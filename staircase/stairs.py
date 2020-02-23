@@ -86,14 +86,14 @@ def _get_common_points(Stairs_list):
     return SortedSet(points)
     
 def sample(Stairs_dict, points=None):
+    use_dates = False
     if isinstance(Stairs_dict, dict) and Stairs_dict.values()[0].use_dates:
-        raise NotImplementedError
+        use_dates = True
     if isinstance(Stairs_dict, pd.Series) and Stairs_dict.values[0].use_dates:
-        raise NotImplementedError
-    assert len(set([type(x) for x in Stairs_dict.values()])) == 1, "Stairs_dict must contain values of same type"
+        use_dates = True
+    #assert len(set([type(x) for x in Stairs_dict.values()])) == 1, "Stairs_dict must contain values of same type"
     if points is None:
         points = _get_common_points(Stairs_dict.values())
-        
     result = (pd.DataFrame({"points":points, **{key:stairs(points) for key,stairs in Stairs_dict.items()}})
         .melt(id_vars="points", var_name="key")
     )
@@ -164,6 +164,10 @@ class Stairs(SortedDict):
         
     def layer(self, start, end=None, value=None):
         if hasattr(start, "__iter__"):
+            if self.use_dates:
+                start = _convert_date_to_float(start)
+                if end is not None:
+                    end = _convert_date_to_float(end)
             layer_func = self._layer_multiple
         else:
             layer_func = self._layer_single
@@ -203,6 +207,8 @@ class Stairs(SortedDict):
     def _layer_multiple(self, starts, ends=None, values = None):
         """Given interval data, adds them to the Stairs instance
 
+        SHOULD NOT HAVE DATES
+        
         Parameters:
             starts (list-like): a series of numbers representing the start times of the intervals
             end (list-like): a series of numbers representing the end times of the intervals
@@ -212,10 +218,7 @@ class Stairs(SortedDict):
             self
 
         """        
-        if self.use_dates:
-            starts = _convert_date_to_float(starts)
-            if ends is not None:
-                ends = _convert_date_to_float(ends)
+        
         if ends is None:
             ends = [np.nan]*len(starts)
             
