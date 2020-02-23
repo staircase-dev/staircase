@@ -4,7 +4,8 @@ import versioneer
 requirements = [
     'sortedcontainers',
     'pandas',
-    'numpy'
+    'numpy',
+    'matplotlib'
 ]
 
 setup(
