@@ -4,7 +4,8 @@ import versioneer
 requirements = [
     'sortedcontainers',
     'pandas',
-    'numpy'
+    'numpy',
+    'matplotlib'
 ]
 
 setup(
@@ -17,7 +18,7 @@ setup(
     author_email='venaturum@gmail.com',
     url='https://github.com/venaturum/staircase',
     packages=['staircase'],
-    
+    python_requires='>=3.6',
     install_requires=requirements,
     keywords=['Staircase',
 			'Step Functions',
