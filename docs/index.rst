@@ -1,7 +1,7 @@
-Railing: The guide to staircase
+Railing: The staircase guide
 =====================================
 
-.. automodule:: staircase
+.. automodule:: staircase.stairs
     :members:
     
 .. toctree::
