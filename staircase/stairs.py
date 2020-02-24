@@ -336,7 +336,7 @@ class Stairs(SortedDict):
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ne__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or IntSeq2.use_dates)    
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
         
     def identical(self, IntSeq):
         return bool(self == IntSeq)
