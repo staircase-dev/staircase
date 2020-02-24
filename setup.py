@@ -2,8 +2,8 @@ from setuptools import setup
 import versioneer
 
 requirements = [
-    'sortedcontainers',
-    'pandas',
+    'sortedcontainers>=2',
+    'pandas>=0.24',
     'numpy',
     'matplotlib'
 ]
