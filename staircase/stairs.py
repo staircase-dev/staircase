@@ -306,37 +306,37 @@ class Stairs(SortedDict):
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__lt__
-        return self.__class__._compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
         
     def __gt__(self, other):
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__gt__
-        return self.__class__._compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
         
     def __le__(self, other):
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__le__
-        return self.__class__._compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
 
     def __ge__(self, other):
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ge__
-        return self.__class__._compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)                
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)                
     
     def __eq__(self, other):
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__eq__
-        return self.__class__._compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)           
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)           
     
     def __ne__(self, other):
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ne__
-        return self.__class__._compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or IntSeq2.use_dates)    
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or IntSeq2.use_dates)    
         
     def identical(self, IntSeq):
         return bool(self == IntSeq)
