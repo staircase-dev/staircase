@@ -86,6 +86,7 @@ def _get_common_points(Stairs_list):
     return SortedSet(points)
     
 def sample(Stairs_dict, points=None):
+    
     use_dates = False
     if isinstance(Stairs_dict, dict) and Stairs_dict.values()[0].use_dates:
         use_dates = True
@@ -109,6 +110,9 @@ def sample(Stairs_dict, points=None):
     return result
 
 def aggregate(Stairs_dict_or_list, func, points=None):
+    '''An aggregating function
+    
+    '''
     if isinstance(Stairs_dict_or_list, dict):
         Stairs_dict = Stairs_dict_or_list
     else:
@@ -142,9 +146,36 @@ class Stairs(SortedDict):
             self[float('-inf')] = value
         self.use_dates = use_dates
         self.cached_cumulative = None
-    
-    
+
     def number_of_steps(self):
+        r"""Summarize the function in one line.
+
+        Several sentences providing an extended description. Refer to
+        variables using back-ticks, e.g. `var`.
+
+        Parameters
+        ----------
+        var1 : array_like
+            Array_like means all those objects -- lists, nested lists, etc. --
+            that can be converted to an array.  We can also refer to
+            variables like `var1`.
+        var2 : int
+            The type above can either refer to an actual Python type
+            (e.g. ``int``), or describe the type of the variable in more
+            detail, e.g. ``(N,) ndarray`` or ``array_like``.
+        long_var_name : {'hi', 'ho'}, optional
+            Choices in brackets, default first when optional.
+
+        Returns
+        -------
+        type
+            Explanation of anonymous return value of type ``type``.
+        describe : type
+            Explanation of return value named `describe`.
+        out : type
+            Explanation of `out`.
+        type_without_description
+        """
         return len(self.keys())-1
         
     def step_changes(self):
