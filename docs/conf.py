@@ -33,10 +33,13 @@ extensions = [
     'sphinx.ext.autodoc', 
     'sphinx.ext.autosummary', 
     'sphinx.ext.coverage', 
-    'sphinx.ext.napoleon',     
+    'sphinx.ext.napoleon',   
+    'matplotlib.sphinxext.plot_directive',    
     #'numpydoc',  # handle NumPy documentation formatted docstrings]
     'nbsphinx',
 ]
+
+source_suffix = ['.rst', '.ipynb']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -44,9 +47,26 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'examples/.ipynb_checkpoints']
+
 autosummary_generate = True
+
 master_doc = 'index'
+
+# matplotlib plot directive
+plot_include_source = True
+plot_formats = [("png", 90)]
+plot_html_show_formats = False
+plot_html_show_source_link = False
+plot_pre_code = """
+import numpy as np
+import pandas as pd
+import staircase as sc
+s1 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1)
+"""
+
+
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -54,8 +74,18 @@ master_doc = 'index'
 #
 html_theme = 'alabaster'
 html_theme = "sphinx_rtd_theme"
+html_theme = "nature"
+#html_theme = "bizstyle"
+
+
+html_logo = 'img/staircase.png'
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_sidebars = {
+    "**":["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html"]
+}
