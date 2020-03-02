@@ -1,11 +1,11 @@
 <p align="center"><a href="https://github.com/venaturum/staircase"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/staircase.png?raw=true" title="staircase logo" alt="staircase logo"></a></p>
 
 <p align="center">
-[![Python version](https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=https://img.shields.io/pypi/pyversions/staircase)](https://www.python.org/)
-[![PyPI version](https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=https://img.shields.io/pypi/v/staircase)](https://pypi.org/project/staircase/)
-[![Conda version](https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=https://img.shields.io/conda/v/venaturum/staircase)](https://anaconda.org/venaturum/staircase)
-[![Read The Docs](https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=https://readthedocs.org/projects/railing/badge/?version=latest)](https://railing.readthedocs.io/en/latest/?badge=latest) 
-[![License](https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://staircase.mit-license.org/) 
+[![Python version](https://img.shields.io/pypi/pyversions/staircase)](https://www.python.org/)
+[![PyPI version](https://img.shields.io/pypi/v/staircase)](https://pypi.org/project/staircase/)
+[![Conda version](https://img.shields.io/conda/v/venaturum/staircase)](https://anaconda.org/venaturum/staircase)
+[![Read The Docs](https://readthedocs.org/projects/railing/badge/?version=latest)](https://railing.readthedocs.io/en/latest/?badge=latest) 
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://staircase.mit-license.org/) 
 </p>
 
 The leading use-case for the staircase package is for the creation and analysis of step functions.
