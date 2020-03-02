@@ -63,6 +63,7 @@ import numpy as np
 import pandas as pd
 import staircase as sc
 s1 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1)
+s2 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1)
 """
 
 

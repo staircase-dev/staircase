@@ -536,6 +536,29 @@ class Stairs(SortedDict):
         return new_instance
         
     def __add__(self, other):
+        """
+        An operator facilitating the addition of two step functions.
+        
+        Should be used as an operator, i.e. by utilising the symbol +.  See examples below.
+              
+        Returns
+        -------
+        :class:`Stairs`
+            A new instance representing the addition of two step functions
+        
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1+s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1+s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         new_instance = self.copy()
@@ -547,18 +570,47 @@ class Stairs(SortedDict):
         return new_instance
         
     def __sub__(self, other):
+        """
+        An operator facilitating the subtraction of one step function from another.
+        
+        Should be used as an operator, i.e. by utilising the symbol -.  See examples below.
+              
+        Returns
+        -------
+        :class:`Stairs`
+            A new instance representing the subtraction of one step function from another
+        
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1-s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1-s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         other = -other
         return self + other
     
     def __div__(self, other):
+        """
+        Not implemented
+        """
+        raise NotImplementedError("Not yet implemented")
         return self
     
     def __mult__(self, other):
+        """
+        Not implemented
+        """
+        raise NotImplementedError("Not yet implemented")
         return self
-    
-
         
     def _cumulative(self):
         if self.cached_cumulative == None:
