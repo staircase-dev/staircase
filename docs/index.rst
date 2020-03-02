@@ -1,8 +1,6 @@
-.. module:: staircase
-
-*****************************
-Railing: the staircase guide
-*****************************
+.. image:: img/staircasewide.png
+   :width: 400px
+   :alt: staircase logo
 
 **Date**: |today| **Version**: |version|
 
@@ -18,6 +16,7 @@ Railing: the staircase guide
    
    install.rst
    getting_started.rst
+   examples.rst
    api.rst 
 
    readme
