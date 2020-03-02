@@ -240,7 +240,7 @@ def sample(Stairs_dict, points=None):
         
     """
     use_dates = False
-    if isinstance(Stairs_dict, dict) and list(Stairs_dict.values())[0].use_dates:
+    if isinstance(Stairs_dict, dict) and next(iter(Stairs_dict.values())).use_dates:
         use_dates = True
     if isinstance(Stairs_dict, pd.Series) and Stairs_dict.values[0].use_dates:
         use_dates = True
@@ -265,7 +265,7 @@ def aggregate(Stairs_dict_or_list, func, points=None):
     '''An aggregating function
     
     '''
-    if isinstance(Stairs_dict_or_list, dict):
+    if isinstance(Stairs_dict_or_list, dict) or isinstance(Stairs_dict_or_list, pd.Series):
         Stairs_dict = Stairs_dict_or_list
     else:
         Stairs_dict = dict(enumerate(Stairs_dict_or_list))
