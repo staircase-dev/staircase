@@ -86,9 +86,161 @@ def _get_common_points(Stairs_list):
     return SortedSet(points)
     
 def sample(Stairs_dict, points=None):
+    """Merge DataFrame or named Series objects with a database-style join.
     
+    The join is done on columns or indexes. If joining columns on
+    columns, the DataFrame indexes *will be ignored*. Otherwise if joining indexes
+    on indexes or indexes on a column or columns, the index will be passed on.
+    
+    Parameters
+    ----------
+    right : DataFrame or named Series
+        Object to merge with.
+    how : {'left', 'right', 'outer', 'inner'}, default 'inner'
+        Type of merge to be performed.
+        
+        * left: use only keys from left frame, similar to a SQL left outer join;
+          preserve key order.
+        * right: use only keys from right frame, similar to a SQL right outer join;
+          preserve key order.
+        * outer: use union of keys from both frames, similar to a SQL full outer
+          join; sort keys lexicographically.
+        * inner: use intersection of keys from both frames, similar to a SQL inner
+          join; preserve the order of the left keys.
+    on : label or list
+        Column or index level names to join on. These must be found in both
+        DataFrames. If `on` is None and not merging on indexes then this defaults
+        to the intersection of the columns in both DataFrames.
+    left_on : label or list, or array-like
+        Column or index level names to join on in the left DataFrame. Can also
+        be an array or list of arrays of the length of the left DataFrame.
+        These arrays are treated as if they are columns.
+    right_on : label or list, or array-like
+        Column or index level names to join on in the right DataFrame. Can also
+        be an array or list of arrays of the length of the right DataFrame.
+        These arrays are treated as if they are columns.
+    left_index : bool, default False
+        Use the index from the left DataFrame as the join key(s). If it is a
+        MultiIndex, the number of keys in the other DataFrame (either the index
+        or a number of columns) must match the number of levels.
+    right_index : bool, default False
+        Use the index from the right DataFrame as the join key. Same caveats as
+        left_index.
+    sort : bool, default False
+        Sort the join keys lexicographically in the result DataFrame. If False,
+        the order of the join keys depends on the join type (how keyword).
+    suffixes : tuple of (str, str), default ('_x', '_y')
+        Suffix to apply to overlapping column names in the left and right
+        side, respectively. To raise an exception on overlapping columns use
+        (False, False).
+    copy : bool, default True
+        If False, avoid copy if possible.
+    indicator : bool or str, default False
+        If True, adds a column to output DataFrame called "_merge" with
+        information on the source of each row.
+        If string, column with information on source of each row will be added to
+        output DataFrame, and column will be named value of string.
+        Information column is Categorical-type and takes on a value of "left_only"
+        for observations whose merge key only appears in 'left' DataFrame,
+        "right_only" for observations whose merge key only appears in 'right'
+        DataFrame, and "both" if the observation's merge key is found in both.  
+    validate : str, optional
+        If specified, checks if merge is of specified type.
+        
+        * "one_to_one" or "1:1": check if merge keys are unique in both
+          left and right datasets.
+        * "one_to_many" or "1:m": check if merge keys are unique in left
+          dataset.
+        * "many_to_one" or "m:1": check if merge keys are unique in right
+          dataset.
+        * "many_to_many" or "m:m": allowed, but does not result in checks.
+        
+        .. versionadded:: 0.21.0
+    
+    Returns
+    -------
+    DataFrame
+        A DataFrame of the two merged objects.
+    
+    See Also
+    --------
+    merge_ordered : Merge with optional filling/interpolation.
+    merge_asof : Merge on nearest keys.
+    DataFrame.join : Similar method using indices.
+    
+    Notes
+    -----
+    Support for specifying index levels as the `on`, `left_on`, and
+    `right_on` parameters was added in version 0.23.0
+    Support for merging named Series objects was added in version 0.24.0
+    
+    Examples
+    --------
+    
+    >>> df1 = pd.DataFrame({'lkey': ['foo', 'bar', 'baz', 'foo'],
+    ...                     'value': [1, 2, 3, 5]})
+    >>> df2 = pd.DataFrame({'rkey': ['foo', 'bar', 'baz', 'foo'],
+    ...                     'value': [5, 6, 7, 8]})
+    >>> df1
+        lkey value
+    0   foo      1
+    1   bar      2
+    2   baz      3
+    3   foo      5
+    >>> df2
+        rkey value
+    0   foo      5
+    1   bar      6
+    2   baz      7
+    3   foo      8
+    
+    Merge df1 and df2 on the lkey and rkey columns. The value columns have
+    the default suffixes, _x and _y, appended.
+    
+    >>> df1.merge(df2, left_on='lkey', right_on='rkey')
+      lkey  value_x rkey  value_y
+    0  foo        1  foo        5
+    1  foo        1  foo        8
+    2  foo        5  foo        5
+    3  foo        5  foo        8
+    4  bar        2  bar        6
+    5  baz        3  baz        7
+    
+    Merge DataFrames df1 and df2 with specified left and right suffixes
+    appended to any overlapping columns.
+    
+    >>> df1.merge(df2, left_on='lkey', right_on='rkey',
+    ...           suffixes=('_left', '_right'))
+      lkey  value_left rkey  value_right
+    0  foo           1  foo            5
+    1  foo          
+     1  foo            8
+    2  foo           5  foo            5
+    3  foo           5  foo            8
+    4  bar           2  bar            6
+    5  baz           3  baz            7
+    
+    Merge DataFrames df1 and df2, but raise an exception if the DataFrames have
+    any overlapping columns.
+    
+    >>> df1.merge(df2, left_on='lkey', right_on='rkey', suffixes=(False, False))
+    Traceback (most recent call last):
+    ...
+    ValueError: columns overlap but no suffix specified:
+        Index(['value'], dtype='object')
+        
+    .. plot::
+        :context: close-figs
+        
+        >>> df = pd.DataFrame(
+        ...     np.random.randint(1, 7, 6000),
+        ...     columns = ['one'])
+        >>> df['two'] = df['one'] + np.random.randint(1, 7, 6000)
+        >>> ax = df.plot.hist(bins=12, alpha=0.5)
+        
+    """
     use_dates = False
-    if isinstance(Stairs_dict, dict) and Stairs_dict.values()[0].use_dates:
+    if isinstance(Stairs_dict, dict) and list(Stairs_dict.values())[0].use_dates:
         use_dates = True
     if isinstance(Stairs_dict, pd.Series) and Stairs_dict.values[0].use_dates:
         use_dates = True
@@ -147,53 +299,136 @@ class Stairs(SortedDict):
         self.use_dates = use_dates
         self.cached_cumulative = None
 
-    def number_of_steps(self):
-        r"""Summarize the function in one line.
-
-        Several sentences providing an extended description. Refer to
-        variables using back-ticks, e.g. `var`.
-
-        Parameters
-        ----------
-        var1 : array_like
-            Array_like means all those objects -- lists, nested lists, etc. --
-            that can be converted to an array.  We can also refer to
-            variables like `var1`.
-        var2 : int
-            The type above can either refer to an actual Python type
-            (e.g. ``int``), or describe the type of the variable in more
-            detail, e.g. ``(N,) ndarray`` or ``array_like``.
-        long_var_name : {'hi', 'ho'}, optional
-            Choices in brackets, default first when optional.
+    def copy(self):
+        """Returns a deep copy of this Stairs instance
 
         Returns
         -------
-        type
-            Explanation of anonymous return value of type ``type``.
-        describe : type
-            Explanation of return value named `describe`.
-        out : type
-            Explanation of `out`.
-        type_without_description
+        copy : Stairs
+
+        """ 
+        new_instance = Stairs(use_dates=self.use_dates)
+        for key,value in self.items():
+            new_instance[key] = value
+        return new_instance
+
+    def plot(self, ax=None, **kwargs):
         """
-        return len(self.keys())-1
+        Makes a step plot representing the finite intervals belonging to the Stairs instance. 
         
-    def step_changes(self):
-        return self.keys()[1:]
-            
-    def __call__(self, points):
+        Uses matplotlib as a backend.
+
+        Parameters
+        ----------
+        ax : :class:`matplotlib.axes.Axes`, default None
+            Allows the axes, on which to plot, to be specified
+        **kwargs
+            Options to pass to :function: `matplotlib.pyplot.step`
+        
+        Returns
+        -------
+        :class:`matplotlib.axes.Axes`
+        """
+        if ax is None:
+            fig, ax = plt.subplots()
+                
+        cumulative = self._cumulative()
+        step_points = cumulative.keys()
         if self.use_dates:
-            points = _convert_date_to_float(points)
-        if hasattr(points, "__iter__"):
-            new_instance = self.copy()._layer_multiple(points, None, [0]*len(points))
+            step_points = [np.NaT] + _convert_float_to_date(np.array(step_points[1:]))
+        ax.step(step_points, cumulative.values(), where='post', **kwargs)
+        return ax
+
+    def __call__(self, x):
+        """Evaluates the value of the step function at one, or more, points.
+
+        The function should be called using parentheses.  See example below.
+
+        Parameters
+        ----------
+        x : int, float or vector data
+            values at which to evaluate the function
+            
+        Returns
+        -------
+        float, or list of floats
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            >>> s1(3.5)
+            1
+            >>> s1([1, 2, 4.5, 6])
+            [1, 0, -1, 0]
+        
+        """
+        if self.use_dates:
+            x = _convert_date_to_float(x)
+        if hasattr(x, "__iter__"):
+            new_instance = self.copy()._layer_multiple(x, None, [0]*len(x))
             cumulative = new_instance._cumulative()
-            return [val for key,val in cumulative.items() if key in points]
+            return [val for key,val in cumulative.items() if key in x]
         else:
             cumulative = self._cumulative()
-            preceding_boundary_index = cumulative.bisect_right(points) - 1
+            preceding_boundary_index = cumulative.bisect_right(x) - 1
             return cumulative.values()[preceding_boundary_index]    
-        
+
+            
     def layer(self, start, end=None, value=None):
+        """
+        Changes the value of the step function.
+        
+        
+        Parameters
+        ----------
+        start : int, float or vector data
+            start time(s) of the interval(s)
+        end : int, float or vector data, optional
+            end time(s) of the interval(s)
+        value: int, float or vector data, optional
+            value(s) of the interval(s)
+              
+        Returns
+        -------
+        :class:`Stairs`
+            The current instance is returned to facilitate method chaining
+        
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> import staircase as sc
+            ... (sc.Stairs()
+            ...     .layer(1,3)
+            ...     .layer(4,5,-2)
+            ...     .plot()
+            ... )
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> import pandas as pd
+            >>> import staircase as sc
+            >>> data = pd.DataFrame({"starts":[1,4,5.5],
+            ...                      "ends":[3,5,7],
+            ...                      "values":[-1,2,-3]})
+            >>> data
+               starts  ends  values
+            0     1.0     3      -1
+            1     4.0     5       2
+            2     5.5     7      -3
+            >>> (sc.Stairs(1.5)
+            ...     .layer(data["starts"], data["ends"], data["values"])
+            ...     .plot()
+            ... )
+        """
         if hasattr(start, "__iter__"):
             if self.use_dates:
                 start = _convert_date_to_float(start)
@@ -207,16 +442,8 @@ class Stairs(SortedDict):
         return layer_func(start, end, value)
         
     def _layer_single(self, start, end=None, value=1):
-        """Adds an interval to the Stairs instance
-
-        Parameters:
-            start (numeric): start time of the interval
-            end (numeric): end time of the interval
-            value (numeric, optional): the value of the interval
-
-        Returns:
-            self
-
+        """
+        Implementation of the layer function for when start parameter is single-valued
         """
         if self.use_dates:
             start = _convert_date_to_float(start)
@@ -236,18 +463,8 @@ class Stairs(SortedDict):
                 
     
     def _layer_multiple(self, starts, ends=None, values = None):
-        """Given interval data, adds them to the Stairs instance
-
-        SHOULD NOT HAVE DATES
-        
-        Parameters:
-            starts (list-like): a series of numbers representing the start times of the intervals
-            end (list-like): a series of numbers representing the end times of the intervals
-            values (list-like, optional): a series of numbers representing the value of each interval.  If not supplied values of 1 are assumed.
-
-        Returns:
-            self
-
+        """
+        Implementation of the layer function for when start parameter is vector data
         """        
         
         if ends is None:
@@ -266,8 +483,52 @@ class Stairs(SortedDict):
                 self[end] = self.get(end,0) - value
         self.cached_cumulative = None
         return self
+
+    def step_changes(self):
+        """
+        Returns a dictionary of key, value pairs of indicating where step changes occur in the step function, and the change in value 
         
+        Returns
+        -------
+        dictionary
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            >>> s1.step_changes()
+            {1: 1, 2: -1, 3: 1, 4: -2, 5: 1}
+        
+        
+        """
+        return dict(self.items()[1:])
+
+            
     def __neg__(self):
+        """
+        An operator which produces a new Stairs instance representing the multiplication of the step function by -1.
+        
+        Should be used as an operator, i.e. by utilising the symbol -.  See examples below.
+              
+        Returns
+        -------
+        :class:`Stairs`
+            A new instance representing the multiplication of the step function by -1
+        
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            >>> (-s1).plot(color='r')
+        """    
+        
         new_instance = self.copy()
         for key,delta in new_instance.items():
             new_instance[key] = -delta
@@ -291,21 +552,14 @@ class Stairs(SortedDict):
         other = -other
         return self + other
     
-    def copy(self, keep_cache=False):
-        """Returns a deep copy
-
-        Returns:
-            Stairs
-
-        """ 
-        new_instance = Stairs(use_dates=self.use_dates)
-        for key,value in self.items():
-            new_instance[key] = value
-        if keep_cache:
-            new_instance.cached_cumulative = self.cached_cumulative
-        return new_instance
+    def __div__(self, other):
+        return self
     
+    def __mult__(self, other):
+        return self
     
+
+        
     def _cumulative(self):
         if self.cached_cumulative == None:
             self.cached_cumulative = SortedDict(zip(self.keys(), np.cumsum(self.values())))
@@ -325,7 +579,7 @@ class Stairs(SortedDict):
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _min_pair(self_bool, other_bool)
-        
+    
     def __or__(self, other):
         assert isinstance(other, type(self)), f"Arguments to {cls.__name__}.min must be both of type {cls}."
         self_bool = self.make_boolean()
@@ -410,6 +664,27 @@ class Stairs(SortedDict):
         area, mean = self.get_integral_and_mean(lower, upper)
         return mean
     
+    def median(self, lower=float('-inf'), upper=float('inf')):
+        pass
+    
+    def _values_in_range(self, lower, upper):
+        points = [key for key in self.keys() if lower < key < upper]
+        if lower > float('-inf'):
+            points.append(self(lower))
+        if upper < float('inf'):
+            points.append(self(upper))
+        return self(points)
+        
+    def min(self, lower=float('-inf'), upper=float('inf')):
+        return np.min(self._values_in_range(lower, upper))
+        
+    def max(self, lower=float('-inf'), upper=float('inf')):
+        return np.min(self._values_in_range(lower, upper))
+        
+    def percentiles(self, lower=float('-inf'), upper=float('inf')):
+        pass    
+        
+        
     def clip(self, lower=float('-inf'), upper=float('inf')):
         assert lower is not None or upper is not None, "clip function should not be called with no parameters."
         if self.use_dates:
@@ -454,25 +729,25 @@ class Stairs(SortedDict):
     def __repr__(self):
         return str(self)
         
-    def plot(self, *args, **kwargs):
-        """Line plot for Stairs.
+    
+    def number_of_steps(self):
+        """Calculates the number of step changes
+
+        Returns
+        -------
+        int
         
-        Parameters:
-            ax: (matplotlib.axes, optional) An axis to be plotted to - specified either as first positional argument, or as named argument
-            **kwargs: Additional parameters are the same as those for plot.
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            >>> s1.number_of_steps()
+            5
+        
         """
-        assert len(args) <= 1
-        if len(args) == 1:
-            ax = args[0]
-        else:
-            if "ax" in kwargs:
-                ax = kwargs.pop("ax")
-            else:
-                fig, ax = plt.subplots()
-                
-        cumulative = self._cumulative()
-        step_points = cumulative.keys()
-        if self.use_dates:
-            step_points = [np.NaT] + _convert_float_to_date(np.array(step_points[1:]))
-        ax.step(step_points, cumulative.values(), where='post', **kwargs)
+        return len(self.keys())-1
+        
     
