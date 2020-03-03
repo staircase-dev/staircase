@@ -65,7 +65,7 @@ def test_init2(init_value):
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])      
 def test_init3(init_value):
     int_seq = stairs.Stairs(init_value)
-    assert int_seq.step_changes() == [], "Initialised stairs.Stairs should not have any finite interval endpoints"
+    assert int_seq.step_changes() == {}, "Initialised stairs.Stairs should not have any finite interval endpoints"
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])      
 def test_init4(init_value):
