@@ -13,7 +13,7 @@ Constructor & Basic Methods
    Stairs
    Stairs.copy
    Stairs.plot
-   Stairs.__call__
+   Stairs.evaluate
    Stairs.layer
    Stairs.step_changes
    Stairs.to_dataframe
@@ -25,11 +25,11 @@ Arithmetic Operators
 .. autosummary::
    :toctree: api/
 
-   Stairs.__neg__
-   Stairs.__add__
-   Stairs.__sub__
-   Stairs.__mul__
-   Stairs.__truediv__
+   Stairs.negate
+   Stairs.add
+   Stairs.subtract
+   Stairs.multiply
+   Stairs.divide
 
     
 Relational Operators
@@ -38,12 +38,12 @@ Relational Operators
 .. autosummary::
    :toctree: api/
 
-   Stairs.__lt__
-   Stairs.__gt__
-   Stairs.__le__
-   Stairs.__ge__
-   Stairs.__eq__
-   Stairs.__ne__
+   Stairs.lt
+   Stairs.gt
+   Stairs.le
+   Stairs.ge
+   Stairs.eq
+   Stairs.ne
    Stairs.identical
    
 
@@ -54,10 +54,9 @@ Logical Operators
    :toctree: api/
    
    Stairs.make_boolean
-   Stairs.__invert__
-   Stairs.__and__
-   Stairs.__or__
-   Stairs.__bool__
+   Stairs.invert
+   Stairs.logical_and
+   Stairs.logical_or
 
 
 Summary Statistics

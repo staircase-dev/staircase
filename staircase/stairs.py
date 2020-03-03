@@ -359,7 +359,7 @@ class Stairs(SortedDict):
         ax.step(step_points, cumulative.values(), where='post', **kwargs)
         return ax
 
-    def __call__(self, x):
+    def evaluate(self, x):
         """Evaluates the value of the step function at one, or more, points.
 
         The function should be called using parentheses.  See example below.
@@ -527,7 +527,7 @@ class Stairs(SortedDict):
         return dict(self.items()[1:])
 
             
-    def __neg__(self):
+    def negate(self):
         """
         An operator which produces a new Stairs instance representing the multiplication of the step function by -1.
         
@@ -555,7 +555,7 @@ class Stairs(SortedDict):
         new_instance.cached_cumulative = None
         return new_instance
         
-    def __add__(self, other):
+    def add(self, other):
         """
         An operator facilitating the addition of two step functions.
         
@@ -589,7 +589,7 @@ class Stairs(SortedDict):
         new_instance.cached_cumulative = None
         return new_instance
         
-    def __sub__(self, other):
+    def subtract(self, other):
         """
         An operator facilitating the subtraction of one step function from another.
         
@@ -632,7 +632,7 @@ class Stairs(SortedDict):
         return new_instance
         
         
-    def __truediv__(self, other):
+    def divide(self, other):
         """
         An operator facilitating the division of one step function by another.
         
@@ -663,8 +663,8 @@ class Stairs(SortedDict):
         
         return self._mul_or_div(other, np.divide)
     
-    def __mul__(self, other):
-        """
+    def multiply(self, other):
+        r"""
         An operator facilitating the multiplication of one step function with another.
         
         Should be used as an operator, i.e. by utilising the symbol \*.  See examples below.
@@ -711,7 +711,7 @@ class Stairs(SortedDict):
         new_instance = self != Stairs(0)
         return new_instance
     
-    def __invert__(self):
+    def invert(self):
         """
         Examples
         --------
@@ -729,7 +729,7 @@ class Stairs(SortedDict):
         new_instance = Stairs(1) - new_instance
         return new_instance
     
-    def __and__(self, other):
+    def logical_and(self, other):
         """
         Examples
         --------
@@ -748,7 +748,7 @@ class Stairs(SortedDict):
         other_bool = other.make_boolean()
         return _min_pair(self_bool, other_bool)
     
-    def __or__(self, other):
+    def logical_or(self, other):
         """
         Examples
         --------
@@ -768,7 +768,7 @@ class Stairs(SortedDict):
         return _max_pair(self_bool, other_bool)
 
     
-    def __lt__(self, other):
+    def lt(self, other):
         """
         Examples
         --------
@@ -787,7 +787,7 @@ class Stairs(SortedDict):
         comparator = float(0).__lt__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
         
-    def __gt__(self, other):
+    def gt(self, other):
         """
         Examples
         --------
@@ -806,7 +806,7 @@ class Stairs(SortedDict):
         comparator = float(0).__gt__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
         
-    def __le__(self, other):
+    def le(self, other):
         """
         Examples
         --------
@@ -825,7 +825,7 @@ class Stairs(SortedDict):
         comparator = float(0).__le__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
 
-    def __ge__(self, other):
+    def ge(self, other):
         """
         Examples
         --------
@@ -844,7 +844,7 @@ class Stairs(SortedDict):
         comparator = float(0).__ge__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)                
     
-    def __eq__(self, other):
+    def eq(self, other):
         """
         Examples
         --------
@@ -863,7 +863,7 @@ class Stairs(SortedDict):
         comparator = float(0).__eq__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)           
     
-    def __ne__(self, other):
+    def ne(self, other):
         """
         Examples
         --------
@@ -1027,5 +1027,19 @@ class Stairs(SortedDict):
         
         """
         return len(self.keys())-1
-        
     
+    __neg__ = negate
+    __mul__ = multiply
+    __truediv__ = divide
+    __add__ = add
+    __sub__ = subtract
+    __or__ = logical_or
+    __and__ = logical_and
+    __invert__ = invert
+    __eq__ = eq
+    __ne__ = ne
+    __lt__ = lt
+    __gt__ = gt
+    __le__ = le
+    __ge__ = ge
+    __call__ = evaluate
