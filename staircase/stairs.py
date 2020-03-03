@@ -926,6 +926,13 @@ class Stairs(SortedDict):
     def median(self, lower=float('-inf'), upper=float('inf')):
         return self.percentiles(lower, upper)(0.5)
     
+    def mode(self, lower=float('-inf'), upper=float('inf')):
+        df = (self.clip(lower,upper)
+                .to_dataframe().iloc[1:-1]
+                .assign(duration = lambda df: df.end-df.start)
+        )
+        return df.value.iloc[df.duration.argmax()]
+
     def _values_in_range(self, lower, upper):
         points = [key for key in self.keys() if lower < key < upper]
         if lower > float('-inf'):
