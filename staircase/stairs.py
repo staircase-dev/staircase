@@ -355,8 +355,8 @@ class Stairs(SortedDict):
         cumulative = self._cumulative()
         step_points = cumulative.keys()
         if self.use_dates:
-            step_points = [pd.Timestamp.min] + _convert_float_to_date(np.array(step_points[1:]))
-        ax.step(step_points, cumulative.values(), where='post', **kwargs)
+            step_points = _convert_float_to_date(np.array(step_points[1:]))
+        ax.step(step_points, list(cumulative.values())[1:], where='post', **kwargs)
         return ax
 
     def evaluate(self, x):
