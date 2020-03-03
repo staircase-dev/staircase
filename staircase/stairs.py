@@ -614,8 +614,6 @@ class Stairs(SortedDict):
         return self + other
     
     def _mul_or_div(self, other, func):
-        if not bool(other.make_boolean()):
-            raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
         a = self.copy()
         b = other.copy()
         a_keys = a.keys()
@@ -637,7 +635,27 @@ class Stairs(SortedDict):
     
     def __mul__(self, other):
         """
-        Not implemented
+        An operator facilitating the multiplication of one step function with another.
+        
+        Should be used as an operator, i.e. by utilising the symbol *.  See examples below.
+              
+        Returns
+        -------
+        :class:`Stairs`
+            A new instance representing the multiplication of one step function from another
+        
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1*s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1*s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
         """
         return self._mul_or_div(other, np.multiply)
         
