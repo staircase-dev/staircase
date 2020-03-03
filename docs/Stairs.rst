@@ -28,8 +28,8 @@ Arithmetic Operators
    Stairs.__neg__
    Stairs.__add__
    Stairs.__sub__
-   Stairs.__mult__
-   Stairs.__div__
+   Stairs.__mul__
+   Stairs.__truediv__
 
     
 Relational Operators
