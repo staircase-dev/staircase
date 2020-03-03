@@ -84,6 +84,20 @@ def _get_common_points(Stairs_list):
     for stairs in Stairs_list:
         points += list(stairs.keys())
     return SortedSet(points)
+
+def _using_dates(Stairs_dict_or_list):
+    try:
+        return next(iter(Stairs_dict_or_list.values())).use_dates
+    except:
+        try:
+            return Stairs_dict_or_list.values[0].use_dates
+        except:
+            try:
+                return Stairs_dict_or_list[0]
+            except:
+                return False
+        
+    
     
 def sample(Stairs_dict, points=None):
     """Merge DataFrame or named Series objects with a database-style join.
@@ -239,11 +253,7 @@ def sample(Stairs_dict, points=None):
         >>> ax = df.plot.hist(bins=12, alpha=0.5)
         
     """
-    use_dates = False
-    if isinstance(Stairs_dict, dict) and next(iter(Stairs_dict.values())).use_dates:
-        use_dates = True
-    if isinstance(Stairs_dict, pd.Series) and Stairs_dict.values[0].use_dates:
-        use_dates = True
+    use_dates = _using_dates(Stairs_dict)
     #assert len(set([type(x) for x in Stairs_dict.values()])) == 1, "Stairs_dict must contain values of same type"
     if points is None:
         points = _get_common_points(Stairs_dict.values())
