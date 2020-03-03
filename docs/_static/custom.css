@@ -1,0 +1,31 @@
+div.bodywrapper {
+    border-left: solid #ddd;
+}
+
+div.related {
+    background-color: #006c85;
+}
+
+div.related a {
+    color: #7CB9B3    
+}
+
+div.document {
+    background-color: #fff;
+}
+
+div.sphinxsidebar p {
+    color: #006c85;
+}
+
+div.body h1 {
+    background-color: #C7E3E2;
+}
+    
+div.body h2 {
+    background-color: #C7E3E2;
+}
+
+dt:target, span.highlighted {
+  background-color: #e9fce6;
+}
