@@ -629,7 +629,29 @@ class Stairs(SortedDict):
         
     def __truediv__(self, other):
         """
-        Not implemented
+        An operator facilitating the division of one step function by another.
+        
+        The divisor should cannot be zero-valued anywhere.
+        
+        Should be used as an operator, i.e. by utilising the symbol /.  See examples below.      
+              
+        Returns
+        -------
+        :class:`Stairs`
+            A new instance representing the division of one step function by another
+        
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, (s2+2), s1/(s2+2)]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2+2", "S1/(s2+2)"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
         """
         if not bool(other.make_boolean()):
             raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
@@ -640,7 +662,7 @@ class Stairs(SortedDict):
         """
         An operator facilitating the multiplication of one step function with another.
         
-        Should be used as an operator, i.e. by utilising the symbol *.  See examples below.
+        Should be used as an operator, i.e. by utilising the symbol \*.  See examples below.
               
         Returns
         -------
