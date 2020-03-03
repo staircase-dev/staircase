@@ -24,6 +24,11 @@ def _convert_float_to_date(val):
         return list(pd.to_datetime(val/24, unit='D', origin=origin))
     return pd.to_datetime(val/24, unit='D', origin=origin)
 
+def _from_cumulative(cumulative, use_dates=False):
+    return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates)
+
+
+
 def _min_pair(stairs1, stairs2):
     """Calculates the minimum of two Stairs objects.  It can be thought of as calculating the minimum of two step functions.
 
@@ -608,25 +613,39 @@ class Stairs(SortedDict):
         other = -other
         return self + other
     
-    def __div__(self, other):
+    def _mul_or_div(self, other, func):
+        if not bool(other.make_boolean()):
+            raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
+        a = self.copy()
+        b = other.copy()
+        a_keys = a.keys()
+        b_keys = b.keys()
+        a.layer(b_keys, None, [0]*len(b_keys))
+        b.layer(a_keys, None, [0]*len(a_keys))
+        
+        multiplied_cumulative_values = func(a._cumulative().values(), b._cumulative().values())
+        new_instance = _from_cumulative(dict(zip(a.keys(), multiplied_cumulative_values)), use_dates=self.use_dates)
+        new_instance._reduce()   
+        return new_instance
+        
+        
+    def __truediv__(self, other):
         """
         Not implemented
         """
-        raise NotImplementedError("Not yet implemented")
-        return self
+        return self._mul_or_div(other, np.divide)
     
-    def __mult__(self, other):
+    def __mul__(self, other):
         """
         Not implemented
         """
-        raise NotImplementedError("Not yet implemented")
-        return self
+        return self._mul_or_div(other, np.multiply)
         
     def _cumulative(self):
         if self.cached_cumulative == None:
             self.cached_cumulative = SortedDict(zip(self.keys(), np.cumsum(self.values())))
         return self.cached_cumulative
-            
+        
     def make_boolean(self):
         new_instance = self != Stairs(0)
         return new_instance
@@ -637,13 +656,13 @@ class Stairs(SortedDict):
         return new_instance
     
     def __and__(self, other):
-        assert isinstance(other, type(self)), f"Arguments to {cls.__name__}.min must be both of type {cls}."
+        assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _min_pair(self_bool, other_bool)
     
     def __or__(self, other):
-        assert isinstance(other, type(self)), f"Arguments to {cls.__name__}.min must be both of type {cls}."
+        assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _max_pair(self_bool, other_bool)
