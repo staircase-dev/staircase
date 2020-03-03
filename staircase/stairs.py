@@ -695,21 +695,73 @@ class Stairs(SortedDict):
         return self.cached_cumulative
         
     def make_boolean(self):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s2, s2.make_boolean()]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s2", "s2.make_boolean()"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         new_instance = self != Stairs(0)
         return new_instance
     
     def __invert__(self):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s2, ~s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s2", "~s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         new_instance = self.make_boolean()
         new_instance = Stairs(1) - new_instance
         return new_instance
     
     def __and__(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 & s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 & s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _min_pair(self_bool, other_bool)
     
     def __or__(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 | s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 | s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
@@ -717,36 +769,114 @@ class Stairs(SortedDict):
 
     
     def __lt__(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 < s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 < s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__lt__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
         
     def __gt__(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 > s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 > s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__gt__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
         
     def __le__(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 <= s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 <= s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__le__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
 
     def __ge__(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 >= s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 >= s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ge__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)                
     
     def __eq__(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 == s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 == s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__eq__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)           
     
     def __ne__(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 != s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 != s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ne__
