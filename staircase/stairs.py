@@ -5,6 +5,10 @@ import numpy as np
 import pandas as pd
 import functools
 import warnings
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+
+
 warnings.simplefilter('default')
 
 origin = pd.to_datetime('2000-1-1')
@@ -344,17 +348,18 @@ class Stairs(SortedDict):
         -------
         :class:`matplotlib.axes.Axes`
         """
+
         if ax is None:
             fig, ax = plt.subplots()
                 
         cumulative = self._cumulative()
         step_points = cumulative.keys()
         if self.use_dates:
-            step_points = [np.NaT] + _convert_float_to_date(np.array(step_points[1:]))
-        ax.step(step_points, cumulative.values(), where='post', **kwargs)
+            step_points = _convert_float_to_date(np.array(step_points[1:]))
+        ax.step(step_points, list(cumulative.values())[1:], where='post', **kwargs)
         return ax
 
-    def __call__(self, x):
+    def evaluate(self, x):
         """Evaluates the value of the step function at one, or more, points.
 
         The function should be called using parentheses.  See example below.
@@ -522,7 +527,7 @@ class Stairs(SortedDict):
         return dict(self.items()[1:])
 
             
-    def __neg__(self):
+    def negate(self):
         """
         An operator which produces a new Stairs instance representing the multiplication of the step function by -1.
         
@@ -550,7 +555,7 @@ class Stairs(SortedDict):
         new_instance.cached_cumulative = None
         return new_instance
         
-    def __add__(self, other):
+    def add(self, other):
         """
         An operator facilitating the addition of two step functions.
         
@@ -584,7 +589,7 @@ class Stairs(SortedDict):
         new_instance.cached_cumulative = None
         return new_instance
         
-    def __sub__(self, other):
+    def subtract(self, other):
         """
         An operator facilitating the subtraction of one step function from another.
         
@@ -614,8 +619,6 @@ class Stairs(SortedDict):
         return self + other
     
     def _mul_or_div(self, other, func):
-        if not bool(other.make_boolean()):
-            raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
         a = self.copy()
         b = other.copy()
         a_keys = a.keys()
@@ -629,15 +632,60 @@ class Stairs(SortedDict):
         return new_instance
         
         
-    def __truediv__(self, other):
+    def divide(self, other):
         """
-        Not implemented
+        An operator facilitating the division of one step function by another.
+        
+        The divisor should cannot be zero-valued anywhere.
+        
+        Should be used as an operator, i.e. by utilising the symbol /.  See examples below.      
+              
+        Returns
+        -------
+        :class:`Stairs`
+            A new instance representing the division of one step function by another
+        
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, (s2+2), s1/(s2+2)]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2+2", "S1/(s2+2)"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
         """
+        if not bool(other.make_boolean()):
+            raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
+        
         return self._mul_or_div(other, np.divide)
     
-    def __mul__(self, other):
-        """
-        Not implemented
+    def multiply(self, other):
+        r"""
+        An operator facilitating the multiplication of one step function with another.
+        
+        Should be used as an operator, i.e. by utilising the symbol \*.  See examples below.
+              
+        Returns
+        -------
+        :class:`Stairs`
+            A new instance representing the multiplication of one step function from another
+        
+        
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1*s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1*s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
         """
         return self._mul_or_div(other, np.multiply)
         
@@ -647,58 +695,188 @@ class Stairs(SortedDict):
         return self.cached_cumulative
         
     def make_boolean(self):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s2, s2.make_boolean()]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s2", "s2.make_boolean()"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         new_instance = self != Stairs(0)
         return new_instance
     
-    def __invert__(self):
+    def invert(self):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s2, ~s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s2", "~s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         new_instance = self.make_boolean()
         new_instance = Stairs(1) - new_instance
         return new_instance
     
-    def __and__(self, other):
+    def logical_and(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 & s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 & s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _min_pair(self_bool, other_bool)
     
-    def __or__(self, other):
+    def logical_or(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 | s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 | s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _max_pair(self_bool, other_bool)
 
     
-    def __lt__(self, other):
+    def lt(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 < s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 < s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__lt__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
         
-    def __gt__(self, other):
+    def gt(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 > s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 > s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__gt__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
         
-    def __le__(self, other):
+    def le(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 <= s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 <= s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__le__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
 
-    def __ge__(self, other):
+    def ge(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 >= s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 >= s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ge__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)                
     
-    def __eq__(self, other):
+    def eq(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 == s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 == s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__eq__
         return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)           
     
-    def __ne__(self, other):
+    def ne(self, other):
+        """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s1, s2, s1 != s2]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 != s2"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+        """
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ne__
@@ -746,8 +924,15 @@ class Stairs(SortedDict):
         return mean
     
     def median(self, lower=float('-inf'), upper=float('inf')):
-        pass
+        return self.percentiles(lower, upper)(0.5)
     
+    def mode(self, lower=float('-inf'), upper=float('inf')):
+        df = (self.clip(lower,upper)
+                .to_dataframe().iloc[1:-1]
+                .assign(duration = lambda df: df.end-df.start)
+        )
+        return df.value.iloc[df.duration.argmax()]
+
     def _values_in_range(self, lower, upper):
         points = [key for key in self.keys() if lower < key < upper]
         if lower > float('-inf'):
@@ -763,8 +948,20 @@ class Stairs(SortedDict):
         return np.min(self._values_in_range(lower, upper))
         
     def percentiles(self, lower=float('-inf'), upper=float('inf')):
-        pass    
-        
+        temp_df = (self.clip(lower,upper)
+             .to_dataframe()
+             .iloc[1:-1]
+             .assign(duration = lambda df: df.end-df.start)
+             .groupby('value').sum()
+             .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
+             .assign(duration = lambda df: df.duration.shift())
+             .fillna(0)
+        )
+        percentile_step_func = Stairs()
+        for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
+            percentile_step_func.layer(start,end,value)
+        return percentile_step_func
+                
         
     def clip(self, lower=float('-inf'), upper=float('inf')):
         assert lower is not None or upper is not None, "clip function should not be called with no parameters."
@@ -830,5 +1027,19 @@ class Stairs(SortedDict):
         
         """
         return len(self.keys())-1
-        
     
+    __neg__ = negate
+    __mul__ = multiply
+    __truediv__ = divide
+    __add__ = add
+    __sub__ = subtract
+    __or__ = logical_or
+    __and__ = logical_and
+    __invert__ = invert
+    __eq__ = eq
+    __ne__ = ne
+    __lt__ = lt
+    __gt__ = gt
+    __le__ = le
+    __ge__ = ge
+    __call__ = evaluate

@@ -62,6 +62,7 @@ plot_pre_code = """
 import numpy as np
 import pandas as pd
 import staircase as sc
+import matplotlib.pyplot as plt
 s1 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1)
 s2 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1)
 """
@@ -87,6 +88,9 @@ html_logo = 'img/staircase.png'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+def setup(app):
+    app.add_css_file('custom.css')
+    
 html_sidebars = {
     "**":["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html"]
 }
