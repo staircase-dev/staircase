@@ -614,8 +614,6 @@ class Stairs(SortedDict):
         return self + other
     
     def _mul_or_div(self, other, func):
-        if not bool(other.make_boolean()):
-            raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
         a = self.copy()
         b = other.copy()
         a_keys = a.keys()
@@ -633,6 +631,9 @@ class Stairs(SortedDict):
         """
         Not implemented
         """
+        if not bool(other.make_boolean()):
+            raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
+        
         return self._mul_or_div(other, np.divide)
     
     def __mul__(self, other):
