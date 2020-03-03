@@ -5,6 +5,10 @@ import numpy as np
 import pandas as pd
 import functools
 import warnings
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+
+
 warnings.simplefilter('default')
 
 origin = pd.to_datetime('2000-1-1')
@@ -344,13 +348,14 @@ class Stairs(SortedDict):
         -------
         :class:`matplotlib.axes.Axes`
         """
+
         if ax is None:
             fig, ax = plt.subplots()
                 
         cumulative = self._cumulative()
         step_points = cumulative.keys()
         if self.use_dates:
-            step_points = [np.NaT] + _convert_float_to_date(np.array(step_points[1:]))
+            step_points = [pd.Timestamp.min] + _convert_float_to_date(np.array(step_points[1:]))
         ax.step(step_points, cumulative.values(), where='post', **kwargs)
         return ax
 
@@ -789,7 +794,7 @@ class Stairs(SortedDict):
         return mean
     
     def median(self, lower=float('-inf'), upper=float('inf')):
-        pass
+        return self.percentiles(lower, upper)(0.5)
     
     def _values_in_range(self, lower, upper):
         points = [key for key in self.keys() if lower < key < upper]
@@ -806,8 +811,20 @@ class Stairs(SortedDict):
         return np.min(self._values_in_range(lower, upper))
         
     def percentiles(self, lower=float('-inf'), upper=float('inf')):
-        pass    
-        
+        temp_df = (self.clip(lower,upper)
+             .to_dataframe()
+             .iloc[1:-1]
+             .assign(duration = lambda df: df.end-df.start)
+             .groupby('value').sum()
+             .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
+             .assign(duration = lambda df: df.duration.shift())
+             .fillna(0)
+        )
+        percentile_step_func = Stairs()
+        for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
+            percentile_step_func.layer(start,end,value)
+        return percentile_step_func
+                
         
     def clip(self, lower=float('-inf'), upper=float('inf')):
         assert lower is not None or upper is not None, "clip function should not be called with no parameters."
