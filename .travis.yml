@@ -10,7 +10,7 @@ install:
   - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
   - git fetch
   - for branch in $(git branch -r|grep -v HEAD) ; do
-        git checkout -qf ${branch#origin/}
+      git checkout -qf ${branch#origin/}
     done
   - git checkout ${build_head}
   - git merge CondaBuild
