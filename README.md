@@ -8,6 +8,8 @@
         <img src="https://img.shields.io/pypi/v/staircase" /></a>
     <a href="https://anaconda.org/venaturum/staircase" alt="Conda version">
         <img src="https://img.shields.io/conda/v/venaturum/staircase" /></a>
+	<a href="https://travis-ci.org/venaturum/staircase" alt"Travis CI">
+		<img src="https://img.shields.io/travis/venaturum/staircase"/></a>
     <a href="https://railing.readthedocs.io/en/stable/" alt="Read the Docs">
         <img src="https://readthedocs.org/projects/railing/badge/?version=stable" /></a>
     <a href="https://staircase.mit-license.org/" alt="License">
