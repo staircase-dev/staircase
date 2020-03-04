@@ -331,6 +331,21 @@ mean_example = """
             0.3333333333333333
 """
 
+mode_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s2.plot()
+            >>> s2.mode()
+            -1.0
+            >>> s2.mode(0,3)
+            0.5
+"""
+
+
 median_example = """
         Examples
         --------
@@ -361,3 +376,63 @@ percentile_example = """
             0.0
 """
 
+percentile_stairs_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5))
+            >>> s2.plot(axes[0])
+            >>> axes[0].set_title("s2")
+            >>> s2_percentiles = s2.percentile_Stairs()
+            >>> s2_percentiles.plot(axes[1])
+            >>> axes[0].set_title("s2 percentiles")
+            >>> s2_percentiles(55)
+            0.0
+            >>> s2_percentiles(75)
+            0.5
+"""
+
+min_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s2.plot()
+            >>> s2.min(0,3)
+            -1.0
+            >>> s2.min(1,2.5)
+            0.0
+"""
+
+max_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            >>> s1.max()
+            1.0
+            >>> s1.max(2,3)
+            1.0
+"""
+
+clip_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5))
+            >>> s1.plot(axes[0])
+            >>> s1.clip(2,4).plot(axes[1])
+            >>> s1.clip(2,4).mean()
+            0.5
+"""
