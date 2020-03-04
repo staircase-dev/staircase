@@ -397,7 +397,7 @@ class Stairs(SortedDict):
             if how == "right":
                 preceding_boundary_index = cumulative.bisect_right(x) - 1
             else:
-                preceding_boundary_index = cumulative.bisect_right(x) - 1
+                preceding_boundary_index = cumulative.bisect_left(x) - 1
             return cumulative.values()[preceding_boundary_index]    
 
     @append_doc(SC_docs.layer_example)        
@@ -859,6 +859,7 @@ class Stairs(SortedDict):
         area, mean = self.get_integral_and_mean(lower, upper)
         return mean
     
+    @append_doc(SC_docs.median_example) 
     def median(self, lower=float('-inf'), upper=float('inf')):
         """
         Calculates the median of the step function.
@@ -875,8 +876,52 @@ class Stairs(SortedDict):
         float
             The median
         """
-        return self.percentiles(lower, upper)(0.5)
+        return self.percentile(50, lower, upper)
     
+    @append_doc(SC_docs.percentile_example) 
+    def percentile(self, x, lower=float('-inf'), upper=float('inf')):
+        """
+        Calculates the x-th percentile of the step function's values
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        float
+            The x-th percentile
+        """
+        assert 0 <= x <= 100
+        percentiles = self.percentile_Stairs(lower, upper)
+        return (percentiles(x, how='left') + percentiles(x, how='right'))/2
+
+    def percentile_Stairs(self, lower=float('-inf'), upper=float('inf')):
+    
+        temp_df = (self.clip(lower,upper)
+             .to_dataframe()
+             .iloc[1:-1]
+             .assign(duration = lambda df: df.end-df.start)
+             .groupby('value').sum()
+             .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
+             .assign(duration = lambda df: df.duration.shift())
+             .fillna(0)
+        )
+        percentile_step_func = Stairs()
+        for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
+            percentile_step_func.layer(start*100,end*100,value)
+        percentile_step_func.popitem()
+        return percentile_step_func
+    
+    def popitem(self, index=-1):
+        """Needed to override SortedDict method, as definitions of __bool__ were different"""
+        key = self._list_pop(index)
+        value = self._dict_pop(key)
+        return (key, value)
+        
     def mode(self, lower=float('-inf'), upper=float('inf')):
         df = (self.clip(lower,upper)
                 .to_dataframe().iloc[1:-1]
@@ -897,23 +942,7 @@ class Stairs(SortedDict):
         
     def max(self, lower=float('-inf'), upper=float('inf')):
         return np.min(self._values_in_range(lower, upper))
-        
-    def percentiles(self, lower=float('-inf'), upper=float('inf')):
-        temp_df = (self.clip(lower,upper)
-             .to_dataframe()
-             .iloc[1:-1]
-             .assign(duration = lambda df: df.end-df.start)
-             .groupby('value').sum()
-             .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
-             .assign(duration = lambda df: df.duration.shift())
-             .fillna(0)
-        )
-        percentile_step_func = Stairs()
-        for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
-            percentile_step_func.layer(start,end,value)
-        return percentile_step_func
-                
-        
+          
     def clip(self, lower=float('-inf'), upper=float('inf')):
         assert lower is not None or upper is not None, "clip function should not be called with no parameters."
         if self.use_dates:

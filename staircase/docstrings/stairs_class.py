@@ -330,3 +330,34 @@ mean_example = """
             >>> s1.mean(3, 4.5)
             0.3333333333333333
 """
+
+median_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            >>> s1.median()
+            0.5
+            >>> s1.median(2,5)
+            0.0
+"""
+
+percentile_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            >>> s1.percentile(70)
+            1.0
+            >>> s1.percentile(25)
+            -0.5
+            >>> s1.percentile(40, lower=1.5, upper=3.5)
+            0.0
+"""
+
