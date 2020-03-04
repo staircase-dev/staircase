@@ -20,12 +20,18 @@ div.sphinxsidebar p {
 
 div.body h1 {
     background-color: #C7E3E2;
+	font-size: 120%;
+	padding: 2px 0 2px 5px;
 }
     
 div.body h2 {
     background-color: #C7E3E2;
+	font-size: 100%;
+	padding: 2px 0 2px 5px;
 }
 
 dt:target, span.highlighted {
   background-color: #e9fce6;
 }
+
+.center {text-align: center;}
