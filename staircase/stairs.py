@@ -363,7 +363,7 @@ class Stairs(SortedDict):
         return ax
 
     @append_doc(SC_docs.evaluate_example)
-    def evaluate(self, x):
+    def evaluate(self, x, how='right'):
         """Evaluates the value of the step function at one, or more, points.
 
         The function should be called using parentheses.  See example below.
@@ -372,20 +372,32 @@ class Stairs(SortedDict):
         ----------
         x : int, float or vector data
             values at which to evaluate the function
+        how : {'left', 'right'}, default 'right'
+            if points where step changes occur do not coincide with x then this parameter
+            has no effect.  Where a step changes occurs at a point given by x, this parameter
+            determines if the step function is evaluated at the interval to the left, or the right.
             
         Returns
         -------
         float, or list of floats
         """
+        assert how in ("right", "left")
         if self.use_dates:
             x = _convert_date_to_float(x)
         if hasattr(x, "__iter__"):
             new_instance = self.copy()._layer_multiple(x, None, [0]*len(x))
             cumulative = new_instance._cumulative()
-            return [val for key,val in cumulative.items() if key in x]
+            if how == "right":
+                return [val for key,val in cumulative.items() if key in x]
+            else:
+                shifted_cumulative = SortedDict(zip(cumulative.keys()[1:], cumulative.values()[:-1]))
+                return [val for key,val in shifted_cumulative.items() if key in x]
         else:
             cumulative = self._cumulative()
-            preceding_boundary_index = cumulative.bisect_right(x) - 1
+            if how == "right":
+                preceding_boundary_index = cumulative.bisect_right(x) - 1
+            else:
+                preceding_boundary_index = cumulative.bisect_right(x) - 1
             return cumulative.values()[preceding_boundary_index]    
 
     @append_doc(SC_docs.layer_example)        
