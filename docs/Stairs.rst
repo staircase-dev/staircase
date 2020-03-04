@@ -68,11 +68,12 @@ Summary Statistics
    Stairs.number_of_steps
    Stairs.get_integral_and_mean
    Stairs.integrate
-   Stairs.mean
-   Stairs.median
    Stairs.min
    Stairs.max
-   Stairs.percentiles
+   Stairs.mean
+   Stairs.median
+   Stairs.percentile
+   Stairs.percentile_Stairs
    
    
 Miscellaneous Functions
