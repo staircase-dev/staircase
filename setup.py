@@ -1,7 +1,7 @@
 from setuptools import setup
 import versioneer
 
-with open('README.md'), encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
     
 requirements = [
@@ -17,7 +17,7 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     description="Modelling of quantitative state changes as step functions",
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type='text/markdown',
     license="MIT",
     author="Riley Clement",
     author_email='venaturum@gmail.com',
