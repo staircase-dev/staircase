@@ -9,6 +9,7 @@ install:
   - git remote set-branches --add origin CondaBuild
   - git pull --all
   - git checkout CondaBuild
+  - git merge $TRAVIS_BRANCH
   - git checkout $TRAVIS_BRANCH
   - git merge CondaBuild --progress
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
