@@ -12,9 +12,12 @@
 #from numpydoc.docscrape import NumpyDocString
 #from sphinx.ext.autosummary import _import_by_name
 
-import os
-import sys
-sys.path.insert(0, os.path.abspath('..'))
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+import staircase as sc
+
 
 
 # -- Project information -----------------------------------------------------
@@ -22,6 +25,7 @@ sys.path.insert(0, os.path.abspath('..'))
 project = 'staircase'
 copyright = '2020, Riley Clement'
 author = 'Riley Clement'
+version = sc.__version__
 
 
 # -- General configuration ---------------------------------------------------
