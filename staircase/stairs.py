@@ -899,8 +899,26 @@ class Stairs(SortedDict):
         percentiles = self.percentile_Stairs(lower, upper)
         return (percentiles(x, how='left') + percentiles(x, how='right'))/2
 
+    @append_doc(SC_docs.percentile_stairs_example)
     def percentile_Stairs(self, lower=float('-inf'), upper=float('inf')):
-    
+        """
+        Calculates a percentile function (and returns a corresponding Stairs instance)
+        
+        This method can be used for efficiency gains if subtituting for multiple calls
+        to percentile() with the same lower and upper parameters
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        :class:`Stairs`
+            An instance representing a percentile function
+        """
         temp_df = (self.clip(lower,upper)
              .to_dataframe()
              .iloc[1:-1]
@@ -914,6 +932,7 @@ class Stairs(SortedDict):
         for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
             percentile_step_func.layer(start*100,end*100,value)
         percentile_step_func.popitem()
+        percentile_step_func[100]=0
         return percentile_step_func
     
     def popitem(self, index=-1):
@@ -921,8 +940,26 @@ class Stairs(SortedDict):
         key = self._list_pop(index)
         value = self._dict_pop(key)
         return (key, value)
-        
+    
+    @append_doc(SC_docs.mode_example)    
     def mode(self, lower=float('-inf'), upper=float('inf')):
+        """
+        Calculates the mode of the step function.  
+        
+        If there is more than one mode only the smallest is returned
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        float
+            The mode
+        """
         df = (self.clip(lower,upper)
                 .to_dataframe().iloc[1:-1]
                 .assign(duration = lambda df: df.end-df.start)
@@ -932,18 +969,72 @@ class Stairs(SortedDict):
     def _values_in_range(self, lower, upper):
         points = [key for key in self.keys() if lower < key < upper]
         if lower > float('-inf'):
-            points.append(self(lower))
+            points.append(lower)
         if upper < float('inf'):
-            points.append(self(upper))
+            points.append(upper)
         return self(points)
-        
+    
+    @append_doc(SC_docs.min_example)
     def min(self, lower=float('-inf'), upper=float('inf')):
-        return np.min(self._values_in_range(lower, upper))
+        """
+        Calculates the minimum value of the step function.
         
-    def max(self, lower=float('-inf'), upper=float('inf')):
+        If an interval which to calculate over is specified it is interpreted
+        as a closed interval
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        float
+            The minimum value of the step function
+        """
         return np.min(self._values_in_range(lower, upper))
-          
+
+    @append_doc(SC_docs.max_example)    
+    def max(self, lower=float('-inf'), upper=float('inf')):
+        """
+        Calculates the maximum value of the step function.
+        
+        If an interval which to calculate over is specified it is interpreted
+        as a closed interval
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        float
+            The maximum value of the step function
+        """
+        return np.max(self._values_in_range(lower, upper))
+     
+    @append_doc(SC_docs.clip_example)        
     def clip(self, lower=float('-inf'), upper=float('inf')):
+        """
+        Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval
+              
+        Returns
+        -------
+        :class:`Stairs`
+            Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
+        """
         assert lower is not None or upper is not None, "clip function should not be called with no parameters."
         if self.use_dates:
             if isinstance(lower, pd.Timestamp):
@@ -967,6 +1058,16 @@ class Stairs(SortedDict):
         return Stairs(s, use_dates=self.use_dates)
               
     def to_dataframe(self):
+        """
+        Returns a pandas.DataFrame with columns 'start', 'end' and 'value'
+        
+        The rows of the dataframe can be interpreted as the interval definitions
+        which make up the step function.
+        
+        Returns
+        -------
+        :class:`pandas.DataFrame`        
+        """
         cumulative = self._cumulative()
         starts = cumulative.keys()
         ends = cumulative.keys()[1:]
