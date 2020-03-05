@@ -2,7 +2,8 @@ try:
     from ._version import get_versions
     __version__ = get_versions()['version']
     del get_versions
-except:
+except Exception as e:
+    print(e)
     __version__ = '0.1.0'
 
 from .stairs import Stairs, sample, aggregate
