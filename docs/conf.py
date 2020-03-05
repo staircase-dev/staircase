@@ -27,7 +27,7 @@ copyright = '2020, Riley Clement'
 author = 'Riley Clement'
 version = sc.__version__
 if 'untagged' in version:
-    version = ''
+    version = 'latest'
 
 # -- General configuration ---------------------------------------------------
 
