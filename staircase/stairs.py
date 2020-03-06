@@ -350,7 +350,7 @@ class Stairs(SortedDict):
         -------
         :class:`matplotlib.axes.Axes`
         """
-
+        register_matplotlib_converters()
         if ax is None:
             fig, ax = plt.subplots()
                 
@@ -384,6 +384,9 @@ class Stairs(SortedDict):
         assert how in ("right", "left")
         if self.use_dates:
             x = _convert_date_to_float(x)
+        return self._evaluate_without_dates(x,how)
+    
+    def _evaluate_without_dates(self, x, how='right'):
         if hasattr(x, "__iter__"):
             new_instance = self.copy()._layer_multiple(x, None, [0]*len(x))
             cumulative = new_instance._cumulative()
@@ -399,7 +402,8 @@ class Stairs(SortedDict):
             else:
                 preceding_boundary_index = cumulative.bisect_left(x) - 1
             return cumulative.values()[preceding_boundary_index]    
-
+            
+            
     @append_doc(SC_docs.layer_example)        
     def layer(self, start, end=None, value=None):
         """
@@ -972,7 +976,7 @@ class Stairs(SortedDict):
             points.append(lower)
         if upper < float('inf'):
             points.append(upper)
-        return self(points)
+        return self._evaluate_without_dates(points)
     
     @append_doc(SC_docs.min_example)
     def min(self, lower=float('-inf'), upper=float('inf')):
