@@ -15,6 +15,23 @@ sample_example = """
             [0, 1, -1, 0]
 """
 
+
+resample_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+
+            >>> stair_list = [s1, s1.resample([1.5,2.5,4,4.5])]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s1 resampled"), stair_list):
+            ...     stair_instance.plot(ax)
+            ...     ax.set_title(title)
+"""
+
+
+
 layer_example = """
         Examples
         --------

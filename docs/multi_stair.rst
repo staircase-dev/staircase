@@ -14,4 +14,5 @@ Multi-Stairs Functions
    median
    min
    max
+   resample
 

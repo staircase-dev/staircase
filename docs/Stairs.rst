@@ -81,6 +81,7 @@ Miscellaneous Functions
 
 .. autosummary::
    :toctree: api/
-
+   
+   Stairs.resample
    Stairs.clip
    
