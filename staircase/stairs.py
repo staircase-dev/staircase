@@ -362,8 +362,8 @@ class Stairs(SortedDict):
             ax.step(cumulative.keys(), cumulative.values(), where='post', **kwargs)
         return ax
 
-    @append_doc(SC_docs.evaluate_example)
-    def evaluate(self, x, how='right'):
+    @append_doc(SC_docs.sample_example)
+    def sample(self, x, how='right'):
         """Evaluates the value of the step function at one, or more, points.
 
         The function should be called using parentheses.  See example below.
@@ -385,8 +385,15 @@ class Stairs(SortedDict):
         if self.use_dates:
             x = _convert_date_to_float(x)
         return self._evaluate_without_dates(x,how)
+        
+    def evaluate(self, x, how='right'):
+        warnings.warn(
+            "Stairs.evaluate will be deprecated in version 1.0.0, use Stairs.sample instead",
+             PendingDeprecationWarning
+        )
+        return self.sample(x, how)
     
-    def _evaluate_without_dates(self, x, how='right'):
+    def _sample_without_dates(self, x, how='right'):
         if hasattr(x, "__iter__"):
             new_instance = self.copy()._layer_multiple(x, None, [0]*len(x))
             cumulative = new_instance._cumulative()
@@ -976,7 +983,7 @@ class Stairs(SortedDict):
             points.append(lower)
         if upper < float('inf'):
             points.append(upper)
-        return self._evaluate_without_dates(points)
+        return self._sample_without_dates(points)
     
     @append_doc(SC_docs.min_example)
     def min(self, lower=float('-inf'), upper=float('inf')):
@@ -1116,4 +1123,4 @@ class Stairs(SortedDict):
     __gt__ = gt
     __le__ = le
     __ge__ = ge
-    __call__ = evaluate
+    __call__ = sample

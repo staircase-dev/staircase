@@ -13,7 +13,7 @@ Constructor & Basic Methods
    Stairs
    Stairs.copy
    Stairs.plot
-   Stairs.evaluate
+   Stairs.sample
    Stairs.layer
    Stairs.step_changes
    Stairs.to_dataframe

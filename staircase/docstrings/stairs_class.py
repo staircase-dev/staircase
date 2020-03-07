@@ -1,5 +1,5 @@
 
-evaluate_example = """
+sample_example = """
         Examples
         --------
             
