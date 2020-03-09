@@ -1,7 +1,21 @@
 .. _api.multi_stair:
 
 ======================
-Multi-Stairs Functions
+Aggregation Functions
+======================
+.. currentmodule:: staircase
+
+.. autosummary::
+   :toctree: api/
+
+   aggregate
+   mean
+   median
+   min
+   max
+
+======================
+Collection Functions
 ======================
 .. currentmodule:: staircase
 
@@ -9,10 +23,3 @@ Multi-Stairs Functions
    :toctree: api/
 
    sample
-   aggregate
-   mean
-   median
-   min
-   max
-   resample
-
