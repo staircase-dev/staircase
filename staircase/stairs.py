@@ -9,7 +9,7 @@ from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 from .docstrings.decorator import append_doc
 from .docstrings import stairs_class as SC_docs
-
+from .docstrings import stairs_module as SM_docs
 warnings.simplefilter('default')
 
 origin = pd.to_datetime('2000-1-1')
@@ -95,68 +95,166 @@ def _get_common_points(Stairs_list):
         points += list(stairs.keys())
     return SortedSet(points)
 
-def _using_dates(Stairs_dict_or_list):
-    try:
-        return next(iter(Stairs_dict_or_list.values())).use_dates
-    except:
+def _using_dates(collection):
+
+    def dict_use_dates():
+        return next(iter(collection.values())).use_dates
+        
+    def series_use_dates():
+        return collection.values[0].use_dates
+        
+    def array_use_dates():
+        return collection[0]
+    
+    for func in (dict_use_dates, series_use_dates, array_use_dates):
         try:
-            return Stairs_dict_or_list.values[0].use_dates
+            return func()
         except:
-            try:
-                return Stairs_dict_or_list[0]
-            except:
-                return False
+            pass
+    raise TypeError('Could not determine if Stairs collection is using dates.  Collection should be a tuple, list, numpy array, dict or pandas.Series.')
         
     
+@append_doc(SM_docs.sample_example)    
+def sample(collection, points=None, how='right'):
+    """
+    Takes a dict-like collection of Stairs instances and evaluates their values across a common set of points.
     
-def sample(Stairs_dict, points=None):
-    #Stairs_dict, can be list, dict, series
-    
-    use_dates = _using_dates(Stairs_dict)
-    #assert len(set([type(x) for x in Stairs_dict.values()])) == 1, "Stairs_dict must contain values of same type"
+    Parameters
+    ----------
+    collection : dictionary or pandas.Series
+        The Stairs instances at which to evaluate
+    points : int, float or vector data
+        The points at which to sample the Stairs instances
+    how : {'left', 'right'}, default 'right'
+        if points where step changes occur do not coincide with x then this parameter
+        has no effect.  Where a step changes occurs at a point given by x, this parameter
+        determines if the step function is evaluated at the interval to the left, or the right.
+        
+    Returns
+    -------
+    :class:`pandas.DataFrame`
+        A dataframe, in tidy format, with three columns: points, key, value.  The column key contains
+        the identifiers used in the dict-like object specified by 'collection'.
+    """
+    use_dates = _using_dates(collection)
+    #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
-        points = _get_common_points(Stairs_dict.values())
-    result = (pd.DataFrame({"points":points, **{key:stairs(points) for key,stairs in Stairs_dict.items()}})
+        points = _get_common_points(collection.values())
+    result = (pd.DataFrame({"points":points, **{key:stairs(points) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
     
     try:
-        if len(Stairs_dict.index.names) > 1:
+        if len(collection.index.names) > 1:
             result = (result
-                .join(pd.DataFrame(result.key.tolist(), columns=Stairs_dict.index.names))
+                .join(pd.DataFrame(result.key.tolist(), columns=collection.index.names))
                 .drop(columns='key')
             )     
     except:
         pass
     return result
 
-def aggregate(Stairs_dict_or_list, func, points=None):
-    '''An aggregating function
+@append_doc(SM_docs.aggregate_example)
+def aggregate(collection, func, points=None):
+    """
+    Takes a collection of Stairs instances and returns a single instance representing the aggregation.
     
-    '''
-    if isinstance(Stairs_dict_or_list, dict) or isinstance(Stairs_dict_or_list, pd.Series):
-        Stairs_dict = Stairs_dict_or_list
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate
+    func: a function taking a 1 dimensional vector of floats, and returning a single float
+        The function to apply, eg numpy.max
+    points: vector of floats or dates
+        Points at which to evaluate.  Defaults to union of all step changes.  Equivalent to applying Stairs.resample().
+        
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a mean function
+    """
+    if isinstance(collection, dict) or isinstance(collection, pd.Series):
+        Stairs_dict = collection
     else:
-        Stairs_dict = dict(enumerate(Stairs_dict_or_list))
+        Stairs_dict = dict(enumerate(collection))
     df = sample(Stairs_dict, points)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
     step_changes = aggregation.diff().fillna(0)
-    return Stairs(dict(step_changes))
+    return Stairs(dict(step_changes))._reduce()
 
+@append_doc(SM_docs.mean_example)      
+def _mean(collection):
+    """
+    Takes a collection of Stairs instances and returns the mean of the corresponding step functions.
     
-def _mean(Stairs_dict_or_list):
-    return aggregate(Stairs_dict_or_list, np.mean)
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a mean function
+    
+    Returns
+    -------
+    :class:`Stairs`
+    """
+    return aggregate(collection, np.mean)
 
-def _median(Stairs_dict_or_list):
-    return aggregate(Stairs_dict_or_list, np.median)
-        
-def _min(Stairs_dict_or_list):
-    return aggregate(Stairs_dict_or_list, np.min)
+@append_doc(SM_docs.median_example)  
+def _median(collection):
+    """
+    Takes a collection of Stairs instances and returns the median of the corresponding step functions.
+    
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a median function
+    
+    Returns
+    -------
+    :class:`Stairs`
+    """
+    return aggregate(collection, np.median)
 
-def _max(Stairs_dict_or_list):
-    return aggregate(Stairs_dict_or_list, np.max)
+@append_doc(SM_docs.min_example)          
+def _min(collection):
+    """
+    Takes a collection of Stairs instances and returns the minimum of the corresponding step functions.
+    
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a min function
+    
+    Returns
+    -------
+    :class:`Stairs`
+    """
+    return aggregate(collection, np.min)
+
+@append_doc(SM_docs.max_example)  
+def _max(collection):
+    """
+    Takes a collection of Stairs instances and returns the maximum of the corresponding step functions.
+    
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a max function
+    
+    Returns
+    -------
+    :class:`Stairs`
+    """
+    return aggregate(collection, np.max)
+
 
 def resample(container, x, how='right'):
+    """
+    Applies the Stairs.resample function to a 1D container, eg tuple, list, numpy array, pandas series, dictionary
+    
+    Returns
+    -------
+    type(container)
+    """
     if isinstance(container, dict):
         return {key:s.resample(x, how) for key,s in container}
     if isinstance(container, pd.Series):
@@ -655,6 +753,7 @@ class Stairs(SortedDict):
         to_remove = [key for key,val in self.items()[1:] if val == 0]
         for key in to_remove:
             self.pop(key)
+        return self
         
     def __bool__(self):
         self._reduce()
