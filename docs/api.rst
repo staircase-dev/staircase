@@ -9,4 +9,3 @@ API reference
 
    Stairs
    multi_stair
-   

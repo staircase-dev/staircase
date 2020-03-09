@@ -1,0 +1,1032 @@
+game_id,sort_order,time,event_team,opponent,home_team
+0,65,72,Aston Villa,Bournemouth,False
+1,11,13,Watford,Everton,False
+1,63,75,Everton,Watford,True
+1,72,83,Watford,Everton,False
+1,76,86,Everton,Watford,True
+2,40,22,Chelsea,Swansea,True
+2,45,25,Chelsea,Swansea,True
+2,52,28,Swansea,Chelsea,False
+2,54,30,Chelsea,Swansea,True
+2,55,30,Swansea,Chelsea,False
+2,59,33,Chelsea,Swansea,True
+2,114,54,Swansea,Chelsea,False
+2,121,58,Swansea,Chelsea,False
+3,15,10,Leicester City,Sunderland,True
+3,21,18,Leicester City,Sunderland,True
+3,25,24,Leicester City,Sunderland,True
+3,67,60,Sunderland,Leicester City,False
+3,72,65,Leicester City,Sunderland,True
+3,76,70,Sunderland,Leicester City,False
+4,46,42,Crystal Palace,Norwich City,False
+4,56,51,Crystal Palace,Norwich City,False
+4,83,71,Norwich City,Crystal Palace,True
+4,103,90,Crystal Palace,Norwich City,False
+5,15,22,Manchester Utd,Tottenham,True
+6,26,24,Southampton,Newcastle,False
+6,39,42,Newcastle,Southampton,True
+6,48,47,Newcastle,Southampton,True
+6,78,78,Southampton,Newcastle,False
+7,83,85,Liverpool,Stoke City,False
+8,47,43,West Ham,Arsenal,False
+8,55,56,West Ham,Arsenal,False
+9,5,8,Manchester City,West Brom,False
+9,12,24,Manchester City,West Brom,False
+9,52,59,Manchester City,West Brom,False
+10,18,28,Manchester Utd,Aston Villa,False
+11,23,26,Leicester City,West Ham,False
+11,32,37,Leicester City,West Ham,False
+11,49,55,West Ham,Leicester City,True
+12,25,18,Tottenham,Stoke City,True
+12,51,46,Tottenham,Stoke City,True
+12,88,78,Stoke City,Tottenham,False
+12,93,82,Stoke City,Tottenham,False
+13,22,21,Everton,Southampton,False
+13,43,44,Everton,Southampton,False
+13,92,83,Everton,Southampton,False
+14,8,9,Swansea,Newcastle,True
+14,47,52,Swansea,Newcastle,True
+15,28,26,Norwich City,Sunderland,False
+15,35,37,Norwich City,Sunderland,False
+15,50,57,Norwich City,Sunderland,False
+15,71,88,Sunderland,Norwich City,True
+16,21,20,Arsenal,Crystal Palace,False
+16,30,30,Crystal Palace,Arsenal,True
+16,64,56,Arsenal,Crystal Palace,False
+17,37,31,Manchester City,Chelsea,True
+17,91,79,Manchester City,Chelsea,True
+17,99,84,Manchester City,Chelsea,True
+18,23,26,Liverpool,Bournemouth,True
+19,69,80,Tottenham,Leicester City,False
+19,70,82,Leicester City,Tottenham,True
+20,6,10,Stoke City,Norwich City,False
+20,18,28,Norwich City,Stoke City,True
+21,44,47,Swansea,Sunderland,False
+21,56,62,Sunderland,Swansea,True
+22,74,71,Crystal Palace,Aston Villa,True
+22,80,76,Aston Villa,Crystal Palace,False
+22,94,87,Crystal Palace,Aston Villa,True
+23,10,11,Bournemouth,West Ham,False
+23,18,28,Bournemouth,West Ham,False
+23,34,47,West Ham,Bournemouth,True
+23,42,52,West Ham,Bournemouth,True
+23,52,65,Bournemouth,West Ham,False
+23,63,79,Bournemouth,West Ham,False
+23,64,82,West Ham,Bournemouth,True
+24,14,20,Chelsea,West Brom,False
+24,23,29,Chelsea,West Brom,False
+24,25,35,West Brom,Chelsea,True
+24,32,42,Chelsea,West Brom,False
+24,54,59,West Brom,Chelsea,True
+25,42,59,Manchester City,Everton,False
+25,75,88,Manchester City,Everton,False
+26,1,2,West Ham,Liverpool,False
+26,23,28,West Ham,Liverpool,False
+26,101,91,West Ham,Liverpool,False
+27,39,48,West Brom,Stoke City,False
+28,4,10,Sunderland,Aston Villa,False
+28,8,14,Aston Villa,Sunderland,True
+28,28,42,Aston Villa,Sunderland,True
+28,46,54,Sunderland,Aston Villa,False
+29,70,65,Crystal Palace,Chelsea,False
+29,87,79,Chelsea,Crystal Palace,True
+29,88,81,Crystal Palace,Chelsea,False
+30,56,51,Arsenal,Newcastle,False
+31,20,23,Bournemouth,Leicester City,True
+31,68,86,Leicester City,Bournemouth,False
+32,47,46,Manchester City,Watford,True
+32,57,55,Manchester City,Watford,True
+33,40,48,Manchester Utd,Swansea,False
+33,50,60,Swansea,Manchester Utd,True
+33,55,65,Swansea,Manchester Utd,True
+34,40,46,Southampton,Norwich City,True
+34,57,64,Southampton,Norwich City,True
+34,61,67,Southampton,Norwich City,True
+35,8,16,Everton,Chelsea,True
+35,14,21,Everton,Chelsea,True
+35,30,35,Chelsea,Everton,False
+35,88,82,Everton,Chelsea,True
+36,50,58,Watford,Swansea,True
+37,27,35,Norwich City,Bournemouth,True
+37,40,51,Norwich City,Bournemouth,True
+37,55,66,Norwich City,Bournemouth,True
+37,67,80,Bournemouth,Norwich City,False
+38,98,90,Manchester City,Crystal Palace,False
+39,35,48,Manchester Utd,Liverpool,True
+39,50,70,Manchester Utd,Liverpool,True
+39,66,84,Liverpool,Manchester Utd,False
+39,67,86,Manchester Utd,Liverpool,True
+40,33,30,Arsenal,Stoke City,True
+40,95,84,Arsenal,Stoke City,True
+41,31,39,Aston Villa,Leicester City,False
+41,52,63,Aston Villa,Leicester City,False
+41,62,71,Leicester City,Aston Villa,True
+41,79,81,Leicester City,Aston Villa,True
+41,88,89,Leicester City,Aston Villa,True
+42,86,81,Tottenham,Sunderland,False
+43,4,14,West Ham,Newcastle,True
+43,37,51,West Ham,Newcastle,True
+44,3,4,Bournemouth,Sunderland,True
+44,10,8,Bournemouth,Sunderland,True
+45,31,42,West Brom,Aston Villa,False
+46,5,12,Stoke City,Leicester City,True
+46,7,20,Stoke City,Leicester City,True
+46,37,51,Leicester City,Stoke City,False
+46,58,68,Leicester City,Stoke City,False
+47,3,5,West Ham,Manchester City,False
+47,17,31,West Ham,Manchester City,False
+47,34,46,Manchester City,West Ham,True
+48,54,52,Chelsea,Arsenal,True
+48,91,90,Chelsea,Arsenal,True
+49,12,9,Watford,Newcastle,False
+49,23,28,Watford,Newcastle,False
+49,54,62,Newcastle,Watford,True
+50,73,67,Tottenham,Crystal Palace,True
+51,12,12,Southampton,Manchester Utd,True
+51,27,34,Manchester Utd,Southampton,False
+51,40,50,Manchester Utd,Southampton,False
+51,57,68,Manchester Utd,Southampton,False
+51,73,85,Southampton,Manchester Utd,True
+52,36,48,Liverpool,Norwich City,True
+52,49,61,Norwich City,Liverpool,False
+53,45,42,Newcastle,Chelsea,True
+53,58,59,Newcastle,Chelsea,True
+53,84,78,Chelsea,Newcastle,False
+53,90,86,Chelsea,Newcastle,False
+54,11,12,Leicester City,Arsenal,True
+54,17,18,Arsenal,Leicester City,False
+54,24,33,Arsenal,Leicester City,False
+54,55,57,Arsenal,Leicester City,False
+54,82,80,Arsenal,Leicester City,False
+54,92,88,Leicester City,Arsenal,True
+54,97,93,Arsenal,Leicester City,False
+55,24,24,Manchester City,Tottenham,False
+55,44,44,Tottenham,Manchester City,True
+55,50,50,Tottenham,Manchester City,True
+55,70,60,Tottenham,Manchester City,True
+55,92,78,Tottenham,Manchester City,True
+56,24,32,Stoke City,Bournemouth,True
+56,65,76,Bournemouth,Stoke City,False
+56,74,83,Stoke City,Bournemouth,True
+57,14,10,Southampton,Swansea,True
+57,63,53,Southampton,Swansea,True
+57,73,60,Southampton,Swansea,True
+57,109,83,Swansea,Southampton,False
+58,35,46,Manchester Utd,Sunderland,True
+58,43,48,Manchester Utd,Sunderland,True
+58,83,89,Manchester Utd,Sunderland,True
+59,1,1,Liverpool,Aston Villa,True
+59,54,58,Liverpool,Aston Villa,True
+59,59,65,Aston Villa,Liverpool,False
+59,60,66,Liverpool,Aston Villa,True
+59,64,70,Aston Villa,Liverpool,False
+60,12,8,Norwich City,West Ham,False
+60,28,33,West Ham,Norwich City,True
+60,83,83,Norwich City,West Ham,False
+60,98,92,West Ham,Norwich City,True
+61,91,71,Crystal Palace,Watford,False
+62,24,40,West Brom,Everton,True
+62,37,54,West Brom,Everton,True
+62,38,55,Everton,West Brom,False
+62,59,75,Everton,West Brom,False
+62,65,83,Everton,West Brom,False
+63,18,27,Leicester City,Norwich City,False
+63,29,46,Leicester City,Norwich City,False
+63,48,67,Norwich City,Leicester City,True
+64,16,28,Bournemouth,Watford,True
+64,30,45,Watford,Bournemouth,False
+65,49,54,Stoke City,Aston Villa,False
+66,14,10,Chelsea,Southampton,True
+66,42,43,Southampton,Chelsea,False
+66,65,60,Southampton,Chelsea,False
+66,79,72,Southampton,Chelsea,False
+67,77,67,Crystal Palace,West Brom,True
+67,100,88,Crystal Palace,West Brom,True
+68,14,17,Newcastle,Manchester City,False
+68,41,41,Manchester City,Newcastle,True
+68,56,49,Manchester City,Newcastle,True
+68,57,50,Manchester City,Newcastle,True
+68,61,53,Manchester City,Newcastle,True
+68,65,59,Manchester City,Newcastle,True
+68,66,62,Manchester City,Newcastle,True
+69,9,10,Sunderland,West Ham,True
+69,14,22,Sunderland,West Ham,True
+69,40,46,West Ham,Sunderland,False
+69,61,60,West Ham,Sunderland,False
+70,10,15,Swansea,Tottenham,True
+70,26,27,Tottenham,Swansea,False
+70,30,31,Swansea,Tottenham,True
+70,71,64,Tottenham,Swansea,False
+71,6,5,Arsenal,Manchester Utd,True
+71,7,6,Arsenal,Manchester Utd,True
+71,11,19,Arsenal,Manchester Utd,True
+72,43,41,Liverpool,Everton,False
+72,49,46,Everton,Liverpool,True
+73,50,53,West Brom,Sunderland,True
+74,16,20,Southampton,Leicester City,True
+74,37,36,Southampton,Leicester City,True
+74,76,66,Leicester City,Southampton,False
+74,105,91,Leicester City,Southampton,False
+75,39,33,Chelsea,Aston Villa,True
+75,64,53,Chelsea,Aston Villa,True
+76,20,22,West Ham,Crystal Palace,False
+76,21,25,Crystal Palace,West Ham,True
+76,86,87,West Ham,Crystal Palace,False
+76,93,94,West Ham,Crystal Palace,False
+77,13,18,Manchester Utd,Everton,False
+77,14,22,Manchester Utd,Everton,False
+77,58,61,Manchester Utd,Everton,False
+78,1,7,Manchester City,Bournemouth,True
+78,4,10,Manchester City,Bournemouth,True
+78,12,21,Bournemouth,Manchester City,False
+78,22,28,Manchester City,Bournemouth,True
+78,37,47,Manchester City,Bournemouth,True
+78,70,89,Manchester City,Bournemouth,True
+79,60,62,Arsenal,Watford,False
+79,66,67,Arsenal,Watford,False
+79,70,73,Arsenal,Watford,False
+80,10,17,Newcastle,Norwich City,True
+80,13,23,Norwich City,Newcastle,False
+80,16,27,Newcastle,Norwich City,True
+80,22,34,Newcastle,Norwich City,True
+80,23,35,Norwich City,Newcastle,False
+80,51,65,Newcastle,Norwich City,True
+80,52,66,Newcastle,Norwich City,True
+80,79,87,Newcastle,Norwich City,True
+81,1,3,Stoke City,Swansea,False
+82,17,17,West Ham,Chelsea,True
+82,61,55,Chelsea,West Ham,False
+82,79,78,West Ham,Chelsea,True
+83,35,63,Leicester City,Crystal Palace,True
+84,43,42,Watford,Stoke City,False
+84,77,69,Watford,Stoke City,False
+85,41,46,West Brom,Norwich City,False
+86,28,36,Arsenal,Everton,True
+86,31,37,Arsenal,Everton,True
+86,35,43,Everton,Arsenal,False
+87,45,62,Aston Villa,Swansea,True
+87,51,67,Swansea,Aston Villa,False
+87,73,86,Swansea,Aston Villa,False
+88,67,77,Liverpool,Southampton,True
+88,83,85,Southampton,Liverpool,False
+89,48,47,Sunderland,Newcastle,True
+89,64,64,Sunderland,Newcastle,True
+89,85,86,Sunderland,Newcastle,True
+90,1,1,Bournemouth,Tottenham,True
+90,7,8,Tottenham,Bournemouth,False
+90,15,17,Tottenham,Bournemouth,False
+90,24,29,Tottenham,Bournemouth,False
+90,57,56,Tottenham,Bournemouth,False
+90,64,63,Tottenham,Bournemouth,False
+91,34,48,Arsenal,Swansea,False
+91,58,68,Arsenal,Swansea,False
+91,64,73,Arsenal,Swansea,False
+92,51,68,Manchester City,Norwich City,True
+92,69,87,Norwich City,Manchester City,False
+92,88,90,Manchester City,Norwich City,True
+93,18,29,West Brom,Leicester City,True
+93,38,56,Leicester City,West Brom,False
+93,42,64,Leicester City,West Brom,False
+93,58,76,Leicester City,West Brom,False
+93,62,84,West Brom,Leicester City,True
+94,4,3,Chelsea,Liverpool,True
+94,42,47,Liverpool,Chelsea,False
+94,82,74,Liverpool,Chelsea,False
+94,94,82,Liverpool,Chelsea,False
+95,30,38,Watford,West Ham,True
+95,44,47,Watford,West Ham,True
+96,21,18,Everton,Sunderland,True
+96,30,30,Everton,Sunderland,True
+96,42,48,Sunderland,Everton,False
+96,43,50,Sunderland,Everton,False
+96,50,55,Everton,Sunderland,True
+96,52,60,Everton,Sunderland,True
+96,53,62,Everton,Sunderland,True
+96,63,76,Everton,Sunderland,True
+97,19,31,Southampton,Bournemouth,True
+97,20,35,Southampton,Bournemouth,True
+98,1,2,Tottenham,Aston Villa,True
+98,33,45,Tottenham,Aston Villa,True
+98,70,79,Aston Villa,Tottenham,False
+98,84,93,Tottenham,Aston Villa,True
+99,42,70,Norwich City,Swansea,True
+100,40,51,Manchester Utd,West Brom,True
+100,74,91,Manchester Utd,West Brom,True
+101,56,53,Stoke City,Chelsea,True
+102,21,26,Newcastle,Bournemouth,False
+103,26,30,West Ham,Everton,True
+103,39,43,Everton,West Ham,False
+104,41,52,Leicester City,Watford,True
+104,52,65,Leicester City,Watford,True
+104,55,75,Watford,Leicester City,False
+105,10,20,Crystal Palace,Liverpool,False
+105,29,41,Liverpool,Crystal Palace,True
+105,75,81,Crystal Palace,Liverpool,False
+106,18,32,Tottenham,Arsenal,False
+106,76,76,Arsenal,Tottenham,True
+107,43,46,Leicester City,Newcastle,False
+107,54,61,Leicester City,Newcastle,False
+107,84,83,Leicester City,Newcastle,False
+108,8,19,Everton,Aston Villa,True
+108,14,29,Everton,Aston Villa,True
+108,22,45,Everton,Aston Villa,True
+108,35,60,Everton,Aston Villa,True
+109,6,9,Stoke City,Southampton,False
+110,63,63,Chelsea,Norwich City,True
+111,7,11,Manchester Utd,Watford,False
+111,79,86,Watford,Manchester Utd,True
+111,85,90,Manchester Utd,Watford,False
+112,5,7,Liverpool,Manchester City,False
+112,13,22,Liverpool,Manchester City,False
+112,21,32,Liverpool,Manchester City,False
+112,30,43,Manchester City,Liverpool,True
+112,76,81,Liverpool,Manchester City,False
+113,6,10,Bournemouth,Swansea,False
+113,18,26,Bournemouth,Swansea,False
+113,19,27,Swansea,Bournemouth,True
+113,29,38,Swansea,Bournemouth,True
+114,18,27,Arsenal,West Brom,False
+114,26,35,West Brom,Arsenal,True
+114,29,40,West Brom,Arsenal,True
+115,15,22,Tottenham,West Ham,True
+115,30,33,Tottenham,West Ham,True
+115,51,50,Tottenham,West Ham,True
+115,95,83,Tottenham,West Ham,True
+115,97,86,West Ham,Tottenham,False
+116,90,80,Sunderland,Crystal Palace,False
+117,23,19,Watford,Aston Villa,False
+117,49,42,Aston Villa,Watford,True
+117,65,71,Watford,Aston Villa,False
+117,81,86,Watford,Aston Villa,False
+117,98,90,Aston Villa,Watford,True
+118,3,9,Newcastle,Crystal Palace,False
+118,10,13,Crystal Palace,Newcastle,True
+118,14,16,Crystal Palace,Newcastle,True
+118,25,40,Crystal Palace,Newcastle,True
+118,34,47,Crystal Palace,Newcastle,True
+118,84,93,Crystal Palace,Newcastle,True
+119,72,81,Sunderland,Stoke City,True
+119,73,84,Sunderland,Stoke City,True
+120,10,8,Manchester City,Southampton,True
+120,26,20,Manchester City,Southampton,True
+120,47,49,Southampton,Manchester City,False
+120,72,69,Manchester City,Southampton,True
+121,17,23,Leicester City,Manchester Utd,True
+121,29,45,Manchester Utd,Leicester City,False
+122,20,25,Everton,Bournemouth,False
+122,26,35,Everton,Bournemouth,False
+122,60,79,Bournemouth,Everton,True
+122,68,86,Bournemouth,Everton,True
+122,75,95,Everton,Bournemouth,False
+122,77,97,Bournemouth,Everton,True
+123,12,17,West Ham,West Brom,True
+123,49,50,West Brom,West Ham,False
+124,21,29,Arsenal,Norwich City,False
+124,28,42,Norwich City,Arsenal,True
+125,46,64,Liverpool,Swansea,True
+126,89,81,Bournemouth,Chelsea,False
+127,4,6,Stoke City,Manchester City,True
+127,9,15,Stoke City,Manchester City,True
+128,12,14,Tottenham,West Brom,False
+128,27,38,West Brom,Tottenham,True
+129,21,33,Arsenal,Sunderland,True
+129,28,45,Sunderland,Arsenal,False
+129,43,62,Arsenal,Sunderland,True
+129,76,93,Arsenal,Sunderland,True
+130,15,30,Watford,Norwich City,True
+130,74,91,Watford,Norwich City,True
+131,36,44,Aston Villa,Southampton,False
+131,63,73,Southampton,Aston Villa,True
+132,6,6,Leicester City,Swansea,False
+132,21,23,Leicester City,Swansea,False
+132,63,70,Leicester City,Swansea,False
+133,55,74,Newcastle,Liverpool,True
+133,69,90,Newcastle,Liverpool,True
+134,68,76,Crystal Palace,Everton,False
+134,73,81,Everton,Crystal Palace,True
+135,10,15,Everton,Norwich City,False
+135,31,46,Norwich City,Everton,True
+136,29,38,Crystal Palace,Southampton,True
+137,4,2,Bournemouth,Manchester Utd,True
+137,28,24,Manchester Utd,Bournemouth,False
+137,50,54,Bournemouth,Manchester Utd,True
+138,20,25,Manchester City,Swansea,True
+138,102,89,Swansea,Manchester City,False
+138,103,91,Manchester City,Swansea,True
+139,3,4,Watford,Sunderland,False
+140,2,7,Arsenal,Aston Villa,False
+140,27,37,Arsenal,Aston Villa,False
+141,12,21,Liverpool,West Brom,True
+141,19,30,West Brom,Liverpool,False
+141,57,73,West Brom,Liverpool,False
+141,75,95,Liverpool,West Brom,True
+142,38,38,Tottenham,Newcastle,True
+142,79,73,Newcastle,Tottenham,False
+142,97,92,Newcastle,Tottenham,False
+143,21,33,Leicester City,Chelsea,True
+143,39,47,Leicester City,Chelsea,True
+143,63,77,Chelsea,Leicester City,False
+144,35,40,Tottenham,Southampton,False
+144,39,45,Tottenham,Southampton,False
+145,26,38,Norwich City,Manchester Utd,False
+145,40,54,Norwich City,Manchester Utd,False
+145,49,66,Manchester Utd,Norwich City,True
+146,36,51,Bournemouth,West Brom,False
+146,67,79,West Brom,Bournemouth,True
+146,79,87,Bournemouth,West Brom,False
+147,2,5,Chelsea,Sunderland,True
+147,6,12,Chelsea,Sunderland,True
+147,40,49,Chelsea,Sunderland,True
+147,44,52,Sunderland,Chelsea,False
+148,22,45,Crystal Palace,Stoke City,False
+148,65,78,Stoke City,Crystal Palace,True
+148,90,90,Crystal Palace,Stoke City,False
+149,20,27,Leicester City,Everton,False
+149,26,31,Everton,Leicester City,True
+149,48,64,Leicester City,Everton,False
+149,49,69,Leicester City,Everton,False
+149,70,88,Everton,Leicester City,True
+150,26,37,Newcastle,Aston Villa,True
+150,53,61,Aston Villa,Newcastle,False
+151,2,2,Watford,Liverpool,True
+151,10,15,Watford,Liverpool,True
+151,74,84,Watford,Liverpool,True
+152,31,33,Arsenal,Manchester City,True
+152,43,46,Arsenal,Manchester City,True
+152,80,82,Manchester City,Arsenal,False
+153,4,8,Swansea,West Brom,True
+154,107,93,Everton,Newcastle,False
+155,13,18,Southampton,Arsenal,True
+155,38,54,Southampton,Arsenal,True
+155,49,68,Southampton,Arsenal,True
+155,78,92,Southampton,Arsenal,True
+156,26,26,Tottenham,Norwich City,True
+156,43,41,Tottenham,Norwich City,True
+156,83,79,Tottenham,Norwich City,True
+157,41,47,West Ham,Aston Villa,False
+157,59,62,Aston Villa,West Ham,True
+158,31,32,Chelsea,Watford,True
+158,38,42,Watford,Chelsea,False
+158,59,56,Watford,Chelsea,False
+158,62,65,Chelsea,Watford,True
+159,19,19,Stoke City,Manchester Utd,True
+159,24,25,Stoke City,Manchester Utd,True
+160,63,62,Liverpool,Leicester City,True
+161,8,12,Manchester City,Sunderland,True
+161,11,16,Manchester City,Sunderland,True
+161,17,21,Manchester City,Sunderland,True
+161,50,53,Manchester City,Sunderland,True
+161,55,58,Sunderland,Manchester City,False
+162,14,17,Tottenham,Watford,False
+162,35,41,Watford,Tottenham,True
+162,86,89,Tottenham,Watford,False
+163,9,13,Southampton,West Ham,False
+163,59,68,West Ham,Southampton,True
+163,78,79,West Ham,Southampton,True
+164,21,24,Norwich City,Aston Villa,True
+164,79,86,Norwich City,Aston Villa,True
+165,13,16,Stoke City,Everton,False
+165,16,22,Everton,Stoke City,True
+165,38,44,Stoke City,Everton,False
+165,56,64,Everton,Stoke City,True
+165,63,70,Everton,Stoke City,True
+165,68,80,Stoke City,Everton,False
+165,80,91,Stoke City,Everton,False
+166,83,80,West Brom,Newcastle,True
+167,18,27,Arsenal,Bournemouth,True
+167,48,62,Arsenal,Bournemouth,True
+168,39,45,Liverpool,Sunderland,False
+169,67,75,Norwich City,Southampton,True
+170,16,29,Sunderland,Aston Villa,True
+170,53,63,Aston Villa,Sunderland,False
+170,59,72,Sunderland,Aston Villa,True
+170,79,92,Sunderland,Aston Villa,True
+171,7,9,West Ham,Liverpool,True
+171,54,55,West Ham,Liverpool,True
+172,43,47,Manchester Utd,Swansea,True
+172,63,70,Swansea,Manchester Utd,False
+172,70,77,Manchester Utd,Swansea,True
+173,38,54,Watford,Manchester City,True
+173,62,81,Manchester City,Watford,False
+173,65,84,Manchester City,Watford,False
+174,62,72,Arsenal,Newcastle,True
+175,46,60,West Brom,Stoke City,True
+175,61,80,Stoke City,West Brom,False
+175,83,92,West Brom,Stoke City,True
+176,16,21,Everton,Tottenham,True
+176,36,45,Tottenham,Everton,False
+177,31,28,Chelsea,Crystal Palace,False
+177,59,60,Chelsea,Crystal Palace,False
+177,63,66,Chelsea,Crystal Palace,False
+178,12,20,Manchester Utd,Newcastle,False
+178,33,40,Manchester Utd,Newcastle,False
+178,36,43,Newcastle,Manchester Utd,True
+178,60,67,Newcastle,Manchester Utd,True
+178,76,81,Manchester Utd,Newcastle,False
+178,89,90,Newcastle,Manchester Utd,True
+179,13,19,Bournemouth,West Ham,True
+179,43,68,West Ham,Bournemouth,False
+179,49,78,West Ham,Bournemouth,False
+179,59,86,West Ham,Bournemouth,False
+180,55,61,Aston Villa,Crystal Palace,True
+181,5,4,Sunderland,Swansea,False
+181,17,23,Swansea,Sunderland,True
+181,30,42,Swansea,Sunderland,True
+181,38,50,Sunderland,Swansea,False
+181,49,64,Sunderland,Swansea,False
+181,77,86,Sunderland,Swansea,False
+182,97,85,Leicester City,Tottenham,False
+183,8,10,Liverpool,Arsenal,True
+183,13,15,Arsenal,Liverpool,False
+183,17,23,Liverpool,Arsenal,True
+183,21,28,Arsenal,Liverpool,False
+183,45,56,Arsenal,Liverpool,False
+183,89,90,Liverpool,Arsenal,True
+184,47,55,Stoke City,Norwich City,True
+184,48,56,Norwich City,Stoke City,False
+184,60,69,Stoke City,Norwich City,True
+184,71,78,Stoke City,Norwich City,True
+184,74,82,Stoke City,Norwich City,True
+185,8,21,Southampton,Watford,True
+185,64,76,Southampton,Watford,True
+186,19,23,Chelsea,West Brom,True
+186,31,37,West Brom,Chelsea,False
+186,81,73,Chelsea,West Brom,True
+186,82,76,Chelsea,West Brom,True
+186,100,88,West Brom,Chelsea,False
+187,20,24,Manchester City,Crystal Palace,True
+187,37,42,Manchester City,Crystal Palace,True
+187,59,70,Manchester City,Crystal Palace,True
+187,76,85,Manchester City,Crystal Palace,True
+188,34,51,Everton,Chelsea,False
+188,41,58,Everton,Chelsea,False
+188,50,65,Chelsea,Everton,True
+188,51,66,Chelsea,Everton,True
+188,67,90,Chelsea,Everton,True
+188,76,90,Everton,Chelsea,False
+189,27,30,Leicester City,Aston Villa,False
+189,76,76,Aston Villa,Leicester City,True
+190,7,9,Southampton,West Brom,True
+190,27,36,Southampton,West Brom,True
+190,64,73,Southampton,West Brom,True
+191,6,7,Newcastle,West Ham,True
+191,13,18,Newcastle,West Ham,True
+191,35,51,West Ham,Newcastle,False
+192,44,42,Sunderland,Tottenham,False
+192,46,43,Tottenham,Sunderland,True
+192,74,63,Tottenham,Sunderland,True
+192,77,72,Tottenham,Sunderland,True
+192,86,80,Tottenham,Sunderland,True
+193,4,11,Bournemouth,Norwich City,True
+193,44,55,Bournemouth,Norwich City,True
+193,72,77,Bournemouth,Norwich City,True
+194,67,80,Manchester Utd,Liverpool,False
+195,22,27,Swansea,Watford,True
+196,25,42,Leicester City,Stoke City,True
+196,49,66,Leicester City,Stoke City,True
+196,71,87,Leicester City,Stoke City,True
+197,9,16,Bournemouth,Sunderland,False
+197,33,45,Sunderland,Bournemouth,True
+198,24,30,Crystal Palace,Tottenham,True
+198,61,63,Tottenham,Crystal Palace,False
+198,84,84,Tottenham,Crystal Palace,False
+198,92,90,Tottenham,Crystal Palace,False
+199,32,46,Watford,Newcastle,True
+199,49,58,Watford,Newcastle,True
+199,61,71,Newcastle,Watford,False
+200,1,1,West Ham,Manchester City,True
+200,9,9,Manchester City,West Ham,False
+200,48,56,West Ham,Manchester City,True
+200,70,81,Manchester City,West Ham,False
+201,10,21,Liverpool,Norwich City,False
+201,22,30,Norwich City,Liverpool,True
+201,38,45,Norwich City,Liverpool,True
+201,45,55,Norwich City,Liverpool,True
+201,46,58,Liverpool,Norwich City,False
+201,48,64,Liverpool,Norwich City,False
+201,63,76,Liverpool,Norwich City,False
+201,73,90,Liverpool,Norwich City,False
+201,75,90,Norwich City,Liverpool,True
+202,63,87,Southampton,Manchester Utd,False
+203,25,24,Chelsea,Arsenal,False
+204,8,17,Swansea,Everton,False
+204,18,26,Everton,Swansea,True
+204,30,34,Swansea,Everton,False
+205,2,2,Tottenham,Norwich City,False
+205,30,30,Tottenham,Norwich City,False
+205,87,90,Tottenham,Norwich City,False
+206,15,16,Manchester City,Sunderland,False
+207,25,27,Crystal Palace,Bournemouth,True
+207,32,34,Bournemouth,Crystal Palace,False
+207,55,57,Bournemouth,Crystal Palace,False
+208,56,58,West Ham,Aston Villa,True
+208,88,85,West Ham,Aston Villa,True
+209,52,60,Leicester City,Liverpool,True
+209,56,71,Leicester City,Liverpool,True
+210,61,68,Swansea,West Brom,False
+210,96,90,West Brom,Swansea,True
+211,14,14,Manchester Utd,Stoke City,True
+211,23,23,Manchester Utd,Stoke City,True
+211,54,53,Manchester Utd,Stoke City,True
+212,14,26,Everton,Newcastle,True
+212,71,90,Everton,Newcastle,True
+212,78,90,Everton,Newcastle,True
+213,40,45,Aston Villa,Norwich City,True
+213,45,52,Aston Villa,Norwich City,True
+214,12,15,Swansea,Crystal Palace,True
+214,45,51,Crystal Palace,Swansea,False
+215,67,67,Tottenham,Watford,True
+216,11,15,Everton,Stoke City,False
+216,22,29,Everton,Stoke City,False
+216,29,44,Everton,Stoke City,False
+217,9,12,Southampton,West Ham,True
+218,33,33,Newcastle,West Brom,True
+219,4,5,Leicester City,Manchester City,False
+219,49,50,Leicester City,Manchester City,False
+219,67,62,Leicester City,Manchester City,False
+219,100,88,Manchester City,Leicester City,True
+220,46,61,Liverpool,Sunderland,True
+220,55,72,Liverpool,Sunderland,True
+220,67,84,Sunderland,Liverpool,False
+220,75,90,Sunderland,Liverpool,False
+221,17,24,Arsenal,Bournemouth,False
+221,19,27,Arsenal,Bournemouth,False
+222,56,63,Manchester Utd,Chelsea,False
+222,90,90,Chelsea,Manchester Utd,True
+223,11,17,Watford,Crystal Palace,False
+223,39,45,Crystal Palace,Watford,True
+223,84,83,Watford,Crystal Palace,False
+224,5,6,Sunderland,Manchester Utd,True
+224,34,40,Manchester Utd,Sunderland,False
+224,95,85,Sunderland,Manchester Utd,True
+225,12,6,Chelsea,Newcastle,True
+225,17,10,Chelsea,Newcastle,True
+225,29,19,Chelsea,Newcastle,True
+225,75,60,Chelsea,Newcastle,True
+225,98,88,Chelsea,Newcastle,True
+225,100,90,Newcastle,Chelsea,False
+226,61,72,Southampton,Swansea,False
+227,14,16,West Brom,Everton,False
+228,56,56,Norwich City,West Ham,True
+228,70,67,Norwich City,West Ham,True
+228,82,76,West Ham,Norwich City,False
+228,84,81,West Ham,Norwich City,False
+229,12,12,Stoke City,Bournemouth,False
+229,45,53,Stoke City,Bournemouth,False
+229,48,57,Stoke City,Bournemouth,False
+229,50,61,Bournemouth,Stoke City,True
+230,37,45,Leicester City,Arsenal,False
+230,65,72,Arsenal,Leicester City,True
+230,88,90,Arsenal,Leicester City,True
+231,59,55,Tottenham,Manchester City,False
+231,77,75,Manchester City,Tottenham,True
+231,87,84,Tottenham,Manchester City,False
+232,8,21,Liverpool,Aston Villa,False
+232,14,30,Liverpool,Aston Villa,False
+232,36,62,Liverpool,Aston Villa,False
+232,39,64,Liverpool,Aston Villa,False
+232,44,66,Liverpool,Aston Villa,False
+232,51,73,Liverpool,Aston Villa,False
+233,34,44,Southampton,Chelsea,True
+233,67,77,Chelsea,Southampton,False
+233,84,89,Chelsea,Southampton,False
+234,44,53,Stoke City,Aston Villa,True
+234,49,58,Stoke City,Aston Villa,True
+234,67,80,Aston Villa,Stoke City,False
+235,18,31,West Ham,Sunderland,True
+236,9,13,West Brom,Crystal Palace,True
+236,25,25,West Brom,Crystal Palace,True
+236,30,32,West Brom,Crystal Palace,True
+236,45,50,Crystal Palace,West Brom,False
+236,70,81,Crystal Palace,West Brom,False
+237,80,90,Leicester City,Norwich City,True
+238,32,32,Manchester Utd,Arsenal,True
+238,34,33,Manchester Utd,Arsenal,True
+238,44,42,Arsenal,Manchester Utd,False
+238,70,68,Manchester Utd,Arsenal,True
+238,75,70,Arsenal,Manchester Utd,False
+239,16,22,Swansea,Tottenham,False
+239,87,71,Tottenham,Swansea,True
+239,100,78,Tottenham,Swansea,True
+240,31,34,Bournemouth,Southampton,True
+240,73,81,Bournemouth,Southampton,True
+241,3,12,Everton,Aston Villa,False
+241,25,32,Everton,Aston Villa,False
+241,49,61,Everton,Aston Villa,False
+241,62,80,Aston Villa,Everton,True
+242,10,13,West Brom,Leicester City,False
+242,27,32,Leicester City,West Brom,True
+242,34,45,Leicester City,West Brom,True
+242,41,53,West Brom,Leicester City,False
+243,33,37,Sunderland,Crystal Palace,True
+243,65,62,Crystal Palace,Sunderland,False
+243,75,68,Crystal Palace,Sunderland,False
+243,94,90,Sunderland,Crystal Palace,True
+244,2,4,Chelsea,Norwich City,False
+244,41,45,Chelsea,Norwich City,False
+244,61,69,Norwich City,Chelsea,True
+245,9,11,West Ham,Tottenham,True
+246,91,86,Manchester Utd,Watford,True
+247,51,84,Stoke City,Newcastle,True
+248,14,17,Arsenal,Swansea,True
+248,32,40,Swansea,Arsenal,False
+248,66,75,Swansea,Arsenal,False
+249,25,36,Liverpool,Manchester City,True
+249,31,42,Liverpool,Manchester City,True
+249,48,60,Liverpool,Manchester City,True
+250,79,88,Sunderland,Southampton,False
+250,82,90,Southampton,Sunderland,True
+251,17,16,Everton,West Ham,True
+251,63,58,Everton,West Ham,True
+251,89,80,West Ham,Everton,False
+251,94,84,West Ham,Everton,False
+251,109,90,West Ham,Everton,False
+252,46,50,Manchester City,Aston Villa,True
+252,48,54,Manchester City,Aston Villa,True
+252,53,62,Manchester City,Aston Villa,True
+252,58,70,Manchester City,Aston Villa,True
+253,42,57,Leicester City,Watford,False
+254,26,31,Bournemouth,Newcastle,False
+254,63,72,Bournemouth,Newcastle,False
+254,75,81,Newcastle,Bournemouth,True
+254,89,90,Bournemouth,Newcastle,False
+255,35,41,Arsenal,Tottenham,False
+255,56,62,Tottenham,Arsenal,True
+255,59,64,Tottenham,Arsenal,True
+255,73,77,Arsenal,Tottenham,False
+256,63,63,Swansea,Norwich City,True
+257,36,41,Chelsea,Stoke City,True
+257,88,86,Stoke City,Chelsea,False
+258,51,69,West Brom,Manchester Utd,True
+259,61,51,Crystal Palace,Liverpool,True
+259,86,74,Liverpool,Crystal Palace,False
+259,107,90,Liverpool,Crystal Palace,False
+260,38,39,Bournemouth,Swansea,True
+260,39,41,Swansea,Bournemouth,False
+260,49,54,Bournemouth,Swansea,True
+260,61,64,Swansea,Bournemouth,False
+260,72,80,Bournemouth,Swansea,True
+261,10,12,Southampton,Stoke City,False
+261,22,31,Southampton,Stoke City,False
+261,45,55,Stoke City,Southampton,True
+262,36,45,Tottenham,Aston Villa,False
+262,43,49,Tottenham,Aston Villa,False
+263,18,28,Leicester City,Newcastle,True
+264,41,53,Norwich City,West Brom,False
+265,18,20,Stoke City,Watford,False
+265,56,54,Stoke City,Watford,False
+265,89,89,Watford,Stoke City,True
+266,19,18,West Ham,Chelsea,False
+266,39,45,Chelsea,West Ham,True
+266,61,62,West Ham,Chelsea,False
+266,99,89,Chelsea,West Ham,True
+267,26,37,Leicester City,Crystal Palace,False
+268,8,8,Arsenal,Everton,False
+268,31,43,Arsenal,Everton,False
+269,39,55,Swansea,Aston Villa,True
+270,50,45,Sunderland,Newcastle,False
+270,85,84,Newcastle,Sunderland,True
+271,2,2,Tottenham,Bournemouth,True
+271,10,17,Tottenham,Bournemouth,True
+271,46,53,Tottenham,Bournemouth,True
+272,19,19,Liverpool,Southampton,False
+272,28,25,Liverpool,Southampton,False
+272,77,68,Southampton,Liverpool,True
+272,93,86,Southampton,Liverpool,True
+272,94,86,Southampton,Liverpool,True
+273,20,17,Manchester Utd,Manchester City,False
+274,27,45,Norwich City,Newcastle,True
+274,57,72,Newcastle,Norwich City,False
+274,60,75,Norwich City,Newcastle,True
+274,73,87,Newcastle,Norwich City,False
+274,75,90,Norwich City,Newcastle,True
+275,3,8,Arsenal,Watford,True
+275,31,39,Arsenal,Watford,True
+275,38,50,Arsenal,Watford,True
+275,81,90,Arsenal,Watford,True
+276,10,17,Crystal Palace,West Ham,False
+276,12,19,West Ham,Crystal Palace,True
+276,44,43,West Ham,Crystal Palace,True
+276,79,77,Crystal Palace,West Ham,False
+277,25,27,Chelsea,Aston Villa,False
+277,41,45,Chelsea,Aston Villa,False
+277,45,48,Chelsea,Aston Villa,False
+277,61,60,Chelsea,Aston Villa,False
+278,46,53,Liverpool,Tottenham,True
+278,61,64,Tottenham,Liverpool,False
+279,5,9,Manchester City,Bournemouth,False
+279,9,13,Manchester City,Bournemouth,False
+279,15,24,Manchester City,Bournemouth,False
+279,73,90,Manchester City,Bournemouth,False
+280,14,15,Stoke City,Swansea,True
+280,53,56,Stoke City,Swansea,True
+280,61,69,Swansea,Stoke City,False
+280,68,81,Swansea,Stoke City,False
+281,36,43,Leicester City,Southampton,True
+282,40,55,Manchester Utd,Everton,True
+283,4,6,Southampton,Newcastle,True
+283,25,38,Southampton,Newcastle,True
+283,40,58,Southampton,Newcastle,True
+283,52,68,Newcastle,Southampton,False
+284,23,28,Swansea,Chelsea,True
+285,39,45,Bournemouth,Aston Villa,False
+285,69,76,Bournemouth,Aston Villa,False
+285,79,86,Aston Villa,Bournemouth,True
+286,7,9,West Brom,Manchester City,False
+286,16,21,Manchester City,West Brom,True
+286,58,67,Manchester City,West Brom,True
+287,15,20,Arsenal,West Ham,False
+287,30,39,Arsenal,West Ham,False
+287,35,45,West Ham,Arsenal,True
+287,39,45,West Ham,Arsenal,True
+287,45,54,West Ham,Arsenal,True
+287,66,71,Arsenal,West Ham,False
+288,66,69,Crystal Palace,Norwich City,True
+289,43,45,Watford,Everton,True
+289,45,45,Everton,Watford,False
+290,12,10,Liverpool,Stoke City,True
+290,22,24,Stoke City,Liverpool,False
+290,35,34,Liverpool,Stoke City,True
+290,59,53,Liverpool,Stoke City,True
+290,72,66,Liverpool,Stoke City,True
+291,51,72,Tottenham,Manchester Utd,True
+291,56,76,Tottenham,Manchester Utd,True
+291,57,76,Tottenham,Manchester Utd,True
+292,64,68,Leicester City,Sunderland,False
+292,81,90,Leicester City,Sunderland,False
+293,23,29,Watford,West Brom,False
+294,34,35,Manchester Utd,Aston Villa,True
+295,34,43,Newcastle,Swansea,True
+295,73,83,Newcastle,Swansea,True
+295,87,90,Newcastle,Swansea,True
+296,39,35,Manchester City,Chelsea,False
+296,57,56,Manchester City,Chelsea,False
+296,90,82,Manchester City,Chelsea,False
+297,69,70,Everton,Southampton,True
+297,74,77,Southampton,Everton,False
+298,40,45,Sunderland,Norwich City,False
+298,49,57,Sunderland,Norwich City,False
+298,90,90,Sunderland,Norwich City,False
+299,38,42,Liverpool,Bournemouth,False
+299,40,45,Liverpool,Bournemouth,False
+299,87,90,Bournemouth,Liverpool,True
+300,38,45,Arsenal,Crystal Palace,True
+300,88,84,Crystal Palace,Arsenal,False
+301,24,21,Leicester City,West Ham,True
+301,83,86,West Ham,Leicester City,False
+301,85,87,West Ham,Leicester City,False
+301,88,90,Leicester City,West Ham,True
+302,12,12,Tottenham,Stoke City,False
+302,70,69,Tottenham,Stoke City,False
+302,75,73,Tottenham,Stoke City,False
+302,86,83,Tottenham,Stoke City,False
+303,13,20,Manchester City,Newcastle,False
+303,19,39,Newcastle,Manchester City,True
+304,48,45,Liverpool,Everton,True
+304,52,45,Liverpool,Everton,True
+304,62,62,Liverpool,Everton,True
+304,80,78,Liverpool,Everton,True
+305,6,12,West Ham,Watford,True
+305,37,45,West Ham,Watford,True
+305,46,55,West Ham,Watford,True
+305,57,65,Watford,West Ham,False
+306,5,6,Manchester Utd,Crystal Palace,True
+306,47,59,Manchester Utd,Crystal Palace,True
+307,5,8,Arsenal,West Brom,True
+307,33,39,Arsenal,West Brom,True
+308,25,37,Manchester City,Stoke City,True
+308,32,45,Manchester City,Stoke City,True
+308,51,65,Manchester City,Stoke City,True
+308,60,75,Manchester City,Stoke City,True
+309,6,4,Liverpool,Newcastle,True
+309,30,32,Liverpool,Newcastle,True
+309,45,50,Newcastle,Liverpool,False
+309,68,69,Newcastle,Liverpool,False
+310,5,11,Chelsea,Bournemouth,False
+310,27,35,Chelsea,Bournemouth,False
+310,30,38,Bournemouth,Chelsea,True
+310,65,76,Chelsea,Bournemouth,False
+310,81,90,Chelsea,Bournemouth,False
+311,21,17,Southampton,Aston Villa,False
+311,42,42,Southampton,Aston Villa,False
+311,45,45,Aston Villa,Southampton,True
+311,69,73,Southampton,Aston Villa,False
+311,83,88,Aston Villa,Southampton,True
+311,89,90,Southampton,Aston Villa,False
+312,5,13,Leicester City,Swansea,True
+312,22,32,Leicester City,Swansea,True
+312,57,63,Leicester City,Swansea,True
+312,93,87,Leicester City,Swansea,True
+313,31,34,Tottenham,West Brom,True
+313,78,73,West Brom,Tottenham,False
+314,23,30,Aston Villa,Watford,False
+314,34,45,Watford,Aston Villa,True
+314,42,49,Aston Villa,Watford,False
+314,90,90,Watford,Aston Villa,True
+314,95,90,Watford,Aston Villa,True
+315,48,51,Stoke City,Sunderland,True
+315,89,90,Sunderland,Stoke City,False
+316,46,61,Newcastle,Crystal Palace,True
+317,34,63,Arsenal,Norwich City,True
+318,4,9,Everton,Bournemouth,True
+318,7,12,Bournemouth,Everton,False
+318,45,65,Everton,Bournemouth,True
+319,35,38,West Ham,West Brom,False
+319,37,45,West Ham,West Brom,False
+319,66,81,West Ham,West Brom,False
+320,7,9,Manchester Utd,Leicester City,True
+320,18,18,Leicester City,Manchester Utd,False
+321,17,28,Southampton,Manchester City,True
+321,18,30,Southampton,Manchester City,True
+321,30,45,Manchester City,Southampton,False
+321,43,59,Southampton,Manchester City,True
+321,56,73,Southampton,Manchester City,True
+321,62,80,Manchester City,Southampton,False
+322,20,25,Swansea,Liverpool,True
+322,34,36,Swansea,Liverpool,True
+322,70,66,Liverpool,Swansea,False
+322,72,72,Swansea,Liverpool,True
+323,38,38,Tottenham,Chelsea,False
+323,54,45,Tottenham,Chelsea,False
+323,71,61,Chelsea,Tottenham,True
+323,99,85,Chelsea,Tottenham,True
+324,59,73,Manchester Utd,Norwich City,False
+325,24,28,Swansea,West Ham,False
+325,29,32,Swansea,West Ham,False
+325,49,53,Swansea,West Ham,False
+325,70,69,West Ham,Swansea,True
+325,97,90,Swansea,West Ham,False
+326,1,9,Leicester City,Everton,True
+326,17,35,Leicester City,Everton,True
+326,60,67,Leicester City,Everton,True
+326,92,89,Everton,Leicester City,False
+327,12,19,Chelsea,Sunderland,False
+327,25,44,Sunderland,Chelsea,True
+327,26,45,Chelsea,Sunderland,False
+327,53,68,Sunderland,Chelsea,True
+327,54,70,Sunderland,Chelsea,True
+328,7,18,West Brom,Bournemouth,False
+328,60,83,Bournemouth,West Brom,True
+329,28,28,Stoke City,Crystal Palace,False
+329,56,48,Crystal Palace,Stoke City,True
+329,78,73,Crystal Palace,Stoke City,True
+330,35,37,Liverpool,Watford,True
+330,86,77,Liverpool,Watford,True
+331,6,9,Manchester City,Arsenal,True
+331,10,13,Arsenal,Manchester City,False
+331,44,53,Manchester City,Arsenal,True
+331,58,70,Arsenal,Manchester City,False
+332,11,19,Tottenham,Southampton,True
+332,23,32,Southampton,Tottenham,False
+332,71,74,Southampton,Tottenham,False
+333,9,11,West Ham,Manchester Utd,True
+333,40,52,Manchester Utd,West Ham,False
+333,68,74,Manchester Utd,West Ham,False
+333,76,80,West Ham,Manchester Utd,True
+333,78,83,West Ham,Manchester Utd,True
+334,30,33,Chelsea,Liverpool,False
+334,103,90,Liverpool,Chelsea,True
+335,9,12,Watford,Norwich City,False
+335,12,18,Norwich City,Watford,True
+335,13,20,Norwich City,Watford,True
+335,26,39,Norwich City,Watford,True
+335,40,51,Watford,Norwich City,False
+335,50,58,Norwich City,Watford,True
+336,26,39,Sunderland,Everton,True
+336,35,44,Sunderland,Everton,True
+336,51,57,Sunderland,Everton,True
+337,23,21,Everton,Norwich City,True
+337,46,45,Everton,Norwich City,True
+337,51,50,Everton,Norwich City,True
+338,9,15,West Brom,Liverpool,True
+338,16,26,Liverpool,West Brom,False
+339,2,6,Arsenal,Aston Villa,True
+339,56,80,Arsenal,Aston Villa,True
+339,58,81,Arsenal,Aston Villa,True
+339,68,90,Arsenal,Aston Villa,True
+340,21,25,West Ham,Stoke City,False
+340,47,56,Stoke City,West Ham,True
+340,88,89,Stoke City,West Ham,True
+341,35,45,Southampton,Crystal Palace,True
+341,52,63,Southampton,Crystal Palace,True
+341,54,64,Crystal Palace,Southampton,False
+341,73,77,Southampton,Crystal Palace,True
+341,88,89,Southampton,Crystal Palace,True
+342,73,69,Chelsea,Leicester City,True
+342,82,83,Leicester City,Chelsea,False
+343,27,40,Sunderland,Watford,False
+343,35,50,Watford,Sunderland,True
+343,40,52,Sunderland,Watford,False
+343,52,62,Watford,Sunderland,True
+344,7,7,Manchester City,Swansea,False
+344,40,45,Swansea,Manchester City,True
+345,11,22,Newcastle,Tottenham,True
+345,27,42,Newcastle,Tottenham,True
+345,50,62,Tottenham,Newcastle,False
+345,63,75,Newcastle,Tottenham,True
+345,75,85,Newcastle,Tottenham,True
+345,78,87,Newcastle,Tottenham,True
+346,30,45,Manchester Utd,Bournemouth,True
+346,56,75,Manchester Utd,Bournemouth,True
+346,67,88,Manchester Utd,Bournemouth,True
+346,69,90,Bournemouth,Manchester Utd,False

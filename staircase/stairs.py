@@ -9,7 +9,7 @@ from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 from .docstrings.decorator import append_doc
 from .docstrings import stairs_class as SC_docs
-
+from .docstrings import stairs_module as SM_docs
 warnings.simplefilter('default')
 
 origin = pd.to_datetime('2000-1-1')
@@ -95,218 +95,175 @@ def _get_common_points(Stairs_list):
         points += list(stairs.keys())
     return SortedSet(points)
 
-def _using_dates(Stairs_dict_or_list):
-    try:
-        return next(iter(Stairs_dict_or_list.values())).use_dates
-    except:
+def _using_dates(collection):
+
+    def dict_use_dates():
+        return next(iter(collection.values())).use_dates
+        
+    def series_use_dates():
+        return collection.values[0].use_dates
+        
+    def array_use_dates():
+        return collection[0]
+    
+    for func in (dict_use_dates, series_use_dates, array_use_dates):
         try:
-            return Stairs_dict_or_list.values[0].use_dates
+            return func()
         except:
-            try:
-                return Stairs_dict_or_list[0]
-            except:
-                return False
+            pass
+    raise TypeError('Could not determine if Stairs collection is using dates.  Collection should be a tuple, list, numpy array, dict or pandas.Series.')
         
     
-    
-def sample(Stairs_dict, points=None):
-    """Merge DataFrame or named Series objects with a database-style join.
-    
-    The join is done on columns or indexes. If joining columns on
-    columns, the DataFrame indexes *will be ignored*. Otherwise if joining indexes
-    on indexes or indexes on a column or columns, the index will be passed on.
+@append_doc(SM_docs.sample_example)    
+def sample(collection, points=None, how='right'):
+    """
+    Takes a dict-like collection of Stairs instances and evaluates their values across a common set of points.
     
     Parameters
     ----------
-    right : DataFrame or named Series
-        Object to merge with.
-    how : {'left', 'right', 'outer', 'inner'}, default 'inner'
-        Type of merge to be performed.
+    collection : dictionary or pandas.Series
+        The Stairs instances at which to evaluate
+    points : int, float or vector data
+        The points at which to sample the Stairs instances
+    how : {'left', 'right'}, default 'right'
+        if points where step changes occur do not coincide with x then this parameter
+        has no effect.  Where a step changes occurs at a point given by x, this parameter
+        determines if the step function is evaluated at the interval to the left, or the right.
         
-        * left: use only keys from left frame, similar to a SQL left outer join;
-          preserve key order.
-        * right: use only keys from right frame, similar to a SQL right outer join;
-          preserve key order.
-        * outer: use union of keys from both frames, similar to a SQL full outer
-          join; sort keys lexicographically.
-        * inner: use intersection of keys from both frames, similar to a SQL inner
-          join; preserve the order of the left keys.
-    on : label or list
-        Column or index level names to join on. These must be found in both
-        DataFrames. If `on` is None and not merging on indexes then this defaults
-        to the intersection of the columns in both DataFrames.
-    left_on : label or list, or array-like
-        Column or index level names to join on in the left DataFrame. Can also
-        be an array or list of arrays of the length of the left DataFrame.
-        These arrays are treated as if they are columns.
-    right_on : label or list, or array-like
-        Column or index level names to join on in the right DataFrame. Can also
-        be an array or list of arrays of the length of the right DataFrame.
-        These arrays are treated as if they are columns.
-    left_index : bool, default False
-        Use the index from the left DataFrame as the join key(s). If it is a
-        MultiIndex, the number of keys in the other DataFrame (either the index
-        or a number of columns) must match the number of levels.
-    right_index : bool, default False
-        Use the index from the right DataFrame as the join key. Same caveats as
-        left_index.
-    sort : bool, default False
-        Sort the join keys lexicographically in the result DataFrame. If False,
-        the order of the join keys depends on the join type (how keyword).
-    suffixes : tuple of (str, str), default ('_x', '_y')
-        Suffix to apply to overlapping column names in the left and right
-        side, respectively. To raise an exception on overlapping columns use
-        (False, False).
-    copy : bool, default True
-        If False, avoid copy if possible.
-    indicator : bool or str, default False
-        If True, adds a column to output DataFrame called "_merge" with
-        information on the source of each row.
-        If string, column with information on source of each row will be added to
-        output DataFrame, and column will be named value of string.
-        Information column is Categorical-type and takes on a value of "left_only"
-        for observations whose merge key only appears in 'left' DataFrame,
-        "right_only" for observations whose merge key only appears in 'right'
-        DataFrame, and "both" if the observation's merge key is found in both.  
-    validate : str, optional
-        If specified, checks if merge is of specified type.
-        
-        * "one_to_one" or "1:1": check if merge keys are unique in both
-          left and right datasets.
-        * "one_to_many" or "1:m": check if merge keys are unique in left
-          dataset.
-        * "many_to_one" or "m:1": check if merge keys are unique in right
-          dataset.
-        * "many_to_many" or "m:m": allowed, but does not result in checks.
-        
-        .. versionadded:: 0.21.0
-    
     Returns
     -------
-    DataFrame
-        A DataFrame of the two merged objects.
-    
-    See Also
-    --------
-    merge_ordered : Merge with optional filling/interpolation.
-    merge_asof : Merge on nearest keys.
-    DataFrame.join : Similar method using indices.
-    
-    Notes
-    -----
-    Support for specifying index levels as the `on`, `left_on`, and
-    `right_on` parameters was added in version 0.23.0
-    Support for merging named Series objects was added in version 0.24.0
-    
-    Examples
-    --------
-    
-    >>> df1 = pd.DataFrame({'lkey': ['foo', 'bar', 'baz', 'foo'],
-    ...                     'value': [1, 2, 3, 5]})
-    >>> df2 = pd.DataFrame({'rkey': ['foo', 'bar', 'baz', 'foo'],
-    ...                     'value': [5, 6, 7, 8]})
-    >>> df1
-        lkey value
-    0   foo      1
-    1   bar      2
-    2   baz      3
-    3   foo      5
-    >>> df2
-        rkey value
-    0   foo      5
-    1   bar      6
-    2   baz      7
-    3   foo      8
-    
-    Merge df1 and df2 on the lkey and rkey columns. The value columns have
-    the default suffixes, _x and _y, appended.
-    
-    >>> df1.merge(df2, left_on='lkey', right_on='rkey')
-      lkey  value_x rkey  value_y
-    0  foo        1  foo        5
-    1  foo        1  foo        8
-    2  foo        5  foo        5
-    3  foo        5  foo        8
-    4  bar        2  bar        6
-    5  baz        3  baz        7
-    
-    Merge DataFrames df1 and df2 with specified left and right suffixes
-    appended to any overlapping columns.
-    
-    >>> df1.merge(df2, left_on='lkey', right_on='rkey',
-    ...           suffixes=('_left', '_right'))
-      lkey  value_left rkey  value_right
-    0  foo           1  foo            5
-    1  foo          
-     1  foo            8
-    2  foo           5  foo            5
-    3  foo           5  foo            8
-    4  bar           2  bar            6
-    5  baz           3  baz            7
-    
-    Merge DataFrames df1 and df2, but raise an exception if the DataFrames have
-    any overlapping columns.
-    
-    >>> df1.merge(df2, left_on='lkey', right_on='rkey', suffixes=(False, False))
-    Traceback (most recent call last):
-    ...
-    ValueError: columns overlap but no suffix specified:
-        Index(['value'], dtype='object')
-        
-    .. plot::
-        :context: close-figs
-        
-        >>> df = pd.DataFrame(
-        ...     np.random.randint(1, 7, 6000),
-        ...     columns = ['one'])
-        >>> df['two'] = df['one'] + np.random.randint(1, 7, 6000)
-        >>> ax = df.plot.hist(bins=12, alpha=0.5)
-        
+    :class:`pandas.DataFrame`
+        A dataframe, in tidy format, with three columns: points, key, value.  The column key contains
+        the identifiers used in the dict-like object specified by 'collection'.
     """
-    use_dates = _using_dates(Stairs_dict)
-    #assert len(set([type(x) for x in Stairs_dict.values()])) == 1, "Stairs_dict must contain values of same type"
+    use_dates = _using_dates(collection)
+    #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
-        points = _get_common_points(Stairs_dict.values())
-    result = (pd.DataFrame({"points":points, **{key:stairs(points) for key,stairs in Stairs_dict.items()}})
+        points = _get_common_points(collection.values())
+    result = (pd.DataFrame({"points":points, **{key:stairs(points) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
     
     try:
-        if len(Stairs_dict.index.names) > 1:
+        if len(collection.index.names) > 1:
             result = (result
-                .join(pd.DataFrame(result.key.tolist(), columns=Stairs_dict.index.names))
+                .join(pd.DataFrame(result.key.tolist(), columns=collection.index.names))
                 .drop(columns='key')
             )     
     except:
         pass
     return result
 
-def aggregate(Stairs_dict_or_list, func, points=None):
-    '''An aggregating function
+@append_doc(SM_docs.aggregate_example)
+def aggregate(collection, func, points=None):
+    """
+    Takes a collection of Stairs instances and returns a single instance representing the aggregation.
     
-    '''
-    if isinstance(Stairs_dict_or_list, dict) or isinstance(Stairs_dict_or_list, pd.Series):
-        Stairs_dict = Stairs_dict_or_list
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate
+    func: a function taking a 1 dimensional vector of floats, and returning a single float
+        The function to apply, eg numpy.max
+    points: vector of floats or dates
+        Points at which to evaluate.  Defaults to union of all step changes.  Equivalent to applying Stairs.resample().
+        
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a mean function
+    """
+    if isinstance(collection, dict) or isinstance(collection, pd.Series):
+        Stairs_dict = collection
     else:
-        Stairs_dict = dict(enumerate(Stairs_dict_or_list))
+        Stairs_dict = dict(enumerate(collection))
     df = sample(Stairs_dict, points)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
     step_changes = aggregation.diff().fillna(0)
-    return Stairs(dict(step_changes))
+    return Stairs(dict(step_changes))._reduce()
 
+@append_doc(SM_docs.mean_example)      
+def _mean(collection):
+    """
+    Takes a collection of Stairs instances and returns the mean of the corresponding step functions.
     
-def _mean(Stairs_dict_or_list):
-    return aggregate(Stairs_dict_or_list, np.mean)
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a mean function
+    
+    Returns
+    -------
+    :class:`Stairs`
+    """
+    return aggregate(collection, np.mean)
 
-def _median(Stairs_dict_or_list):
-    return aggregate(Stairs_dict_or_list, np.median)
-        
-def _min(Stairs_dict_or_list):
-    return aggregate(Stairs_dict_or_list, np.min)
+@append_doc(SM_docs.median_example)  
+def _median(collection):
+    """
+    Takes a collection of Stairs instances and returns the median of the corresponding step functions.
+    
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a median function
+    
+    Returns
+    -------
+    :class:`Stairs`
+    """
+    return aggregate(collection, np.median)
 
-def _max(Stairs_dict_or_list):
-    return aggregate(Stairs_dict_or_list, np.max)
-        
+@append_doc(SM_docs.min_example)          
+def _min(collection):
+    """
+    Takes a collection of Stairs instances and returns the minimum of the corresponding step functions.
+    
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a min function
+    
+    Returns
+    -------
+    :class:`Stairs`
+    """
+    return aggregate(collection, np.min)
+
+@append_doc(SM_docs.max_example)  
+def _max(collection):
+    """
+    Takes a collection of Stairs instances and returns the maximum of the corresponding step functions.
+    
+    Parameters
+    ----------
+    collection : tuple, list, numpy array, dict or pandas.Series
+        The Stairs instances to aggregate using a max function
+    
+    Returns
+    -------
+    :class:`Stairs`
+    """
+    return aggregate(collection, np.max)
+
+
+def resample(container, x, how='right'):
+    """
+    Applies the Stairs.resample function to a 1D container, eg tuple, list, numpy array, pandas series, dictionary
+    
+    Returns
+    -------
+    type(container)
+    """
+    if isinstance(container, dict):
+        return {key:s.resample(x, how) for key,s in container}
+    if isinstance(container, pd.Series):
+        return pd.Series([s.resample(x, how) for s in container.values], index=container.index)
+    if isinstance(container, np.ndarray):
+        return np.array([s.resample(x, how) for s in container])
+    return type(container)([s.resample(x, how) for s in container])
+    
+    
 class Stairs(SortedDict):
     '''Intervals are considered left-closed, right-open. '''
     
@@ -362,8 +319,8 @@ class Stairs(SortedDict):
             ax.step(cumulative.keys(), cumulative.values(), where='post', **kwargs)
         return ax
 
-    @append_doc(SC_docs.evaluate_example)
-    def evaluate(self, x, how='right'):
+    @append_doc(SC_docs.sample_example)
+    def sample(self, x, how='right'):
         """Evaluates the value of the step function at one, or more, points.
 
         The function should be called using parentheses.  See example below.
@@ -384,9 +341,16 @@ class Stairs(SortedDict):
         assert how in ("right", "left")
         if self.use_dates:
             x = _convert_date_to_float(x)
-        return self._evaluate_without_dates(x,how)
+        return self._sample_without_dates(x,how)
+        
+    def evaluate(self, x, how='right'):
+        warnings.warn(
+            "Stairs.evaluate will be deprecated in version 1.0.0, use Stairs.sample instead",
+             PendingDeprecationWarning
+        )
+        return self.sample(x, how)
     
-    def _evaluate_without_dates(self, x, how='right'):
+    def _sample_without_dates(self, x, how='right'):
         if hasattr(x, "__iter__"):
             new_instance = self.copy()._layer_multiple(x, None, [0]*len(x))
             cumulative = new_instance._cumulative()
@@ -402,8 +366,17 @@ class Stairs(SortedDict):
             else:
                 preceding_boundary_index = cumulative.bisect_left(x) - 1
             return cumulative.values()[preceding_boundary_index]    
-            
-            
+    
+    @append_doc(SC_docs.resample_example)
+    def resample(self, x, how='right'):
+        """
+        """
+        new_cumulative = SortedDict({float('-inf'):self(float('-inf'))})
+        new_cumulative.update({point:value for point, value in zip(x, self(x))})
+        return _from_cumulative(new_cumulative, self.use_dates)    
+        
+
+    
     @append_doc(SC_docs.layer_example)        
     def layer(self, start, end=None, value=None):
         """
@@ -780,6 +753,7 @@ class Stairs(SortedDict):
         to_remove = [key for key,val in self.items()[1:] if val == 0]
         for key in to_remove:
             self.pop(key)
+        return self
         
     def __bool__(self):
         self._reduce()
@@ -976,7 +950,7 @@ class Stairs(SortedDict):
             points.append(lower)
         if upper < float('inf'):
             points.append(upper)
-        return self._evaluate_without_dates(points)
+        return self._sample_without_dates(points)
     
     @append_doc(SC_docs.min_example)
     def min(self, lower=float('-inf'), upper=float('inf')):
@@ -1116,4 +1090,4 @@ class Stairs(SortedDict):
     __gt__ = gt
     __le__ = le
     __ge__ = ge
-    __call__ = evaluate
+    __call__ = sample

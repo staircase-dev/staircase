@@ -28,6 +28,7 @@ author = 'Riley Clement'
 version = sc.__version__
 if 'untagged' in version:
     version = 'latest'
+version = version.split('+')[0]
 
 # -- General configuration ---------------------------------------------------
 

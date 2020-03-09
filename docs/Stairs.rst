@@ -13,7 +13,7 @@ Constructor & Basic Methods
    Stairs
    Stairs.copy
    Stairs.plot
-   Stairs.evaluate
+   Stairs.sample
    Stairs.layer
    Stairs.step_changes
    Stairs.to_dataframe
@@ -81,6 +81,7 @@ Miscellaneous Functions
 
 .. autosummary::
    :toctree: api/
-
+   
+   Stairs.resample
    Stairs.clip
    
