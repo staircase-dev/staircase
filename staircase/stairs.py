@@ -89,11 +89,30 @@ def _compare(cumulative, zero_comparator, use_dates=False):
     new_instance._reduce()
     return new_instance
 
-def _get_common_points(Stairs_list):
-    points = []
-    for stairs in Stairs_list:
-        points += list(stairs.keys())
-    return SortedSet(points)
+def _get_common_points(collection):
+    
+    def dict_common_points():
+        return collection.values()
+        
+    def series_common_points():
+        return collection.values
+        
+    def array_common_points():
+        return collection
+    
+    for func in (dict_common_points, series_common_points, array_common_points):
+        try:
+            stairs_instances = func()
+            points = []
+            for stairs in stairs_instances:
+                points += list(stairs.keys())
+            return SortedSet(points)
+        except:
+            pass
+    raise TypeError('Collection should be a tuple, list, numpy array, dict or pandas.Series.')
+    
+    
+    
 
 def _using_dates(collection):
 
@@ -139,7 +158,7 @@ def sample(collection, points=None, how='right'):
     use_dates = _using_dates(collection)
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
-        points = _get_common_points(collection.values())
+        points = _get_common_points(collection)
     result = (pd.DataFrame({"points":points, **{key:stairs(points) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
