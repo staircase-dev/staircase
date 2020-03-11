@@ -18,7 +18,8 @@ Constructor & Basic Methods
    Stairs.step_changes
    Stairs.to_dataframe
    
-    
+.. _api.arithmetic_operators:
+ 
 Arithmetic Operators
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -31,7 +32,8 @@ Arithmetic Operators
    Stairs.multiply
    Stairs.divide
 
-    
+.. _api.relational_operators:
+   
 Relational Operators
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -46,6 +48,7 @@ Relational Operators
    Stairs.ne
    Stairs.identical
    
+.. _api.logical_operators:
 
 Logical Operators
 ~~~~~~~~~~~~~~~~~
@@ -58,6 +61,7 @@ Logical Operators
    Stairs.logical_and
    Stairs.logical_or
 
+.. _api.summary_statistics:
 
 Summary Statistics
 ~~~~~~~~~~~~~~~~~~

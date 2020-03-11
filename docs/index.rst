@@ -29,7 +29,6 @@ Contents
    examples.rst
    api.rst 
 
-   readme
    changelog
 
 
