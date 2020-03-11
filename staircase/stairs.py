@@ -390,8 +390,10 @@ class Stairs(SortedDict):
     def resample(self, x, how='right'):
         """
         """
-        new_cumulative = SortedDict({float('-inf'):self(float('-inf'))})
-        new_cumulative.update({point:value for point, value in zip(x, self(x))})
+        if self.use_dates:
+            x = _convert_date_to_float(x)
+        new_cumulative = SortedDict({float('-inf'):self._sample_without_dates(float('-inf'))})
+        new_cumulative.update({point:self._sample_without_dates(point) for point in x})
         return _from_cumulative(new_cumulative, self.use_dates)    
         
 
