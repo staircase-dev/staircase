@@ -1,3 +1,4 @@
+ipykernel
 sphinx
 nbsphinx
 sortedcontainers
