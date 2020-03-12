@@ -7,3 +7,4 @@ pandas
 numpy
 seaborn
 jupyter_client
+staircase
