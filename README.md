@@ -57,7 +57,7 @@ We can find the maximum concurrent views:
 views.max(0,1440)
 ```
 
-There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://railing.readthedocs.io/en/stable/Stairs.html#arithmetic-operators), [relational operations](https://railing.readthedocs.io/en/stable/Stairs.html#relational-operators), [logical operations](https://railing.readthedocs.io/en/stable/Stairs.html#logical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://railing.readthedocs.io/en/stable/Stairs.html#summary-statistics), [aggregations](https://railing.readthedocs.io/en/stable/multi_stair.html) and compatibility with [pandas.Timestamp](https://railing.readthedocs.io/en/stable/multi_stair.html).
+There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://railing.readthedocs.io/en/stable/Stairs.html#arithmetic-operators), [relational operations](https://railing.readthedocs.io/en/stable/Stairs.html#relational-operators), [logical operations](https://railing.readthedocs.io/en/stable/Stairs.html#logical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://railing.readthedocs.io/en/stable/Stairs.html#summary-statistics), [aggregations](https://railing.readthedocs.io/en/stable/multi_stair.html) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html).
 
 
 ## Installation
