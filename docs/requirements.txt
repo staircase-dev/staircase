@@ -1,7 +1,10 @@
+ipykernel
 sphinx
 nbsphinx
 sortedcontainers
 matplotlib
 pandas
 numpy
-
+seaborn
+jupyter_client
+staircase
