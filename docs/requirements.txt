@@ -6,4 +6,4 @@ pandas
 numpy
 seaborn
 staircase
-
+jupyter_client
