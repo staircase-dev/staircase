@@ -4,4 +4,6 @@ sortedcontainers
 matplotlib
 pandas
 numpy
+seaborn
+staircase
 
