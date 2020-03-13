@@ -1080,12 +1080,13 @@ class Stairs(SortedDict):
         return df
         
     def __str__(self):
-        if len(self) < 11:
-            return super().__repr__()
-        return ''.join(['Stairs({', ', '.join([f'{key}: {val}' for key,val in self.items()[:10]]), '...})'])
-        
+        return f"<staircase.Stairs, id={id(self)}, dates={self.use_dates}>"
+
     def __repr__(self):
         return str(self)
+        # if len(self) < 11:
+            # return ''.join(['Stairs({', ', '.join([f'{key}: {val}' for key,val in self.items()]), '})'])
+        # return ''.join(['Stairs({', ', '.join([f'{key}: {val}' for key,val in self.items()[:10]]), '...})'])
         
     @append_doc(SC_docs.number_of_steps_example)
     def number_of_steps(self):
