@@ -45,7 +45,7 @@ To help clarify the characteristics of a step function we show four plots below 
 More information on step functions, including formal definitions, can be found on `Wikipedia <https://en.wikipedia.org/wiki/Step_function>`_.
    
 
-A Small Example
+A small example
 ===============
    
 The number of users viewing this webpage over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the page, and decreases by 1 every time a user leaves the page.  Let's say we have this data in vector format (i.e. tuple, list, numpy array, pandas series).  Specifically, assume *arrive* and *leave* are vectors of times, expressed as minutes past midnight, for all page views occuring yesterday.  Creating the corresponding step function is simple.  To achieve it we use the :ref:`Stairs <api.Stairs>` class:
