@@ -154,6 +154,10 @@ def sample(collection, points=None, how='right'):
     :class:`pandas.DataFrame`
         A dataframe, in tidy format, with three columns: points, key, value.  The column key contains
         the identifiers used in the dict-like object specified by 'collection'.
+        
+    See Also
+    --------
+    Stairs.sample
     """
     use_dates = _using_dates(collection)
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
@@ -187,10 +191,13 @@ def aggregate(collection, func, points=None):
     points: vector of floats or dates
         Points at which to evaluate.  Defaults to union of all step changes.  Equivalent to applying Stairs.resample().
         
-    Parameters
+    Returns
     ----------
-    collection : tuple, list, numpy array, dict or pandas.Series
-        The Stairs instances to aggregate using a mean function
+    :class:`Stairs`
+    
+    See Also
+    --------
+    staircase.mean, staircase.median, staircase.min, staircase.max
     """
     if isinstance(collection, dict) or isinstance(collection, pd.Series):
         Stairs_dict = collection
@@ -214,6 +221,10 @@ def _mean(collection):
     Returns
     -------
     :class:`Stairs`
+    
+    See Also
+    --------
+    staircase.aggregate, staircase.median, staircase.min, staircase.max
     """
     return aggregate(collection, np.mean)
 
@@ -230,6 +241,10 @@ def _median(collection):
     Returns
     -------
     :class:`Stairs`
+    
+    See Also
+    --------
+    staircase.aggregate, staircase.mean, staircase.min, staircase.max
     """
     return aggregate(collection, np.median)
 
@@ -246,6 +261,10 @@ def _min(collection):
     Returns
     -------
     :class:`Stairs`
+    
+    See Also
+    --------
+    staircase.aggregate, staircase.mean, staircase.median, staircase.max
     """
     return aggregate(collection, np.min)
 
@@ -262,6 +281,10 @@ def _max(collection):
     Returns
     -------
     :class:`Stairs`
+    
+    See Also
+    --------
+    staircase.aggregate, staircase.mean, staircase.median, staircase.min
     """
     return aggregate(collection, np.max)
 
@@ -273,6 +296,10 @@ def resample(container, x, how='right'):
     Returns
     -------
     type(container)
+    
+    See Also
+    --------
+    Stairs.resample
     """
     if isinstance(container, dict):
         return {key:s.resample(x, how) for key,s in container}
@@ -356,6 +383,10 @@ class Stairs(SortedDict):
         Returns
         -------
         float, or list of floats
+        
+        See Also
+        --------
+        staircase.sample
         """
         assert how in ("right", "left")
         if self.use_dates:
@@ -389,6 +420,9 @@ class Stairs(SortedDict):
     @append_doc(SC_docs.resample_example)
     def resample(self, x, how='right'):
         """
+        See Also
+        --------
+        staircase.sample
         """
         if self.use_dates:
             x = _convert_date_to_float(x)
@@ -482,6 +516,10 @@ class Stairs(SortedDict):
         Returns
         -------
         dictionary
+        
+        See Also
+        --------
+        Stairs.number_of_steps
         """
         return dict(self.items()[1:])
 
@@ -496,6 +534,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing the multiplication of the step function by -1
+            
+        See Also
+        --------
+        Stairs.subtract
         """    
         
         new_instance = self.copy()
@@ -515,6 +557,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing the addition of two step functions
+            
+        See Also
+        --------
+        Stairs.subtract
         """
         if not isinstance(other, Stairs):
             other = Stairs(other)
@@ -538,6 +584,9 @@ class Stairs(SortedDict):
         :class:`Stairs`
             A new instance representing the subtraction of one step function from another
         
+        See Also
+        --------
+        Stairs.add
         """
         if not isinstance(other, Stairs):
             other = Stairs(other)
@@ -570,6 +619,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing the division of one step function by another
+            
+        See Also
+        --------
+        Stairs.multiply
         """
         if not bool(other.make_boolean()):
             raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
@@ -587,6 +640,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing the multiplication of one step function from another
+        
+        See Also
+        --------
+        Stairs.divide
         """
         return self._mul_or_div(other, np.multiply)
         
@@ -604,6 +661,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* is non-zero
+        
+        See Also
+        --------
+        Stairs.invert
         """
         new_instance = self != Stairs(0)
         return new_instance
@@ -614,10 +675,15 @@ class Stairs(SortedDict):
         Returns a boolean-valued step function indicating where *self* is zero-valued.
         
         Equivalent to ~*self*
+        
         Returns
         -------
         :class:`Stairs`
             A new instance representing where *self* is zero-valued
+        
+        See Also
+        --------
+        Stairs.make_boolean
         """
         new_instance = self.make_boolean()
         new_instance = Stairs(1) - new_instance
@@ -634,6 +700,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* & *other*
+            
+        See Also
+        --------
+        Stairs.logical_or
         """
         assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
@@ -651,6 +721,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* | *other*
+        
+        See Also
+        --------
+        Stairs.logical_and
         """
         assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
@@ -668,6 +742,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* < *other*
+            
+        See Also
+        --------
+        Stairs.gt, Stairs.le, Stairs.ge
         """
         if not isinstance(other, Stairs):
             other = Stairs(other)
@@ -685,6 +763,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* > *other*
+            
+        See Also
+        --------
+        Stairs.lt, Stairs.le, Stairs.ge
         """
         if not isinstance(other, Stairs):
             other = Stairs(other)
@@ -702,6 +784,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* <= *other*
+            
+        See Also
+        --------
+        Stairs.lt, Stairs.gt, Stairs.ge
         """
         if not isinstance(other, Stairs):
             other = Stairs(other)
@@ -719,6 +805,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* >= *other*
+            
+        See Also
+        --------
+        Stairs.lt, Stairs.gt, Stairs.le
         """
         if not isinstance(other, Stairs):
             other = Stairs(other)
@@ -736,6 +826,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* == *other*
+            
+        See Also
+        --------
+        Stairs.ne, Stairs.identical
         """
         if not isinstance(other, Stairs):
             other = Stairs(other)
@@ -753,6 +847,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             A new instance representing where *self* != *other*
+            
+        See Also
+        --------
+        Stairs.eq, Stairs.identical
         """
         if not isinstance(other, Stairs):
             other = Stairs(other)
@@ -767,6 +865,10 @@ class Stairs(SortedDict):
         Returns
         -------
         boolean
+        
+        See Also
+        --------
+        Stairs.eq, Stairs.ne
         """
         return bool(self == other)
     
@@ -800,6 +902,10 @@ class Stairs(SortedDict):
         -------
         tuple
             The area and mean are returned as a pair
+            
+        See Also
+        --------
+        Stairs.integrate, Stairs.mean
         """
         if self.use_dates:
             if isinstance(lower, pd.Timestamp):
@@ -834,6 +940,10 @@ class Stairs(SortedDict):
         -------
         float
             The area
+            
+        See Also
+        --------
+        Stairs.get_integral_and_mean
         """
         area, mean = self.get_integral_and_mean(lower, upper)
         return area
@@ -854,6 +964,10 @@ class Stairs(SortedDict):
         -------
         float
             The mean
+        
+        See Also
+        --------
+        Stairs.get_integral_and_mean, Stairs.median, Stairs.mode
         """
         area, mean = self.get_integral_and_mean(lower, upper)
         return mean
@@ -874,6 +988,10 @@ class Stairs(SortedDict):
         -------
         float
             The median
+            
+        See Also
+        --------
+        Stairs.mean, Stairs.mode, Stairs.percentile, Stairs.percentile_Stairs
         """
         return self.percentile(50, lower, upper)
     
@@ -893,6 +1011,10 @@ class Stairs(SortedDict):
         -------
         float
             The x-th percentile
+            
+        See Also
+        --------
+        Stairs.median, Stairs.percentile_Stairs
         """
         assert 0 <= x <= 100
         percentiles = self.percentile_Stairs(lower, upper)
@@ -917,6 +1039,10 @@ class Stairs(SortedDict):
         -------
         :class:`Stairs`
             An instance representing a percentile function
+            
+        See Also
+        --------
+        Stairs.percentile
         """
         temp_df = (self.clip(lower,upper)
              .to_dataframe()
@@ -958,6 +1084,10 @@ class Stairs(SortedDict):
         -------
         float
             The mode
+            
+        See Also
+        --------
+        Stairs.mean, Stairs.median
         """
         df = (self.clip(lower,upper)
                 .to_dataframe().iloc[1:-1]
@@ -992,6 +1122,10 @@ class Stairs(SortedDict):
         -------
         float
             The minimum value of the step function
+            
+        See Also
+        --------
+        Stairs.max, staircase.min
         """
         return np.min(self._values_in_range(lower, upper))
 
@@ -1014,6 +1148,10 @@ class Stairs(SortedDict):
         -------
         float
             The maximum value of the step function
+            
+        See Also
+        --------
+        Stairs.min, staircase.max
         """
         return np.max(self._values_in_range(lower, upper))
      
@@ -1095,6 +1233,10 @@ class Stairs(SortedDict):
         Returns
         -------
         int
+        
+        See Also
+        --------
+        Stairs.step_changes
         """
         return len(self.keys())-1
     
