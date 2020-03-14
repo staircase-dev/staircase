@@ -957,7 +957,7 @@ class Stairs():
             lower = _convert_date_to_float(lower)
         if isinstance(upper, pd.Timestamp):
             upper = _convert_date_to_float(upper)
-        return self._get_integral_and_mean(lower, float)
+        return self._get_integral_and_mean(lower, upper)
                 
     @append_doc(SC_docs.integrate_example)    
     def integrate(self, lower=float('-inf'), upper=float('inf')):
@@ -1244,7 +1244,7 @@ class Stairs():
             ends = _convert_float_to_date(np.array(ends)) + [pd.NaT]
         else:
             ends.append(float('inf'))
-        values = self._cumulative.values()
+        values = self._cumulative().values()
         df = pd.DataFrame({"start":starts, "end":ends, "value":values})
         return df
             
