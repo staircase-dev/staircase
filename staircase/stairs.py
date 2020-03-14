@@ -7,7 +7,7 @@ import functools
 import warnings
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
-from .docstrings.decorator import append_doc
+from .docstrings.decorator import add_doc, append_doc
 from .docstrings import stairs_class as SC_docs
 from .docstrings import stairs_module as SM_docs
 warnings.simplefilter('default')
@@ -31,8 +31,6 @@ def _convert_float_to_date(val):
 
 def _from_cumulative(cumulative, use_dates=False):
     return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates)
-
-
 
 def _min_pair(stairs1, stairs2):
     """Calculates the minimum of two Stairs objects.  It can be thought of as calculating the minimum of two step functions.
@@ -163,7 +161,7 @@ def sample(collection, points=None, how='right'):
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
         points = _get_common_points(collection)
-    result = (pd.DataFrame({"points":points, **{key:stairs(points) for key,stairs in collection.items()}})
+    result = (pd.DataFrame({"points":points, **{key:stairs.sample(points) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
     
@@ -323,6 +321,15 @@ class Stairs():
         self.use_dates = use_dates
         self.cached_cumulative = None
         
+        #bypass date mapping
+        if not use_dates:
+            self.sample = self._sample
+            self.resample = self._resample
+            self.layer = self._layer
+            self.get_integral_and_mean = self._get_integral_and_mean
+            self.clip = self._clip
+            
+        
         self._get = self._sorted_dict.get
         self._items = self._sorted_dict.items
         self._keys = self._sorted_dict.keys
@@ -387,7 +394,7 @@ class Stairs():
         return ax
 
     @append_doc(SC_docs.sample_example)
-    def sample(self, x, how='right'):
+    def _sample(self, x, how='right'):
         """Evaluates the value of the step function at one, or more, points.
 
         The function should be called using parentheses.  See example below.
@@ -410,18 +417,6 @@ class Stairs():
         staircase.sample
         """
         assert how in ("right", "left")
-        if self.use_dates:
-            x = _convert_date_to_float(x)
-        return self._sample_without_dates(x,how)
-        
-    def evaluate(self, x, how='right'):
-        warnings.warn(
-            "Stairs.evaluate will be deprecated in version 1.0.0, use Stairs.sample instead",
-             PendingDeprecationWarning
-        )
-        return self.sample(x, how)
-    
-    def _sample_without_dates(self, x, how='right'):
         if hasattr(x, "__iter__"):
             new_instance = self.copy()._layer_multiple(x, None, [0]*len(x))
             cumulative = new_instance._cumulative()
@@ -437,24 +432,39 @@ class Stairs():
             else:
                 preceding_boundary_index = cumulative.bisect_left(x) - 1
             return cumulative.values()[preceding_boundary_index]    
+
+            
+    @add_doc(_sample.__doc__)
+    def sample(self, x, how='right'):
+        x = _convert_date_to_float(x)
+        return self._sample(x,how)
+        
+    def evaluate(self, x, how='right'):
+        warnings.warn(
+            "Stairs.evaluate will be deprecated in version 1.0.0, use Stairs.sample instead",
+             PendingDeprecationWarning
+        )
+        return self.sample(x, how)
     
     @append_doc(SC_docs.resample_example)
-    def resample(self, x, how='right'):
+    def _resample(self, x, how='right'):
         """
         See Also
         --------
         staircase.sample
         """
-        if self.use_dates:
-            x = _convert_date_to_float(x)
-        new_cumulative = SortedDict({float('-inf'):self._sample_without_dates(float('-inf'))})
-        new_cumulative.update({point:self._sample_without_dates(point) for point in x})
+        new_cumulative = SortedDict({float('-inf'):self._sample(float('-inf'))})
+        new_cumulative.update({point:self._sample(point) for point in x})
         return _from_cumulative(new_cumulative, self.use_dates)    
-        
+
+    @add_doc(_resample.__doc__)
+    def resample(self, x, how='right'):
+        x = _convert_date_to_float(x)
+        return self._resample(x, how)
 
     
     @append_doc(SC_docs.layer_example)        
-    def layer(self, start, end=None, value=None):
+    def _layer(self, start, end=None, value=None):
         """
         Changes the value of the step function.
         
@@ -475,30 +485,30 @@ class Stairs():
         
         """
         if hasattr(start, "__iter__"):
-            if self.use_dates:
-                start = _convert_date_to_float(start)
-                if end is not None:
-                    end = _convert_date_to_float(end)
             layer_func = self._layer_multiple
         else:
             layer_func = self._layer_single
-            if value is None:
-                value = 1
         return layer_func(start, end, value)
+
+    @add_doc(_layer.__doc__)        
+    def layer(self, start, end=None, value=None):
+        start = _convert_date_to_float(start)
+        if end is not None:
+            end = _convert_date_to_float(end)
+        return self._layer(start, end, value)
+
         
-    def _layer_single(self, start, end=None, value=1):
+    def _layer_single(self, start, end=None, value=None):
         """
         Implementation of the layer function for when start parameter is single-valued
         """
-        if self.use_dates:
-            start = _convert_date_to_float(start)
+        if value is None:
+            value = 1
         self[start] = self._get(start,0) + value
         if self[start] == 0:
             self._pop(start)
         
         if end != None:
-            if self.use_dates:
-                end = _convert_date_to_float(end)
             self[end] = self._get(end,0) - value
             if self[end] == 0 or end == float('inf'):
                 self._pop(end)
@@ -906,8 +916,9 @@ class Stairs():
         value = self._values()[0]
         return value == 1
     
+    
     @append_doc(SC_docs.integral_and_mean_example)
-    def get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
+    def _get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
         """
         Calculates the integral, and the mean of the step function.
         
@@ -928,11 +939,6 @@ class Stairs():
         --------
         Stairs.integrate, Stairs.mean
         """
-        if self.use_dates:
-            if isinstance(lower, pd.Timestamp):
-                lower = _convert_date_to_float(lower)
-            if isinstance(upper, pd.Timestamp):
-                upper = _convert_date_to_float(upper) 
         new_instance = self.clip(lower, upper)
         if lower != float('-inf'):
             new_instance[lower] = new_instance._get(lower,0)
@@ -944,7 +950,15 @@ class Stairs():
         area = np.multiply(widths, heights).sum()
         mean = area/(cumulative.keys()[-1] - cumulative.keys()[1])
         return area, mean
-    
+
+    @add_doc(_get_integral_and_mean.__doc__)
+    def get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
+        if isinstance(lower, pd.Timestamp):
+            lower = _convert_date_to_float(lower)
+        if isinstance(upper, pd.Timestamp):
+            upper = _convert_date_to_float(upper)
+        return self._get_integral_and_mean(lower, float)
+                
     @append_doc(SC_docs.integrate_example)    
     def integrate(self, lower=float('-inf'), upper=float('inf')):
         """
@@ -1116,7 +1130,7 @@ class Stairs():
             points.append(lower)
         if upper < float('inf'):
             points.append(upper)
-        return self._sample_without_dates(points)
+        return self._sample(points)
     
     @append_doc(SC_docs.min_example)
     def min(self, lower=float('-inf'), upper=float('inf')):
@@ -1171,7 +1185,7 @@ class Stairs():
         return np.max(self._values_in_range(lower, upper))
      
     @append_doc(SC_docs.clip_example)        
-    def clip(self, lower=float('-inf'), upper=float('inf')):
+    def _clip(self, lower=float('-inf'), upper=float('inf')):
         """
         Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
         
@@ -1187,12 +1201,7 @@ class Stairs():
         :class:`Stairs`
             Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
         """
-        assert lower is not None or upper is not None, "clip function should not be called with no parameters."
-        if self.use_dates:
-            if isinstance(lower, pd.Timestamp):
-                lower = _convert_date_to_float(lower)
-            if isinstance(upper, pd.Timestamp):
-                upper = _convert_date_to_float(upper) 
+        assert lower is not None or upper is not None, "clip function should not be called with no parameters." 
         cumulative = self._cumulative()
         left_boundary_index = cumulative.bisect_right(lower) - 1
         right_boundary_index = cumulative.bisect_right(upper) - 1
@@ -1208,7 +1217,15 @@ class Stairs():
         if upper != float('inf'):
             s[upper] = s.get(upper,0)-value_at_right 
         return Stairs(s, use_dates=self.use_dates)
-              
+
+    @add_doc(_clip.__doc__)        
+    def clip(self, lower=float('-inf'), upper=float('inf')):
+        if isinstance(lower, pd.Timestamp):
+            lower = _convert_date_to_float(lower)
+        if isinstance(upper, pd.Timestamp):
+            upper = _convert_date_to_float(upper)
+        return self._clip(lower, upper)
+            
     def to_dataframe(self):
         """
         Returns a pandas.DataFrame with columns 'start', 'end' and 'value'
@@ -1220,27 +1237,17 @@ class Stairs():
         -------
         :class:`pandas.DataFrame`        
         """
-        cumulative = self._cumulative()
-        starts = cumulative.keys()
-        ends = cumulative.keys()[1:]
+        starts = self._keys()
+        ends = self._keys()[1:]
         if self.use_dates:
             starts = [pd.NaT] + _convert_float_to_date(np.array(starts[1:]))
             ends = _convert_float_to_date(np.array(ends)) + [pd.NaT]
         else:
             ends.append(float('inf'))
-        values = cumulative.values()
+        values = self._cumulative.values()
         df = pd.DataFrame({"start":starts, "end":ends, "value":values})
         return df
-        
-    def __str__(self):
-        return f"<staircase.Stairs, id={id(self)}, dates={self.use_dates}>"
-
-    def __repr__(self):
-        return str(self)
-        # if len(self) < 11:
-            # return ''.join(['Stairs({', ', '.join([f'{key}: {val}' for key,val in self.items()]), '})'])
-        # return ''.join(['Stairs({', ', '.join([f'{key}: {val}' for key,val in self.items()[:10]]), '...})'])
-        
+            
     @append_doc(SC_docs.number_of_steps_example)
     def number_of_steps(self):
         """Calculates the number of step changes
@@ -1254,6 +1261,16 @@ class Stairs():
         Stairs.step_changes
         """
         return len(self._keys())-1
+        
+    def __str__(self):
+        return f"<staircase.Stairs, id={id(self)}, dates={self.use_dates}>"
+
+    def __repr__(self):
+        return str(self)
+    
+        
+    def __call__(self, *args, **kwargs):
+        return self.sample(*args, **kwargs)
     
     __neg__ = negate
     __mul__ = multiply
@@ -1269,4 +1286,3 @@ class Stairs():
     __gt__ = gt
     __le__ = le
     __ge__ = ge
-    __call__ = sample
