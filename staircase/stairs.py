@@ -53,7 +53,7 @@ def _min_pair(stairs1, stairs2):
             cumulative[key] = 0
     deltas = [cumulative.values()[0]]
     deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1])) 
-    new_instance = Stairs(dict(zip(new_instance.keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
+    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
     return new_instance + stairs2
     
 def _max_pair(stairs1, stairs2):
@@ -75,7 +75,7 @@ def _max_pair(stairs1, stairs2):
             cumulative[key] = 0
     deltas = [cumulative.values()[0]]
     deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))   
-    new_instance = Stairs(dict(zip(new_instance.keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
+    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
     return new_instance + stairs2
 
 def _compare(cumulative, zero_comparator, use_dates=False):
@@ -104,8 +104,8 @@ def _get_common_points(collection):
         try:
             stairs_instances = func()
             points = []
-            for stairs in stairs_instances:
-                points += list(stairs.keys())
+            for stair_instance in stairs_instances:
+                points += list(stair_instance._keys())
             return SortedSet(points)
         except:
             pass
@@ -310,19 +310,40 @@ def resample(container, x, how='right'):
     return type(container)([s.resample(x, how) for s in container])
     
     
-class Stairs(SortedDict):
+class Stairs():
     '''Intervals are considered left-closed, right-open. '''
     
     def __init__(self, value=0, use_dates=False):
+        self._sorted_dict = SortedDict()
         if isinstance(value, dict):
-            super().__init__(value)
+            self._sorted_dict = SortedDict(value)
         else:
-            super().__init__()
-            self[float('-inf')] = value
+            self._sorted_dict = SortedDict()
+            self._sorted_dict[float('-inf')] = value
         self.use_dates = use_dates
         self.cached_cumulative = None
-
-
+        
+        self._get = self._sorted_dict.get
+        self._items = self._sorted_dict.items
+        self._keys = self._sorted_dict.keys
+        self._values = self._sorted_dict.values
+        self._pop = self._sorted_dict.pop
+        self._len = self._sorted_dict.__len__
+    
+    # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING 
+       
+    def __getitem__(self,*args, **kwargs):
+        return self._sorted_dict.__getitem__(*args, **kwargs)
+        
+    def __setitem__(self, key, value):
+        self._sorted_dict.__setitem__(key, value)
+        
+    def _popitem(self, index=-1):
+        #SortedDict.popitem cannot be used, as definitions of __bool__ are different between SortedDict and Stairs
+        key = self._sorted_dict._list_pop(index)
+        value = self._sorted_dict._dict_pop(key)
+        return (key, value)
+    
     def copy(self):
         """
         Returns a deep copy of this Stairs instance
@@ -332,7 +353,7 @@ class Stairs(SortedDict):
         copy : Stairs
         """
         new_instance = Stairs(use_dates=self.use_dates)
-        for key,value in self.items():
+        for key,value in self._items():
             new_instance[key] = value
         return new_instance
 
@@ -471,16 +492,16 @@ class Stairs(SortedDict):
         """
         if self.use_dates:
             start = _convert_date_to_float(start)
-        self[start] = self.get(start,0) + value
+        self[start] = self._get(start,0) + value
         if self[start] == 0:
-            self.pop(start)
+            self._pop(start)
         
         if end != None:
             if self.use_dates:
                 end = _convert_date_to_float(end)
-            self[end] = self.get(end,0) - value
+            self[end] = self._get(end,0) - value
             if self[end] == 0 or end == float('inf'):
-                self.pop(end)
+                self._pop(end)
                 
         self.cached_cumulative = None
         return self
@@ -502,9 +523,9 @@ class Stairs(SortedDict):
             values = [1]*len(starts)
         for start, end, value in zip(starts, ends, values):
             if not np.isnan(start):
-                self[start] = self.get(start,0) + value
+                self[start] = self._get(start,0) + value
             if not np.isnan(end):
-                self[end] = self.get(end,0) - value
+                self[end] = self._get(end,0) - value
         self.cached_cumulative = None
         return self
 
@@ -521,7 +542,7 @@ class Stairs(SortedDict):
         --------
         Stairs.number_of_steps
         """
-        return dict(self.items()[1:])
+        return dict(self._items()[1:])
 
     @append_doc(SC_docs.negate_example)        
     def negate(self):
@@ -541,7 +562,7 @@ class Stairs(SortedDict):
         """    
         
         new_instance = self.copy()
-        for key,delta in new_instance.items():
+        for key,delta in new_instance._items():
             new_instance[key] = -delta
         new_instance.cached_cumulative = None
         return new_instance
@@ -565,8 +586,8 @@ class Stairs(SortedDict):
         if not isinstance(other, Stairs):
             other = Stairs(other)
         new_instance = self.copy()
-        for key, value in other.items():
-            new_instance[key] = self.get(key,0) + value
+        for key, value in other._items():
+            new_instance[key] = self._get(key,0) + value
         new_instance._reduce()
         new_instance.use_dates = self.use_dates or other.use_dates
         new_instance.cached_cumulative = None
@@ -596,13 +617,13 @@ class Stairs(SortedDict):
     def _mul_or_div(self, other, func):
         a = self.copy()
         b = other.copy()
-        a_keys = a.keys()
-        b_keys = b.keys()
+        a_keys = a._keys()
+        b_keys = b._keys()
         a._layer_multiple(b_keys, None, [0]*len(b_keys))
         b._layer_multiple(a_keys, None, [0]*len(a_keys))
         
         multiplied_cumulative_values = func(a._cumulative().values(), b._cumulative().values())
-        new_instance = _from_cumulative(dict(zip(a.keys(), multiplied_cumulative_values)), use_dates=self.use_dates)
+        new_instance = _from_cumulative(dict(zip(a._keys(), multiplied_cumulative_values)), use_dates=self.use_dates)
         new_instance._reduce()   
         return new_instance
         
@@ -649,7 +670,7 @@ class Stairs(SortedDict):
         
     def _cumulative(self):
         if self.cached_cumulative == None:
-            self.cached_cumulative = SortedDict(zip(self.keys(), np.cumsum(self.values())))
+            self.cached_cumulative = SortedDict(zip(self._keys(), np.cumsum(self._values())))
         return self.cached_cumulative
     
     @append_doc(SC_docs.make_boolean_example)
@@ -873,16 +894,16 @@ class Stairs(SortedDict):
         return bool(self == other)
     
     def _reduce(self):
-        to_remove = [key for key,val in self.items()[1:] if val == 0]
+        to_remove = [key for key,val in self._items()[1:] if val == 0]
         for key in to_remove:
-            self.pop(key)
+            self._pop(key)
         return self
         
     def __bool__(self):
         self._reduce()
-        if len(self) != 1:
+        if self._len() != 1:
             return False
-        value = self.values()[0]
+        value = self._values()[0]
         return value == 1
     
     @append_doc(SC_docs.integral_and_mean_example)
@@ -914,9 +935,9 @@ class Stairs(SortedDict):
                 upper = _convert_date_to_float(upper) 
         new_instance = self.clip(lower, upper)
         if lower != float('-inf'):
-            new_instance[lower] = new_instance.get(lower,0)
+            new_instance[lower] = new_instance._get(lower,0)
         if upper != float('inf'):
-            new_instance[upper] = new_instance.get(upper,0)
+            new_instance[upper] = new_instance._get(upper,0)
         cumulative = new_instance._cumulative()
         widths = np.subtract(cumulative.keys()[2:], cumulative.keys()[1:-1])
         heights = cumulative.values()[1:-1]
@@ -1056,15 +1077,9 @@ class Stairs(SortedDict):
         percentile_step_func = Stairs()
         for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
             percentile_step_func.layer(start*100,end*100,value)
-        percentile_step_func.popitem()
+        percentile_step_func._popitem()
         percentile_step_func[100]=0
         return percentile_step_func
-    
-    def popitem(self, index=-1):
-        """Needed to override SortedDict method, as definitions of __bool__ were different"""
-        key = self._list_pop(index)
-        value = self._dict_pop(key)
-        return (key, value)
     
     @append_doc(SC_docs.mode_example)    
     def mode(self, lower=float('-inf'), upper=float('inf')):
@@ -1096,7 +1111,7 @@ class Stairs(SortedDict):
         return df.value.iloc[df.duration.argmax()]
 
     def _values_in_range(self, lower, upper):
-        points = [key for key in self.keys() if lower < key < upper]
+        points = [key for key in self._keys() if lower < key < upper]
         if lower > float('-inf'):
             points.append(lower)
         if upper < float('inf'):
@@ -1183,7 +1198,7 @@ class Stairs(SortedDict):
         right_boundary_index = cumulative.bisect_right(upper) - 1
         value_at_left = cumulative.values()[left_boundary_index]
         value_at_right = cumulative.values()[right_boundary_index]
-        s = dict(self.items()[left_boundary_index+1:right_boundary_index+1])
+        s = dict(self._items()[left_boundary_index+1:right_boundary_index+1])
         s[float('-inf')] = 0
         if lower != float('-inf'):
             s[float('-inf')] = 0
@@ -1238,7 +1253,7 @@ class Stairs(SortedDict):
         --------
         Stairs.step_changes
         """
-        return len(self.keys())-1
+        return len(self._keys())-1
     
     __neg__ = negate
     __mul__ = multiply
