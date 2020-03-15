@@ -27,7 +27,16 @@ div.body h1 {
 div.body h2 {
     background-color: #C7E3E2;
 	font-size: 100%;
-	padding: 2px 0 2px 5px;
+	padding: 2px 2px 2px 5px;
+}
+
+div.admonition {
+	padding: 2px 2px 2px 5px;        
+}
+
+div.seealso {
+    background-color: #eafaff;
+    border: 1px solid #eafaff;
 }
 
 dt:target, span.highlighted {
