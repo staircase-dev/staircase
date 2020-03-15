@@ -6,5 +6,5 @@ Examples
 
 .. toctree::
 
-   examples/StaircaseBasics
+   examples/Staircase Basics
    examples/Case Study Hotel Stays

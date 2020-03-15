@@ -1,9 +1,14 @@
+"""Staircase
+==============
+:doc:`Staircase<index>` is a MIT licensed library, written in pure-Python, for
+modelling step functions. See :doc:`Getting Started<getting_started>` for more information.
+"""
+
 #uses https://pypi.org/project/sortedcontainers/
 from sortedcontainers import SortedDict, SortedSet
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import functools
 import warnings
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
@@ -309,9 +314,29 @@ def resample(container, x, how='right'):
     
     
 class Stairs():
-    '''Intervals are considered left-closed, right-open. '''
+    """An instance of a Stairs class is used to represent a :ref:`step function <getting_started.step_function>`.
+    
+    The Stairs class encapsulates a `SortedDict <http://www.grantjenks.com/docs/sortedcontainers/sorteddict.html>`_
+    which is used to hold the points at which the step function changes, and by how much.
+    
+    See the :ref:`Stairs API <api.Stairs>` for details of methods.
+    """
     
     def __init__(self, value=0, use_dates=False):
+        """
+        Initialise a Stairs instance. 
+        
+        Parameters
+        ----------
+        value : float, default 0
+            The value of the step function at negative infinity.
+        use_dates: bool, default False
+            Allows the step function to be defined with `Pandas.Timestamp <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html>`_.
+        
+        Returns
+        -------
+        :class:`Stairs`
+        """
         self._sorted_dict = SortedDict()
         if isinstance(value, dict):
             self._sorted_dict = SortedDict(value)
@@ -440,6 +465,7 @@ class Stairs():
         return self._sample(x,how)
         
     def evaluate(self, x, how='right'):
+        """Deprecated.  Use Stairs.sample"""
         warnings.warn(
             "Stairs.evaluate will be deprecated in version 1.0.0, use Stairs.sample instead",
              PendingDeprecationWarning
@@ -448,10 +474,26 @@ class Stairs():
     
     @append_doc(SC_docs.resample_example)
     def _resample(self, x, how='right'):
-        """
+        """Evaluates the value of the step function at one, or more, points and
+        creates a new Stairs instance whose step changes occur at a subset of these
+        points.  The new instance and self have the same values when evaluated at x.
+
+        Parameters
+        ----------
+        x : int, float or vector data
+            values at which to evaluate the function
+        how : {'left', 'right'}, default 'right'
+            if points where step changes occur do not coincide with x then this parameter
+            has no effect.  Where a step changes occurs at a point given by x, this parameter
+            determines if the step function is evaluated at the interval to the left, or the right.
+            
+        Returns
+        -------
+        :class:`Stairs`
+      
         See Also
         --------
-        staircase.sample
+        staircase.resample
         """
         new_cumulative = SortedDict({float('-inf'):self._sample(float('-inf'))})
         new_cumulative.update({point:self._sample(point) for point in x})
