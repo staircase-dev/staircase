@@ -137,7 +137,7 @@ def _using_dates(collection):
         
     
 @append_doc(SM_docs.sample_example)    
-def sample(collection, points=None, how='right'):
+def sample(collection, points=None, how='right', expand_key=True):
     """
     Takes a dict-like collection of Stairs instances and evaluates their values across a common set of points.
     
@@ -151,6 +151,9 @@ def sample(collection, points=None, how='right'):
         if points where step changes occur do not coincide with x then this parameter
         has no effect.  Where a step changes occurs at a point given by x, this parameter
         determines if the step function is evaluated at the interval to the left, or the right.
+    expand_key: boolean, default True
+        used when collection is a multi-index pandas.Series.  Indicates if index should be expanded from
+        tuple to columns in a dataframe.
         
     Returns
     -------
@@ -169,15 +172,14 @@ def sample(collection, points=None, how='right'):
     result = (pd.DataFrame({"points":points, **{key:stairs.sample(points) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
-    
-    try:
-        if len(collection.index.names) > 1:
+    if expand_key and len(collection.index.names) > 1:
+        try:
             result = (result
                 .join(pd.DataFrame(result.key.tolist(), columns=collection.index.names))
                 .drop(columns='key')
             )     
-    except:
-        pass
+        except:
+            pass
     return result
 
 @append_doc(SM_docs.aggregate_example)
@@ -206,7 +208,7 @@ def aggregate(collection, func, points=None):
         Stairs_dict = collection
     else:
         Stairs_dict = dict(enumerate(collection))
-    df = sample(Stairs_dict, points)
+    df = sample(Stairs_dict, points, expand_key=False)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
     step_changes = aggregation.diff().fillna(0)
     return Stairs(dict(step_changes))._reduce()
