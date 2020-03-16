@@ -355,6 +355,7 @@ class Stairs():
             self.layer = self._layer
             self.get_integral_and_mean = self._get_integral_and_mean
             self.clip = self._clip
+            self.values_in_range = self._values_in_range
             
         
         self._get = self._sorted_dict.get
@@ -1168,6 +1169,13 @@ class Stairs():
         )
         return df.value.iloc[df.duration.argmax()]
 
+    def values_in_range(self, lower=float('-inf'), upper=float('inf')):
+        if isinstance(lower, pd.Timestamp):
+            lower = _convert_date_to_float(lower)
+        if isinstance(upper, pd.Timestamp):
+            upper = _convert_date_to_float(upper)
+        return self._values_in_range(lower, upper)
+        
     def _values_in_range(self, lower, upper):
         points = [key for key in self._keys() if lower < key < upper]
         if lower > float('-inf'):
@@ -1200,7 +1208,7 @@ class Stairs():
         --------
         Stairs.max, staircase.min
         """
-        return np.min(self._values_in_range(lower, upper))
+        return np.min(self.values_in_range(lower, upper))
 
     @append_doc(SC_docs.max_example)    
     def max(self, lower=float('-inf'), upper=float('inf')):
@@ -1226,7 +1234,7 @@ class Stairs():
         --------
         Stairs.min, staircase.max
         """
-        return np.max(self._values_in_range(lower, upper))
+        return np.max(self.values_in_range(lower, upper))
      
     @append_doc(SC_docs.clip_example)        
     def _clip(self, lower=float('-inf'), upper=float('inf')):
