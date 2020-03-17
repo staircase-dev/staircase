@@ -169,6 +169,9 @@ def sample(collection, points=None, how='right', expand_key=True):
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
         points = _get_common_points(collection)
+        if use_dates:
+            points.discard(float('-inf'))
+            points = _convert_float_to_date(points)
     result = (pd.DataFrame({"points":points, **{key:stairs.sample(points) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
