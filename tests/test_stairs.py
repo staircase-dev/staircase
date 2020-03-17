@@ -2,10 +2,12 @@ import pytest
 import itertools
 import staircase.stairs as stairs
 
-def _expand_interval_definition(start, end, value=1):
+def _expand_interval_definition(start, end=None, value=1):
     return start, end, value
 
 def _compare_iterables(it1, it2):
+    it1 = [i for i in it1 if i is not None]
+    it2 = [i for i in it2 if i is not None]    
     for e1, e2 in zip(it1, it2):
         if e1 != e2:
             return False
@@ -74,21 +76,22 @@ def test_init4(init_value):
     assert int_seq(0) == init_value, "Initialised stairs.Stairs should have initial value everywhere"
     assert int_seq(1) == init_value, "Initialised stairs.Stairs should have initial value everywhere"
     
-@pytest.mark.parametrize("init_value, added_interval", itertools.product([0, 1.25, -1.25, 2, -2], [(-2,1),(3,5,2),(1,5,-1),(-5,-3,3)])) 
+@pytest.mark.parametrize("init_value, added_interval", itertools.product([0, 1.25, -1.25], [(-2,1),(3,5,2),(1,5,-1),(-5,-3,3), (3,), (2,None,2)])) 
 def test_one_finite_interval(init_value, added_interval):
     e = 0.0001
     int_seq = stairs.Stairs(init_value)
     int_seq.layer(*added_interval)
     start, end, value = _expand_interval_definition(*added_interval)
-    assert int_seq.number_of_steps() == 2, "One finite interval added to initial infinite interval should result in 3 intervals"
+    assert int_seq.number_of_steps() == 2 - (end is None), "One finite interval added to initial infinite interval should result in 3 intervals"
     assert _compare_iterables(int_seq.step_changes(), (start,end)), "Finite endpoints are not what is expected"
     assert int_seq(float('-inf')) == init_value, "Adding finite interval should not change initial value"
-    assert int_seq(float('inf')) == init_value, "Adding finite interval should not change final value"
+    assert int_seq(float('inf')) == init_value+value*(end is None), "Adding finite interval should not change final value"
     assert int_seq(start-e) == init_value
     assert int_seq(start) == init_value + value
-    assert int_seq((start+end)/2) == init_value + value
-    assert int_seq(end-e) == init_value + value
-    assert int_seq(end) == init_value
+    assert int_seq(start+e) == init_value + value
+    if end is not None:
+        assert int_seq(end-e) == init_value + value
+        assert int_seq(end) == init_value
     
 
 @pytest.mark.parametrize("init_value, endpoints, value", itertools.product([0, 1.25, -1.25, 2, -2], [(-2,1,3), (-2,-1,3), (-3,-2,-1), (1,2,3)], [-1,2,3])) 
