@@ -359,6 +359,7 @@ class Stairs():
             self.get_integral_and_mean = self._get_integral_and_mean
             self.clip = self._clip
             self.values_in_range = self._values_in_range
+            self.step_changes = self._step_changes
             
         
         self._get = self._sorted_dict.get
@@ -501,8 +502,10 @@ class Stairs():
         --------
         staircase.resample
         """
+        if not hasattr(x, "__iter__"):
+            x = [x,]
         new_cumulative = SortedDict({float('-inf'):self._sample(float('-inf'))})
-        new_cumulative.update({point:self._sample(point) for point in x})
+        new_cumulative.update({point:self._sample(point, how) for point in x})
         return _from_cumulative(new_cumulative, self.use_dates)    
 
     @add_doc(_resample.__doc__)
@@ -588,7 +591,7 @@ class Stairs():
         return self
 
     @append_doc(SC_docs.step_changes_example)
-    def step_changes(self):
+    def _step_changes(self):
         """
         Returns a dictionary of key, value pairs of indicating where step changes occur in the step function, and the change in value 
         
@@ -601,6 +604,10 @@ class Stairs():
         Stairs.number_of_steps
         """
         return dict(self._items()[1:])
+    
+    @add_doc(_step_changes.__doc__)
+    def step_changes(self):
+        return dict(zip(_convert_float_to_date(self._keys()[1:]), self._values()[1:]))
 
     @append_doc(SC_docs.negate_example)        
     def negate(self):
@@ -958,12 +965,15 @@ class Stairs():
         return self
         
     def __bool__(self):
-        self._reduce()
-        if self._len() != 1:
-            return False
-        value = self._values()[0]
-        return value == 1
+        return float(_min_pair(Stairs(1),(~self)).integrate()) < 0.0000001
+
     
+    # def __bool__(self):
+        # self._reduce()
+        # if self._len() != 1:
+            # return False
+        # value = self._values()[0]
+        # return value == 1
     
     @append_doc(SC_docs.integral_and_mean_example)
     def _get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
@@ -988,6 +998,8 @@ class Stairs():
         Stairs.integrate, Stairs.mean
         """
         new_instance = self.clip(lower, upper)
+        if new_instance.number_of_steps() < 2:
+            return 0, np.nan
         if lower != float('-inf'):
             new_instance[lower] = new_instance._get(lower,0)
         if upper != float('inf'):
