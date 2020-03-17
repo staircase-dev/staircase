@@ -113,4 +113,156 @@ def test_mean_dates_3(IS1):
 
 def test_mean_dates_4(IS1):
     assert IS1.mean(lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == 1.375, "Expected mean to be 1.375"
+
+def test_integrate_dates_1(IS1):
+    assert IS1.integrate() == 312, "Expected integral to be 312"
     
+def test_integrate_dates_2(IS1):
+    assert IS1.integrate(upper=pd.Timestamp(2020,1,6)) == 360, "Expected integral to be 360"
+
+def test_integrate_dates_3(IS1):
+    assert IS1.integrate(lower=pd.Timestamp(2020,1,4)) == 108, "Expected integral to be 108"
+
+def test_integrate_dates_4(IS1):
+    assert IS1.integrate(lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == 132, "Expected integral to be 132"
+
+def test_integral_and_mean_dates_1(IS1):
+    integral, mean = IS1.get_integral_and_mean()
+    assert abs(mean -13/9) <= 0.00001, "Expected mean to be 13/9"
+    assert integral == 312, "Expected integral to be 312"
+    
+def test_integral_and_mean_dates_2(IS1):
+    integral, mean = IS1.get_integral_and_mean(upper=pd.Timestamp(2020,1,6))
+    assert mean == 3, "Expected mean to be 3"
+    assert integral == 360, "Expected integral to be 360"
+    
+def test_integral_and_mean_3(IS1):
+    integral, mean = IS1.get_integral_and_mean(lower=pd.Timestamp(2020,1,4))
+    assert mean == 0.75, "Expected mean to be 0.75"
+    assert integral == 108, "Expected integral to be 108"
+    
+def test_integral_and_mean_dates_4(IS1):
+    integral, mean = IS1.get_integral_and_mean(lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8))
+    assert mean == 1.375, "Expected mean to be 1.375"
+    assert integral == 132, "Expected integral to be 132"
+
+def test_percentile_dates_1(IS1):
+    assert IS1.percentile(20) == -0.5, "Expected 20th percentile to be -0.5"
+    assert IS1.percentile(40) == -0.5, "Expected 40th percentile to be -0.5"
+    assert IS1.percentile(60) == 2, "Expected 60th percentile to be 2"
+    assert IS1.percentile(80) == 4.5, "Expected 80th percentile to be 4.5"
+    
+def test_percentile_dates_2(IS1):
+    assert IS1.percentile(20, upper=pd.Timestamp(2020,1,6)) == 2, "Expected 20th percentile to be 2"
+    assert IS1.percentile(40, upper=pd.Timestamp(2020,1,6)) == 2, "Expected 40th percentile to be 2"
+    assert IS1.percentile(60, upper=pd.Timestamp(2020,1,6)) == 3.25, "Expected 60th percentile to be 3.25"
+    assert IS1.percentile(80, upper=pd.Timestamp(2020,1,6)) == 4.5, "Expected 80th percentile to be 4.5"
+        
+def test_percentile_dates_3(IS1):
+    assert IS1.percentile(20, lower=pd.Timestamp(2020,1,4)) == -0.5, "Expected 20th percentile to be -0.5"
+    assert IS1.percentile(40, lower=pd.Timestamp(2020,1,4)) == -0.5, "Expected 40th percentile to be -0.5"
+    assert IS1.percentile(60, lower=pd.Timestamp(2020,1,4)) == -0.5, "Expected 60th percentile to be -0.5"
+    assert IS1.percentile(80, lower=pd.Timestamp(2020,1,4)) == 2, "Expected 80th percentile to be 2"
+    
+def test_percentile_dates_4(IS1):
+    assert IS1.percentile(20, lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == -0.5, "Expected 20th percentile to be -0.5"
+    assert IS1.percentile(40, lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == -0.5, "Expected 40th percentile to be -0.5"
+    assert IS1.percentile(60, lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == 2, "Expected 60th percentile to be 2"
+    assert IS1.percentile(80, lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == 4.5, "Expected 80th percentile to be 4.5"
+    
+def test_percentile_Stairs_dates_1(IS1):
+    assert IS1.percentile_Stairs() == stairs.Stairs().layer(0,400/9, -0.5).layer(400/9, 700/9, 2).layer(700/9, 100, 4.5)
+
+def test_percentile_Stairs_dates_2(IS1):
+    assert IS1.percentile_Stairs(upper=pd.Timestamp(2020,1,6)) == stairs.Stairs().layer(0,60,2).layer(60, 100, 4.5)
+
+def test_percentile_Stairs_dates_3(IS1):
+    assert IS1.percentile_Stairs(lower=pd.Timestamp(2020,1,4)) == stairs.Stairs().layer(0,400/6,-0.5).layer(400/6, 500/6, 2).layer(500/6, 100, 4.5)
+    
+def test_percentile_Stairs_dates_4(IS1):
+    assert IS1.percentile_Stairs(lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == stairs.Stairs().layer(0,50,-0.5).layer(50, 75, 2).layer(75, 100, 4.5)
+
+def test_plot(IS1):
+    IS1.plot()
+    
+def test_resample_dates_1(IS1):
+    assert IS1.resample(pd.Timestamp(2020,1,4)).step_changes() == {pd.Timestamp(2020,1,4): 4.5}
+    
+def test_resample_dates_2(IS1):
+    assert IS1.resample(pd.Timestamp(2020,1,6), how='right').step_changes() == {pd.Timestamp(2020,1,6): -0.5}
+
+def test_resample_dates_3(IS1):
+    assert IS1.resample(pd.Timestamp(2020,1,6), how='left').step_changes() == {pd.Timestamp(2020,1,6): 2}
+    
+def test_resample_dates_4(IS1):
+    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)]).step_changes() == {pd.Timestamp(2020,1,4): 4.5, pd.Timestamp(2020,1,6): -5.0}
+
+def test_resample_dates_5(IS1):
+    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='right').step_changes() == {pd.Timestamp(2020,1,4): 4.5, pd.Timestamp(2020,1,6): -5.0}
+    
+def test_resample_dates_6(IS1):
+    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='left').step_changes() == {pd.Timestamp(2020,1,4): 4.5, pd.Timestamp(2020,1,6): -2.5}
+
+def test_sample_dates_1(IS1):
+    assert IS1.sample(pd.Timestamp(2020,1,6)) == -0.5
+
+def test_sample_dates_2(IS1):
+    assert IS1.sample(pd.Timestamp(2020,1,6), how='right') == -0.5
+
+def test_sample_dates_3(IS1):
+    assert IS1.sample(pd.Timestamp(2020,1,6), how='left') == 2
+    
+def test_sample_dates_4(IS1):    
+    assert _compare_iterables(IS1.sample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)]), [4.5, -0.5])
+    
+def test_sample_dates_5(IS1):    
+    assert _compare_iterables(IS1.sample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='right'), [4.5, -0.5])
+   
+def test_sample_dates_6(IS1):    
+    assert _compare_iterables(IS1.sample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='left'), [4.5, 2])
+
+def test_step_changes_dates(IS1):
+    assert IS1.step_changes() == {pd.Timestamp('2020-01-01 00:00:00'): 2,
+                             pd.Timestamp('2020-01-03 00:00:00'): 2.5,
+                             pd.Timestamp('2020-01-05 00:00:00'): -2.5,
+                             pd.Timestamp('2020-01-06 00:00:00'): -2.5,
+                             pd.Timestamp('2020-01-10 00:00:00'): 0.5
+                        }
+                        
+def test_dataframe_dates(IS1):
+    ans = pd.DataFrame({
+        "start":[pd.NaT, pd.to_datetime('2020-01-01'), pd.to_datetime('2020-01-03'), pd.to_datetime('2020-01-05'), pd.to_datetime('2020-01-06'), pd.to_datetime('2020-01-10')],
+        "end":[pd.to_datetime('2020-01-01'), pd.to_datetime('2020-01-03'), pd.to_datetime('2020-01-05'), pd.to_datetime('2020-01-06'), pd.to_datetime('2020-01-10'), pd.NaT],
+        "value":[0,2,4.5,2,-0.5,0]
+    })
+    assert IS1.to_dataframe().equals(ans)
+    
+def test_add_dates(IS1, IS2):
+    ans = {
+        pd.Timestamp('2020-01-01 00:00:00'): -0.5,
+        pd.Timestamp('2020-01-02 00:00:00'): 4.5,
+        pd.Timestamp('2020-01-02 12:00:00'): -2.5,
+        pd.Timestamp('2020-01-03 00:00:00'): 2.5,
+        pd.Timestamp('2020-01-04 00:00:00'): 2.5,
+        pd.Timestamp('2020-01-05 00:00:00'): -7.0,
+        pd.Timestamp('2020-01-06 00:00:00'): -2.5,
+        pd.Timestamp('2020-01-07 00:00:00'): 2.5,
+        pd.Timestamp('2020-01-08 00:00:00'): 5,
+        pd.Timestamp('2020-01-10 00:00:00'): -4.5
+    }
+    assert (IS1 + IS2).step_changes() == ans 
+    
+def test_subtract_dates(IS1, IS2):
+    ans = {
+        pd.Timestamp('2020-01-01 00:00:00'): 4.5,
+        pd.Timestamp('2020-01-02 00:00:00'): -4.5,
+        pd.Timestamp('2020-01-02 12:00:00'): 2.5,
+        pd.Timestamp('2020-01-03 00:00:00'): 2.5,
+        pd.Timestamp('2020-01-04 00:00:00'): -2.5,
+        pd.Timestamp('2020-01-05 00:00:00'): 2.0,
+        pd.Timestamp('2020-01-06 00:00:00'): -2.5,
+        pd.Timestamp('2020-01-07 00:00:00'): -2.5,
+        pd.Timestamp('2020-01-08 00:00:00'): -5,
+        pd.Timestamp('2020-01-10 00:00:00'): 5.5
+    }
+    assert (IS1 - IS2).step_changes() == ans 
