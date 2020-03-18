@@ -92,7 +92,7 @@ def _compare(cumulative, zero_comparator, use_dates=False):
     new_instance._reduce()
     return new_instance
 
-def _get_common_points(collection):
+def _get_union_of_points(collection):
     
     def dict_common_points():
         return collection.values()
@@ -168,7 +168,7 @@ def sample(collection, points=None, how='right', expand_key=True):
     use_dates = _using_dates(collection)
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
-        points = _get_common_points(collection)
+        points = _get_union_of_points(collection)
     result = (pd.DataFrame({"points":points, **{key:stairs.sample(points) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
