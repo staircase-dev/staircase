@@ -169,10 +169,10 @@ def sample(collection, points=None, how='right', expand_key=True):
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
         points = _get_union_of_points(collection)
-    result = (pd.DataFrame({"points":points, **{key:stairs.sample(points) for key,stairs in collection.items()}})
+    result = (pd.DataFrame({"points":points, **{key:s.sample(points, how=how) for key,s in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
-    if expand_key and len(collection.index.names) > 1:
+    if isinstance(collection, pd.Series) and expand_key and len(collection.index.names) > 1:
         try:
             result = (result
                 .join(pd.DataFrame(result.key.tolist(), columns=collection.index.names))
@@ -458,7 +458,12 @@ class Stairs():
                 return [val for key,val in cumulative.items() if key in x]
             else:
                 shifted_cumulative = SortedDict(zip(cumulative.keys()[1:], cumulative.values()[:-1]))
-                return [val for key,val in shifted_cumulative.items() if key in x]
+                if float('-inf') in x:
+                    vals = [self[float('-inf')]]
+                else:
+                    vals = []
+                vals.extend([val for key,val in shifted_cumulative.items() if key in x])
+                return vals
         else:
             cumulative = self._cumulative()
             if how == "right":
