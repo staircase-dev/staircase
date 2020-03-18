@@ -171,16 +171,16 @@ def test_percentile_dates_4(IS1):
     assert IS1.percentile(80, lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == 4.5, "Expected 80th percentile to be 4.5"
     
 def test_percentile_Stairs_dates_1(IS1):
-    assert IS1.percentile_Stairs() == stairs.Stairs().layer(0,400/9, -0.5).layer(400/9, 700/9, 2).layer(700/9, 100, 4.5)
+    assert IS1.percentile_Stairs() == stairs.Stairs().layer(0,400/9, -0.5).layer(400/9, 700/9, 2).layer(700/9, None, 4.5)
 
 def test_percentile_Stairs_dates_2(IS1):
-    assert IS1.percentile_Stairs(upper=pd.Timestamp(2020,1,6)) == stairs.Stairs().layer(0,60,2).layer(60, 100, 4.5)
+    assert IS1.percentile_Stairs(upper=pd.Timestamp(2020,1,6)) == stairs.Stairs().layer(0,60,2).layer(60, None, 4.5)
 
 def test_percentile_Stairs_dates_3(IS1):
-    assert IS1.percentile_Stairs(lower=pd.Timestamp(2020,1,4)) == stairs.Stairs().layer(0,400/6,-0.5).layer(400/6, 500/6, 2).layer(500/6, 100, 4.5)
+    assert IS1.percentile_Stairs(lower=pd.Timestamp(2020,1,4)) == stairs.Stairs().layer(0,400/6,-0.5).layer(400/6, 500/6, 2).layer(500/6, None, 4.5)
     
 def test_percentile_Stairs_dates_4(IS1):
-    assert IS1.percentile_Stairs(lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == stairs.Stairs().layer(0,50,-0.5).layer(50, 75, 2).layer(75, 100, 4.5)
+    assert IS1.percentile_Stairs(lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == stairs.Stairs().layer(0,50,-0.5).layer(50, 75, 2).layer(75, None, 4.5)
 
 def test_plot(IS1):
     IS1.plot()

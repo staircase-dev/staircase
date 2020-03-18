@@ -1194,7 +1194,7 @@ class Stairs():
                 .to_dataframe().iloc[1:-1]
                 .assign(duration = lambda df: df.end-df.start)
         )
-        return df.value.iloc[df.duration.argmax()]
+        return df.value.loc[df.duration.idxmax()]
 
     def values_in_range(self, lower=float('-inf'), upper=float('inf')):
         if isinstance(lower, pd.Timestamp):
