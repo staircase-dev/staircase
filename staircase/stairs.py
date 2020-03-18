@@ -169,7 +169,10 @@ def sample(collection, points=None, how='right', expand_key=True):
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
         points = _get_union_of_points(collection)
-    result = (pd.DataFrame({"points":points, **{key:s.sample(points, how=how) for key,s in collection.items()}})
+        if use_dates:
+            points.discard(float('-inf'))
+            points = _convert_float_to_date(points)
+    result = (pd.DataFrame({"points":points, **{key:stairs.sample(points, how=how) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
     if isinstance(collection, pd.Series) and expand_key and len(collection.index.names) > 1:
