@@ -126,7 +126,7 @@ def _using_dates(collection):
         return collection.values[0].use_dates
         
     def array_use_dates():
-        return collection[0]
+        return collection[0].use_dates
     
     for func in (dict_use_dates, series_use_dates, array_use_dates):
         try:
