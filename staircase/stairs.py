@@ -200,6 +200,10 @@ def aggregate(collection, func, points=None):
     ----------
     :class:`Stairs`
     
+    Notes
+    -----
+    The points at which to aggregate will include -infinity whether explicitly included or not.
+    
     See Also
     --------
     staircase.mean, staircase.median, staircase.min, staircase.max
@@ -207,10 +211,11 @@ def aggregate(collection, func, points=None):
     if isinstance(collection, dict) or isinstance(collection, pd.Series):
         Stairs_dict = collection
     else:
-        Stairs_dict = dict(enumerate(collection))
+        Stairs_dict = dict(enumerate(collection))    
     df = sample(Stairs_dict, points, expand_key=False)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
-    step_changes = aggregation.diff().fillna(0)
+    aggregation[float('-inf')] = func([val[float('-inf')] for key,val in Stairs_dict.items()])
+    step_changes = aggregation.sort_index().diff().fillna(0)
     return Stairs(dict(step_changes))._reduce()
 
 @append_doc(SM_docs.mean_example)      
