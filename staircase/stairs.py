@@ -975,7 +975,9 @@ class Stairs():
         return self
         
     def __bool__(self):
-        return float(_min_pair(Stairs(1),(~self)).integrate()) < 0.0000001
+        if self.number_of_steps() >= 2:
+            return float((~self).integrate()) < 0.0000001
+        return dict(self._sorted_dict) == {float('-inf'): 1}
 
     
     # def __bool__(self):
