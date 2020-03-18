@@ -92,7 +92,7 @@ def _compare(cumulative, zero_comparator, use_dates=False):
     new_instance._reduce()
     return new_instance
 
-def _get_common_points(collection):
+def _get_union_of_points(collection):
     
     def dict_common_points():
         return collection.values()
@@ -126,7 +126,7 @@ def _using_dates(collection):
         return collection.values[0].use_dates
         
     def array_use_dates():
-        return collection[0]
+        return collection[0].use_dates
     
     for func in (dict_use_dates, series_use_dates, array_use_dates):
         try:
@@ -168,14 +168,14 @@ def sample(collection, points=None, how='right', expand_key=True):
     use_dates = _using_dates(collection)
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
-        points = _get_common_points(collection)
+        points = _get_union_of_points(collection)
         if use_dates:
             points.discard(float('-inf'))
             points = _convert_float_to_date(points)
-    result = (pd.DataFrame({"points":points, **{key:stairs.sample(points) for key,stairs in collection.items()}})
+    result = (pd.DataFrame({"points":points, **{key:stairs.sample(points, how=how) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
-    if expand_key and len(collection.index.names) > 1:
+    if isinstance(collection, pd.Series) and expand_key and len(collection.index.names) > 1:
         try:
             result = (result
                 .join(pd.DataFrame(result.key.tolist(), columns=collection.index.names))
@@ -203,6 +203,10 @@ def aggregate(collection, func, points=None):
     ----------
     :class:`Stairs`
     
+    Notes
+    -----
+    The points at which to aggregate will include -infinity whether explicitly included or not.
+    
     See Also
     --------
     staircase.mean, staircase.median, staircase.min, staircase.max
@@ -210,10 +214,11 @@ def aggregate(collection, func, points=None):
     if isinstance(collection, dict) or isinstance(collection, pd.Series):
         Stairs_dict = collection
     else:
-        Stairs_dict = dict(enumerate(collection))
+        Stairs_dict = dict(enumerate(collection))    
     df = sample(Stairs_dict, points, expand_key=False)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
-    step_changes = aggregation.diff().fillna(0)
+    aggregation[float('-inf')] = func([val[float('-inf')] for key,val in Stairs_dict.items()])
+    step_changes = aggregation.sort_index().diff().fillna(0)
     return Stairs(dict(step_changes))._reduce()
 
 @append_doc(SM_docs.mean_example)      
@@ -456,7 +461,12 @@ class Stairs():
                 return [val for key,val in cumulative.items() if key in x]
             else:
                 shifted_cumulative = SortedDict(zip(cumulative.keys()[1:], cumulative.values()[:-1]))
-                return [val for key,val in shifted_cumulative.items() if key in x]
+                if float('-inf') in x:
+                    vals = [self[float('-inf')]]
+                else:
+                    vals = []
+                vals.extend([val for key,val in shifted_cumulative.items() if key in x])
+                return vals
         else:
             cumulative = self._cumulative()
             if how == "right":
