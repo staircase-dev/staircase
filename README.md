@@ -35,7 +35,7 @@ We can visualise the function with the plot function:
 ```python
 views.plot()
 ```
-<p align="left"><img src="docs/img/pageviews.png?raw=true" title="pageviews example" alt="pageviews example"></p>
+<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/pageviews.png?raw=true" title="pageviews example" alt="pageviews example"></p>
 
 We can find the total time the page was viewed:
 ```python
@@ -90,7 +90,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://staircase.mit-license.org/) file for details
 
 ## Acknowledgments
 
