@@ -217,12 +217,15 @@ def aggregate(collection, func, points=None):
     if isinstance(collection, dict) or isinstance(collection, pd.Series):
         Stairs_dict = collection
     else:
-        Stairs_dict = dict(enumerate(collection))    
+        Stairs_dict = dict(enumerate(collection))
+    use_dates = _using_dates(collection)
     df = sample(Stairs_dict, points, expand_key=False)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
-    aggregation[float('-inf')] = func([val[float('-inf')] for key,val in Stairs_dict.items()])
+    if use_dates:
+        aggregation.index = _convert_date_to_float(aggregation.index)
+    aggregation[float('-inf')] = func([val._sample(float('-inf')) for key,val in Stairs_dict.items()])
     step_changes = aggregation.sort_index().diff().fillna(0)
-    return Stairs(dict(step_changes))._reduce()
+    return Stairs(dict(step_changes), use_dates=use_dates)._reduce()
 
 @append_doc(SM_docs.mean_example)      
 def _mean(collection):
