@@ -172,6 +172,9 @@ def sample(collection, points=None, how='right', expand_key=True):
         if use_dates:
             points.discard(float('-inf'))
             points = _convert_float_to_date(points)
+    else:
+        if not hasattr(points, "__iter__"):
+            points = [points]
     result = (pd.DataFrame({"points":points, **{key:stairs.sample(points, how=how) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
