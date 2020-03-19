@@ -172,3 +172,61 @@ def test_sample_4(IS1, IS2):
     key=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     value=[0.0, 0.0, -1.75, -1.75, 0.25, 0.25, 0.25, 2.75, 2.75, 2.0, -0.5, -0.5, -0.5, 0.0, 0.0, 0.0, -1.75, -2.5, 2.0, -0.5, -0.5, 2.0, -2.5, -2.5, 0.0, 5.0]
     assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+def test_sample_5(IS1, IS2):
+    sample = stairs.sample(pd.Series([IS1, IS2]), 3)
+    points = [3, 3]
+    key = [0, 1]
+    value = [2.75, -0.5]
+    assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+def test_sample_6(IS1, IS2):
+    sample = stairs.sample({0:IS1, 1:IS2}, 3)
+    points = [3, 3]
+    key = [0, 1]
+    value = [2.75, -0.5]
+    assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+def test_sample_7(IS1, IS2):
+    sample = stairs.sample(pd.Series([IS1, IS2]), 3, how='left')    
+    points = [3, 3]
+    key = [0, 1]
+    value = [0.25, -0.5]
+    assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+def test_sample_8(IS1, IS2):
+    sample = stairs.sample({0:IS1, 1:IS2}, 3, how='left')    
+    points = [3, 3]
+    key = [0, 1]
+    value = [0.25, -0.5]
+    assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+def test_sample_9(IS1, IS2):
+    sample = stairs.sample(pd.Series([IS1, IS2]), [3, 6, 8])
+    points = [3, 6, 8, 3, 6, 8]
+    key = [0, 0, 0, 1, 1, 1]
+    value = [2.75, -0.5, -0.5, -0.5, -2.5, 5.0]
+    assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+def test_sample_10(IS1, IS2):
+    sample = stairs.sample({0:IS1, 1:IS2}, [3, 6, 8])
+    points = [3, 6, 8, 3, 6, 8]
+    key = [0, 0, 0, 1, 1, 1]
+    value = [2.75, -0.5, -0.5, -0.5, -2.5, 5.0]
+    assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+def test_sample_11(IS1, IS2):
+    sample = stairs.sample(pd.Series([IS1, IS2]), [3, 6, 8], how='left')    
+    points = [3, 6, 8, 3, 6, 8]
+    key = [0, 0, 0, 1, 1, 1]
+    value = [0.25, 2.0, -0.5, -0.5, -2.5, 0.0]
+    assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+def test_sample_12(IS1, IS2):
+    sample = stairs.sample({0:IS1, 1:IS2}, [3, 6, 8], how='left')    
+    points = [3, 6, 8, 3, 6, 8]
+    key = [0, 0, 0, 1, 1, 1]
+    value = [0.25, 2.0, -0.5, -0.5, -2.5, 0.0]
+    assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
+    
+    
