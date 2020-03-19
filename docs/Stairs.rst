@@ -1,11 +1,11 @@
 .. _api.Stairs:
 
 ==============
-Stairs Methods
+Stairs methods
 ==============
 .. currentmodule:: staircase
 
-Constructor & Basic Methods
+Constructor & basic methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
    :toctree: api/
@@ -20,7 +20,7 @@ Constructor & Basic Methods
    
 .. _api.arithmetic_operators:
  
-Arithmetic Operators
+Arithmetic operators
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -34,7 +34,7 @@ Arithmetic Operators
 
 .. _api.relational_operators:
    
-Relational Operators
+Relational operators
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -50,7 +50,7 @@ Relational Operators
    
 .. _api.logical_operators:
 
-Logical Operators
+Logical operators
 ~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -63,7 +63,7 @@ Logical Operators
 
 .. _api.summary_statistics:
 
-Summary Statistics
+Summary statistics
 ~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -80,7 +80,7 @@ Summary Statistics
    Stairs.percentile_Stairs
    
    
-Miscellaneous Functions
+Miscellaneous functions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::

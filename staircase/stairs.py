@@ -172,6 +172,9 @@ def sample(collection, points=None, how='right', expand_key=True):
         if use_dates:
             points.discard(float('-inf'))
             points = _convert_float_to_date(points)
+    else:
+        if not hasattr(points, "__iter__"):
+            points = [points]
     result = (pd.DataFrame({"points":points, **{key:stairs.sample(points, how=how) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
@@ -214,12 +217,15 @@ def aggregate(collection, func, points=None):
     if isinstance(collection, dict) or isinstance(collection, pd.Series):
         Stairs_dict = collection
     else:
-        Stairs_dict = dict(enumerate(collection))    
+        Stairs_dict = dict(enumerate(collection))
+    use_dates = _using_dates(collection)
     df = sample(Stairs_dict, points, expand_key=False)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
-    aggregation[float('-inf')] = func([val[float('-inf')] for key,val in Stairs_dict.items()])
+    if use_dates:
+        aggregation.index = _convert_date_to_float(aggregation.index)
+    aggregation[float('-inf')] = func([val._sample(float('-inf')) for key,val in Stairs_dict.items()])
     step_changes = aggregation.sort_index().diff().fillna(0)
-    return Stairs(dict(step_changes))._reduce()
+    return Stairs(dict(step_changes), use_dates=use_dates)._reduce()
 
 @append_doc(SM_docs.mean_example)      
 def _mean(collection):
@@ -418,14 +424,16 @@ class Stairs():
         -------
         :class:`matplotlib.axes.Axes`
         """
-        register_matplotlib_converters()
         if ax is None:
             fig, ax = plt.subplots()
                 
         cumulative = self._cumulative()
         step_points = cumulative.keys()
         if self.use_dates:
-            ax.step(_convert_float_to_date(np.array(cumulative.keys()[1:])), list(cumulative.values())[1:], where='post', **kwargs)
+            register_matplotlib_converters()
+            x = list(cumulative.keys())
+            x[0] = x[1]-0.00001
+            ax.step(_convert_float_to_date(x), list(cumulative.values()), where='post', **kwargs)
         else:
             ax.step(cumulative.keys(), cumulative.values(), where='post', **kwargs)
         return ax

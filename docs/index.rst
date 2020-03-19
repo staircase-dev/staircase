@@ -1,11 +1,11 @@
 .. image:: img/staircasewide.png
-   :width: 400px
+   :width: 80%
    :alt: staircase logo
    :align: center
 
 .. rst-class:: center
 
-**Date**: |today| **Version**: |version|
+**Date**: |today| **Version**: |version| |
 
 .. rst-class:: center
 
