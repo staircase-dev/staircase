@@ -424,14 +424,16 @@ class Stairs():
         -------
         :class:`matplotlib.axes.Axes`
         """
-        register_matplotlib_converters()
         if ax is None:
             fig, ax = plt.subplots()
                 
         cumulative = self._cumulative()
         step_points = cumulative.keys()
         if self.use_dates:
-            ax.step(_convert_float_to_date(np.array(cumulative.keys()[1:])), list(cumulative.values())[1:], where='post', **kwargs)
+            register_matplotlib_converters()
+            x = list(cumulative.keys())
+            x[0] = x[1]-0.00001
+            ax.step(_convert_float_to_date(x), list(cumulative.values()), where='post', **kwargs)
         else:
             ax.step(cumulative.keys(), cumulative.values(), where='post', **kwargs)
         return ax
