@@ -31,7 +31,7 @@ def test_max_pair(IS1, IS2):
     assert stairs._max_pair(IS1,IS2).step_changes() == {-2: -1.75, 1: 2.0, 2: 1.75, 2.5: -1.75, 3: 2.5, 5: -0.75, 6: -2.5, 7: 0.5, 8: 5.0, 10: -5.0}
     
 def test_get_union_of_points_1(IS1, IS2):
-    stairs._get_union_of_points({1:IS2, 2:IS2}) == SortedSet([float('-inf'), -4, -2, 1, 2, 2.5, 3, 4, 5, 6, 7, 8, 10])
+    stairs._get_union_of_points({1:IS1, 2:IS2}) == SortedSet([float('-inf'), -4, -2, 1, 2, 2.5, 3, 4, 5, 6, 7, 8, 10])
     
 def test_get_union_of_points_2(IS1, IS2):
     stairs._get_union_of_points(pd.Series([IS1, IS2])) == SortedSet([float('-inf'), -4, -2, 1, 2, 2.5, 3, 4, 5, 6, 7, 8, 10])
