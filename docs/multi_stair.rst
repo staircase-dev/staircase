@@ -1,7 +1,7 @@
 .. _api.multi_stair:
 
 ======================
-Aggregation Functions
+Aggregation functions
 ======================
 .. currentmodule:: staircase
 
@@ -15,7 +15,7 @@ Aggregation Functions
    max
 
 ======================
-Collection Functions
+Collection functions
 ======================
 .. currentmodule:: staircase
 
