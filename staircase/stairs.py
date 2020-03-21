@@ -225,8 +225,9 @@ def aggregate(collection, func, points=None):
         aggregation.index = _convert_date_to_float(aggregation.index)
     aggregation[float('-inf')] = func([val._sample(float('-inf')) for key,val in Stairs_dict.items()])
     step_changes = aggregation.sort_index().diff().fillna(0)
-    return Stairs(dict(step_changes), use_dates=use_dates)._reduce()
-
+    #groupby.sum is necessary on next line as step_changes series may not have unique index elements
+    return Stairs(dict(step_changes.groupby(level=0).sum()), use_dates=use_dates)._reduce()
+    
 @append_doc(SM_docs.mean_example)      
 def _mean(collection):
     """
@@ -265,7 +266,7 @@ def _median(collection):
     --------
     staircase.aggregate, staircase.mean, staircase.min, staircase.max
     """
-    return aggregate(collection, np.median)
+    return aggregate(collection,np.mean)
 
 @append_doc(SM_docs.min_example)          
 def _min(collection):
@@ -466,7 +467,7 @@ class Stairs():
             new_instance = self.copy()._layer_multiple(x, None, [0]*len(x))
             cumulative = new_instance._cumulative()
             if how == "right":
-                return [val for key,val in cumulative.items() if key in x]
+                return [cumulative[_x] for _x in x]
             else:
                 shifted_cumulative = SortedDict(zip(cumulative.keys()[1:], cumulative.values()[:-1]))
                 if float('-inf') in x:
@@ -486,7 +487,7 @@ class Stairs():
             
     @add_doc(_sample.__doc__)
     def sample(self, x, how='right'):
-        x = _convert_date_to_float(x)
+        x = _convert_date_to_float(x)      
         return self._sample(x,how)
         
     def evaluate(self, x, how='right'):
