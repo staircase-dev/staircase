@@ -31,8 +31,8 @@ def _convert_float_to_date(val):
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
-        return list(pd.to_datetime(val/24, unit='D', origin=origin))
-    return pd.to_datetime(val/24, unit='D', origin=origin)
+        return list(pd.to_datetime(val*3600, unit='s', origin=origin))
+    return pd.to_datetime(val*3600, unit='s', origin=origin)
 
 def _from_cumulative(cumulative, use_dates=False):
     return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates)
@@ -266,7 +266,7 @@ def _median(collection):
     --------
     staircase.aggregate, staircase.mean, staircase.min, staircase.max
     """
-    return aggregate(collection,np.mean)
+    return aggregate(collection,np.median)
 
 @append_doc(SM_docs.min_example)          
 def _min(collection):
