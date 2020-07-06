@@ -392,7 +392,7 @@ class Stairs():
     def _popitem(self, index=-1):
         #SortedDict.popitem cannot be used, as definitions of __bool__ are different between SortedDict and Stairs
         key = self._sorted_dict._list_pop(index)
-        value = self._sorted_dict._dict_pop(key)
+        value = dict.pop(self._sorted_dict,key)
         return (key, value)
     
     def copy(self):
