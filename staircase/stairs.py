@@ -594,12 +594,8 @@ class Stairs():
         
         if ends is None:
             ends = [np.nan]*len(starts)
-            
-        assert len(starts) == len(ends)
         
-        if values is not None:
-            assert len(starts) == len(values)
-        else:
+        if values is None:
             values = [1]*len(starts)
         for start, end, value in zip(starts, ends, values):
             if not np.isnan(start):
