@@ -6,7 +6,7 @@ with open('README.md', encoding='utf-8') as f:
     
 requirements = [
     'sortedcontainers>=2,<=2.2.2',
-    'pandas>=0.24',
+    'pandas>=0.24,<1.1',
     'numpy>=1.16.0',
     'matplotlib>3.0.0'
 ]
