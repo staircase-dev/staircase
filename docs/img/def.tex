@@ -1,0 +1,18 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{amssymb}
+
+\begin{document}
+
+Let $f$ be a function defined over $D \subseteq \mathbb{R}$.  $f$ is a step function, if and only if, 
+\vspace{0.5cm}
+
+$\forall x_1, x_2 \in D$ with $x_1 < x_2, f(x_1) \neq f(x_2) \Rightarrow \exists z \in \mathbb{R}$, with $x_1 \leq z \leq x_2$, such that
+
+\begin{itemize}
+	\item $z \not\in D$, or
+	\item $\lim_{x \to z^{-}} f(x) \neq  \lim_{x \to z^{+}} f(x)$
+\end{itemize}
+
+\end{document}

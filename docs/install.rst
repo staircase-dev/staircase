@@ -5,7 +5,7 @@ staircase can be installed from PyPI or Anaconda.
 
 To install the latest version from PyPI::
 
-    pip install staircase
+    python -m pip install staircase
 
 To install the latest version from Anaconda::
 

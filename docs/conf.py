@@ -39,6 +39,7 @@ extensions = [
     'sphinx.ext.autodoc', 
     'sphinx.ext.autosummary', 
     'sphinx.ext.coverage', 
+    'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',   
     'matplotlib.sphinxext.plot_directive',    
     #'numpydoc',  # handle NumPy documentation formatted docstrings]
@@ -96,5 +97,5 @@ def setup(app):
     app.add_css_file('custom.css')
     
 html_sidebars = {
-    "**":["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html"]
+    "**":["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html", "gumroad.html",]
 }
