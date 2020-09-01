@@ -178,10 +178,11 @@ def sample(collection, points=None, how='right', expand_key=True):
         points = _get_union_of_points(collection)
         if use_dates:
             points.discard(float('-inf'))
-            points = _convert_float_to_date(points)
+            points = _convert_float_to_date(list(points)) #bugfix - pandas>=1.1 breaks with points as type SortedSet
     else:
         if not hasattr(points, "__iter__"):
             points = [points]
+    points = list(points) #bugfix - pandas>=1.1 breaks with points as type SortedSet
     result = (pd.DataFrame({"points":points, **{key:stairs.sample(points, how=how) for key,stairs in collection.items()}})
         .melt(id_vars="points", var_name="key")
     )
