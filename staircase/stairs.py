@@ -20,6 +20,8 @@ warnings.simplefilter('default')
 origin = pd.to_datetime('2000-1-1')
 
 def _convert_date_to_float(val):
+    if val is None:
+        return None
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
@@ -140,6 +142,11 @@ def _using_dates(collection):
 def sample(collection, points=None, how='right', expand_key=True):
     """
     Takes a dict-like collection of Stairs instances and evaluates their values across a common set of points.
+    
+    Technically the results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
+    or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See 
+    :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
+        
     
     Parameters
     ----------
@@ -443,6 +450,10 @@ class Stairs():
     def _sample(self, x, how='right'):
         """Evaluates the value of the step function at one, or more, points.
 
+        Technically the results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
+        or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See 
+        :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
+        
         The function should be called using parentheses.  See example below.
 
         Parameters
@@ -489,14 +500,6 @@ class Stairs():
     def sample(self, x, how='right'):
         x = _convert_date_to_float(x)      
         return self._sample(x,how)
-        
-    def evaluate(self, x, how='right'):
-        """Deprecated.  Use Stairs.sample"""
-        warnings.warn(
-            "Stairs.evaluate will be deprecated in version 1.0.0, use Stairs.sample instead",
-             PendingDeprecationWarning
-        )
-        return self.sample(x, how)
     
     @append_doc(SC_docs.resample_example)
     def _resample(self, x, how='right'):
@@ -534,14 +537,14 @@ class Stairs():
 
     
     @append_doc(SC_docs.layer_example)        
-    def _layer(self, start, end=None, value=None):
+    def _layer(self, start=None, end=None, value=None):
         """
         Changes the value of the step function.
         
         
         Parameters
         ----------
-        start : int, float or vector data
+        start : int, float or vector data, optional
             start time(s) of the interval(s)
         end : int, float or vector data, optional
             end time(s) of the interval(s)
@@ -554,28 +557,30 @@ class Stairs():
             The current instance is returned to facilitate method chaining
         
         """
-        if hasattr(start, "__iter__"):
+        if hasattr(start, "__iter__") or hasattr(end, "__iter__"):
             layer_func = self._layer_multiple
         else:
             layer_func = self._layer_single
         return layer_func(start, end, value)
 
     @add_doc(_layer.__doc__)        
-    def layer(self, start, end=None, value=None):
+    def layer(self, start=None, end=None, value=None):
         start = _convert_date_to_float(start)
         if end is not None:
             end = _convert_date_to_float(end)
         return self._layer(start, end, value)
 
         
-    def _layer_single(self, start, end=None, value=None):
+    def _layer_single(self, start=None, end=None, value=None):
         """
         Implementation of the layer function for when start parameter is single-valued
         """
+        if start is None:
+            start = float('-inf')
         if value is None:
             value = 1
         self[start] = self._get(start,0) + value
-        if self[start] == 0:
+        if start != float('-inf') and self[start] == 0:
             self._pop(start)
         
         if end != None:
@@ -587,19 +592,23 @@ class Stairs():
         return self
                 
     
-    def _layer_multiple(self, starts, ends=None, values = None):
+    def _layer_multiple(self, starts=None, ends=None, values = None):
         """
         Implementation of the layer function for when start parameter is vector data
-        """        
+        """      
+        for vector in (starts, ends):
+            if vector is not None and values is not None:
+                assert len(vector) == len(values)
         
-        if ends is None:
-            ends = [np.nan]*len(starts)
+        if starts is None: starts = [float('-inf')]*len(ends) 
+        if ends is None: ends = []
+        if values is None: values = [1]*max(len(starts), len(ends))
         
-        if values is None:
-            values = [1]*len(starts)
-        for start, end, value in zip(starts, ends, values):
-            if not np.isnan(start):
-                self[start] = self._get(start,0) + value
+        for start, value in zip(starts, values):
+            if np.isnan(start):
+                start = float('-inf')
+            self[start] = self._get(start,0) + value
+        for end, value in zip(ends, values):
             if not np.isnan(end):
                 self[end] = self._get(end,0) - value
         self.cached_cumulative = None
