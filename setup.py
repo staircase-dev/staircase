@@ -5,7 +5,7 @@ with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
     
 requirements = [
-    'sortedcontainers>=2',
+    'sortedcontainers>=2,<=2.2.2',
     'pandas>=0.24',
     'numpy>=1.16.0',
     'matplotlib>3.0.0'
