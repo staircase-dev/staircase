@@ -1339,7 +1339,7 @@ class Stairs():
         else:
             ends.append(float('inf'))
         values = self._cumulative().values()
-        df = pd.DataFrame({"start":starts, "end":ends, "value":values})
+        df = pd.DataFrame({"start":list(starts), "end":list(ends), "value":list(values)}) #bugfix for pandas 1.1
         return df
             
     @append_doc(SC_docs.number_of_steps_example)
