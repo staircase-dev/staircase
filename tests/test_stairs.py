@@ -373,6 +373,10 @@ def test_mean2(IS1, IS2):
     assert abs(IS1.mean(2,8) - 1.125) < 0.000001
     assert abs(IS2.mean(2,8) - -0.45833333) < 0.000001
     
+def test_to_dataframe(IS1):
+    IS1.to_dataframe()
+    
+    
 # @pytest.mark.parametrize("index, init_val", [(1,1.25), (2,-2.5), (3,3.25), (4,-4)])         
 # def test_base_subtraction(IS_set, index, init_val):
     # int_seq = IS_set[index]
