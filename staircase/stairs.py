@@ -403,9 +403,14 @@ class Stairs():
         value = dict.pop(self._sorted_dict,key)
         return (key, value)
     
-    def copy(self):
+    def copy(self, deep=None):
         """
         Returns a deep copy of this Stairs instance
+        
+        Parameters
+        ----------
+        deep : None
+            Dummy parameter to keep pandas satisfied.
 
         Returns
         -------
