@@ -26,7 +26,7 @@ Contents
    
    install.rst
    getting_started.rst
-   examples.rst
+   resources.rst
    api.rst 
 
    changelog

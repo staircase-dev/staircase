@@ -2,6 +2,11 @@
 Changelog
 =========
 
+v1.0.3 2020-09-08
+
+- *deep* parameter added to :meth:`staircase.Stairs.copy` method for pandas compatability
+
+
 v1.0.[1|2] 2020-09-02
 
 - Bugfix with Pandas 1.1.x where SortedSet cannot be used as basis for Series or DataFrame

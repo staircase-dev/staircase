@@ -135,7 +135,7 @@ We can find the maximum concurrent views:
 
    >>> views.max(0,1440)
 
-See :ref:`examples and case studies <examples>` for more in-depth demonstrations of the staircase package. 
+See the :ref:`case studies <resources.tutorials>` for more in-depth demonstrations of the staircase package. 
    
 The staircase API
 =================
