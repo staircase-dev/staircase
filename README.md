@@ -2,6 +2,8 @@
 
 
 <p align="center">
+	<a href="https://pepy.tech/project/staircase/" alt="PyPI downloads">
+        <img src="https://pepy.tech/badge/staircase" /></a>
     <a href="https://www.python.org/" alt="Python version">
         <img src="https://img.shields.io/pypi/pyversions/staircase" /></a>
     <a href="https://pypi.org/project/staircase/" alt="PyPI version">
@@ -65,7 +67,7 @@ There is plenty more analysis that could be done.  The staircase package provide
 Staircase can be installed from PyPI:
 
 ```bash
-pip install staircase
+python -m pip install staircase
 ```
 
 or also with conda:
