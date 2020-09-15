@@ -19,22 +19,22 @@ warnings.simplefilter('default')
 
 origin = pd.to_datetime('2000-1-1')
 
-def _convert_date_to_float(val):
+def _convert_date_to_float(val, tz):
     if val is None:
         return None
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
-        deltas = pd.TimedeltaIndex(val - origin)
+        deltas = pd.TimedeltaIndex(val.dt.tz_localize(tz) - origin.tz_localize(tz))
         return deltas.days*24 + deltas.seconds/3600
-    return (val - origin).total_seconds()/3600
+    return (val.tz_localize(tz) - origin.tz_localize(tz)).total_seconds()/3600
     
-def _convert_float_to_date(val):
+def _convert_float_to_date(val, tz):
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
-        return list(pd.to_datetime(val*3600, unit='s', origin=origin))
-    return pd.to_datetime(val*3600, unit='s', origin=origin)
+        return list(pd.to_datetime(val*3600, unit='s', origin=origin.tz_localize(tz)))
+    return pd.to_datetime(val*3600, unit='s', origin=origin.tz_localize(tz))
 
 def _from_cumulative(cumulative, use_dates=False):
     return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates)
@@ -122,13 +122,16 @@ def _get_union_of_points(collection):
 def _using_dates(collection):
 
     def dict_use_dates():
-        return next(iter(collection.values())).use_dates
+        s = next(iter(collection.values()))
+        return s.use_dates, s.tz
         
     def series_use_dates():
-        return collection.values[0].use_dates
+        s = collection.values[0]
+        return s.use_dates, s.tz
         
     def array_use_dates():
-        return collection[0].use_dates
+        s = collection[0]
+        return s.use_dates, s.tz
     
     for func in (dict_use_dates, series_use_dates, array_use_dates):
         try:
@@ -172,13 +175,13 @@ def sample(collection, points=None, how='right', expand_key=True):
     --------
     Stairs.sample
     """
-    use_dates = _using_dates(collection)
+    use_dates, tz = _using_dates(collection)
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
         points = _get_union_of_points(collection)
         if use_dates:
             points.discard(float('-inf'))
-            points = _convert_float_to_date(list(points)) #bugfix - pandas>=1.1 breaks with points as type SortedSet
+            points = _convert_float_to_date(list(points), tz) #bugfix - pandas>=1.1 breaks with points as type SortedSet
     else:
         if not hasattr(points, "__iter__"):
             points = [points]
@@ -226,11 +229,11 @@ def aggregate(collection, func, points=None):
         Stairs_dict = collection
     else:
         Stairs_dict = dict(enumerate(collection))
-    use_dates = _using_dates(collection)
+    use_dates, tz = _using_dates(collection)
     df = sample(Stairs_dict, points, expand_key=False)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
     if use_dates:
-        aggregation.index = _convert_date_to_float(aggregation.index)
+        aggregation.index = _convert_date_to_float(aggregation.index, tz=tz)
     aggregation[float('-inf')] = func([val._sample(float('-inf')) for key,val in Stairs_dict.items()])
     step_changes = aggregation.sort_index().diff().fillna(0)
     #groupby.sum is necessary on next line as step_changes series may not have unique index elements
@@ -347,7 +350,7 @@ class Stairs():
     See the :ref:`Stairs API <api.Stairs>` for details of methods.
     """
     
-    def __init__(self, value=0, use_dates=False):
+    def __init__(self, value=0, use_dates=False, tz="UTC"):
         """
         Initialise a Stairs instance. 
         
@@ -369,6 +372,7 @@ class Stairs():
             self._sorted_dict = SortedDict()
             self._sorted_dict[float('-inf')] = value
         self.use_dates = use_dates
+        self.tz = tz
         self.cached_cumulative = None
         
         #bypass date mapping
@@ -447,7 +451,7 @@ class Stairs():
             register_matplotlib_converters()
             x = list(cumulative.keys())
             x[0] = x[1]-0.00001
-            ax.step(_convert_float_to_date(x), list(cumulative.values()), where='post', **kwargs)
+            ax.step(_convert_float_to_date(x, self.tz), list(cumulative.values()), where='post', **kwargs)
         else:
             ax.step(cumulative.keys(), cumulative.values(), where='post', **kwargs)
         return ax
@@ -504,7 +508,7 @@ class Stairs():
             
     @add_doc(_sample.__doc__)
     def sample(self, x, how='right'):
-        x = _convert_date_to_float(x)      
+        x = _convert_date_to_float(x, self.tz)      
         return self._sample(x,how)
     
     @append_doc(SC_docs.resample_example)
@@ -538,7 +542,7 @@ class Stairs():
 
     @add_doc(_resample.__doc__)
     def resample(self, x, how='right'):
-        x = _convert_date_to_float(x)
+        x = _convert_date_to_float(x, self.tz)
         return self._resample(x, how)
 
     
@@ -571,9 +575,9 @@ class Stairs():
 
     @add_doc(_layer.__doc__)        
     def layer(self, start=None, end=None, value=None):
-        start = _convert_date_to_float(start)
+        start = _convert_date_to_float(start, self.tz)
         if end is not None:
-            end = _convert_date_to_float(end)
+            end = _convert_date_to_float(end, self.tz)
         return self._layer(start, end, value)
 
         
@@ -637,7 +641,7 @@ class Stairs():
     
     @add_doc(_step_changes.__doc__)
     def step_changes(self):
-        return dict(zip(_convert_float_to_date(self._keys()[1:]), self._values()[1:]))
+        return dict(zip(_convert_float_to_date(self._keys()[1:], self.tz), self._values()[1:]))
 
     @append_doc(SC_docs.negate_example)        
     def negate(self):
@@ -1046,9 +1050,9 @@ class Stairs():
     @add_doc(_get_integral_and_mean.__doc__)
     def get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
         if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower)
+            lower = _convert_date_to_float(lower, self.tz)
         if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper)
+            upper = _convert_date_to_float(upper, self.tz)
         return self._get_integral_and_mean(lower, upper)
                 
     @append_doc(SC_docs.integrate_example)    
@@ -1218,9 +1222,9 @@ class Stairs():
 
     def values_in_range(self, lower=float('-inf'), upper=float('inf')):
         if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower)
+            lower = _convert_date_to_float(lower, self.tz)
         if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper)
+            upper = _convert_date_to_float(upper, self.tz)
         return self._values_in_range(lower, upper)
         
     def _values_in_range(self, lower, upper):
@@ -1320,9 +1324,9 @@ class Stairs():
     @add_doc(_clip.__doc__)        
     def clip(self, lower=float('-inf'), upper=float('inf')):
         if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower)
+            lower = _convert_date_to_float(lower, self.tz)
         if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper)
+            upper = _convert_date_to_float(upper, self.tz)
         return self._clip(lower, upper)
     
     @append_doc(SC_docs.shift_example)    
@@ -1395,8 +1399,8 @@ class Stairs():
         starts = self._keys()
         ends = self._keys()[1:]
         if self.use_dates:
-            starts = [pd.NaT] + _convert_float_to_date(np.array(starts[1:]))
-            ends = _convert_float_to_date(np.array(ends)) + [pd.NaT]
+            starts = [pd.NaT] + _convert_float_to_date(np.array(starts[1:]), self.tz)
+            ends = _convert_float_to_date(np.array(ends), self.tz) + [pd.NaT]
         else:
             ends.append(float('inf'))
         values = self._cumulative().values()
