@@ -453,3 +453,99 @@ clip_example = """
             >>> s1.clip(2,4).mean()
             0.5
 """
+
+shift_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s2, s2.shift(1), s2.shift(-1)]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s2", "s2.shift(1)", "s2.shift(-1)"), stair_list):
+            ...     stair_instance.plot(ax, label=title)
+            ...     ax.set_title(title)
+        
+        Note that the definition of shift is designed to be consistent with pandas.Series.shift
+         
+        .. plot::
+            :context: close-figs
+            
+            >>> pd.Series(s2(range(7)))
+            0    0.5
+            1    0.5
+            2    0.0
+            3   -1.0
+            4   -1.0
+            5   -1.0
+            6    0.0
+            dtype: float64
+            >>> pd.Series(s2(range(7))).shift(1)
+            0    NaN
+            1    0.5
+            2    0.5
+            3    0.0
+            4   -1.0
+            5   -1.0
+            6   -1.0
+            dtype: float64
+            >>> pd.Series(s2.shift(1)(range(7)))
+            0    0.0
+            1    0.5
+            2    0.5
+            3    0.0
+            4   -1.0
+            5   -1.0
+            6   -1.0
+            dtype: float64
+"""
+
+diff_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> stair_list = [s2, s2.shift(1), s2.diff(1)]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s2", "s2.shift(1)", "s2.diff(1)"), stair_list):
+            ...     stair_instance.plot(ax, label=title)
+            ...     ax.set_title(title)
+            ... s2.plot(axes[1], label="s2", linestyle="--")
+            ... axes[1].legend()
+        
+        Note that the definition of diff is designed to be consistent with pandas.Series.diff
+         
+        .. plot::
+            :context: close-figs
+            
+            >>> pd.Series(s2(range(7)))
+            0    0.5
+            1    0.5
+            2    0.0
+            3   -1.0
+            4   -1.0
+            5   -1.0
+            6    0.0
+            dtype: float64
+            >>> pd.Series(s2(range(7))).diff(1)
+            0    NaN
+            1    0.0
+            2   -0.5
+            3   -1.0
+            4    0.0
+            5    0.0
+            6    1.0
+            dtype: float64
+            >>> pd.Series(s2.diff(1)(range(7)))
+            0    0.5
+            1    0.0
+            2   -0.5
+            3   -1.0
+            4    0.0
+            5    0.0
+            6    1.0
+            dtype: float64
+"""
