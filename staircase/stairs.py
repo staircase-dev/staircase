@@ -414,7 +414,7 @@ class Stairs():
 
         Returns
         -------
-        copy : Stairs
+        :class:`Stairs`
         """
         new_instance = Stairs(use_dates=self.use_dates)
         for key,value in self._items():
@@ -1324,7 +1324,63 @@ class Stairs():
         if isinstance(upper, pd.Timestamp):
             upper = _convert_date_to_float(upper)
         return self._clip(lower, upper)
-            
+    
+    @append_doc(SC_docs.shift_example)    
+    def shift(self, delta):
+        """
+        Returns a stairs instance corresponding to a horizontal translation by delta.
+        
+        If delta is positive the corresponding step function is moved right.
+        If delta is negative the corresponding step function is moved left.
+        
+        Parameters
+        ----------
+        delta : int, float or pandas.Timestamp
+            the amount by which to translate.  A pandas.Timestamp is only valid when using dates.
+            If using dates and delta is an int or float, then it is interpreted as a number of hours.
+              
+        Returns
+        -------
+        :class:`Stairs`
+        
+        See Also
+        --------
+        Stairs.diff
+        """
+        if isinstance(delta, pd.Timedelta):
+            assert self.use_dates, "delta is of type pandas.Timedelta, expected float"
+            delta =  delta.total_seconds()/3600
+        return Stairs(
+            dict(zip(
+                (key + delta for key in self._sorted_dict.keys()), 
+                self._sorted_dict.values()
+            )),
+            use_dates=self.use_dates
+        )
+        
+    @append_doc(SC_docs.diff_example)
+    def diff(self, delta):
+        """
+        Returns a stairs instance corresponding to the difference between the step function corresponding to *self* 
+        and the same step-function translated by delta. 
+        
+        Parameters
+        ----------
+        delta : int, float or pandas.Timestamp
+            the amount by which to translate.  A pandas.Timestamp is only valid when using dates.
+            If using dates and delta is an int or float, then it is interpreted as a number of hours.
+              
+        Returns
+        -------
+        :class:`Stairs`
+        
+        See Also
+        --------
+        Stairs.shift
+        """
+        return self-self.shift(delta)
+        
+    
     def to_dataframe(self):
         """
         Returns a pandas.DataFrame with columns 'start', 'end' and 'value'
