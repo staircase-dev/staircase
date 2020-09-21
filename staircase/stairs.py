@@ -25,16 +25,20 @@ def _convert_date_to_float(val, tz):
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
-        deltas = pd.TimedeltaIndex(val.dt.tz_localize(tz) - origin.tz_localize(tz))
+        if val.dt.tz is None and tz is not None:
+            val = val.dt.tz_localize(tz)
+        deltas = pd.TimedeltaIndex(val - origin.tz_localize(tz))
         return deltas.days*24 + deltas.seconds/3600
-    return (val.tz_localize(tz) - origin.tz_localize(tz)).total_seconds()/3600
+    if val.tz is None and tz is not None:
+        val = val.tz_localize(tz)
+    return (val - origin.tz_localize(tz)).total_seconds()/3600
     
 def _convert_float_to_date(val, tz):
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
-        return list(pd.to_datetime(val*3600, unit='s', origin=origin.tz_localize(tz)))
-    return pd.to_datetime(val*3600, unit='s', origin=origin.tz_localize(tz))
+        return list(pd.to_datetime(val*3600, unit='s', origin=origin).dt.tz_localize(tz))
+    return pd.to_datetime(val*3600, unit='s', origin=origin).tz_localize(tz)
 
 def _from_cumulative(cumulative, use_dates=False):
     return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates)
@@ -51,6 +55,7 @@ def _min_pair(stairs1, stairs2):
 
     """
     assert isinstance(stairs1, Stairs) and isinstance(stairs2, Stairs), f"Arguments to min must be both of type Stairs."
+    assert stairs1.tz == stairs2.tz
     new_instance = stairs1-stairs2
     cumulative = new_instance._cumulative()
     for key,value in cumulative.items():
@@ -58,7 +63,7 @@ def _min_pair(stairs1, stairs2):
             cumulative[key] = 0
     deltas = [cumulative.values()[0]]
     deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1])) 
-    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
+    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates, tz=stairs1.tz)
     return new_instance + stairs2
     
 def _max_pair(stairs1, stairs2):
@@ -73,6 +78,7 @@ def _max_pair(stairs1, stairs2):
 
     """
     assert isinstance(stairs1, Stairs) and isinstance(stairs2, Stairs), f"Arguments to max must be both of type Stairs."
+    assert stairs1.tz == stairs2.tz
     new_instance = stairs1-stairs2
     cumulative = new_instance._cumulative()
     for key,value in cumulative.items():
@@ -80,17 +86,17 @@ def _max_pair(stairs1, stairs2):
             cumulative[key] = 0
     deltas = [cumulative.values()[0]]
     deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))   
-    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
+    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates, tz=stairs1.tz)
     return new_instance + stairs2
 
-def _compare(cumulative, zero_comparator, use_dates=False):
+def _compare(cumulative, zero_comparator, use_dates=False, tz=None):
     truth = cumulative.copy()
     for key,value in truth.items():
         new_val = int(zero_comparator(float(value)))
         truth[key] = new_val
     deltas = [truth.values()[0]]
     deltas.extend(np.subtract(truth.values()[1:], truth.values()[:-1]))
-    new_instance = Stairs(dict(zip(truth.keys(), deltas)), use_dates=use_dates)
+    new_instance = Stairs(dict(zip(truth.keys(), deltas)), use_dates, tz)
     new_instance._reduce()
     return new_instance
 
@@ -237,7 +243,7 @@ def aggregate(collection, func, points=None):
     aggregation[float('-inf')] = func([val._sample(float('-inf')) for key,val in Stairs_dict.items()])
     step_changes = aggregation.sort_index().diff().fillna(0)
     #groupby.sum is necessary on next line as step_changes series may not have unique index elements
-    return Stairs(dict(step_changes.groupby(level=0).sum()), use_dates=use_dates)._reduce()
+    return Stairs(dict(step_changes.groupby(level=0).sum()), use_dates=use_dates, tz=tz)._reduce()
     
 @append_doc(SM_docs.mean_example)      
 def _mean(collection):
@@ -350,7 +356,7 @@ class Stairs():
     See the :ref:`Stairs API <api.Stairs>` for details of methods.
     """
     
-    def __init__(self, value=0, use_dates=False, tz="UTC"):
+    def __init__(self, value=0, use_dates=False, tz=None):
         """
         Initialise a Stairs instance. 
         
@@ -420,7 +426,7 @@ class Stairs():
         -------
         :class:`Stairs`
         """
-        new_instance = Stairs(use_dates=self.use_dates)
+        new_instance = Stairs(use_dates=self.use_dates, tz=self.tz)
         for key,value in self._items():
             new_instance[key] = value
         return new_instance
@@ -683,7 +689,7 @@ class Stairs():
         Stairs.subtract
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
         new_instance = self.copy()
         for key, value in other._items():
             new_instance[key] = self._get(key,0) + value
@@ -709,7 +715,7 @@ class Stairs():
         Stairs.add
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
         other = -other
         return self + other
     
@@ -806,7 +812,7 @@ class Stairs():
         Stairs.make_boolean
         """
         new_instance = self.make_boolean()
-        new_instance = Stairs(1) - new_instance
+        new_instance = Stairs(1, self.use_dates, self.tz) - new_instance
         return new_instance
     
     @append_doc(SC_docs.logical_and_example)
@@ -868,9 +874,9 @@ class Stairs():
         Stairs.gt, Stairs.le, Stairs.ge
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
         comparator = float(0).__lt__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
     
     @append_doc(SC_docs.gt_example)
     def gt(self, other):
@@ -889,9 +895,9 @@ class Stairs():
         Stairs.lt, Stairs.le, Stairs.ge
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
         comparator = float(0).__gt__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)        
     
     @append_doc(SC_docs.le_example)    
     def le(self, other):
@@ -910,9 +916,9 @@ class Stairs():
         Stairs.lt, Stairs.gt, Stairs.ge
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
         comparator = float(0).__le__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)        
 
     @append_doc(SC_docs.ge_example)
     def ge(self, other):
@@ -931,9 +937,9 @@ class Stairs():
         Stairs.lt, Stairs.gt, Stairs.le
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
         comparator = float(0).__ge__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)                
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)                
     
     @append_doc(SC_docs.eq_example)
     def eq(self, other):
@@ -952,9 +958,9 @@ class Stairs():
         Stairs.ne, Stairs.identical
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
         comparator = float(0).__eq__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)           
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)           
     
     @append_doc(SC_docs.ne_example)
     def ne(self, other):
@@ -973,9 +979,9 @@ class Stairs():
         Stairs.eq, Stairs.identical
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
         comparator = float(0).__ne__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
     
     @append_doc(SC_docs.identical_example)    
     def identical(self, other):
@@ -1184,7 +1190,7 @@ class Stairs():
              .assign(duration = lambda df: df.duration.shift())
              .fillna(0)
         )
-        percentile_step_func = Stairs()
+        percentile_step_func = Stairs(0, False, None)
         for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
             percentile_step_func.layer(start*100,end*100,value)
         percentile_step_func._popitem()
@@ -1319,7 +1325,7 @@ class Stairs():
             s[float('-inf')] = self[float('-inf')]
         if upper != float('inf'):
             s[upper] = s.get(upper,0)-value_at_right 
-        return Stairs(s, use_dates=self.use_dates)
+        return Stairs(s, self.use_dates, self.tz)
 
     @add_doc(_clip.__doc__)        
     def clip(self, lower=float('-inf'), upper=float('inf')):
@@ -1359,7 +1365,8 @@ class Stairs():
                 (key + delta for key in self._sorted_dict.keys()), 
                 self._sorted_dict.values()
             )),
-            use_dates=self.use_dates
+            self.use_dates,
+            self.tz,
         )
         
     @append_doc(SC_docs.diff_example)

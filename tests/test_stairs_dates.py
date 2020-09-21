@@ -186,22 +186,22 @@ def test_plot(IS1):
     IS1.plot()
     
 def test_resample_dates_1(IS1):
-    assert IS1.resample(pd.Timestamp(2020,1,4)).step_changes() == {pd.Timestamp(2020,1,4): 4.5}
+    assert IS1.resample(pd.Timestamp(2020,1,4)).step_changes() == {pd.Timestamp(2020,1,4).tz_localize(IS1.tz): 4.5}
     
 def test_resample_dates_2(IS1):
-    assert IS1.resample(pd.Timestamp(2020,1,6), how='right').step_changes() == {pd.Timestamp(2020,1,6): -0.5}
+    assert IS1.resample(pd.Timestamp(2020,1,6), how='right').step_changes() == {pd.Timestamp(2020,1,6).tz_localize(IS1.tz): -0.5}
 
 def test_resample_dates_3(IS1):
-    assert IS1.resample(pd.Timestamp(2020,1,6), how='left').step_changes() == {pd.Timestamp(2020,1,6): 2}
+    assert IS1.resample(pd.Timestamp(2020,1,6), how='left').step_changes() == {pd.Timestamp(2020,1,6).tz_localize(IS1.tz): 2}
     
 def test_resample_dates_4(IS1):
-    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)]).step_changes() == {pd.Timestamp(2020,1,4): 4.5, pd.Timestamp(2020,1,6): -5.0}
+    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)]).step_changes() == {pd.Timestamp(2020,1,4).tz_localize(IS1.tz): 4.5, pd.Timestamp(2020,1,6).tz_localize(IS1.tz): -5.0}
 
 def test_resample_dates_5(IS1):
-    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='right').step_changes() == {pd.Timestamp(2020,1,4): 4.5, pd.Timestamp(2020,1,6): -5.0}
+    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='right').step_changes() == {pd.Timestamp(2020,1,4).tz_localize(IS1.tz): 4.5, pd.Timestamp(2020,1,6).tz_localize(IS1.tz): -5.0}
     
 def test_resample_dates_6(IS1):
-    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='left').step_changes() == {pd.Timestamp(2020,1,4): 4.5, pd.Timestamp(2020,1,6): -2.5}
+    assert IS1.resample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='left').step_changes() == {pd.Timestamp(2020,1,4).tz_localize(IS1.tz): 4.5, pd.Timestamp(2020,1,6).tz_localize(IS1.tz): -2.5}
 
 def test_sample_dates_1(IS1):
     assert IS1.sample(pd.Timestamp(2020,1,6)) == -0.5
@@ -222,47 +222,47 @@ def test_sample_dates_6(IS1):
     assert _compare_iterables(IS1.sample([pd.Timestamp(2020,1,4), pd.Timestamp(2020,1,6)], how='left'), [4.5, 2])
 
 def test_step_changes_dates(IS1):
-    assert IS1.step_changes() == {pd.Timestamp('2020-01-01 00:00:00'): 2,
-                             pd.Timestamp('2020-01-03 00:00:00'): 2.5,
-                             pd.Timestamp('2020-01-05 00:00:00'): -2.5,
-                             pd.Timestamp('2020-01-06 00:00:00'): -2.5,
-                             pd.Timestamp('2020-01-10 00:00:00'): 0.5
+    assert IS1.step_changes() == {pd.Timestamp('2020-01-01 00:00:00').tz_localize(IS1.tz): 2,
+                             pd.Timestamp('2020-01-03 00:00:00').tz_localize(IS1.tz): 2.5,
+                             pd.Timestamp('2020-01-05 00:00:00').tz_localize(IS1.tz): -2.5,
+                             pd.Timestamp('2020-01-06 00:00:00').tz_localize(IS1.tz): -2.5,
+                             pd.Timestamp('2020-01-10 00:00:00').tz_localize(IS1.tz): 0.5
                         }
                         
 def test_dataframe_dates(IS1):
     ans = pd.DataFrame({
-        "start":[pd.NaT, pd.to_datetime('2020-01-01'), pd.to_datetime('2020-01-03'), pd.to_datetime('2020-01-05'), pd.to_datetime('2020-01-06'), pd.to_datetime('2020-01-10')],
-        "end":[pd.to_datetime('2020-01-01'), pd.to_datetime('2020-01-03'), pd.to_datetime('2020-01-05'), pd.to_datetime('2020-01-06'), pd.to_datetime('2020-01-10'), pd.NaT],
+        "start":[pd.NaT, pd.to_datetime('2020-01-01').tz_localize(IS1.tz), pd.to_datetime('2020-01-03').tz_localize(IS1.tz), pd.to_datetime('2020-01-05').tz_localize(IS1.tz), pd.to_datetime('2020-01-06').tz_localize(IS1.tz), pd.to_datetime('2020-01-10').tz_localize(IS1.tz)],
+        "end":[pd.to_datetime('2020-01-01').tz_localize(IS1.tz), pd.to_datetime('2020-01-03').tz_localize(IS1.tz), pd.to_datetime('2020-01-05').tz_localize(IS1.tz), pd.to_datetime('2020-01-06').tz_localize(IS1.tz), pd.to_datetime('2020-01-10').tz_localize(IS1.tz), pd.NaT],
         "value":[0,2,4.5,2,-0.5,0]
     })
     assert IS1.to_dataframe().equals(ans)
     
 def test_add_dates(IS1, IS2):
     ans = {
-        pd.Timestamp('2020-01-01 00:00:00'): -0.5,
-        pd.Timestamp('2020-01-02 00:00:00'): 4.5,
-        pd.Timestamp('2020-01-02 12:00:00'): -2.5,
-        pd.Timestamp('2020-01-03 00:00:00'): 2.5,
-        pd.Timestamp('2020-01-04 00:00:00'): 2.5,
-        pd.Timestamp('2020-01-05 00:00:00'): -7.0,
-        pd.Timestamp('2020-01-06 00:00:00'): -2.5,
-        pd.Timestamp('2020-01-07 00:00:00'): 2.5,
-        pd.Timestamp('2020-01-08 00:00:00'): 5,
-        pd.Timestamp('2020-01-10 00:00:00'): -4.5
+        pd.Timestamp('2020-01-01 00:00:00').tz_localize(IS1.tz): -0.5,
+        pd.Timestamp('2020-01-02 00:00:00').tz_localize(IS1.tz): 4.5,
+        pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): -2.5,
+        pd.Timestamp('2020-01-03 00:00:00').tz_localize(IS1.tz): 2.5,
+        pd.Timestamp('2020-01-04 00:00:00').tz_localize(IS1.tz): 2.5,
+        pd.Timestamp('2020-01-05 00:00:00').tz_localize(IS1.tz): -7.0,
+        pd.Timestamp('2020-01-06 00:00:00').tz_localize(IS1.tz): -2.5,
+        pd.Timestamp('2020-01-07 00:00:00').tz_localize(IS1.tz): 2.5,
+        pd.Timestamp('2020-01-08 00:00:00').tz_localize(IS1.tz): 5,
+        pd.Timestamp('2020-01-10 00:00:00').tz_localize(IS1.tz): -4.5
     }
     assert (IS1 + IS2).step_changes() == ans 
     
 def test_subtract_dates(IS1, IS2):
     ans = {
-        pd.Timestamp('2020-01-01 00:00:00'): 4.5,
-        pd.Timestamp('2020-01-02 00:00:00'): -4.5,
-        pd.Timestamp('2020-01-02 12:00:00'): 2.5,
-        pd.Timestamp('2020-01-03 00:00:00'): 2.5,
-        pd.Timestamp('2020-01-04 00:00:00'): -2.5,
-        pd.Timestamp('2020-01-05 00:00:00'): 2.0,
-        pd.Timestamp('2020-01-06 00:00:00'): -2.5,
-        pd.Timestamp('2020-01-07 00:00:00'): -2.5,
-        pd.Timestamp('2020-01-08 00:00:00'): -5,
-        pd.Timestamp('2020-01-10 00:00:00'): 5.5
+        pd.Timestamp('2020-01-01 00:00:00').tz_localize(IS1.tz): 4.5,
+        pd.Timestamp('2020-01-02 00:00:00').tz_localize(IS1.tz): -4.5,
+        pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): 2.5,
+        pd.Timestamp('2020-01-03 00:00:00').tz_localize(IS1.tz): 2.5,
+        pd.Timestamp('2020-01-04 00:00:00').tz_localize(IS1.tz): -2.5,
+        pd.Timestamp('2020-01-05 00:00:00').tz_localize(IS1.tz): 2.0,
+        pd.Timestamp('2020-01-06 00:00:00').tz_localize(IS1.tz): -2.5,
+        pd.Timestamp('2020-01-07 00:00:00').tz_localize(IS1.tz): -2.5,
+        pd.Timestamp('2020-01-08 00:00:00').tz_localize(IS1.tz): -5,
+        pd.Timestamp('2020-01-10 00:00:00').tz_localize(IS1.tz): 5.5
     }
     assert (IS1 - IS2).step_changes() == ans 

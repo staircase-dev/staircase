@@ -46,19 +46,19 @@ def test_get_union_of_points_5(IS1, IS2):
     stairs._get_union_of_points((IS1, IS2)) == SortedSet([float('-inf'), -4, -2, 1, 2, 2.5, 3, 4, 5, 6, 7, 8, 10])
 
 def test_using_dates_1(IS1, IS2):
-    assert not stairs._using_dates({1:IS1, 2:IS2})
+    assert not stairs._using_dates({1:IS1, 2:IS2})[0]
     
 def test_using_dates_2(IS1, IS2):
-    assert not stairs._using_dates(pd.Series([IS1, IS2]))
+    assert not stairs._using_dates(pd.Series([IS1, IS2]))[0]
 
 def test_using_dates_3(IS1, IS2):
-    assert not stairs._using_dates(np.array([IS1, IS2]))
+    assert not stairs._using_dates(np.array([IS1, IS2]))[0]
 
 def test_using_dates_4(IS1, IS2):
-    assert not stairs._using_dates([IS1, IS2])
+    assert not stairs._using_dates([IS1, IS2])[0]
 
 def test_using_dates_5(IS1, IS2):
-    assert not stairs._using_dates((IS1, IS2))
+    assert not stairs._using_dates((IS1, IS2))[0]
     
 def test_aggregate_1(IS1, IS2):
     assert stairs.aggregate({1:IS1, 2:IS2}, np.mean).step_changes() == {-4.0: -0.875,
