@@ -125,7 +125,7 @@ divide_example = """
             
             >>> stair_list = [s1, (s2+2), s1/(s2+2)]
             >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
-            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2+2", "S1/(s2+2)"), stair_list):
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2+2", "s1/(s2+2)"), stair_list):
             ...     stair_instance.plot(ax)
             ...     ax.set_title(title)
 """
