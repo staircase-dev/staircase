@@ -493,6 +493,8 @@ class Stairs():
                     vals = []
                 vals.extend([val for key,val in shifted_cumulative.items() if key in x])
                 return vals
+        elif x == float('-inf'):
+            return self._sorted_dict.values()[0]
         else:
             cumulative = self._cumulative()
             if how == "right":
