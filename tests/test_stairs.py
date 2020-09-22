@@ -1,5 +1,6 @@
 import pytest
 import itertools
+import pandas as pd
 import staircase.stairs as stairs
 
 def _expand_interval_definition(start, end=None, value=1):
@@ -12,9 +13,8 @@ def _compare_iterables(it1, it2):
         if e1 != e2:
             return False
     return True
-    
-@pytest.fixture
-def IS1():
+ 
+def s1():
     int_seq1 = stairs.Stairs(0)
     int_seq1.layer(1,10,2)
     int_seq1.layer(-4,5,-1.75)
@@ -23,8 +23,7 @@ def IS1():
     int_seq1.layer(7,10,-2.5)
     return int_seq1
 
-@pytest.fixture
-def IS2():    
+def s2():    
     int_seq2 = stairs.Stairs(0)
     int_seq2.layer(1,7,-2.5)
     int_seq2.layer(8,10,5)
@@ -32,9 +31,8 @@ def IS2():
     int_seq2.layer(2.5,4,-2.5)
     int_seq2.layer(-2,1,-1.75)
     return int_seq2
-    
-@pytest.fixture
-def IS3(): #boolean    
+ 
+def s3(): #boolean    
     int_seq = stairs.Stairs(0)
     int_seq.layer(-10,10,1)
     int_seq.layer(-8,-7,-1)
@@ -44,8 +42,7 @@ def IS3(): #boolean
     int_seq.layer(7,9.5,-1)
     return int_seq
 
-@pytest.fixture
-def IS4(): #boolean      
+def s4(): #boolean      
     int_seq = stairs.Stairs(0)
     int_seq.layer(-11,9,1)
     int_seq.layer(-9.5,-8,-1)
@@ -54,7 +51,25 @@ def IS4(): #boolean
     int_seq.layer(6,6.5,-1)
     int_seq.layer(7,8.5,-1)
     return int_seq
-     
+ 
+@pytest.fixture 
+def s1_fix():
+    return s1()
+    
+@pytest.fixture 
+def s2_fix():
+    return s2()
+
+@pytest.fixture 
+def s3_fix():
+    return s3()
+
+@pytest.fixture 
+def s4_fix():
+    return s4()    
+    
+
+    
 def test_init():
     assert stairs.Stairs(0).identical(stairs.Stairs())
     assert stairs.Stairs().identical(stairs.Stairs(0))
@@ -205,8 +220,8 @@ def test_layer2(init_value):
     assert int_seq.identical(int_seq2)
     assert int_seq2.identical(int_seq)
     
-def test_min(IS1, IS2): 
-    int_seq1, int_seq2 = IS1, IS2
+def test_min(s1_fix, s2_fix): 
+    int_seq1, int_seq2 = s1_fix, s2_fix
     calc = stairs._min_pair(int_seq1, int_seq2)
     expected = stairs.Stairs()
     expected.layer(-4,11,-1.75)
@@ -220,8 +235,8 @@ def test_min(IS1, IS2):
     assert calc.identical(expected), "Min calculation not what it should be"
     assert expected.identical(calc), "Min calculation not what it should be"
 
-def test_max(IS1, IS2): 
-    int_seq1, int_seq2 = IS1, IS2
+def test_max(s1_fix, s2_fix): 
+    int_seq1, int_seq2 = s1_fix, s2_fix
     calc = stairs._max_pair(int_seq1, int_seq2)
     expected = stairs.Stairs()
     expected = stairs.Stairs(0)
@@ -238,8 +253,8 @@ def test_max(IS1, IS2):
     assert calc.identical(expected), "Max calculation not what it should be"
     assert expected.identical(calc), "Max calculation not what it should be"
 
-def test_make_boolean(IS2):
-    int_seq = IS2
+def test_make_boolean(s2_fix):
+    int_seq = s2_fix
     calc = int_seq.make_boolean()
     expected = stairs.Stairs()
     expected.layer(-2,7,1)
@@ -247,8 +262,8 @@ def test_make_boolean(IS2):
     assert calc.identical(expected), "Boolean calculation not what it should be"
     assert expected.identical(calc), "Boolean calculation not what it should be"
 
-def test_invert(IS2):
-    int_seq = IS2
+def test_invert(s2_fix):
+    int_seq = s2_fix
     calc = ~int_seq
     expected = stairs.Stairs(1)
     expected.layer(-2,7,-1)
@@ -256,8 +271,8 @@ def test_invert(IS2):
     assert calc.identical(expected), "Invert calculation not what it should be"
     assert expected.identical(calc), "Invert calculation not what it should be"
 
-def test_and(IS3, IS4): 
-    calc = IS3 & IS4
+def test_and(s3_fix, s4_fix): 
+    calc = s3_fix & s4_fix
     expected = stairs.Stairs(0)
     expected.layer(-10,-9.5)
     expected.layer(-7,-5)
@@ -267,8 +282,8 @@ def test_and(IS3, IS4):
     assert calc.identical(expected), "AND calculation not what it should be"
     assert expected.identical(calc), "AND calculation not what it should be"
 
-def test_or(IS3, IS4): 
-    calc = IS3 | IS4
+def test_or(s3_fix, s4_fix): 
+    calc = s3_fix | s4_fix
     expected = stairs.Stairs(0)
     expected.layer(-11,-7.5)
     expected.layer(-7,0.5)
@@ -279,8 +294,8 @@ def test_or(IS3, IS4):
     assert expected.identical(calc), "OR calculation not what it should be"
 
 
-def test_lt(IS1, IS2): 
-    calc = IS1 < IS2
+def test_lt(s1_fix, s2_fix): 
+    calc = s1_fix < s2_fix
     expected = stairs.Stairs(0)
     expected.layer(-4,-2)
     expected.layer(2,2.5)
@@ -288,24 +303,24 @@ def test_lt(IS1, IS2):
     assert calc.identical(expected), "LT calculation not what it should be"
     assert expected.identical(calc), "LT calculation not what it should be"
 
-def test_gt(IS1, IS2): 
-    calc = IS1 > IS2
+def test_gt(s1_fix, s2_fix): 
+    calc = s1_fix > s2_fix
     expected = stairs.Stairs(0)
     expected.layer(1,2)
     expected.layer(2.5,7)
     assert calc.identical(expected), "GT calculation not what it should be"
     assert expected.identical(calc), "GT calculation not what it should be"
     
-def test_le(IS1, IS2): 
-    calc = IS1 <= IS2
+def test_le(s1_fix, s2_fix): 
+    calc = s1_fix <= s2_fix
     expected = stairs.Stairs(1)
     expected.layer(1,2,-1)
     expected.layer(2.5,7,-1)
     assert calc.identical(expected), "LE calculation not what it should be"
     assert expected.identical(calc), "LE calculation not what it should be"
     
-def test_ge(IS1, IS2): 
-    calc = IS1 >= IS2
+def test_ge(s1_fix, s2_fix): 
+    calc = s1_fix >= s2_fix
     expected = stairs.Stairs(1)
     expected.layer(-4,-2,-1)
     expected.layer(2,2.5,-1)
@@ -313,24 +328,24 @@ def test_ge(IS1, IS2):
     assert calc.identical(expected), "GE calculation not what it should be"
     assert expected.identical(calc), "GE calculation not what it should be"    
 
-def test_eq(IS1, IS2): 
-    calc = IS1 == IS2
+def test_eq(s1_fix, s2_fix): 
+    calc = s1_fix == s2_fix
     expected = stairs.Stairs(1)
     expected.layer(-4,-2,-1)
     expected.layer(1,10,-1)
     assert calc.identical(expected), "EQ calculation not what it should be"
     assert expected.identical(calc), "EQ calculation not what it should be" 
 
-def test_eq(IS1, IS2): 
-    calc = IS1 == IS2
+def test_eq(s1_fix, s2_fix): 
+    calc = s1_fix == s2_fix
     expected = stairs.Stairs(1)
     expected.layer(-4,-2,-1)
     expected.layer(1,10,-1)
     assert calc.identical(expected), "EQ calculation not what it should be"
     assert expected.identical(calc), "EQ calculation not what it should be"     
 
-def test_ne(IS1, IS2): 
-    calc = IS1 != IS2
+def test_ne(s1_fix, s2_fix): 
+    calc = s1_fix != s2_fix
     expected = stairs.Stairs(0)
     expected.layer(-4,-2,1)
     expected.layer(1,10,1)
@@ -357,24 +372,59 @@ def test_base_integrate_point5_1(init_value):
     int_seq = stairs.Stairs(init_value)
     assert int_seq.integrate(0.5,1) == 0.5*init_value
 
-def test_integrate1(IS1, IS2):
-    assert IS1.integrate() == -2.75
-    assert IS2.integrate() == -0.5
+def test_integrate1(s1_fix, s2_fix):
+    assert s1_fix.integrate() == -2.75
+    assert s2_fix.integrate() == -0.5
     
-def test_integrate2(IS1, IS2):
-    assert IS1.integrate(-1,5.5) == 3.5
-    assert IS2.integrate(-1,5.5) == -5
+def test_integrate2(s1_fix, s2_fix):
+    assert s1_fix.integrate(-1,5.5) == 3.5
+    assert s2_fix.integrate(-1,5.5) == -5
 
-def test_mean1(IS1, IS2):
-    assert abs(IS1.mean() - -0.19642857) < 0.000001
-    assert abs(IS2.mean() - -0.04166666) < 0.000001
+def test_mean1(s1_fix, s2_fix):
+    assert abs(s1_fix.mean() - -0.19642857) < 0.000001
+    assert abs(s2_fix.mean() - -0.04166666) < 0.000001
 
-def test_mean2(IS1, IS2):
-    assert abs(IS1.mean(2,8) - 1.125) < 0.000001
-    assert abs(IS2.mean(2,8) - -0.45833333) < 0.000001
+def test_mean2(s1_fix, s2_fix):
+    assert abs(s1_fix.mean(2,8) - 1.125) < 0.000001
+    assert abs(s2_fix.mean(2,8) - -0.45833333) < 0.000001
     
-def test_to_dataframe(IS1):
-    IS1.to_dataframe()
+def test_to_dataframe(s1_fix):
+    s1_fix.to_dataframe()
+ 
+@pytest.mark.parametrize("stairs_instance, bounds, cuts", itertools.product([s1(),s2(),s3(),s4()], [(3,4), (0, 10), (-10, 30), (-5, -1)], [None, (0, 2.5, 4, 4.5, 7)]))      
+def test_hist_left_closed(stairs_instance, bounds, cuts):
+
+    def make_expected_result(interval_index, lower, upper):
+        return pd.Series(
+            [((stairs_instance >= i.left)*(stairs_instance < i.right)).mean(lower, upper) for i in interval_index],
+            index = interval_index,
+            dtype='float64',
+        )
+
+    hist = stairs_instance.hist(bin_edges=cuts, lower=bounds[0], upper=bounds[1])
+    expected = make_expected_result(hist.index, *bounds)
+    assert (hist.apply(round,5) == expected.apply(round,5)).all()
+    
+    
+@pytest.mark.parametrize("stairs_instance, bounds, cuts", itertools.product([s1(),s2(),s3(),s4()], [(3,4), (0, 10), (-10, 30), (-5, -1)], [None, (0, 2.5, 4, 4.5, 7)]))       
+def test_hist_right_closed(stairs_instance, bounds, cuts):
+
+    def make_expected_result(interval_index, lower, upper):
+        return pd.Series(
+            [((stairs_instance > i.left)*(stairs_instance <= i.right)).mean(lower, upper) for i in interval_index],
+            index = interval_index,
+            dtype='float64',
+        )
+
+    hist = stairs_instance.hist(bin_edges=cuts, lower=bounds[0], upper=bounds[1], closed='right')
+    expected = make_expected_result(hist.index, *bounds)
+    assert (hist.apply(round,5) == expected.apply(round,5)).all()
+    
+@pytest.mark.parametrize("stairs_instance, bounds, closed", itertools.product([s1(),s2(),s3(),s4()], [(3,4), (0, 10), (-10, 30), (-5, -1)], ['left', 'right']))    
+def test_hist_default_bins(stairs_instance, bounds, closed):
+    #really testing the default binning process here
+    hist = stairs_instance.hist(lower=bounds[0], upper=bounds[1], closed=closed)
+    assert abs(hist.sum() - 1) < 0.000001
     
     
 # @pytest.mark.parametrize("index, init_val", [(1,1.25), (2,-2.5), (3,3.25), (4,-4)])         

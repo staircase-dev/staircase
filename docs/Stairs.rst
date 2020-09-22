@@ -77,7 +77,9 @@ Summary statistics
    Stairs.mean
    Stairs.median
    Stairs.percentile
-   Stairs.percentile_Stairs
+   Stairs.percentile_stairs
+   Stairs.ecdf_stairs
+   Stairs.hist
    
    
 Miscellaneous functions

@@ -13,6 +13,7 @@ Aggregation functions
    median
    min
    max
+   hist_from_ecdf
 
 ======================
 Collection functions
