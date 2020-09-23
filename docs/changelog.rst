@@ -7,6 +7,7 @@ v1.2.0 2020-09-23
 - added :meth:`staircase.Stairs.hist`
 - added :meth:`staircase.Stairs.ecdf_stairs`
 - added :func:`staircase.hist_from_ecdf`
+- added :func:`staircase.make_test_data`
 - :meth:`staircase.Stairs.percentile_Stairs` pending deprecation in favour of :meth:`staircase.Stairs.percentile_stairs`
 
 

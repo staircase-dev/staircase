@@ -27,39 +27,54 @@ But don't hit the close button on the browser just yet.  Let us convince you tha
 For example, the number of users viewing this page over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the page, and decreases by 1 every time a user leaves the page.  Let's say we have this data in vector format (i.e. tuple, list, numpy array, pandas series).  Specifically, assume *arrive* and *leave* are vectors of times, expressed as minutes past midnight, for all page views occuring yesterday.  Creating the corresponding step function is simple.  To achieve it we use the *[Stairs](https://railing.readthedocs.io/en/stable/Stairs.html)* class:
 
 ```python
-import staircase as sc
+>>> import staircase as sc
 
-views = sc.Stairs()
-views.layer(arrive,leave)
+>>> views = sc.Stairs()
+>>> views.layer(arrive,leave)
 ```
 
 We can visualise the function with the plot function:
 ```python
-views.plot()
+>>> views.plot()
 ```
 <p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/pageviews.png?raw=true" title="pageviews example" alt="pageviews example"></p>
 
-We can find the total time the page was viewed:
+We can find the total time in minutes the page was viewed:
 ```python
-views.integrate(0,1440)
+>>> views.integrate(0,1440)
+9297.94622521079
 ```
 
 We can find the average number of viewers:
 ```python
-views.mean(0,1440)
+>>> views.mean(0,1440)
+6.4569071008408265
 ```
 
-We can find the average number of viewers for each hour of the day:
+We can find the average number of viewers, per hour of the day, and plot:
 ```python
-[views.mean(60*i, 60*(i+1)) for i in range(24)]
+>>> pd.Series([views.mean(60*i, 60*(i+1)) for i in range(24)]).plot()
 ```
+<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/meanperhour.png?raw=true" title="mean page views per hour" alt="mean page views per hour"></p>
 
 We can find the maximum concurrent views:
 ```python
-views.max(0,1440)
+>>> views.max(0,1440)
+16
 ```
 
-There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://railing.readthedocs.io/en/stable/Stairs.html#arithmetic-operators), [relational operations](https://railing.readthedocs.io/en/stable/Stairs.html#relational-operators), [logical operations](https://railing.readthedocs.io/en/stable/Stairs.html#logical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://railing.readthedocs.io/en/stable/Stairs.html#summary-statistics), [aggregations](https://railing.readthedocs.io/en/stable/multi_stair.html) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html).
+We can create histogram data showing relative frequency of concurrent viewers (and plot it):
+```python
+>>> views.hist(0,1440).plot.bar()
+```
+<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/pageviewshist.png?raw=true" title="concurrent viewers histogram" alt="concurrent viewers histogram"></p>
+
+
+Plotting is based on [matplotlib](https://matplotlib.org) and it requires relatively little effort to take the previous chart and improve the aesthetics:
+<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/pageviewshistpretty.png?raw=true" title="concurrent viewers histogram (aesthetic)" alt="concurrent viewers histogram (aesthetic)"></p>
+
+
+There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://railing.readthedocs.io/en/stable/Stairs.html#arithmetic-operators), [relational operations](https://railing.readthedocs.io/en/stable/Stairs.html#relational-operators), [logical operations](https://railing.readthedocs.io/en/stable/Stairs.html#logical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://railing.readthedocs.io/en/stable/Stairs.html#summary-statistics), [aggregations](https://railing.readthedocs.io/en/stable/module_funcs.html) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html).
 
 
 ## Installation
