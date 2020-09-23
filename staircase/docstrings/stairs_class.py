@@ -403,7 +403,7 @@ percentile_stairs_example = """
             >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5))
             >>> s2.plot(axes[0])
             >>> axes[0].set_title("s2")
-            >>> s2_percentiles = s2.percentile_Stairs()
+            >>> s2_percentiles = s2.percentile_stairs()
             >>> s2_percentiles.plot(axes[1])
             >>> axes[0].set_title("s2 percentiles")
             >>> s2_percentiles(55)

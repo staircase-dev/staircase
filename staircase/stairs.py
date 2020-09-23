@@ -1185,7 +1185,7 @@ class Stairs():
         Stairs.median, Stairs.percentile_stairs
         """
         assert 0 <= x <= 100
-        percentiles = self.percentile_Stairs(lower, upper)
+        percentiles = self.percentile_stairs(lower, upper)
         return (percentiles(x, how='left') + percentiles(x, how='right'))/2
 
     @append_doc(SC_docs.percentile_stairs_example)
@@ -1212,14 +1212,21 @@ class Stairs():
         --------
         Stairs.percentile
         """
-        temp_df = (self.clip(lower,upper)
-             .to_dataframe()
-             .iloc[1:-1]
-             .assign(duration = lambda df: df.end-df.start)
-             .groupby('value').sum()
-             .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
-             .assign(duration = lambda df: df.duration.shift())
-             .fillna(0)
+        temp_df = (
+            self.clip(lower,upper)
+            .to_dataframe()
+        )
+        
+        assert temp_df.shape[0] >= 3, "Step function composed only of infinite length intervals.  Provide bounds by 'lower' and 'upper' parameters"
+
+        temp_df = ( 
+            temp_df
+            .iloc[1:-1]
+            .assign(duration = lambda df: df.end-df.start)
+            .groupby('value').sum()
+            .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
+            .assign(duration = lambda df: df.duration.shift())
+            .fillna(0)
         )
         percentile_step_func = Stairs()
         for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
@@ -1227,6 +1234,14 @@ class Stairs():
         #percentile_step_func._popitem()
         percentile_step_func[100]=0
         return percentile_step_func
+        
+    def percentile_Stairs(self, lower=float('-inf'), upper=float('inf')):
+        """Deprecated.  Use Stairs.percentile_stairs"""
+        warnings.warn(
+            "Stairs.percentile_Stairs will be deprecated in version 2.0.0, use Stairs.percentile_stairs instead",
+             PendingDeprecationWarning
+        )
+        return self.percentile_stairs(lower, upper)
         
     @append_doc(SC_docs.ecdf_stairs_example)
     def ecdf_stairs(self, lower=float('-inf'), upper=float('inf')):
@@ -1407,7 +1422,8 @@ class Stairs():
         :class:`Stairs`
             Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
         """
-        assert lower is not None or upper is not None, "clip function should not be called with no parameters." 
+        assert lower is not None and upper is not None, "clip function should not be called with no parameters." 
+        assert lower < upper, "Value of parameter 'lower' must be less than the value of parameter 'upper'"
         cumulative = self._cumulative()
         left_boundary_index = cumulative.bisect_right(lower) - 1
         right_boundary_index = cumulative.bisect_right(upper) - 1
@@ -1548,4 +1564,3 @@ class Stairs():
     __gt__ = gt
     __le__ = le
     __ge__ = ge
-    percentile_Stairs = percentile_stairs
