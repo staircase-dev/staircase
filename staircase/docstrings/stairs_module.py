@@ -99,3 +99,32 @@ aggregate_example = """
         ...     stair_instance.plot(ax)
         ...     ax.set_title(title)
 """
+
+hist_from_ecdf_example = """
+    Examples
+    --------
+        
+    .. plot::
+        :context: close-figs
+        
+        >>> import staircase as sc
+        >>> s1_ecdf_stairs = s1.ecdf_stairs()
+        >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8,5), sharey=False, sharex=False)
+        >>> for ax, title, stair_instance in zip(axes, ("s1", "s1 ecdf"), (s1, s1_ecdf_stairs)):
+        ...     stair_instance.plot(ax)
+        ...     ax.set_title(title)
+
+    .. plot::
+        :context: close-figs
+        
+        >>> sc.hist_from_ecdf(s1_ecdf_stairs)
+        [-1, 0)    0.25
+        [0, 1)     0.25
+        [1, 2)     0.50
+        dtype: float64
+
+        >>> sc.hist_from_ecdf(s1_ecdf_stairs, bin_edges=(-1,1,3))
+        [-1, 1)    0.5
+        [1, 3)     0.5
+        dtype: float64
+"""

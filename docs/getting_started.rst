@@ -10,7 +10,7 @@ Introduction
 
 The staircase package is used to model step functions.  We discuss what a step function is below, but first let's talk application.  Step functions can be used to represent time series - think changes in state over time, queue counts over time, utilisation over time - you get the idea.  
 
-The staircase package makes converting raw, temporal data into time series easy and readable.  Furthermore there is a rich variety of :ref:`arithmetic operations <api.arithmetic_operators>`, :ref:`relational operations <api.relational_operators>`, :ref:`logical operations <api.logical_operators>`, to enable analysis, in addition to functions for :ref:`univariate analysis <api.summary_statistics>`, :ref:`aggregations <api.multi_stair>` and compatibility with `pandas.Timestamp <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html>`_.
+The staircase package makes converting raw, temporal data into time series easy and readable.  Furthermore there is a rich variety of :ref:`arithmetic operations <api.arithmetic_operators>`, :ref:`relational operations <api.relational_operators>`, :ref:`logical operations <api.logical_operators>`, to enable analysis, in addition to functions for :ref:`univariate analysis <api.summary_statistics>`, :ref:`aggregations <api.module_funcs>` and compatibility with `pandas.Timestamp <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html>`_.
 
 
 .. _getting_started.step_function:
@@ -115,25 +115,51 @@ We can find the total time the page was viewed:
 .. code-block :: python
 
    >>> views.integrate(0,1440)
-
+   9297.94622521079
 
 We can find the average number of viewers:
 
 .. code-block :: python
 
    >>> views.mean(0,1440)
-
+   6.4569071008408265
    
-We can find the average number of viewers for each hour of the day:
+We can find the average number of viewers, per hour of the day, and plot:
+
 .. code-block :: python
 
-   >>> [views.mean(60*i, 60*(i+1)) for i in range(24)]
+   >>> pd.Series([views.mean(60*i, 60*(i+1)) for i in range(24)]).plot()
+   
+.. figure:: img/meanperhour.png
+   :width: 60%
+   :alt: plot of mean page views per hour
+   :align: center
+   
 
 We can find the maximum concurrent views:
 
 .. code-block :: python
 
    >>> views.max(0,1440)
+   16
+   
+We can create histogram data showing relative frequency of concurrent viewers (and plot it):   
+
+.. code-block :: python
+
+   >>> views.hist(0,1440).plot.bar()
+   
+.. figure:: img/pageviewshist.png
+   :width: 60%
+   :alt: histogram plot of concurrent views
+   :align: center
+   
+Plotting is based on [matplotlib](https://matplotlib.org) and it requires relatively little effort to take the previous chart and improve the aesthetics:
+
+.. figure:: img/pageviewshistpretty.png
+   :width: 80%
+   :alt: aesthetic histogram plot of concurrent views
+   :align: center
 
 See the :ref:`case studies <resources.tutorials>` for more in-depth demonstrations of the staircase package. 
    

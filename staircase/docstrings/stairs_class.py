@@ -125,7 +125,7 @@ divide_example = """
             
             >>> stair_list = [s1, (s2+2), s1/(s2+2)]
             >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
-            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2+2", "S1/(s2+2)"), stair_list):
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2+2", "s1/(s2+2)"), stair_list):
             ...     stair_instance.plot(ax)
             ...     ax.set_title(title)
 """
@@ -403,7 +403,7 @@ percentile_stairs_example = """
             >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5))
             >>> s2.plot(axes[0])
             >>> axes[0].set_title("s2")
-            >>> s2_percentiles = s2.percentile_Stairs()
+            >>> s2_percentiles = s2.percentile_stairs()
             >>> s2_percentiles.plot(axes[1])
             >>> axes[0].set_title("s2 percentiles")
             >>> s2_percentiles(55)
@@ -481,6 +481,7 @@ shift_example = """
             5   -1.0
             6    0.0
             dtype: float64
+            
             >>> pd.Series(s2(range(7))).shift(1)
             0    NaN
             1    0.5
@@ -490,6 +491,7 @@ shift_example = """
             5   -1.0
             6   -1.0
             dtype: float64
+            
             >>> pd.Series(s2.shift(1)(range(7)))
             0    0.0
             1    0.5
@@ -530,6 +532,7 @@ diff_example = """
             5   -1.0
             6    0.0
             dtype: float64
+            
             >>> pd.Series(s2(range(7))).diff(1)
             0    NaN
             1    0.0
@@ -539,6 +542,7 @@ diff_example = """
             5    0.0
             6    1.0
             dtype: float64
+            
             >>> pd.Series(s2.diff(1)(range(7)))
             0    0.5
             1    0.0
@@ -549,3 +553,77 @@ diff_example = """
             6    1.0
             dtype: float64
 """
+
+hist_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+        
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.hist()
+            [-1, 0)    0.25
+            [0, 1)     0.25
+            [1, 2)     0.50
+            dtype: float64
+            
+            >>> s1.hist(closed='right')
+            (-2, -1]    0.25
+            (-1, 0]     0.25
+            (0, 1]      0.50
+            dtype: float64
+            
+            >>> s1.hist(2, 4.5)
+            [-1, 0)    0.2
+            [0, 1)     0.4
+            [1, 2)     0.4
+            dtype: float64
+            
+            >>> s1.hist(bin_edges=(-1,1,3))
+            [-1, 1)    0.5
+            [1, 3)     0.5
+            dtype: float64
+            
+            >>> s1.hist(bin_edges=(-1, 1))
+            [-1, 1)    0.5
+            dtype: float64
+"""
+
+ecdf_stairs_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s2.plot()
+        
+        .. plot::
+            :context: close-figs
+            
+            >>> ecdf = s2.ecdf_stairs(1,5)
+            >>> ecdf.plot()
+            
+        .. plot::    
+            :context: close-figs
+        
+            >>> print(f'{ecdf(0):.2%} of values, for s2 between 1 and 5, are less than or equal to 0')
+            75.00% of values, for s2 between 1 and 5, are less than or equal to 0
+            
+            >>> print(f'{ecdf(0, how="left"):.2%} of values, for s2 between 1 and 5, are strictly less than 0')
+            50.00% of values, for s2 between 1 and 5, are strictly less than 0
+            
+            >>> print(f'{ecdf(0.2) - ecdf(-1):.2%} of values, for s2 between 1 and 5, are in (-1, 0.2]')
+            25.00% of values, for s2 between 1 and 5, are in (-1, 0.2]
+            
+            >>> print(f'{ecdf(0.2, how="left") - ecdf(-1, how="left"):.2%} of values, for s2 between 1 and 5, are in [-1, 0.2)')
+            75.00% of values, for s2 between 1 and 5, are in [-1, 0.2)
+"""
+
+
+

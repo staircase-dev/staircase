@@ -9,6 +9,7 @@ from sortedcontainers import SortedDict, SortedSet
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import math
 import warnings
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
@@ -337,7 +338,45 @@ def resample(container, x, how='right'):
         return np.array([s.resample(x, how) for s in container])
     return type(container)([s.resample(x, how) for s in container])
     
+@append_doc(SM_docs.hist_from_ecdf_example)
+def hist_from_ecdf(ecdf, bin_edges=None, closed='left'):
+    """
+    Calculates a histogram from a Stairs instance corresponding to an
+    `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_.
     
+    Such ecdf stair instances are returned from :meth:`Stairs.ecdf_stairs`.  This function predominantly exists
+    to allow users to store the result of a ecdf stairs instance locally, and experiment with bin_edges without
+    requiring the recalculation of the ecdf.
+
+    Parameters
+    ----------
+    ecdf : :class:`Stairs`
+        lower bound of the step-function domain on which to perform the calculation
+    bin_edges : int, float, optional
+        defines the bin edges for the histogram (it is the domain of the ecdf that is being binned).
+        If not specified the bin_edges will be assumed to be the integers which cover the domain of the ecdf 
+    closed: {'left', 'right'}, default 'left'
+        determines whether the bins, which are half-open intervals, are left-closed , or right-closed
+          
+    Returns
+    -------
+    :class:`pandas.Series`
+        A Series, with a :class:`pandas.IntervalIndex`, representing the values of the histogram
+        
+    See Also
+    --------
+    Stairs.hist
+    Stairs.ecdf_stairs
+    """
+    if bin_edges is None:
+        round_func = math.floor if closed == 'left' else math.ceil
+        bin_edges = range(round_func(min(ecdf.step_changes().keys()))-(closed=='right'), round_func(max(ecdf.step_changes().keys())) + (closed=='left') + 1)
+    return pd.Series(
+        data = [ecdf(c2, how=closed) - ecdf(c1, how=closed) for c1, c2 in zip(bin_edges[:-1], bin_edges[1:])],
+        index = pd.IntervalIndex.from_tuples([(c1,c2) for  c1, c2 in zip(bin_edges[:-1], bin_edges[1:])], closed=closed),
+        dtype='float64',
+    )
+        
 class Stairs():
     """An instance of a Stairs class is used to represent a :ref:`step function <getting_started.step_function>`.
     
@@ -1143,25 +1182,25 @@ class Stairs():
             
         See Also
         --------
-        Stairs.median, Stairs.percentile_Stairs
+        Stairs.median, Stairs.percentile_stairs
         """
         assert 0 <= x <= 100
-        percentiles = self.percentile_Stairs(lower, upper)
+        percentiles = self.percentile_stairs(lower, upper)
         return (percentiles(x, how='left') + percentiles(x, how='right'))/2
 
     @append_doc(SC_docs.percentile_stairs_example)
-    def percentile_Stairs(self, lower=float('-inf'), upper=float('inf')):
+    def percentile_stairs(self, lower=float('-inf'), upper=float('inf')):
         """
         Calculates a percentile function (and returns a corresponding Stairs instance)
         
-        This method can be used for efficiency gains if subtituting for multiple calls
+        This method can be used for efficiency gains if substituting for multiple calls
         to percentile() with the same lower and upper parameters
         
         Parameters
         ----------
-        lower : int, float or pandas.Timestamp
+        lower : int, float or pandas.Timestamp, optional
             lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
+        upper : int, float or pandas.Timestamp, optional
             upper bound of the interval on which to perform the calculation
               
         Returns
@@ -1173,21 +1212,102 @@ class Stairs():
         --------
         Stairs.percentile
         """
-        temp_df = (self.clip(lower,upper)
-             .to_dataframe()
-             .iloc[1:-1]
-             .assign(duration = lambda df: df.end-df.start)
-             .groupby('value').sum()
-             .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
-             .assign(duration = lambda df: df.duration.shift())
-             .fillna(0)
+        temp_df = (
+            self.clip(lower,upper)
+            .to_dataframe()
+        )
+        
+        assert temp_df.shape[0] >= 3, "Step function composed only of infinite length intervals.  Provide bounds by 'lower' and 'upper' parameters"
+
+        temp_df = ( 
+            temp_df
+            .iloc[1:-1]
+            .assign(duration = lambda df: df.end-df.start)
+            .groupby('value').sum()
+            .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
+            .assign(duration = lambda df: df.duration.shift())
+            .fillna(0)
         )
         percentile_step_func = Stairs()
         for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
             percentile_step_func.layer(start*100,end*100,value)
-        percentile_step_func._popitem()
+        #percentile_step_func._popitem()
         percentile_step_func[100]=0
         return percentile_step_func
+        
+    def percentile_Stairs(self, lower=float('-inf'), upper=float('inf')):
+        """Deprecated.  Use Stairs.percentile_stairs"""
+        warnings.warn(
+            "Stairs.percentile_Stairs will be deprecated in version 2.0.0, use Stairs.percentile_stairs instead",
+             PendingDeprecationWarning
+        )
+        return self.percentile_stairs(lower, upper)
+        
+    @append_doc(SC_docs.ecdf_stairs_example)
+    def ecdf_stairs(self, lower=float('-inf'), upper=float('inf')):
+        """
+        Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_ 
+        for the corresponding step function values (and returns the result as a Stairs instance)
+       
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp, optional
+            lower bound of the step-function domain on which to perform the calculation
+        upper : int, float or pandas.Timestamp, optional
+            upper bound of the step-function domain to perform the calculation
+              
+        Returns
+        -------
+        :class:`Stairs`
+            An instance representing an empirical cumulative distribution function for the step function values
+            
+        See Also
+        --------
+        staircase.hist_from_ecdf
+        Stairs.hist
+        """
+        def _switch_first_key_to_zero(d):
+            d[0] = d.get(0,0) + d.pop(float('-inf'))
+            return d
+
+        _ecdf = _switch_first_key_to_zero(
+            self.percentile_stairs(lower, upper)
+            ._sorted_dict.copy()
+        )
+        
+        return Stairs().layer(np.cumsum(list(_ecdf.values())[:-1]), None, np.diff(list(_ecdf.keys()))/100)
+    
+    @append_doc(SC_docs.hist_example)
+    def hist(self, lower=float('-inf'), upper=float('inf'), bin_edges=None, closed='left'):
+        """
+        Calculates a histogram for the corresponding step function values
+       
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp, optional
+            lower bound of the step-function domain on which to perform the calculation
+        upper : int, float or pandas.Timestamp, optional
+            upper bound of the step-function domain to perform the calculation
+        bin_edges : array-like of int or float, optional
+            defines the bin edges for the histogram (remember it is the step-function range that is being binned).
+            If not specified the bin_edges will be assumed to be the integers which cover the step function range
+        closed: {'left', 'right'}, default 'left'
+            determines whether the bins, which are half-open intervals, are left-closed , or right-closed
+              
+        Returns
+        -------
+        :class:`pandas.Series`
+            A Series, with a :class:`pandas.IntervalIndex`, representing the values of the histogram
+            
+        See Also
+        --------
+        staircase.hist_from_ecdf
+        Stairs.ecdf_stairs
+        """
+        _ecdf = self.ecdf_stairs(lower, upper)
+        return hist_from_ecdf(_ecdf, bin_edges, closed)
+        
+
     
     @append_doc(SC_docs.mode_example)    
     def mode(self, lower=float('-inf'), upper=float('inf')):
@@ -1198,9 +1318,9 @@ class Stairs():
         
         Parameters
         ----------
-        lower : int, float or pandas.Timestamp
+        lower : int, float or pandas.Timestamp, optional
             lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
+        upper : int, float or pandas.Timestamp, optional
             upper bound of the interval on which to perform the calculation
               
         Returns
@@ -1243,9 +1363,9 @@ class Stairs():
         
         Parameters
         ----------
-        lower : int, float or pandas.Timestamp
+        lower : int, float or pandas.Timestamp, optional
             lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
+        upper : int, float or pandas.Timestamp, optional
             upper bound of the interval on which to perform the calculation
               
         Returns
@@ -1269,9 +1389,9 @@ class Stairs():
         
         Parameters
         ----------
-        lower : int, float or pandas.Timestamp
+        lower : int, float or pandas.Timestamp, optional
             lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
+        upper : int, float or pandas.Timestamp, optional
             upper bound of the interval on which to perform the calculation
               
         Returns
@@ -1302,7 +1422,8 @@ class Stairs():
         :class:`Stairs`
             Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
         """
-        assert lower is not None or upper is not None, "clip function should not be called with no parameters." 
+        assert lower is not None and upper is not None, "clip function should not be called with no parameters." 
+        assert lower < upper, "Value of parameter 'lower' must be less than the value of parameter 'upper'"
         cumulative = self._cumulative()
         left_boundary_index = cumulative.bisect_right(lower) - 1
         right_boundary_index = cumulative.bisect_right(upper) - 1

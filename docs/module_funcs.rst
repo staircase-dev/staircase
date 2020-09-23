@@ -1,4 +1,4 @@
-.. _api.multi_stair:
+.. _api.module_funcs:
 
 ======================
 Aggregation functions
@@ -14,12 +14,15 @@ Aggregation functions
    min
    max
 
-======================
-Collection functions
-======================
+
+=========================
+Miscellaneous functions
+=========================
 .. currentmodule:: staircase
 
 .. autosummary::
    :toctree: api/
 
    sample
+   hist_from_ecdf
+   make_test_data
