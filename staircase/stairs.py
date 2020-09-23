@@ -338,12 +338,16 @@ def resample(container, x, how='right'):
         return np.array([s.resample(x, how) for s in container])
     return type(container)([s.resample(x, how) for s in container])
     
+@append_doc(SM_docs.hist_from_ecdf_example)
 def hist_from_ecdf(ecdf, bin_edges=None, closed='left'):
     """
     Calculates a histogram from a Stairs instance corresponding to an
-    `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_,
-    such as one returned from Stairs.ecdf_stairs.
-   
+    `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_.
+    
+    Such ecdf stair instances are returned from :meth:`Stairs.ecdf_stairs`.  This function predominantly exists
+    to allow users to store the result of a ecdf stairs instance locally, and experiment with bin_edges without
+    requiring the recalculation of the ecdf.
+
     Parameters
     ----------
     ecdf : :class:`Stairs`
