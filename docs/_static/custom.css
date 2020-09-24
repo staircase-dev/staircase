@@ -63,3 +63,11 @@ div.figure.align-default img {
   max-width:100%;
   background:transparent
 }
+
+div.figure img {
+  display: block;
+  width:auto;
+  border-radius:0;
+  max-width:100%;
+  background:transparent
+}
