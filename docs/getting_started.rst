@@ -154,7 +154,7 @@ We can create histogram data showing relative frequency of concurrent viewers (a
    :alt: histogram plot of concurrent views
    :align: center
    
-Plotting is based on [matplotlib](https://matplotlib.org) and it requires relatively little effort to take the previous chart and improve the aesthetics:
+Because plotting is based on `matplotlib <https://matplotlib.org>`_ and it requires relatively little effort to take the previous chart and improve the aesthetics:
 
 .. figure:: img/pageviewshistpretty.png
    :width: 80%
