@@ -100,5 +100,5 @@ def setup(app):
     app.add_css_file('custom.css')
 
 html_sidebars = {
-    "**":["logo.html", "globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html", "gumroad.html",]
+    "**":["logo.html", "globaltoc.html", "relations.html", "searchbox.html", "gumroad.html",]
 }
