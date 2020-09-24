@@ -9,3 +9,4 @@ seaborn
 jupyter_client
 staircase
 Pygments==2.6.1
+guzzle_sphinx_theme
