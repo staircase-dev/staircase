@@ -54,3 +54,12 @@ img.logo {
   max-width:100%;
   background:transparent
 }
+
+
+div.figure.align-default img {
+  display: block;
+  width:auto;
+  border-radius:0;
+  max-width:100%;
+  background:transparent
+}
