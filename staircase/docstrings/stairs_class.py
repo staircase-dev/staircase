@@ -608,9 +608,8 @@ ecdf_stairs_example = """
             
             >>> ecdf = s2.ecdf_stairs(1,5)
             >>> ecdf.plot()
+            >>> plt.show()
             
-        .. plot::    
-            :context: close-figs
         
             >>> print(f'{ecdf(0):.2%} of values, for s2 between 1 and 5, are less than or equal to 0')
             75.00% of values, for s2 between 1 and 5, are less than or equal to 0

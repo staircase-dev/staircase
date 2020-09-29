@@ -1,6 +1,10 @@
 .. _api.module_funcs:
 
 ======================
+Module functions
+======================
+
+
 Aggregation functions
 ======================
 .. currentmodule:: staircase
@@ -15,7 +19,7 @@ Aggregation functions
    max
 
 
-=========================
+
 Miscellaneous functions
 =========================
 .. currentmodule:: staircase

@@ -113,9 +113,7 @@ hist_from_ecdf_example = """
         >>> for ax, title, stair_instance in zip(axes, ("s1", "s1 ecdf"), (s1, s1_ecdf_stairs)):
         ...     stair_instance.plot(ax)
         ...     ax.set_title(title)
-
-    .. plot::
-        :context: close-figs
+        >>> plt.show() 
         
         >>> sc.hist_from_ecdf(s1_ecdf_stairs)
         [-1, 0)    0.25

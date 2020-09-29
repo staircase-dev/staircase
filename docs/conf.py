@@ -88,6 +88,11 @@ html_theme = "guzzle_sphinx_theme"
 
 html_theme_path = guzzle_sphinx_theme.html_theme_path()
 
+html_theme_options = {
+    "google_analytics_account": "UA-65430466-2",
+    "base_url": "https://railing.readthedocs.io/en/latest/",
+}
+
 html_logo = 'img/staircase.png'
 
 
