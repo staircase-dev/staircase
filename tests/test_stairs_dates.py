@@ -2,6 +2,7 @@ import pytest
 import itertools
 import staircase.stairs as stairs
 import pandas as pd
+import numpy as np
 
 def _expand_interval_definition(start, end=None, value=1):
     return start, end, value
@@ -335,3 +336,110 @@ def test_hist_default_bins(stairs_instance, bounds, closed):
     #really testing the default binning process here
     hist = stairs_instance.hist(lower=bounds[0], upper=bounds[1], closed=closed)
     assert abs(hist.sum() - 1) < 0.000001
+ 
+ 
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.var(st1(pts))
+# = 3.8580225122881124
+
+# low, high = pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.var(st1(pts))
+# = 3.501189060642099
+
+# low, high = pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.var(st1(pts))
+# = 3.971476824920255
+
+@pytest.mark.parametrize("bounds, expected", [
+    ((), 3.8580225122881124),
+    ((pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)), 3.501189060642099),
+    ((pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)), 3.971476824920255),
+])
+def test_s1_var(bounds, expected):
+    assert np.isclose(s1().var(*bounds), expected, atol=0.00001)    
+    
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.var(st2(pts))
+# = 8.068647476524724
+
+# low, high = pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.var(st2(pts))
+# = 4.283962544589773
+
+# low, high = pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.var(st2(pts))
+# = 6.9166823043723
+
+@pytest.mark.parametrize("bounds, expected", [
+    ((), 8.068647476524724),
+    ((pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)), 4.283962544589773),
+    ((pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)), 6.9166823043723),
+])
+def test_s2_var(bounds, expected):
+    assert np.isclose(s2().var(*bounds), expected, atol=0.00001)   
+    
+    
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.std(st1(pts))
+# = 1.9641849485952467
+
+# low, high = pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.std(st1(pts))
+# = 1.871146456224659
+
+# low, high = pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.std(st1(pts))
+# = 1.9928564486485862
+
+@pytest.mark.parametrize("bounds, expected", [
+    ((), 1.9641849485952467),
+    ((pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)), 1.871146456224659),
+    ((pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)), 1.9928564486485862),
+])
+def test_s1_std(bounds, expected):
+    assert np.isclose(s1().std(*bounds), expected, atol=0.00001)   
+    
+    
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.std(st2(pts))
+# = 2.840536476886844
+
+# low, high = pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.std(st2(pts))
+# = 2.0697735491086395
+
+# low, high = pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.std(st2(pts))
+# = 2.6299586126728878
+
+@pytest.mark.parametrize("bounds, expected", [
+    ((), 2.840536476886844),
+    ((pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)), 2.0697735491086395),
+    ((pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)), 2.6299586126728878),
+])
+def test_s2_std(bounds, expected):
+    assert np.isclose(s2().std(*bounds), expected, atol=0.00001)   

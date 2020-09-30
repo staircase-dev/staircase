@@ -624,5 +624,130 @@ ecdf_stairs_example = """
             75.00% of values, for s2 between 1 and 5, are in [-1, 0.2)
 """
 
+var_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.var()
+            0.6875
+            
+            >>> s1.var(lower=0, upper=6)
+            0.4722222222222224
+    
+"""
 
+std_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.plot()
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.std()
+            0.82915619758885
+            
+            >>> s1.std(lower=0, upper=6)
+            0.6871842709362769
+    
+"""
 
+describe_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s2.plot()
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s2.describe()
+            unique    3.000000
+            mean     -0.272727
+            std       0.686349
+            min      -1.000000
+            25%      -1.000000
+            50%       0.000000
+            75%       0.500000
+            max       0.500000
+            dtype: float64
+            
+            >>> s2.describe(lower=0, upper=6, percentiles=range(0,101,20))
+            unique    3.000000
+            mean     -0.250000
+            std       0.661438
+            min      -1.000000
+            0%       -1.000000
+            20%      -1.000000
+            40%      -1.000000
+            60%       0.000000
+            80%       0.500000
+            100%      0.500000
+            max       0.500000
+            dtype: float64
+"""
+
+cov_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2"), (s1, s2)):
+            ...     stair_instance.plot(ax, label=title)
+            ...     ax.set_title(title)
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.cov(s2)
+            0.1404958677685951
+            
+            >>> s2.cov(s1)
+            0.1404958677685951
+            
+            >>> s1.cov(s2, lower=0, upper=6)
+            0.125
+"""
+
+corr_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, stair_instance in zip(axes, ("s1", "s2"), (s1, s2)):
+            ...     stair_instance.plot(ax, label=title)
+            ...     ax.set_title(title)
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s1.corr(s2)
+            0.24687803791136045
+            
+            >>> s2.corr(s1)
+            0.24687803791136045
+            
+            >>> s1.corr(s2, lower=0, upper=6)
+            0.27500954910846337
+"""

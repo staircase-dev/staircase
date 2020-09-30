@@ -29,4 +29,6 @@ Miscellaneous functions
 
    sample
    hist_from_ecdf
+   cov
+   corr
    make_test_data
