@@ -167,6 +167,58 @@ def test_aggregate_10(IS1, IS2):
                          pd.Timestamp('2020-01-09'): 2.5}
                          
 
+def _matrix_close_to_zeros(x):
+    return all(map(lambda v: np.isclose(v, 0, atol = 0.0001), x.flatten()))
+    
+# low, high = pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.cov(st1(pts), st2(pts))
+# = array([[3.50119325, 0.05618318],
+#          [0.05618318, 4.28396767]])
+
+def test_cov_matrix1(IS1, IS2):
+    assert _matrix_close_to_zeros(stairs.cov([IS1, IS2], pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)).values - np.array([[3.50119325, 0.05618318], [0.05618318, 4.28396767]]))
+
+# low, high = pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs*10)]
+# np.cov(st1(pts), st2(pts))
+# = array([[ 3.97147733, -1.01257284],
+#          [-1.01257284,  6.91668318]
+       
+def test_cov_matrix2(IS1, IS2):
+    assert _matrix_close_to_zeros(stairs.cov([IS1, IS2], pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)).values - np.array([[3.97147733, -1.01257284], [-1.01257284,  6.91668318]])) 
+    
+    
+# low, high = pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.corrcoeff(st1(pts), st2(pts))
+# = array([[1, 0.01450692],
+#          [0.01450692, 1]])
+    
+def test_corr_matrix1(IS1, IS2):
+    assert _matrix_close_to_zeros(stairs.corr([IS1, IS2], pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)).values - np.array([[1, 0.01450692], [0.01450692, 1]]))    
+
+
+# low, high = pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)
+# total_secs = int((high-low).total_seconds())
+# pts = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.corrcoeff(st1(pts), st2(pts))
+# = array([[1, -0.19319741],
+#          [-0.19319741, 1]]) 
+       
+def test_corr_matrix2(IS1, IS2):
+    assert _matrix_close_to_zeros(stairs.corr([IS1, IS2], pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)).values - np.array([[1, -0.19319741], [-0.19319741, 1]]))
+    
+    
+
+
+
+
+
+
 # def test_sample_1(IS1, IS2):
     # sample = stairs.sample(pd.Series([IS1, IS2]))
     # points=[float('-inf'), -4.0, -2.0, 1.0, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0, float('-inf'), -4.0, -2.0, 1.0, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0]

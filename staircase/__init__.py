@@ -5,7 +5,7 @@ try:
 except Exception as e:
     __version__ = ''
 
-from .stairs import Stairs, sample, resample, aggregate, hist_from_ecdf
+from .stairs import Stairs, sample, resample, aggregate, hist_from_ecdf, corr, cov
 from .stairs import _mean as mean
 from .stairs import _median as median
 from .stairs import _min as min

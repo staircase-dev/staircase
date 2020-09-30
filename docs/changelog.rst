@@ -2,6 +2,17 @@
 Changelog
 =========
 
+v1.3.0 2020-10-01
+
+- added :meth:`staircase.Stairs.describe`
+- added :meth:`staircase.Stairs.var` (variance)
+- added :meth:`staircase.Stairs.std` (standard deviation)
+- added :meth:`staircase.Stairs.corr` (correlation)
+- added :meth:`staircase.Stairs.cov` (covariance)
+- added :func:`staircase.cov` (pairwise covariance matrix)
+- added :func:`staircase.corr` (pairwise correlation matrix)
+
+
 v1.2.0 2020-09-23
 
 - added :meth:`staircase.Stairs.hist`

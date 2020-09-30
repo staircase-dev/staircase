@@ -377,6 +377,70 @@ def hist_from_ecdf(ecdf, bin_edges=None, closed='left'):
         dtype='float64',
     )
         
+def _pairwise_commutative_operation_matrix(collection, op, assume_ones_diagonal, **kwargs):
+    series = pd.Series(collection)
+    size = series.shape[0]
+    vals = np.ones(shape=(size,size))
+    for i in range(size):
+        for j in range(i+assume_ones_diagonal,size):
+            vals[i,j] = op(series.iloc[i], series.iloc[j], **kwargs)
+            vals[j,i] = vals[i,j]
+    return pd.DataFrame(
+        vals, 
+        index=series.index, 
+        columns=series.index
+    )
+    
+@append_doc(SM_docs.corr_example)
+def corr(collection, lower=float('-inf'), upper=float('inf')):
+    """
+    Calculates the correlation matrix for a collection of :class:`Stairs` instances
+    
+    Parameters
+    ----------
+    collection: :class:`pandas.Series`, dict, or array-like of :class:`Stairs` values
+        the stairs instances with which to compute the correlation matrix
+    lower : int, float or pandas.Timestamp
+        lower bound of the interval on which to perform the calculation
+    upper : int, float or pandas.Timestamp
+        upper bound of the interval on which to perform the calculation
+          
+    Returns
+    -------
+    :class:`pandas.DataFrame`
+        The correlation matrix
+        
+    See Also
+    --------
+    Stairs.corr, staircase.cov
+    """
+    return(_pairwise_commutative_operation_matrix(collection, Stairs.corr, True, lower=lower, upper=upper))
+ 
+@append_doc(SM_docs.cov_example) 
+def cov(collection, lower=float('-inf'), upper=float('inf')):
+    """
+    Calculates the covariance matrix for a collection of :class:`Stairs` instances
+    
+    Parameters
+    ----------
+    collection: :class:`pandas.Series`, dict, or array-like of :class:`Stairs` values
+        the stairs instances with which to compute the covariance matrix
+    lower : int, float or pandas.Timestamp
+        lower bound of the interval on which to perform the calculation
+    upper : int, float or pandas.Timestamp
+        upper bound of the interval on which to perform the calculation
+          
+    Returns
+    -------
+    :class:`pandas.DataFrame`
+        The covariance matrix
+        
+    See Also
+    --------
+    Stairs.cov, staircase.corr
+    """
+    return(_pairwise_commutative_operation_matrix(collection, Stairs.cov, False, lower=lower, upper=upper))
+    
 class Stairs():
     """An instance of a Stairs class is used to represent a :ref:`step function <getting_started.step_function>`.
     
@@ -1162,6 +1226,148 @@ class Stairs():
         Stairs.mean, Stairs.mode, Stairs.percentile, Stairs.percentile_Stairs
         """
         return self.percentile(50, lower, upper)
+    
+    @append_doc(SC_docs.var_example) 
+    def var(self, lower=float('-inf'), upper=float('inf')):
+        """
+        Calculates the variance of the step function.
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        float
+            The variance of the step function
+            
+        See Also
+        --------
+        Stairs.std
+        """
+        percentile_minus_mean = (self.percentile_stairs(lower, upper) - self.mean(lower, upper))._cumulative()
+        return (
+            _from_cumulative(
+                dict(zip(percentile_minus_mean.keys(), (val*val for val in percentile_minus_mean.values())))
+            ).integrate(0,100)/100
+        )
+        
+    @append_doc(SC_docs.std_example)     
+    def std(self, lower=float('-inf'), upper=float('inf')):
+        """
+        Calculates the standard deviation of the step function.
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        float
+            The standard deviation of the step function
+            
+        See Also
+        --------
+        Stairs.var
+        """
+        return np.sqrt(self.var(lower, upper)) 
+        
+    @append_doc(SC_docs.describe_example)     
+    def describe(self, lower=float('-inf'), upper=float('inf'), percentiles=[25, 50, 75]):
+        """
+        Generate descriptive statistics.
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+        percentiles: array-like of float, default [25, 50, 70]
+            The percentiles to include in output.  Numbers should be in the range 0 to 100.
+              
+        Returns
+        -------
+        :class:`pandas.Series`
+            
+        See Also
+        --------
+        Stairs.mean, Stairs.std, Stairs.min, Stairs.percentile, Stairs.max
+        """
+        percentilestairs = self.percentile_stairs(lower, upper)
+        return pd.Series(
+            {
+                **{
+                    "unique": percentilestairs.clip(0,100).number_of_steps()-1,
+                    "mean": self.mean(lower, upper),
+                    "std": self.std(lower, upper),
+                    "min": self.min(lower, upper),
+                },
+                **{f'{perc}%': percentilestairs(perc) for perc in percentiles},
+                **{
+                    "max":self.max(lower, upper),
+                }
+            }
+        )
+        
+    @append_doc(SC_docs.cov_example)     
+    def cov(self, other, lower=float('-inf'), upper=float('inf')):
+        """
+        Calculates the covariance between two step functions described by *self* and *other*.
+        
+        Parameters
+        ----------
+        other: :class:`Stairs`
+            the stairs instance with which to compute the covariance
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        float
+            The covariance between *self* and *other*
+            
+        See Also
+        --------
+        Stairs.corr, staircase.cov, staircase.corr
+        """
+        
+        return (
+            (self - self.mean(lower, upper))*(other - other.mean(lower, upper))
+        ).mean(lower, upper)
+    
+    @append_doc(SC_docs.corr_example) 
+    def corr(self, other, lower=float('-inf'), upper=float('inf')):
+        """
+        Calculates the correlation between two step functions described by *self* and *other*.
+        
+        Parameters
+        ----------
+        other: :class:`Stairs`
+            the stairs instance with which to compute the correlation
+        lower : int, float or pandas.Timestamp
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp
+            upper bound of the interval on which to perform the calculation
+              
+        Returns
+        -------
+        float
+            The correlation between *self* and *other*
+            
+        See Also
+        --------
+        Stairs.cov, staircase.corr, staircase.cov
+        """
+        return self.cov(other, lower, upper)/(self.std(lower, upper)*other.std(lower,upper))
     
     @append_doc(SC_docs.percentile_example) 
     def percentile(self, x, lower=float('-inf'), upper=float('inf')):

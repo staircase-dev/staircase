@@ -1,6 +1,7 @@
 import pytest
 import itertools
 import pandas as pd
+import numpy as np
 import staircase.stairs as stairs
 
 def _expand_interval_definition(start, end=None, value=1):
@@ -427,6 +428,60 @@ def test_hist_default_bins(stairs_instance, bounds, closed):
     assert abs(hist.sum() - 1) < 0.000001
     
     
+#np.var(st1(np.linspace(-4,10, 10000000))) = 2.501594244387741
+#np.var(st1(np.linspace(-5,10, 10000000))) = 2.3372686165530117
+#np.var(st1(np.linspace(1,12, 10000000))) = 1.5433884747933315
+  
+@pytest.mark.parametrize("bounds, expected", [
+    ((), 2.501594244387741),
+    ((-5,10), 2.3372686165530117),
+    ((1,12), 1.5433884747933315),
+])
+def test_s1_var(bounds, expected):
+    assert np.isclose(s1().var(*bounds), expected, atol=0.0001)    
+    
+
+#np.var(st2(np.linspace(-2, 10, 10000000))) = 7.024303861110942
+#np.var(st2(np.linspace(-3, 7.5, 10000000))) = 2.2678568437499633
+#np.var(st2(np.linspace(0, 14, 10000000))) = 5.538902194132663
+
+@pytest.mark.parametrize("bounds, expected", [
+    ((), 7.024303861110942),
+    ((-3, 7.5), 2.2678568437499633),
+    ((0, 14), 5.538902194132663),
+])
+def test_s2_var(bounds, expected):
+    assert np.isclose(s2().var(*bounds), expected, atol=0.0001)        
+    
+
+#np.std(st1(np.linspace(-4,10, 10000000))) = 1.5816428940780978
+#np.std(st1(np.linspace(-5,10, 10000000))) = 1.528797568034358
+#np.std(st1(np.linspace(1,12, 10000000))) = 1.242331869829206
+
+@pytest.mark.parametrize("bounds, expected", [
+    ((), 1.5816428940780978),
+    ((-5,10), 1.528797568034358),
+    ((1,12), 1.242331869829206),
+])
+def test_s1_std(bounds, expected):
+    assert np.isclose(s1().std(*bounds), expected, atol=0.0001)    
+ 
+ 
+#np.std(st2(np.linspace(-2, 10, 10000000))) = 2.650340329299417
+#np.std(st2(np.linspace(-3, 7.5, 10000000))) = 1.5059405179986238
+#np.std(st2(np.linspace(0, 14, 10000000))) = 2.3534872411238315
+
+@pytest.mark.parametrize("bounds, expected", [
+    ((), 2.650340329299417),
+    ((-3, 7.5), 1.5059405179986238),
+    ((0, 14), 2.3534872411238315),
+])
+def test_s2_std(bounds, expected):
+    assert np.isclose(s2().std(*bounds), expected, atol=0.0001)      
+ 
+
+ 
+
 # @pytest.mark.parametrize("index, init_val", [(1,1.25), (2,-2.5), (3,3.25), (4,-4)])         
 # def test_base_subtraction(IS_set, index, init_val):
     # int_seq = IS_set[index]

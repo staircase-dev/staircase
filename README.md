@@ -12,8 +12,8 @@
         <img src="https://img.shields.io/conda/v/venaturum/staircase" /></a>
 	<a href="https://travis-ci.org/venaturum/staircase" alt"Travis CI">
 		<img src="https://img.shields.io/travis/venaturum/staircase"/></a>
-    <a href="https://railing.readthedocs.io/en/stable/" alt="Read the Docs">
-        <img src="https://readthedocs.org/projects/railing/badge/?version=stable" /></a>
+    <a href="https://railing.readthedocs.io/en/latest/" alt="Read the Docs">
+        <img src="https://readthedocs.org/projects/railing/badge/?version=latest" /></a>
     <a href="https://staircase.mit-license.org/" alt="License">
         <img src="http://img.shields.io/:license-mit-blue.svg?style=flat-square"></a>
 </p>
@@ -24,7 +24,7 @@ Pretty exciting huh.
 
 But don't hit the close button on the browser just yet.  Let us convince you that much of the world around you can be modelled as step functions.
 
-For example, the number of users viewing this page over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the page, and decreases by 1 every time a user leaves the page.  Let's say we have this data in vector format (i.e. tuple, list, numpy array, pandas series).  Specifically, assume *arrive* and *leave* are vectors of times, expressed as minutes past midnight, for all page views occuring yesterday.  Creating the corresponding step function is simple.  To achieve it we use the *[Stairs](https://railing.readthedocs.io/en/stable/Stairs.html)* class:
+For example, the number of users viewing this page over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the page, and decreases by 1 every time a user leaves the page.  Let's say we have this data in vector format (i.e. tuple, list, numpy array, pandas series).  Specifically, assume *arrive* and *leave* are vectors of times, expressed as minutes past midnight, for all page views occuring yesterday.  Creating the corresponding step function is simple.  To achieve it we use the *[Stairs](https://railing.readthedocs.io/en/latest/Stairs.html)* class:
 
 ```python
 >>> import staircase as sc
@@ -74,7 +74,7 @@ Plotting is based on [matplotlib](https://matplotlib.org) and it requires relati
 <p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/pageviewshistpretty.png?raw=true" title="concurrent viewers histogram (aesthetic)" alt="concurrent viewers histogram (aesthetic)"></p>
 
 
-There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://railing.readthedocs.io/en/stable/Stairs.html#arithmetic-operators), [relational operations](https://railing.readthedocs.io/en/stable/Stairs.html#relational-operators), [logical operations](https://railing.readthedocs.io/en/stable/Stairs.html#logical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://railing.readthedocs.io/en/stable/Stairs.html#summary-statistics), [aggregations](https://railing.readthedocs.io/en/stable/module_funcs.html) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html).
+There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://railing.readthedocs.io/en/latest/Stairs.html#arithmetic-operators), [relational operations](https://railing.readthedocs.io/en/latest/Stairs.html#relational-operators), [logical operations](https://railing.readthedocs.io/en/latest/Stairs.html#logical-operators), [statistical operations](https://railing.readthedocs.io/en/latest/Stairs.html#statistical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://railing.readthedocs.io/en/latest/Stairs.html#summary-statistics), [aggregations](https://railing.readthedocs.io/en/latest/module_funcs.html) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/latest/reference/api/pandas.Timestamp.html).
 
 
 ## Installation
@@ -92,7 +92,7 @@ conda install -c venaturum staircase
 ```
 
 ## Documentation
-The complete guide to using staircase can be found at [Read the Docs](https://railing.readthedocs.io/en/stable/index.html)
+The complete guide to using staircase can be found at [Read the Docs](https://railing.readthedocs.io/en/latest/index.html)
 
 
 ## Contributing
