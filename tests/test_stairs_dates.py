@@ -337,6 +337,17 @@ def test_hist_default_bins(stairs_instance, bounds, closed):
     hist = stairs_instance.hist(lower=bounds[0], upper=bounds[1], closed=closed)
     assert abs(hist.sum() - 1) < 0.000001
  
+@pytest.mark.parametrize("stairs_instance, hrs",
+    itertools.product(
+        [s1(),s2(),s3(),s4()],
+        [-24, -6, 6, 24],
+    )
+)   
+def test_shift(stairs_instance, hrs):
+    assert bool(stairs_instance.shift(hrs) == stairs_instance.shift(pd.Timedelta(hrs, unit='H')))
+    assert not bool(stairs_instance.shift(hrs) == stairs_instance.shift(pd.Timedelta(hrs+0.000001, unit='H')))
+    assert not bool(stairs_instance.shift(hrs) == stairs_instance.shift(pd.Timedelta(hrs-0.000001, unit='H')))
+ 
  
 # low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
 # total_secs = int((high-low).total_seconds())
@@ -443,3 +454,200 @@ def test_s1_std(bounds, expected):
 ])
 def test_s2_std(bounds, expected):
     assert np.isclose(s2().std(*bounds), expected, atol=0.00001)   
+    
+    
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(1, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs)]
+# np.corrcoef(st1(pts1), st1(pts2))[0,1]
+# = 0.7242066313374523
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs)]
+# np.corrcoef(st1(pts1), st1(pts2))[0,1]
+# = -0.4564262197588511
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.corrcoef(st1(pts1), st1.shift(-pd.Timedelta(2, unit='D'))(pts1))[0,1]
+# = 0.2145983282751396
+
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,10), 'lag':pd.Timedelta(1, unit='D')}, 0.7242066313374523),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D')}, -0.4564262197588511),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D'), 'clip':'post'}, 0.2145983282751396),
+])
+def test_s1_autocorr(kwargs, expected):
+    assert np.isclose(s1().corr(s1(), **kwargs), expected, atol=0.00001)
+    
+    
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(1, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs)]
+# np.corrcoef(st2(pts1), st2(pts2))[0,1]
+# = 0.41564870493583517
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs)]
+# np.corrcoef(st2(pts1), st2(pts2))[0,1]
+# = -0.1856362783824296
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.corrcoef(st2(pts1), st2.shift(-pd.Timedelta(2, unit='D'))(pts1))[0,1]
+# = -0.24047807541603636
+
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,10), 'lag':pd.Timedelta(1, unit='D')}, 0.41564870493583517),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D')}, -0.1856362783824296),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D'), 'clip':'post'}, -0.24047807541603636),
+])
+def test_s2_autocorr(kwargs, expected):
+    assert np.isclose(s2().corr(s2(), **kwargs), expected, atol=0.00001)
+    
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(1, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs)]
+# np.corrcoef(st1(pts1), st2(pts2))[0,1]
+# = -0.5504768716400756
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs)]
+# np.corrcoef(st1(pts1), st2(pts2))[0,1]
+# = -0.869050905054203
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.corrcoef(st1(pts1), st2.shift(-pd.Timedelta(2, unit='D'))(pts1))[0,1]
+# = -0.962531150106436
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,10), 'lag':pd.Timedelta(1, unit='D')}, -0.5504768716400756),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D')}, -0.869050905054203),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D'), 'clip':'post'}, -0.962531150106436),
+])
+def test_crosscorr(kwargs, expected):
+    assert np.isclose(s1().corr(s2(), **kwargs), expected, atol=0.00001)
+    
+    
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(1, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs)]
+# np.cov(st1(pts1), st1(pts2))[0,1]
+# = 2.9296901561636464
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs)]
+# np.cov(st1(pts1), st1(pts2))[0,1]
+# = -1.2499884258990304
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs)]
+# np.cov(st1(pts1), st1.shift(-pd.Timedelta(2, unit='D'))(pts1))[0,1]
+# = 0.892856552342196
+
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,10), 'lag':pd.Timedelta(1, unit='D')}, 2.9296901561636464),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D')}, -1.2499884258990304),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D'), 'clip':'post'}, 0.892856552342196),
+])
+def test_s1_autocov(kwargs, expected):
+    assert np.isclose(s1().cov(s1(), **kwargs), expected, atol=0.00001)
+    
+    
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(1, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs + 1)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs + 1)]
+# np.cov(st2(pts1), st2(pts2))[0,1]
+# = 2.903313715908994
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, 2*(total_secs - lag_secs) + 1)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, 2*(total_secs - lag_secs) + 1)]
+# np.cov(st2(pts1), st2(pts2))[0,1]
+# = -0.5850255035016916
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs + 1)]
+# np.cov(st2(pts1), st2.shift(-pd.Timedelta(2, unit='D'))(pts1))[0,1]
+# = -1.2321516853124157
+
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,10), 'lag':pd.Timedelta(1, unit='D')}, 2.903313715908994),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D')}, -0.5850255035016916),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D'), 'clip':'post'}, -1.2321516853124157),
+])
+def test_s2_autocov(kwargs, expected):
+    assert np.isclose(s2().cov(s2(), **kwargs), expected, atol=0.0001)
+    
+    
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(1, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, total_secs - lag_secs + 1)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, total_secs - lag_secs + 1)]
+# np.cov(st1(pts1), st2(pts2))[0,1]
+# = -2.9980440069170653
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs - lag_secs, 2*(total_secs - lag_secs) + 1)]
+# pts2 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0 + lag_secs, total_secs, 2*(total_secs - lag_secs) + 1)]
+# np.cov(st1(pts1), st2(pts2))[0,1]
+# = -1.8000478009074565
+
+# low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,8)
+# total_secs = int((high-low).total_seconds())
+# lag_secs =  int(pd.Timedelta(2, unit='D').total_seconds())
+# pts1 = [low + pd.Timedelta(x, unit='sec') for x in np.linspace(0, total_secs, total_secs + 1)]
+# np.cov(st1(pts1), st2.shift(-pd.Timedelta(2, unit='D'))(pts1))[0,1]
+# = -5.357139018807952
+
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,10), 'lag':pd.Timedelta(1, unit='D')}, -2.9980440069170653),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D')}, -1.8000478009074565),
+    ({'lower':pd.Timestamp(2020,1,1), 'upper':pd.Timestamp(2020,1,8), 'lag':pd.Timedelta(2, unit='D'), 'clip':'post'}, -5.357139018807952),
+])
+def test_crosscov(kwargs, expected):
+    assert np.isclose(s1().cov(s2(), **kwargs), expected, atol=0.0001)

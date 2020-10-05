@@ -1317,37 +1317,56 @@ class Stairs():
         )
         
     @append_doc(SC_docs.cov_example)     
-    def cov(self, other, lower=float('-inf'), upper=float('inf')):
+    def cov(self, other, lower=float('-inf'), upper=float('inf'), lag=0, clip='pre'):
         """
-        Calculates the covariance between two step functions described by *self* and *other*.
+        Calculates either covariance, autocovariance or cross-covariance.
+
+        The calculation is between two step functions described by *self* and *other*.
+        If lag is None or 0 then covariance is calculated, otherwise cross-covariance is calculated.
+        Autocovariance is a special case of cross-covariance when *other* is equal to *self*.
         
         Parameters
         ----------
         other: :class:`Stairs`
             the stairs instance with which to compute the covariance
         lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
+            lower bound of the domain on which to perform the calculation
         upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-              
+            upper bound of the domain on which to perform the calculation
+        lag : int, float, pandas.Timedelta
+            a pandas.Timedelta is only valid when using dates.  
+            If using dates and delta is an int or float, then it is interpreted as a number of hours.
+        clip : {'pre', 'post'}, default 'pre'
+            only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
+            If 'pre' then the domain over which the calculation is performed is the overlap
+            of the original domain and the translated domain.
+            
         Returns
         -------
         float
-            The covariance between *self* and *other*
+            The covariance (or cross-covariance) between *self* and *other*
             
         See Also
         --------
         Stairs.corr, staircase.cov, staircase.corr
         """
-        
-        return (
-            (self - self.mean(lower, upper))*(other - other.mean(lower, upper))
-        ).mean(lower, upper)
+        if lag != 0:
+            assert clip in ['pre', 'post']
+            if clip == 'pre' and upper != float('inf'):
+                upper = upper - lag
+            other = other.shift(-lag)
+        return (self*other).mean(lower, upper) - self.mean(lower, upper)*other.mean(lower, upper)
     
     @append_doc(SC_docs.corr_example) 
-    def corr(self, other, lower=float('-inf'), upper=float('inf')):
+    def corr(self, other, lower=float('-inf'), upper=float('inf'), lag=0, clip='pre'):
         """
-        Calculates the correlation between two step functions described by *self* and *other*.
+        Calculates either correlation, autocorrelation or cross-correlation. 
+        
+        All calculations are based off the `Pearson correlation coefficient <https://en.wikipedia.org/wiki/Pearson_correlation_coefficient>`_.
+        
+        The calculation is between two step functions described by *self* and *other*.
+        If lag is None or 0 then correlation is calculated, otherwise cross-correlation is calculated.
+        Autocorrelation is a special case of cross-correlation when *other* is equal to *self*.        
         
         Parameters
         ----------
@@ -1357,16 +1376,28 @@ class Stairs():
             lower bound of the interval on which to perform the calculation
         upper : int, float or pandas.Timestamp
             upper bound of the interval on which to perform the calculation
-              
+        lag : int, float, pandas.Timedelta
+            a pandas.Timedelta is only valid when using dates.  
+            If using dates and delta is an int or float, then it is interpreted as a number of hours.
+        clip : {'pre', 'post'}, default 'pre'
+            only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
+            If 'pre' then the domain over which the calculation is performed is the overlap
+            of the original domain and the translated domain.
+            
         Returns
         -------
         float
-            The correlation between *self* and *other*
+            The correlation (or cross-correlation) between *self* and *other*
             
         See Also
         --------
         Stairs.cov, staircase.corr, staircase.cov
         """
+        if lag != 0:
+            assert clip in ['pre', 'post']
+            if clip == 'pre' and upper != float('inf'):
+                upper = upper - lag
+            other = other.shift(-lag)
         return self.cov(other, lower, upper)/(self.std(lower, upper)*other.std(lower,upper))
     
     @append_doc(SC_docs.percentile_example) 
@@ -1664,8 +1695,8 @@ class Stairs():
         
         Parameters
         ----------
-        delta : int, float or pandas.Timestamp
-            the amount by which to translate.  A pandas.Timestamp is only valid when using dates.
+        delta : int, float or pandas.Timedelta
+            the amount by which to translate.  A pandas.Timedelta is only valid when using dates.
             If using dates and delta is an int or float, then it is interpreted as a number of hours.
               
         Returns

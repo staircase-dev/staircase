@@ -480,7 +480,88 @@ def test_s2_std(bounds, expected):
     assert np.isclose(s2().std(*bounds), expected, atol=0.0001)      
  
 
- 
+#np.cov(st1(pts[:-100000]), st1(pts[100000:]))[0,1] = 1.9386094481108465
+#np.cov(st1(np.linspace(-4, 8, 12*100000 + 1)), st1(np.linspace(-2, 10, 12*100000 + 1)))[0,1] = 1.1184896017794723
+#np.cov(st1(np.linspace(-4, 8, 12*100000 + 1)), st1.shift(-2)(np.linspace(-4, 8, 12*100000 + 1)))[0,1] = 1.1184896017794723
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':-4, 'upper':10, 'lag':1}, 1.9386094481108465),
+    ({'lower':-4, 'upper':10, 'lag':2}, 1.1184896017794723),
+    ({'lower':-4, 'upper':8, 'lag':2, 'clip':'post'}, 1.1184896017794723),
+])
+def test_s1_autocov(kwargs, expected):
+    assert np.isclose(s1().cov(s1(), **kwargs), expected, atol=0.00001)
+
+
+#np.cov(st2(np.linspace(-2, 9, 11*100000 + 1)), st2(np.linspace(-1, 10, 11*100000 + 1)))[0,1 = 3.1022721590913256
+#np.cov(st2(np.linspace(0, 6, 12*100000 + 1)), st2(np.linspace(2, 8, 12*100000 + 1)))[0,1] = -0.7291746267294938
+#np.cov(st2(np.linspace(0, 6, 12*100000 + 1)), st2.shift(-2)(np.linspace(0, 6, 12*100000 + 1)))[0,1] = -0.7291746267294938
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':-2, 'upper':10, 'lag':1}, 3.1022721590913256),
+    ({'lower':0, 'upper':8, 'lag':2}, -0.7291746267294938),
+    ({'lower':0, 'upper':6, 'lag':2, 'clip':'post'}, -0.7291746267294938),
+])
+def test_s2_autocov(kwargs, expected):
+    assert np.isclose(s2().cov(s2(), **kwargs), expected, atol=0.00001)
+    
+    
+
+#np.cov(st1(np.linspace(-2, 9, 11*100000 + 1)), st2(np.linspace(-1, 10, 11*100000 + 1)))[0,1 = -0.08677679611199672
+#np.cov(st1(np.linspace(0, 6, 12*100000 + 1)), st2(np.linspace(2, 8, 12*100000 + 1)))[0,1] = -1.970493123547197
+#np.cov(st1(np.linspace(0, 6, 12*100000 + 1)), st2.shift(-2)(np.linspace(0, 6, 12*100000 + 1)))[0,1] = -1.970493123547197
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':-2, 'upper':10, 'lag':1}, -0.08677679611199672),
+    ({'lower':0, 'upper':8, 'lag':2}, -1.970493123547197),
+    ({'lower':0, 'upper':6, 'lag':2, 'clip':'post'}, -1.970493123547197),
+])
+def test_crosscov(kwargs, expected):
+    assert np.isclose(s1().cov(s2(), **kwargs), expected, atol=0.00001)
+    
+
+
+#np.corrcoef(st1(pts[:-100000]), st1(pts[100000:]))[0,1] = 0.6927353407369307
+#np.corrcoef(st1(np.linspace(-4, 8, 12*100000 + 1)), st1(np.linspace(-2, 10, 12*100000 + 1)))[0,1] = -0.2147502741669856
+#np.corrcoef(st1(np.linspace(-4, 8, 12*100000 + 1)), st1.shift(-2)(np.linspace(-4, 8, 12*100000 + 1)))[0,1] = -0.2147502741669856
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':-2, 'upper':10, 'lag':1}, 0.6927353407369307),
+    ({'lower':0, 'upper':8, 'lag':2}, -0.2147502741669856),
+    ({'lower':0, 'upper':6, 'lag':2, 'clip':'post'}, -0.2147502741669856),
+])
+def test_s1_autocorr(kwargs, expected):
+    assert np.isclose(s1().corr(s1(), **kwargs), expected, atol=0.00001)
+
+
+#np.corrcoef(st2(pts[:-100000]), st2(pts[100000:]))[0,1] = 0.5038199912440895
+#np.corrcoef(st2(np.linspace(-4, 8, 12*100000 + 1)), st2(np.linspace(-2, 10, 12*100000 + 1)))[0,1] = -0.2419504099129966
+#np.corrcoef(st2(np.linspace(-4, 8, 12*100000 + 1)), st2.shift(-2)(np.linspace(-4, 8, 12*100000 + 1)))[0,1] = -0.2419504099129966
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':-2, 'upper':10, 'lag':1}, 0.5038199912440895),
+    ({'lower':0, 'upper':8, 'lag':2}, -0.2419504099129966),
+    ({'lower':0, 'upper':6, 'lag':2, 'clip':'post'}, -0.2419504099129966),
+])
+def test_s2_autocorr(kwargs, expected):
+    assert np.isclose(s2().corr(s2(), **kwargs), expected, atol=0.00001)
+
+
+#np.corrcoef(st1(pts[:-100000]), st2(pts[100000:]))[0,1] = -0.01966642657198049
+#np.corrcoef(st1(np.linspace(-4, 8, 12*100000 + 1)), st2(np.linspace(-2, 10, 12*100000 + 1)))[0,1] = -0.7086484036832666
+#np.corrcoef(st1(np.linspace(-4, 8, 12*100000 + 1)), st2.shift(-2)(np.linspace(-4, 8, 12*100000 + 1)))[0,1] = -0.7086484036832666
+
+@pytest.mark.parametrize("kwargs, expected", [
+    ({'lower':-2, 'upper':10, 'lag':1}, -0.01966642657198049),
+    ({'lower':0, 'upper':8, 'lag':2}, -0.7086484036832666),
+    ({'lower':0, 'upper':6, 'lag':2, 'clip':'post'}, -0.7086484036832666),
+])
+def test_crosscorr(kwargs, expected):
+    assert np.isclose(s1().corr(s2(), **kwargs), expected, atol=0.00001)
+    
+    
+    
+    
 
 # @pytest.mark.parametrize("index, init_val", [(1,1.25), (2,-2.5), (3,3.25), (4,-4)])         
 # def test_base_subtraction(IS_set, index, init_val):
