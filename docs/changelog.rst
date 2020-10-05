@@ -2,6 +2,12 @@
 Changelog
 =========
 
+v1.4.0 2020-10-05
+
+- extended :meth:`staircase.Stairs.corr` to facilitate cross-correlation and autocorrelation
+- extended :meth:`staircase.Stairs.cov` to facilitate cross-covariance and autocovariance
+
+
 v1.3.0 2020-10-01
 
 - added :meth:`staircase.Stairs.describe`

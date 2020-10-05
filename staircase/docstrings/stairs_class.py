@@ -725,6 +725,19 @@ cov_example = """
             
             >>> s1.cov(s2, lower=0, upper=6)
             0.125
+            
+            >>> # autocovariance with lag 1
+            >>> s1.cov(s1, lower=1, upper=5, lag=1)
+            -0.3333333333333333
+            
+            >>> # cross-covariance with lag 1
+            >>> s1.cov(s2, lower=1, upper=4.5, lag=1)
+            0.15999999999999998
+            
+            >>> # cross-covariance with lag 1
+            >>> s1.cov(s2, lower=1, upper=4.5, lag=1, clip='post')
+            0.163265306122449
+            
 """
 
 corr_example = """
@@ -750,4 +763,16 @@ corr_example = """
             
             >>> s1.corr(s2, lower=0, upper=6)
             0.27500954910846337
+            
+            >>> # autocorrelation with lag 1
+            >>> s1.corr(s1, lower=1, upper=5, lag=1)
+            -0.8660254037844386
+            
+            >>> # cross-correlation with lag 1
+            >>> s1.corr(s2, lower=1, upper=5.5, lag=1)
+            0.4961389383568339
+            
+            >>> # cross-correlation with lag 1
+            >>> s1.corr(s2, lower=1, upper=4.5, lag=1, clip='post')
+            0.4961389383568339
 """
