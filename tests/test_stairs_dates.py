@@ -83,7 +83,7 @@ def test_min_dates_1(s1_fix):
     assert s1_fix.min() == -0.5, "Expected minimum to be -0.5"
     
 def test_min_dates_2(s1_fix):
-    assert s1_fix.min(upper=pd.Timestamp(2020,1,4)) == 2, "Expected minimum to be 2"
+    assert s1_fix.min(upper=pd.Timestamp(2020,1,4)) == 0, "Expected minimum to be 0"
 
 def test_min_dates_3(s1_fix):
     assert s1_fix.min(lower=pd.Timestamp(2020,1,10,12)) == 0, "Expected minimum to be 0"
@@ -651,3 +651,26 @@ def test_s2_autocov(kwargs, expected):
 ])
 def test_crosscov(kwargs, expected):
     assert np.isclose(s1().cov(s2(), **kwargs), expected, atol=0.0001)
+    
+    
+@pytest.mark.parametrize("kwargs, expected_index, expected_vals", [
+    (
+        {'window':(-pd.Timedelta(1, 'd'), pd.Timedelta(1, 'd'))}, 
+        [pd.Timestamp('2019-12-31'), pd.Timestamp('2020-01-02'), pd.Timestamp('2020-01-04'), pd.Timestamp('2020-01-05'), pd.Timestamp('2020-01-06'), pd.Timestamp('2020-01-07'), pd.Timestamp('2020-01-09'), pd.Timestamp('2020-01-11')],
+        [0.0, 2.0, 4.5, 3.25, 0.75, -0.5, -0.5, 0.0],
+    ),
+    (
+        {'window':(-pd.Timedelta(2, 'd'), pd.Timedelta(0, 'd'))}, 
+        [pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-03'), pd.Timestamp('2020-01-05'), pd.Timestamp('2020-01-06'), pd.Timestamp('2020-01-07'), pd.Timestamp('2020-01-08'), pd.Timestamp('2020-01-10'), pd.Timestamp('2020-01-12')],
+        [0.0, 2.0, 4.5, 3.25, 0.75, -0.5, -0.5, 0.0],
+    ),
+    (
+        {'window':(-pd.Timedelta(1, 'd'), pd.Timedelta(1, 'd')), 'lower':pd.Timestamp('2020-01-03'), 'upper':pd.Timestamp('2020-01-08')}, 
+        [pd.Timestamp('2020-01-04'), pd.Timestamp('2020-01-05'), pd.Timestamp('2020-01-06'), pd.Timestamp('2020-01-07')],
+        [4.5, 3.25, 0.75, -0.5],
+    ),
+])    
+def test_s1_rolling_mean(s1_fix, kwargs, expected_index, expected_vals):
+    rm = s1_fix.rolling_mean(**kwargs)
+    assert list(rm.values) == expected_vals
+    assert list(rm.index) == expected_index

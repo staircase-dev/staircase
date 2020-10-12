@@ -221,38 +221,7 @@ def test_layer2(init_value):
     assert int_seq.identical(int_seq2)
     assert int_seq2.identical(int_seq)
     
-def test_min(s1_fix, s2_fix): 
-    int_seq1, int_seq2 = s1_fix, s2_fix
-    calc = stairs._min_pair(int_seq1, int_seq2)
-    expected = stairs.Stairs()
-    expected.layer(-4,11,-1.75)
-    expected.layer(1,11,-0.75)
-    expected.layer(2,11,2.75)
-    expected.layer(2.5,11,-0.75)
-    expected.layer(4,11,2.5)
-    expected.layer(5,11,-4.5)
-    expected.layer(7,11,2)
-    expected.layer(10,11,0.5)
-    assert calc.identical(expected), "Min calculation not what it should be"
-    assert expected.identical(calc), "Min calculation not what it should be"
 
-def test_max(s1_fix, s2_fix): 
-    int_seq1, int_seq2 = s1_fix, s2_fix
-    calc = stairs._max_pair(int_seq1, int_seq2)
-    expected = stairs.Stairs()
-    expected = stairs.Stairs(0)
-    expected.layer(-2,11,-1.75)
-    expected.layer(1,11,2)
-    expected.layer(2,11,1.75)
-    expected.layer(2.5,11,-1.75)
-    expected.layer(3,11,2.5)
-    expected.layer(5,11,-0.75)
-    expected.layer(6,11,-2.5)
-    expected.layer(7,11,0.5)
-    expected.layer(8,11,5)
-    expected.layer(10,11,-5)
-    assert calc.identical(expected), "Max calculation not what it should be"
-    assert expected.identical(calc), "Max calculation not what it should be"
 
 def test_make_boolean(s2_fix):
     int_seq = s2_fix
@@ -560,9 +529,200 @@ def test_crosscorr(kwargs, expected):
     assert np.isclose(s1().corr(s2(), **kwargs), expected, atol=0.00001)
     
     
+@pytest.mark.parametrize("kwargs, expected_index, expected_vals", [
+    (
+        {'window':(-1,1)}, 
+        [-5, -3, 0, 2, 4, 5, 6, 7, 9, 11],
+        [0.0, -1.75, -1.75, 0.25, 2.75, 2.375, 0.75, -0.5, -0.5, 0.0],
+    ),
+    (
+        {'window':(-2,0)}, 
+        [-4, -2, 1, 3, 5, 6, 7, 8, 10, 12],
+        [0.0, -1.75, -1.75, 0.25, 2.75, 2.375, 0.75, -0.5, -0.5, 0.0],
+    ),
+    (
+        {'window':(-1,1), 'lower':0, 'upper':8}, 
+        [1, 2, 4, 5, 6, 7],
+        [-0.75, 0.25, 2.75, 2.375, 0.75, -0.5],
+    ),
+])    
+def test_s1_rolling_mean(s1_fix, kwargs, expected_index, expected_vals):
+    rm = s1_fix.rolling_mean(**kwargs)
+    assert list(rm.values) == expected_vals
+    assert list(rm.index) == expected_index
+    
+@pytest.mark.parametrize("kwargs, expected_val", [
+    (
+        {}, 
+        -1.75,
+    ),
+    (
+        {'lower':1, 'upper':6}, 
+        0.25,
+    ),
+    (
+        {'lower':1, 'upper':6, 'lower_how':'left'}, 
+        -1.75,
+    ),
+    (
+        {'lower':1, 'upper':6, 'upper_how':'right'}, 
+        -0.5,
+    ),
+])        
+def test_s1_min(s1_fix, kwargs, expected_val):     
+    assert s1_fix.min(**kwargs) == expected_val
     
     
+@pytest.mark.parametrize("kwargs, expected_val", [
+    (
+        {}, 
+        2.75,
+    ),
+    (
+        {'lower':-4, 'upper':1}, 
+        -1.75,
+    ),
+    (
+        {'lower':-4, 'upper':1, 'lower_how':'left'}, 
+        0.0,
+    ),
+    (
+        {'lower':-4, 'upper':1, 'upper_how':'right'}, 
+        0.25,
+    ),
+])        
+def test_s1_max(s1_fix, kwargs, expected_val):     
+    assert s1_fix.max(**kwargs) == expected_val
+    
+    
+@pytest.mark.parametrize("kwargs, expected_val", [
+    (
+        {}, 
+        {-1.75, -0.5, 0.0, 0.25, 2.0, 2.75},
+    ),
+    (
+        {'lower':-4, 'upper':10}, 
+        {-1.75, -0.5, 0.25, 2.0, 2.75},
+    ),
+    (
+        {'lower':1, 'upper':6}, 
+        {0.25, 2.0, 2.75}
+    ),
+    (
+        {'lower':1, 'upper':6, 'lower_how':'left'}, 
+        {-1.75, 0.25, 2.0, 2.75},
+    ),
+    (
+        {'lower':1, 'upper':6, 'upper_how':'right'}, 
+        {-0.5, 0.25, 2.0, 2.75},
+    ),
+])        
+def test_s1_values_in_range(s1_fix, kwargs, expected_val):     
+    assert s1_fix.values_in_range(**kwargs) == expected_val
+    
+    
+@pytest.mark.parametrize("x, kwargs, expected_val", [
+    (
+        [-4,-2,1,3], 
+        {},
+        [-1.75, -1.75, 0.25, 2.75],
+    ),
+    (
+        [-4,-2,1,3], 
+        {'how':'right'},
+        [-1.75, -1.75, 0.25, 2.75],
+    ),
+    (
+        [-4,-2,1,3], 
+        {'how':'left'},
+        [0.0, -1.75, -1.75, 0.25],
+    ),
+])         
+def test_s1_sample(s1_fix, x, kwargs, expected_val):
+    assert s1_fix.sample(x, **kwargs) == expected_val
+    
+@pytest.mark.parametrize("x, kwargs, expected_val", [
+    (
+        [-4,-2,1,3], 
+        {'aggfunc':'mean', 'window':(-0.5, 0.5)},
+        [-0.875, -1.75, -0.75, 1.5],
+    ),
+    (
+        [-4,-2,1,3], 
+        {'aggfunc':'mean', 'window':(-1, 0)},
+        [0.0, -1.75, -1.75, 0.25],
+    ),
+    (
+        [-4,-2,1,3], 
+        {'aggfunc':'mean', 'window':(0, 1)},
+        [-1.75, -1.75, 0.25, 2.75],
+    ),
+])         
+def test_s1_sample_mean(s1_fix, x, kwargs, expected_val):
+    assert s1_fix.sample(x, **kwargs) == expected_val
+    
+@pytest.mark.parametrize("x, kwargs, expected_val", [
+    (
+        [0, 2, 7], 
+        {'aggfunc':'max', 'window':(-1, 1)},
+        [-1.75, 0.25, -0.5],
+    ),
+    (
+        [0, 2, 7], 
+        {'aggfunc':'max', 'window':(-1, 1), 'lower_how':'left'},
+        [-1.75, 0.25, 2.0],
+    ),
+    (
+        [0, 2, 7], 
+        {'aggfunc':'max', 'window':(-1, 1), 'upper_how':'right'},
+        [0.25, 2.75, -0.5],
+    ),
+])         
+def test_s1_sample_max(s1_fix, x, kwargs, expected_val):
+    assert s1_fix.sample(x, **kwargs) == expected_val
 
+@pytest.mark.parametrize("x, kwargs, expected_val", [
+    (
+        [-4,-2,1,3], 
+        {'aggfunc':'mean', 'window':(-0.5, 0.5)},
+        [-0.875, -1.75, -0.75, 1.5],
+    ),
+    (
+        [-4,-2,1,3], 
+        {'aggfunc':'mean', 'window':(-1, 0)},
+        [0.0, -1.75, -1.75, 0.25],
+    ),
+    (
+        [-4,-2,1,3], 
+        {'aggfunc':'mean', 'window':(0, 1)},
+        [-1.75, -1.75, 0.25, 2.75],
+    ),
+])         
+def test_s1_resample_mean(s1_fix, x, kwargs, expected_val):
+    assert s1_fix.resample(x, **kwargs)._cumulative().items()[1:] == list(zip(x, expected_val))
+    
+    
+@pytest.mark.parametrize("x, kwargs, expected_val", [
+    (
+        [0, 2, 7], 
+        {'aggfunc':'max', 'window':(-1, 1)},
+        [-1.75, 0.25, -0.5],
+    ),
+    (
+        [0, 2, 7], 
+        {'aggfunc':'max', 'window':(-1, 1), 'lower_how':'left'},
+        [-1.75, 0.25, 2.0],
+    ),
+    (
+        [0, 2, 7], 
+        {'aggfunc':'max', 'window':(-1, 1), 'upper_how':'right'},
+        [0.25, 2.75, -0.5],
+    ),
+])         
+def test_s1_resample_max(s1_fix, x, kwargs, expected_val):
+    assert s1_fix.resample(x, **kwargs)._cumulative().items()[1:] == list(zip(x, expected_val))
+    
+    
 # @pytest.mark.parametrize("index, init_val", [(1,1.25), (2,-2.5), (3,3.25), (4,-4)])         
 # def test_base_subtraction(IS_set, index, init_val):
     # int_seq = IS_set[index]

@@ -1,7 +1,7 @@
 """Staircase
 ==============
-:doc:`Staircase<index>` is a MIT licensed library, written in pure-Python, for
-modelling step functions. See :doc:`Getting Started<getting_started>` for more information.
+Staircase is a MIT licensed library, written in pure-Python, for
+modelling step functions. See :ref:`Getting Started <getting_started>` for more information.
 """
 
 #uses https://pypi.org/project/sortedcontainers/
@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import math
+import operator
 import warnings
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
@@ -20,6 +21,11 @@ warnings.simplefilter('default')
 
 origin = pd.to_datetime('2000-1-1')
 
+def _verify_window(left_delta, right_delta, zero):
+    assert left_delta <= zero, "left_delta must not be positive"
+    assert right_delta >= zero, "right_delta must not be negative"
+    assert right_delta - left_delta > zero, "window length must be non-zero"
+    
 def _convert_date_to_float(val):
     if val is None:
         return None
@@ -232,7 +238,7 @@ def aggregate(collection, func, points=None):
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
     if use_dates:
         aggregation.index = _convert_date_to_float(aggregation.index)
-    aggregation[float('-inf')] = func([val._sample(float('-inf')) for key,val in Stairs_dict.items()])
+    aggregation[float('-inf')] = func([val._sample_raw(float('-inf')) for key,val in Stairs_dict.items()])
     step_changes = aggregation.sort_index().diff().fillna(0)
     #groupby.sum is necessary on next line as step_changes series may not have unique index elements
     return Stairs(dict(step_changes.groupby(level=0).sum()), use_dates=use_dates)._reduce()
@@ -555,15 +561,12 @@ class Stairs():
             ax.step(cumulative.keys(), cumulative.values(), where='post', **kwargs)
         return ax
 
-    @append_doc(SC_docs.sample_example)
-    def _sample(self, x, how='right'):
+    def _sample_raw(self, x, how='right'):
         """Evaluates the value of the step function at one, or more, points.
 
         Technically the results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
         or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See 
         :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
-        
-        The function should be called using parentheses.  See example below.
 
         Parameters
         ----------
@@ -606,14 +609,117 @@ class Stairs():
                 preceding_boundary_index = cumulative.bisect_left(x) - 1
             return cumulative.values()[preceding_boundary_index]    
 
+    
+    def _sample_agg(self, x, window, aggfunc, lower_how='right', upper_how='left'):
+        """Evaluates the aggregation of the step function over a window around one, or more, points.
+
+        The window around each point is defined by two values paired into an array-like parameter called *window*.
+        These two scalars are the distance from the point to the left boundary of the window, and the right boundary
+        of the window respectively.
+        
+        
+        Parameters
+        ----------
+        x : int, float or vector data
+            values at which to evaluate the function
+        aggfunc: {'mean', 'median', 'mode', 'max', 'min', 'std'}
+            A string corresponding to the aggregating function
+        window : array-like of int, float, optional
+            Should be length of 2. Defines distances from focal point to window boundaries.
+        lower_how: {'left', 'right'}, default 'right'
+            Determines how the left window boundary should be evaluated.
+            If 'left' then :math:`\\lim_{x \\to lower_how^{-}} f(x)` is included in the window.
+        upper_how: {'left', 'right'}, default 'left'
+            Determines how the right window boundary should be evaluated.
+            If 'right' then :math:`\\lim_{x \\to upper_how^{+}} f(x)` is included in the window.
             
+        Returns
+        -------
+        float, or list of floats
+        
+        See Also
+        --------
+        staircase.sample
+        """
+        assert len(window) == 2, f"Window should be a array-like object of length 2."
+        if isinstance(aggfunc, str):
+            aggfunc = _stairs_methods[aggfunc]
+        left_delta, right_delta = window
+        _verify_window(left_delta, right_delta, 0)
+        kwargs = {"lower_how":lower_how, "upper_how":upper_how} if aggfunc in [Stairs.min, Stairs.max] else {}  
+        if not hasattr(x, "__iter__"):
+            return aggfunc(self, lower=x+left_delta, upper=x+right_delta, **kwargs)
+        return [aggfunc(self, lower=point+left_delta, upper=point+right_delta, **kwargs) for point in x]
+    
+    @append_doc(SC_docs.sample_example)
+    def _sample(self, x, how='right', aggfunc=None, window=(0,0), lower_how='right', upper_how='left'):
+        """Evaluates the value of the step function at one, or more, points.
+
+        This method can be used to directly sample values of the corresponding step function at the points
+        provided, or alternatively calculate aggregations over some window around each point.  The first of these
+        is performed when *aggfunc* is None.
+        
+        If *aggfunc* is None then the results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
+        or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See 
+        :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
+        
+        If *aggfunc* is not None then a window, around each point x (referred to as the focal point), over which to aggregate is required.
+        The window is defined by two values paired into an array-like parameter called *window*.
+        These two scalars are the distance from the focal point to the left boundary of the window, and the right boundary
+        of the window respectively.
+        
+        The function can be called using parentheses.  See example below.
+
+        Parameters
+        ----------
+        x : int, float or vector data
+            Values at which to evaluate the function
+        how : {'left', 'right'}, default 'right'
+            Only relevant if *aggfunc* is None.
+            if points where step changes occur do not coincide with x then this parameter
+            has no effect.  Where a step changes occurs at a point given by x, this parameter
+            determines if the step function is evaluated at the interval to the left, or the right.
+        aggfunc: {'mean', 'median', 'mode', 'max', 'min', 'std', None}.  Default None.
+            A string corresponding to the aggregating function
+        window : array-like of int, float or pandas.Timedelta, optional
+            Only relevant if *aggfunc* is not None.  Should be length of 2. Defines distances from focal point to window boundaries.
+        lower_how: {'left', 'right'}, default 'right'
+            Only relevant if *aggfunc* is not None.  Determines how the left window boundary should be evaluated.
+            If 'left' then :math:`\\lim_{x \\to lower_how^{-}} f(x)` is included in the window.
+        upper_how: {'left', 'right'}, default 'left'
+            Only relevant if *aggfunc* is not None.  Determines how the right window boundary should be evaluated.
+            If 'right' then :math:`\\lim_{x \\to upper_how^{+}} f(x)` is included in the window.
+            
+        Returns
+        -------
+        float, or list of floats
+        
+        See Also
+        --------
+        staircase.sample
+        """
+        #not using dates
+        if aggfunc is None:
+            return self._sample_raw(x, how)
+        else:
+            return self._sample_agg(x, window, aggfunc, lower_how, upper_how)
+    
+    
     @add_doc(_sample.__doc__)
-    def sample(self, x, how='right'):
-        x = _convert_date_to_float(x)      
-        return self._sample(x,how)
+    def sample(self, x, how='right', aggfunc=None, window=(0,0), lower_how='right', upper_how='left'):
+        #wrapper for dates
+        x = _convert_date_to_float(x)
+        if aggfunc is not None:
+            left_delta, right_delta = window
+            if isinstance(left_delta, pd.Timedelta):
+                left_delta = _convert_date_to_float(origin + left_delta) - _convert_date_to_float(origin) #convert to hrs
+            if isinstance(right_delta, pd.Timedelta):
+                right_delta = _convert_date_to_float(origin + right_delta) - _convert_date_to_float(origin) #convert to hrs
+                window = (left_delta, right_delta)
+        return self._sample(x,how,aggfunc,window,lower_how,upper_how)
     
     @append_doc(SC_docs.resample_example)
-    def _resample(self, x, how='right'):
+    def _resample(self, x, how='right', aggfunc=None, window=(0,0), lower_how='right', upper_how='left'):
         """Evaluates the value of the step function at one, or more, points and
         creates a new Stairs instance whose step changes occur at a subset of these
         points.  The new instance and self have the same values when evaluated at x.
@@ -626,7 +732,17 @@ class Stairs():
             if points where step changes occur do not coincide with x then this parameter
             has no effect.  Where a step changes occurs at a point given by x, this parameter
             determines if the step function is evaluated at the interval to the left, or the right.
-            
+        aggfunc: {'mean', 'median', 'mode', 'max', 'min', 'std', None}.  Default None.
+            A string corresponding to the aggregating function
+        window : array-like of int, float or pandas.Timedelta, optional
+            Only relevant if *aggfunc* is not None.  Should be length of 2. Defines distances from focal point to window boundaries.
+        lower_how: {'left', 'right'}, default 'right'
+            Only relevant if *aggfunc* is not None.  Determines how the left window boundary should be evaluated.
+            If 'left' then :math:`\\lim_{x \\to lower_how^{-}} f(x)` is included in the window.
+        upper_how: {'left', 'right'}, default 'left'
+            Only relevant if *aggfunc* is not None.  Determines how the right window boundary should be evaluated.
+            If 'right' then :math:`\\lim_{x \\to upper_how^{+}} f(x)` is included in the window. 
+         
         Returns
         -------
         :class:`Stairs`
@@ -638,13 +754,21 @@ class Stairs():
         if not hasattr(x, "__iter__"):
             x = [x,]
         new_cumulative = SortedDict({float('-inf'):self._sample(float('-inf'))})
-        new_cumulative.update({point:self._sample(point, how) for point in x})
+        new_cumulative.update({point:self._sample(point, how, aggfunc, window, lower_how, upper_how) for point in x})
         return _from_cumulative(new_cumulative, self.use_dates)    
 
     @add_doc(_resample.__doc__)
-    def resample(self, x, how='right'):
+    def resample(self, x, how='right', aggfunc=None, window=(0,0)):
         x = _convert_date_to_float(x)
-        return self._resample(x, how)
+        if aggfunc is not None:
+            assert len(window) == 2, "Window should be a array-like object of length 2."
+            left_delta, right_delta = window
+            if isinstance(left_delta, pd.Timedelta):
+                left_delta = _convert_date_to_float(origin + left_delta) - _convert_date_to_float(origin) #convert to hrs
+            if isinstance(right_delta, pd.Timedelta):
+                right_delta = _convert_date_to_float(origin + right_delta) - _convert_date_to_float(origin) #convert to hrs
+            window = (left_delta, right_delta)
+        return self._resample(x, how, aggfunc, window, lower_how='right', upper_how='left')
 
     
     @append_doc(SC_docs.layer_example)        
@@ -1199,7 +1323,7 @@ class Stairs():
         
         See Also
         --------
-        Stairs.get_integral_and_mean, Stairs.median, Stairs.mode
+        Stairs.rolling_mean, Stairs.get_integral_and_mean, Stairs.median, Stairs.mode
         """
         area, mean = self.get_integral_and_mean(lower, upper)
         return mean
@@ -1575,28 +1699,10 @@ class Stairs():
         )
         return df.value.loc[df.duration.idxmax()]
 
-    def values_in_range(self, lower=float('-inf'), upper=float('inf')):
-        if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower)
-        if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper)
-        return self._values_in_range(lower, upper)
-        
-    def _values_in_range(self, lower, upper):
-        points = [key for key in self._keys() if lower < key < upper]
-        if lower > float('-inf'):
-            points.append(lower)
-        if upper < float('inf'):
-            points.append(upper)
-        return self._sample(points)
-    
-    @append_doc(SC_docs.min_example)
-    def min(self, lower=float('-inf'), upper=float('inf')):
+    @append_doc(SC_docs.values_in_range_example)  
+    def values_in_range(self, lower=float('-inf'), upper=float('inf'), lower_how='right', upper_how='left'):
         """
-        Calculates the minimum value of the step function.
-        
-        If an interval which to calculate over is specified it is interpreted
-        as a closed interval
+        Returns the range of the step function as a set of discrete values.
         
         Parameters
         ----------
@@ -1604,6 +1710,53 @@ class Stairs():
             lower bound of the interval on which to perform the calculation
         upper : int, float or pandas.Timestamp, optional
             upper bound of the interval on which to perform the calculation
+        lower_how: {'left', 'right'}, default 'right'
+            Determines how the step function should be evaluated at *lower*.
+            If 'left' then :math:`\\lim_{x \\to lower^{-}} f(x)` is included in the calculation.
+        upper_how: {'left', 'right'}, default 'left'
+            Determines how the step function should be evaluated at *upper*.
+            If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
+              
+        Returns
+        -------
+        set of floats
+        """
+        if isinstance(lower, pd.Timestamp):
+            lower = _convert_date_to_float(lower)
+        if isinstance(upper, pd.Timestamp):
+            upper = _convert_date_to_float(upper)
+        return self._values_in_range(lower, upper, lower_how, upper_how)
+        
+    def _values_in_range(self, lower=float('-inf'), upper=float('inf'), lower_how='right', upper_how='left'):
+        interior_points = [key for key in self._keys() if lower < key < upper]
+        endpoint_vals = self._sample_raw([lower], how='right') + self._sample_raw([upper], how='left')
+        if lower_how == 'left':
+            endpoint_vals += self._sample_raw([lower], how='left')
+        if upper_how == 'right':
+            endpoint_vals += self._sample_raw([upper], how='right')   
+        return set(self._sample_raw(interior_points) + endpoint_vals)
+    
+    @append_doc(SC_docs.min_example)
+    def min(self, lower=float('-inf'), upper=float('inf'), lower_how='right', upper_how='left'):
+        """
+        Calculates the minimum value of the step function.
+        
+        If an interval which to calculate over is specified it is interpreted
+        as a closed interval, with *lower_how* and *upper_how* indicating how the step function
+        should be evaluated at the at the endpoints of the interval.
+        
+        Parameters
+        ----------
+        lower : int, float or pandas.Timestamp, optional
+            lower bound of the interval on which to perform the calculation
+        upper : int, float or pandas.Timestamp, optional
+            upper bound of the interval on which to perform the calculation
+        lower_how: {'left', 'right'}, default 'right'
+            Determines how the step function should be evaluated at *lower*.
+            If 'left' then :math:`\\lim_{x \\to lower^{-}} f(x)` is included in the calculation.
+        upper_how: {'left', 'right'}, default 'left'
+            Determines how the step function should be evaluated at *upper*.
+            If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
               
         Returns
         -------
@@ -1614,15 +1767,16 @@ class Stairs():
         --------
         Stairs.max, staircase.min
         """
-        return np.min(self.values_in_range(lower, upper))
+        return min(self.values_in_range(lower, upper, lower_how, upper_how))
 
     @append_doc(SC_docs.max_example)    
-    def max(self, lower=float('-inf'), upper=float('inf')):
+    def max(self, lower=float('-inf'), upper=float('inf'), lower_how='right', upper_how='left'):
         """
         Calculates the maximum value of the step function.
         
         If an interval which to calculate over is specified it is interpreted
-        as a closed interval
+        as a closed interval, with *lower_how* and *upper_how* indicating how the step function
+        should be evaluated at the at the endpoints of the interval.
         
         Parameters
         ----------
@@ -1630,6 +1784,12 @@ class Stairs():
             lower bound of the interval on which to perform the calculation
         upper : int, float or pandas.Timestamp, optional
             upper bound of the interval on which to perform the calculation
+        lower_how: {'left', 'right'}, default 'right'
+            Determines how the step function should be evaluated at *lower*.
+            If 'left' then :math:`\\lim_{x \\to lower^{-}} f(x)` is included in the calculation.
+        upper_how: {'left', 'right'}, default 'left'
+            Determines how the step function should be evaluated at *upper*.
+            If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
               
         Returns
         -------
@@ -1640,7 +1800,7 @@ class Stairs():
         --------
         Stairs.min, staircase.max
         """
-        return np.max(self.values_in_range(lower, upper))
+        return max(self.values_in_range(lower, upper, lower_how, upper_how))
      
     @append_doc(SC_docs.clip_example)        
     def _clip(self, lower=float('-inf'), upper=float('inf')):
@@ -1726,7 +1886,7 @@ class Stairs():
         
         Parameters
         ----------
-        delta : int, float or pandas.Timestamp
+        delta : int, float or pandas.Timedelta
             the amount by which to translate.  A pandas.Timestamp is only valid when using dates.
             If using dates and delta is an int or float, then it is interpreted as a number of hours.
               
@@ -1740,6 +1900,62 @@ class Stairs():
         """
         return self-self.shift(delta)
         
+    @append_doc(SC_docs.rolling_mean_example)
+    def rolling_mean(self, window=(0,0), lower=float('-inf'), upper=float('inf')):
+        """
+        Returns coordinates defining rolling mean.
+        
+        The rolling mean of a step function is a continous piece-wise linear function, hence it can
+        be described by a sequence of x,y coordinates which mark where function changes gradient.  These
+        x,y coordinates are returned as a :class:`pandas.Series` which could then be used with 
+        :meth:`matplotlib.axes.Axes.plot`, or equivalent, to visualise.
+        
+        A rolling mean requires a window around a point x (referred to as the focal point) to be defined.  
+        In this implementation the window is defined by two values paired into an array-like parameter called *window*.
+        These two numbers are the distance from the focal point to the left boundary of the window, and the right boundary
+        of the window respectively.  This allows for trailing windows, leading windows and everything between 
+        (including a centred window).
+        
+        If *lower* or *upper* is specified then only coordinates corresponding to windows contained within
+        [lower, upper] are included.
+        
+        Parameters
+        ----------
+        window : array-like of int, float or pandas.Timedelta
+            should be length of 2. Defines distances from focal point to window boundaries.
+        lower : int, float, pandas.Timestamp, or None, default None
+            used to indicate the lower bound of the domain of the calculation
+        upper : int, float, pandas.Timestamp, or None, default None
+            used to indicate the upper bound of the domain of the calculation
+              
+        Returns
+        -------
+        :class:`pandas.Series`
+        
+        See Also
+        --------
+        Stairs.mean  
+        """
+        assert len(window) == 2, "Window should be a listlike object of length 2."
+        left_delta, right_delta = window
+        clipped = self.clip(lower, upper)
+        if clipped.use_dates:
+            left_delta = pd.Timedelta(left_delta, 'h')
+            right_delta = pd.Timedelta(right_delta, 'h')
+        change_points = list(SortedSet(
+            [c - right_delta for c in clipped.step_changes().keys()] + 
+            [c - left_delta for c in clipped.step_changes().keys()]
+        ))
+        s = pd.Series(
+            clipped.sample(change_points, aggfunc='mean', window=window),
+            index = change_points,
+        )
+        if lower != float('-inf'):
+            s = s.loc[s.index >= lower - left_delta]
+        if upper != float('inf'):
+            s = s.loc[s.index <= upper - right_delta]
+        return s
+    
     
     def to_dataframe(self):
         """
@@ -1801,3 +2017,11 @@ class Stairs():
     __gt__ = gt
     __le__ = le
     __ge__ = ge
+    
+_stairs_methods = {
+    'mean':Stairs.mean,
+    'median':Stairs.median,
+    'mode':Stairs.mode,
+    'max':Stairs.max,
+    'min':Stairs.min,
+}

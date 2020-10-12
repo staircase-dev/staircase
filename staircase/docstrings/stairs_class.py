@@ -10,9 +10,17 @@ sample_example = """
             >>> s1(3.5)
             1
             >>> s1([1, 2, 4.5, 6])
-            [1, 0, -1, 0]
-            >>> s1([1, 2, 4.5, 6], how='left')
-            [0, 1, -1, 0]
+            \[1, 0, -1, 0\]
+            >>> s1([1, 2, 4.5, 6], how="left")
+            \[0, 1, -1, 0\]
+            >>> s1([1, 2, 4.5], aggfunc="mean", window=(-0.5, 0.5))
+            \[0.5, 0.5, -1.0\]
+            >>> s1([1, 2, 4.5], aggfunc="max", window=(-0.5, 0.5))
+            \[1, 1, -1\]
+            >>> s1([1, 2, 4.5], aggfunc="max", window=(-0.5, 0.5), lower_how="left")
+            \[1, 1, 1\]
+            >>> s1([1, 2, 4.5], aggfunc="max", window=(-0.5, 0.5), upper_how="right")
+            \[1, 1, 0\]
 """
 
 
@@ -420,9 +428,13 @@ min_example = """
             :context: close-figs
             
             >>> s2.plot()
-            >>> s2.min(0,3)
-            -1.0
-            >>> s2.min(1,2.5)
+            >>> s2.min(0, 3)
+            0
+            >>> s2.min(0, 3, upper_how='right')
+            -1
+            >>> s2.min(0, 2)
+            0.5
+            >>> s2.min(0, 2, lower_how='left')
             0.0
 """
 
@@ -436,8 +448,13 @@ max_example = """
             >>> s1.plot()
             >>> s1.max()
             1.0
-            >>> s1.max(2,3)
-            1.0
+            >>> s1.max(4, 5)
+            -1
+            >>> s1.max(4, 5, lower_how='left')
+            1
+            >>> s1.max(4, 5, upper_how='right')
+            0
+            
 """
 
 clip_example = """
@@ -775,4 +792,65 @@ corr_example = """
             >>> # cross-correlation with lag 1
             >>> s1.corr(s2, lower=1, upper=4.5, lag=1, clip='post')
             0.4961389383568339
+"""
+
+rolling_mean_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s2.rolling_mean(window=[-0.5, 0.5])
+            -0.5    0.0
+             0.5    0.5
+             1.5    0.5
+             2.5    0.0
+             3.5   -1.0
+             5.0   -1.0
+             6.0    0.0
+            dtype: float64
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> series_list = [s2.rolling_mean(window=[-0.5, 0.5]), s2.rolling_mean(window=[-0.5, 0.5], lower=0, upper = 5.5)]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, series in zip(axes, ("default", "bounds supplied"), series_list):
+            ...     s2.plot(ax=ax)
+            ...     series.plot(ax=ax, label='rolling mean')
+            ...     ax.set_title(title)
+            ...     ax.legend()
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> series_list = [s2.rolling_mean(window=[-1, 0], lower=0, upper = 5.5), s2.rolling_mean(window=[0, 1], lower=0, upper = 5.5)]
+            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
+            >>> for ax, title, series in zip(axes, ("trailing window", "leading window"), series_list):
+            ...     s2.plot(ax=ax)
+            ...     series.plot(ax=ax, label='rolling mean')
+            ...     ax.set_title(title)
+            ...     ax.legend()
+"""
+
+values_in_range_example = """
+        Examples
+        --------
+            
+        .. plot::
+            :context: close-figs
+            
+            >>> s2.plot()
+            >>> s2.values_in_range()
+            {-1.0, 0.0, 0.5}
+            >>> s2.values_in_range(lower=2)
+            {-1.0, 0.0}
+            >>> s2.values_in_range(lower=2, lower_how="left")
+            {-1.0, 0.0, 0.5}
+            >>> s2.values_in_range(upper=2)
+            {0.0, 0.5}
+            >>> s2.values_in_range(upper=3, upper_how="right")
+            {-1.0, 0.0, 0.5}
+            
 """
