@@ -2,6 +2,18 @@
 Changelog
 =========
 
+v1.5.0 2020-10-12
+
+- fixed typo in diff docstring
+- extended :meth:`staircase.Stairs.values_in_range` to allow specification of how endpoints of domain should be evaluated
+- extended :meth:`staircase.Stairs.min` to allow specification of how endpoints of domain should be evaluated
+- extended :meth:`staircase.Stairs.max` to allow specification of how endpoints of domain should be evaluated
+- extended :meth:`staircase.Stairs.sample` to allow specification of how endpoints of domain should be evaluated
+- extended :meth:`staircase.Stairs.resample` to allow specification of how endpoints of domain should be evaluated
+- added :meth:`staircase.Stairs.rolling_mean`
+- added example usage of rolling_mean to Queue Analysis tutorial
+
+
 v1.4.0 2020-10-05
 
 - extended :meth:`staircase.Stairs.corr` to facilitate cross-correlation and autocorrelation

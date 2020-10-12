@@ -102,8 +102,10 @@ Miscellaneous functions
 .. autosummary::
    :toctree: api/
    
+   Stairs.clip
    Stairs.shift
    Stairs.diff
+   Stairs.rolling_mean
    Stairs.resample
    Stairs.clip
    
