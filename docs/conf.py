@@ -11,7 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #from numpydoc.docscrape import NumpyDocString
 #from sphinx.ext.autosummary import _import_by_name
-
+import guzzle_sphinx_theme
 import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -44,6 +44,7 @@ extensions = [
     'matplotlib.sphinxext.plot_directive',    
     #'numpydoc',  # handle NumPy documentation formatted docstrings]
     'nbsphinx',
+    'guzzle_sphinx_theme',
 ]
 
 source_suffix = ['.rst', '.ipynb']
@@ -54,7 +55,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'examples/.ipynb_checkpoints']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'examples/.ipynb_checkpoints', 'examples/Case Study Asset Utilisation TZ.ipynb']
 
 autosummary_generate = True
 
@@ -81,9 +82,16 @@ s2 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1)
 #
 html_theme = 'alabaster'
 html_theme = "sphinx_rtd_theme"
-html_theme = "nature"
+#html_theme = "nature"
 #html_theme = "bizstyle"
+html_theme = "guzzle_sphinx_theme"
 
+html_theme_path = guzzle_sphinx_theme.html_theme_path()
+
+html_theme_options = {
+    "google_analytics_account": "UA-65430466-2",
+    "base_url": "https://railing.readthedocs.io/en/latest/",
+}
 
 html_logo = 'img/staircase.png'
 
@@ -95,7 +103,7 @@ html_static_path = ['_static']
 
 def setup(app):
     app.add_css_file('custom.css')
-    
+
 html_sidebars = {
-    "**":["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html", "gumroad.html",]
+    "**":["logo.html", "globaltoc.html", "relations.html", "searchbox.html", "gumroad.html",]
 }

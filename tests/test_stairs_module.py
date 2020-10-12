@@ -229,4 +229,23 @@ def test_sample_12(IS1, IS2):
     value = [0.25, 2.0, -0.5, -0.5, -2.5, 0.0]
     assert sample.eq(pd.DataFrame({"points":points, "key":key, "value":value})).all(axis=None)
     
+ 
+def _matrix_close_to_zeros(x):
+    return all(map(lambda v: np.isclose(v, 0, atol = 0.00001), x.flatten()))
+    
+# np.cov(st1(np.linspace(-4,10,10000000)), st2(np.linspace(-4,10,10000000))) = array([[2.50159449, 0.28762709], [0.28762709, 6.02104508]])
+def test_cov_matrix1(IS1, IS2):
+    assert _matrix_close_to_zeros(stairs.cov([IS1, IS2], -4, 10).values - np.array([[2.50159449, 0.28762709], [0.28762709, 6.02104508]]))
+    
+# np.cov(st1(np.linspace(0,12,10000000)), st2(np.linspace(0,12,10000000))) = array([[ 1.81727486, -0.25520783],[-0.25520783,  6.45312616]])
+def test_cov_matrix2(IS1, IS2):    
+    assert _matrix_close_to_zeros(stairs.cov([IS1, IS2], 0, 12).values - np.array([[ 1.81727486, -0.25520783],[-0.25520783,  6.45312616]]))
+    
+# np.corrcoef(st1(np.linspace(-4,10,10000000)), st2(np.linspace(-4,10,10000000))) = array([[1, 0.07411146], [0.07411146, 1]])
+def test_corr_matrix1(IS1, IS2):
+    assert _matrix_close_to_zeros(stairs.corr([IS1, IS2], -4, 10).values - np.array([[1, 0.07411146], [0.07411146, 1]]))
+  
+# np.corrcoef(st1(np.linspace(0,12,10000000)), st2(np.linspace(0,12,10000000))) = array([[1, -0.07452442], [-0.07452442,  1]])
+def test_corr_matrix2(IS1, IS2):    
+    assert _matrix_close_to_zeros(stairs.corr([IS1, IS2],0, 12).values - np.array([[1, -0.07452442], [-0.07452442,  1]]))    
     

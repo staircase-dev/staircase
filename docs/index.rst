@@ -5,7 +5,7 @@
 
 .. rst-class:: center
 
-**Date**: |today| **Version**: |version| |
+**Date**: |today| **Version**: |version|
 
 .. rst-class:: center
 

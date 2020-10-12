@@ -61,6 +61,17 @@ Logical operators
    Stairs.logical_and
    Stairs.logical_or
 
+.. _api.statistical_operators:
+
+Statistical operators
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api/
+   
+   Stairs.cov
+   Stairs.corr
+
 .. _api.summary_statistics:
 
 Summary statistics
@@ -72,12 +83,17 @@ Summary statistics
    Stairs.number_of_steps
    Stairs.get_integral_and_mean
    Stairs.integrate
+   Stairs.describe
    Stairs.min
    Stairs.max
+   Stairs.var
+   Stairs.std
    Stairs.mean
    Stairs.median
    Stairs.percentile
-   Stairs.percentile_Stairs
+   Stairs.percentile_stairs
+   Stairs.ecdf_stairs
+   Stairs.hist
    
    
 Miscellaneous functions
@@ -86,8 +102,10 @@ Miscellaneous functions
 .. autosummary::
    :toctree: api/
    
+   Stairs.clip
    Stairs.shift
    Stairs.diff
+   Stairs.rolling_mean
    Stairs.resample
    Stairs.clip
    
