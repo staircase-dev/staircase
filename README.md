@@ -14,6 +14,8 @@
 		<img src="https://img.shields.io/travis/venaturum/staircase"/></a>
     <a href="https://railing.readthedocs.io/en/latest/" alt="Read the Docs">
         <img src="https://readthedocs.org/projects/railing/badge/?version=latest" /></a>
+	<a href="https://mybinder.org/v2/gh/venaturum/staircase/CondaBuild?filepath=docs%2Fexamples" alt="Binder">
+        <img src="https://mybinder.org/badge_logo.svg" /></a>	
     <a href="https://staircase.mit-license.org/" alt="License">
         <img src="http://img.shields.io/:license-mit-blue.svg?style=flat-square"></a>
 </p>
