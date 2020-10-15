@@ -2,6 +2,11 @@
 Changelog
 =========
 
+v1.5.1 2020-10-15
+- removed dependency on 'private' methods in sortedcontainers
+- increased upper limit for version dependency on sortedcontainers
+
+
 v1.5.0 2020-10-12
 
 - fixed typo in diff docstring
