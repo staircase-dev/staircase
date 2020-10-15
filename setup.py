@@ -5,10 +5,10 @@ with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
     
 requirements = [
-    'sortedcontainers>=2,<=2.2.2',
-    'pandas>=0.24,<1.2',
-    'numpy>=1.16.0',
-    'matplotlib>3.0.0'
+    'sortedcontainers>=2,<3',
+    'pandas>=0.24,<2',
+    'numpy>=1.16.0,<2',
+    'matplotlib>3.0.0,<4'
 ]
 
 setup(
@@ -25,11 +25,16 @@ setup(
     packages=['staircase', 'staircase.docstrings'],
     python_requires='>=3.6',
     install_requires=requirements,
-    keywords=['Staircase',
-			'Step Functions',
-			'Data Analysis',
-			'Intervals',
-			'Simulation'],
+    keywords=[
+        'Staircase',
+        'Step Functions',
+        'Mathematics', 
+        'Data Analysis',
+        'Analysis',
+        'Data Structures',
+        'Time Signal',
+        'Simulation Output',
+    ],
     classifiers=[
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
