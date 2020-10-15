@@ -497,6 +497,7 @@ class Stairs():
         self._values = self._sorted_dict.values
         self._pop = self._sorted_dict.pop
         self._len = self._sorted_dict.__len__
+        self._popitem = self._sorted_dict.popitem
     
     # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING 
        
@@ -505,12 +506,6 @@ class Stairs():
         
     def __setitem__(self, key, value):
         self._sorted_dict.__setitem__(key, value)
-        
-    def _popitem(self, index=-1):
-        #SortedDict.popitem cannot be used, as definitions of __bool__ are different between SortedDict and Stairs
-        key = self._sorted_dict._list_pop(index)
-        value = dict.pop(self._sorted_dict,key)
-        return (key, value)
     
     def copy(self, deep=None):
         """
@@ -600,7 +595,7 @@ class Stairs():
                 vals.extend([val for key,val in shifted_cumulative.items() if key in x])
                 return vals
         elif x == float('-inf'):
-            return self._sorted_dict.values()[0]
+            return self._values()[0]
         else:
             cumulative = self._cumulative()
             if how == "right":
@@ -1872,8 +1867,8 @@ class Stairs():
             delta =  delta.total_seconds()/3600
         return Stairs(
             dict(zip(
-                (key + delta for key in self._sorted_dict.keys()), 
-                self._sorted_dict.values()
+                (key + delta for key in self._keys()), 
+                self._values()
             )),
             use_dates=self.use_dates
         )
