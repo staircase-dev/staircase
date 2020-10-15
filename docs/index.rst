@@ -28,6 +28,7 @@ Contents
    getting_started.rst
    resources.rst
    api.rst 
+   contributing.rst
 
    changelog
 
