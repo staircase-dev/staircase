@@ -691,7 +691,7 @@ finish_floats = [
 def make_test_data(dates=False):
     """
     Returns test data
-    
+
     Parameters
     ----------
     dates : boolean, default False
