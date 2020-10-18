@@ -26,7 +26,7 @@ def _verify_window(left_delta, right_delta, zero):
     assert left_delta <= zero, "left_delta must not be positive"
     assert right_delta >= zero, "right_delta must not be negative"
     assert right_delta - left_delta > zero, "window length must be non-zero"
-    
+
 def _convert_date_to_float(val):
     if val is None:
         return None
@@ -89,7 +89,7 @@ def _max_pair(stairs1, stairs2):
         if value < 0:
             cumulative[key] = 0
     deltas = [cumulative.values()[0]]
-    deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))   
+    deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))
     new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
     return new_instance + stairs2
 
@@ -122,7 +122,7 @@ def _get_union_of_points(collection):
             for stair_instance in stairs_instances:
                 points += list(stair_instance._keys())
             return SortedSet(points)
-        except:
+        except (AttributeError, TypeError):
             pass
     raise TypeError('Collection should be a tuple, list, numpy array, dict or pandas.Series.')
     
@@ -505,12 +505,16 @@ class Stairs():
     
     # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING
        
-    @append_doc(SortedDict.__getitem__.__doc__)
     def __getitem__(self,*args, **kwargs):
+        """
+        f'{dict.__getitem__.__doc__}'
+        """
         return self._sorted_dict.__getitem__(*args, **kwargs)
         
-    @append_doc(SortedDict.__setitem__.__doc__)
     def __setitem__(self, key, value):
+        """
+        f'{dict.__setitem__.__doc__}'
+        """
         self._sorted_dict.__setitem__(key, value)
     
     def copy(self, deep=None):
@@ -566,7 +570,7 @@ class Stairs():
         Evaluates the value of the step function at one, or more, points.
 
         Technically the results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
-        or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See 
+        or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See
         :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
 
         Parameters
@@ -663,7 +667,7 @@ class Stairs():
         is performed when *aggfunc* is None.
         
         If *aggfunc* is None then the results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
-        or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See 
+        or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See
         :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
         
         If *aggfunc* is not None then a window, around each point x (referred to as the focal point), over which to aggregate is required.
@@ -745,7 +749,7 @@ class Stairs():
             If 'left' then :math:`\\lim_{x \\to lower_how^{-}} f(x)` is included in the window.
         upper_how: {'left', 'right'}, default 'left'
             Only relevant if *aggfunc* is not None.  Determines how the right window boundary should be evaluated.
-            If 'right' then :math:`\\lim_{x \\to upper_how^{+}} f(x)` is included in the window. 
+            If 'right' then :math:`\\lim_{x \\to upper_how^{+}} f(x)` is included in the window.
          
         Returns
         -------
@@ -887,8 +891,7 @@ class Stairs():
         See Also
         --------
         Stairs.subtract
-        """    
-        
+        """
         new_instance = self.copy()
         for key,delta in new_instance._items():
             new_instance[key] = -delta
@@ -1075,7 +1078,7 @@ class Stairs():
         --------
         Stairs.logical_and
         """
-        assert isinstance(other, type(self)), f"Arguments must be both of type Stairs."
+        assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _max_pair(self_bool, other_bool)
@@ -1120,7 +1123,7 @@ class Stairs():
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__gt__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
     
     @append_doc(SC_docs.le_example)
     def le(self, other):
@@ -1141,7 +1144,7 @@ class Stairs():
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__le__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)        
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
 
     @append_doc(SC_docs.ge_example)
     def ge(self, other):
@@ -1162,7 +1165,7 @@ class Stairs():
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ge__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)                
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
     
     @append_doc(SC_docs.eq_example)
     def eq(self, other):
@@ -1183,7 +1186,7 @@ class Stairs():
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__eq__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)           
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
     
     @append_doc(SC_docs.ne_example)
     def ne(self, other):
@@ -1204,7 +1207,7 @@ class Stairs():
         if not isinstance(other, Stairs):
             other = Stairs(other)
         comparator = float(0).__ne__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)    
+        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
     
     @append_doc(SC_docs.identical_example)
     def identical(self, other):
@@ -1336,7 +1339,7 @@ class Stairs():
         --------
         Stairs.rolling_mean, Stairs.get_integral_and_mean, Stairs.median, Stairs.mode
         """
-        area, mean = self.get_integral_and_mean(lower, upper)
+        _, mean = self.get_integral_and_mean(lower, upper)
         return mean
     
     @append_doc(SC_docs.median_example)
@@ -1469,7 +1472,7 @@ class Stairs():
         upper : int, float or pandas.Timestamp
             upper bound of the domain on which to perform the calculation
         lag : int, float, pandas.Timedelta
-            a pandas.Timedelta is only valid when using dates.  
+            a pandas.Timedelta is only valid when using dates.
             If using dates and delta is an int or float, then it is interpreted as a number of hours.
         clip : {'pre', 'post'}, default 'pre'
             only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
@@ -1495,13 +1498,13 @@ class Stairs():
     @append_doc(SC_docs.corr_example)
     def corr(self, other, lower=float('-inf'), upper=float('inf'), lag=0, clip='pre'):
         """
-        Calculates either correlation, autocorrelation or cross-correlation. 
+        Calculates either correlation, autocorrelation or cross-correlation.
         
         All calculations are based off the `Pearson correlation coefficient <https://en.wikipedia.org/wiki/Pearson_correlation_coefficient>`_.
         
         The calculation is between two step functions described by *self* and *other*.
         If lag is None or 0 then correlation is calculated, otherwise cross-correlation is calculated.
-        Autocorrelation is a special case of cross-correlation when *other* is equal to *self*.        
+        Autocorrelation is a special case of cross-correlation when *other* is equal to *self*.
         
         Parameters
         ----------
@@ -1512,7 +1515,7 @@ class Stairs():
         upper : int, float or pandas.Timestamp
             upper bound of the interval on which to perform the calculation
         lag : int, float, pandas.Timedelta
-            a pandas.Timedelta is only valid when using dates.  
+            a pandas.Timedelta is only valid when using dates.
             If using dates and delta is an int or float, then it is interpreted as a number of hours.
         clip : {'pre', 'post'}, default 'pre'
             only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
@@ -1535,7 +1538,7 @@ class Stairs():
             other = other.shift(-lag)
         return self.cov(other, lower, upper)/(self.std(lower, upper)*other.std(lower,upper))
     
-    @append_doc(SC_docs.percentile_example) 
+    @append_doc(SC_docs.percentile_example)
     def percentile(self, x, lower=float('-inf'), upper=float('inf')):
         """
         Calculates the x-th percentile of the step function's values
@@ -1591,7 +1594,7 @@ class Stairs():
         
         assert temp_df.shape[0] >= 3, "Step function composed only of infinite length intervals.  Provide bounds by 'lower' and 'upper' parameters"
 
-        temp_df = ( 
+        temp_df = (
             temp_df
             .iloc[1:-1]
             .assign(duration = lambda df: df.end-df.start)
@@ -1618,7 +1621,7 @@ class Stairs():
     @append_doc(SC_docs.ecdf_stairs_example)
     def ecdf_stairs(self, lower=float('-inf'), upper=float('inf')):
         """
-        Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_ 
+        Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_
         for the corresponding step function values (and returns the result as a Stairs instance)
        
         Parameters
@@ -1681,10 +1684,10 @@ class Stairs():
         
 
     
-    @append_doc(SC_docs.mode_example)    
+    @append_doc(SC_docs.mode_example)
     def mode(self, lower=float('-inf'), upper=float('inf')):
         """
-        Calculates the mode of the step function.  
+        Calculates the mode of the step function.
         
         If there is more than one mode only the smallest is returned
         
@@ -1710,7 +1713,7 @@ class Stairs():
         )
         return df.value.loc[df.duration.idxmax()]
 
-    @append_doc(SC_docs.values_in_range_example)  
+    @append_doc(SC_docs.values_in_range_example)
     def values_in_range(self, lower=float('-inf'), upper=float('inf'), lower_how='right', upper_how='left'):
         """
         Returns the range of the step function as a set of discrete values.
@@ -1744,7 +1747,7 @@ class Stairs():
         if lower_how == 'left':
             endpoint_vals += self._sample_raw([lower], how='left')
         if upper_how == 'right':
-            endpoint_vals += self._sample_raw([upper], how='right')   
+            endpoint_vals += self._sample_raw([upper], how='right')
         return set(self._sample_raw(interior_points) + endpoint_vals)
     
     @append_doc(SC_docs.min_example)
@@ -1780,7 +1783,7 @@ class Stairs():
         """
         return min(self.values_in_range(lower, upper, lower_how, upper_how))
 
-    @append_doc(SC_docs.max_example)    
+    @append_doc(SC_docs.max_example)
     def max(self, lower=float('-inf'), upper=float('inf'), lower_how='right', upper_how='left'):
         """
         Calculates the maximum value of the step function
@@ -1813,7 +1816,7 @@ class Stairs():
         """
         return max(self.values_in_range(lower, upper, lower_how, upper_how))
      
-    @append_doc(SC_docs.clip_example)        
+    @append_doc(SC_docs.clip_example)
     def _clip(self, lower=float('-inf'), upper=float('inf')):
         """
         Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
@@ -1830,7 +1833,7 @@ class Stairs():
         :class:`Stairs`
             Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
         """
-        assert lower is not None and upper is not None, "clip function should not be called with no parameters." 
+        assert lower is not None and upper is not None, "clip function should not be called with no parameters."
         assert lower < upper, "Value of parameter 'lower' must be less than the value of parameter 'upper'"
         cumulative = self._cumulative()
         left_boundary_index = cumulative.bisect_right(lower) - 1
@@ -1845,10 +1848,10 @@ class Stairs():
         else:
             s[float('-inf')] = self[float('-inf')]
         if upper != float('inf'):
-            s[upper] = s.get(upper,0)-value_at_right 
+            s[upper] = s.get(upper,0)-value_at_right
         return Stairs(s, use_dates=self.use_dates)
 
-    @add_doc(_clip.__doc__)        
+    @add_doc(_clip.__doc__)
     def clip(self, lower=float('-inf'), upper=float('inf')):
         if isinstance(lower, pd.Timestamp):
             lower = _convert_date_to_float(lower)
@@ -1856,7 +1859,7 @@ class Stairs():
             upper = _convert_date_to_float(upper)
         return self._clip(lower, upper)
     
-    @append_doc(SC_docs.shift_example)    
+    @append_doc(SC_docs.shift_example)
     def shift(self, delta):
         """
         Returns a stairs instance corresponding to a horizontal translation by delta
@@ -1883,7 +1886,7 @@ class Stairs():
             delta =  delta.total_seconds()/3600
         return Stairs(
             dict(zip(
-                (key + delta for key in self._keys()), 
+                (key + delta for key in self._keys()),
                 self._values()
             )),
             use_dates=self.use_dates
@@ -1892,8 +1895,8 @@ class Stairs():
     @append_doc(SC_docs.diff_example)
     def diff(self, delta):
         """
-        Returns a stairs instance corresponding to the difference between the step function corresponding to *self* 
-        and the same step-function translated by delta. 
+        Returns a stairs instance corresponding to the difference between the step function corresponding to *self*
+        and the same step-function translated by delta.
         
         Parameters
         ----------
@@ -1918,13 +1921,13 @@ class Stairs():
         
         The rolling mean of a step function is a continous piece-wise linear function, hence it can
         be described by a sequence of x,y coordinates which mark where function changes gradient.  These
-        x,y coordinates are returned as a :class:`pandas.Series` which could then be used with 
+        x,y coordinates are returned as a :class:`pandas.Series` which could then be used with
         :meth:`matplotlib.axes.Axes.plot`, or equivalent, to visualise.
         
-        A rolling mean requires a window around a point x (referred to as the focal point) to be defined.  
+        A rolling mean requires a window around a point x (referred to as the focal point) to be defined.
         In this implementation the window is defined by two values paired into an array-like parameter called *window*.
         These two numbers are the distance from the focal point to the left boundary of the window, and the right boundary
-        of the window respectively.  This allows for trailing windows, leading windows and everything between 
+        of the window respectively.  This allows for trailing windows, leading windows and everything between
         (including a centred window).
         
         If *lower* or *upper* is specified then only coordinates corresponding to windows contained within
@@ -1945,7 +1948,7 @@ class Stairs():
         
         See Also
         --------
-        Stairs.mean  
+        Stairs.mean
         """
         assert len(window) == 2, "Window should be a listlike object of length 2."
         left_delta, right_delta = window
@@ -1954,7 +1957,7 @@ class Stairs():
             left_delta = pd.Timedelta(left_delta, 'h')
             right_delta = pd.Timedelta(right_delta, 'h')
         change_points = list(SortedSet(
-            [c - right_delta for c in clipped.step_changes().keys()] + 
+            [c - right_delta for c in clipped.step_changes().keys()] +
             [c - left_delta for c in clipped.step_changes().keys()]
         ))
         s = pd.Series(
@@ -1977,7 +1980,7 @@ class Stairs():
         
         Returns
         -------
-        :class:`pandas.DataFrame`        
+        :class:`pandas.DataFrame`
         """
         starts = self._keys()
         ends = self._keys()[1:]
@@ -1989,7 +1992,7 @@ class Stairs():
         values = self._cumulative().values()
         df = pd.DataFrame({"start":list(starts), "end":list(ends), "value":list(values)}) #bugfix for pandas 1.1
         return df
-            
+
     @append_doc(SC_docs.number_of_steps_example)
     def number_of_steps(self):
         """
@@ -1998,7 +2001,7 @@ class Stairs():
         Returns
         -------
         int
-        
+
         See Also
         --------
         Stairs.step_changes

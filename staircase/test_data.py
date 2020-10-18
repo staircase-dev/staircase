@@ -696,12 +696,11 @@ def make_test_data(dates=False):
     ----------
     dates : boolean, default False
         indicates whether the "start" and "finish" columns of the dataframe should be floats, or :class:`pandas.Timestamps`
-          
+
     Returns
     -------
     :class:`pandas.DataFrame`
     """
-    
     df = pd.DataFrame(
         {
             "group":group,
