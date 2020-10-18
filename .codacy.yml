@@ -6,6 +6,6 @@ exclude_paths:
   - 'benchmarks/**/*'
   - 'setup.py'
   - 'versioneer.py'
-  - 'readme.md'
+  - 'README.md'
   - 'docs/*'
   - 'docs/**/*'
