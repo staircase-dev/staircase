@@ -8,3 +8,4 @@ exclude_paths:
   - 'versioneer.py'
   - 'readme.md'
   - 'docs/*'
+  - 'docs/**/*'
