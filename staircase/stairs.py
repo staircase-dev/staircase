@@ -122,7 +122,7 @@ def _get_union_of_points(collection):
             for stair_instance in stairs_instances:
                 points += list(stair_instance._keys())
             return SortedSet(points)
-        except AttributeError:
+        except (AttributeError, TypeError):
             pass
     raise TypeError('Collection should be a tuple, list, numpy array, dict or pandas.Series.')
     
