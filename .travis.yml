@@ -26,8 +26,7 @@ install:
   - conda install --use-local staircase
   - conda info -a
 script:
-  - pytest -v --color=yes --cov=staircase tests
+  - pytest -v --color=yes --cov-report=xml --cov=staircase tests
 after_success:
   - conda install -c conda-forge codecov
   - codecov
-  - bash <(curl -Ls https://coverage.codacy.com/get.sh) report
