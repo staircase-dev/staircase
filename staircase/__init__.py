@@ -2,7 +2,7 @@ try:
     from ._version import get_versions
     __version__ = get_versions()['version']
     del get_versions
-except Exception as e:
+except Exception:
     __version__ = ''
 
 from .stairs import Stairs, sample, resample, aggregate, hist_from_ecdf, corr, cov
