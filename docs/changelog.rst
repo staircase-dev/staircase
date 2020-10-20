@@ -2,7 +2,13 @@
 Changelog
 =========
 
+v1.5.2 2020-10-20
+
+- bugfix for :meth:`staircase.Stairs.layer` when None appears in vector parameters start and end
+
+
 v1.5.1 2020-10-15
+
 - removed dependency on 'private' methods in sortedcontainers
 - increased upper limit for version dependency on sortedcontainers
 
