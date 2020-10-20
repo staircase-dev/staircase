@@ -3,29 +3,31 @@
 
 <p align="center">
 	<a href="https://pepy.tech/project/staircase/" alt="PyPI downloads">
-        <img src="https://pepy.tech/badge/staircase" /></a>
+        <img data-canonical-src="https://pepy.tech/badge/staircase" /></a>
     <a href="https://www.python.org/" alt="Python version">
-        <img src="https://img.shields.io/pypi/pyversions/staircase" /></a>
+        <img data-canonical-src="https://img.shields.io/pypi/pyversions/staircase" /></a>
     <a href="https://pypi.org/project/staircase/" alt="PyPI version">
-        <img src="https://img.shields.io/pypi/v/staircase" /></a>
+        <img data-canonical-src="https://img.shields.io/pypi/v/staircase" /></a>
     <a href="https://anaconda.org/venaturum/staircase" alt="Conda version">
-        <img src="https://img.shields.io/conda/v/venaturum/staircase" /></a>
+        <img data-canonical-src="https://img.shields.io/conda/v/venaturum/staircase" /></a>
     <a href="https://staircase.mit-license.org/" alt="License">
-        <img src="http://img.shields.io/:license-mit-blue.svg?style=flat-square"></a>
+        <img data-canonical-src="http://img.shields.io/:license-mit-blue.svg?style=flat-square"></a>
 </p>
 <p align="center">
 	<a href="https://travis-ci.org/venaturum/staircase" alt"Travis CI">
-		<img src="https://img.shields.io/travis/venaturum/staircase"/></a>
+		<img data-canonical-src="https://img.shields.io/travis/venaturum/staircase"/></a>
     <a href="https://railing.readthedocs.io/en/latest/" alt="Read the Docs">
-        <img src="https://readthedocs.org/projects/railing/badge/?version=latest" /></a>
+        <img data-canonical-src="https://readthedocs.org/projects/railing/badge/?version=latest" /></a>
 	<a href="https://www.codacy.com/gh/venaturum/staircase/dashboard" alt="Codacy Grade">
-        <img src="https://app.codacy.com/project/badge/Grade/04eb9240feec4b4e95b20b96d060d38c" /></a>	
+        <img data-canonical-src="https://app.codacy.com/project/badge/Grade/04eb9240feec4b4e95b20b96d060d38c" /></a>	
 	<a href="https://codecov.io/gh/venaturum/staircase"  alt="Codecov coverage">
-		<img src="https://codecov.io/gh/venaturum/staircase/branch/master/graph/badge.svg?token=AsjexD8Xbh"/></a>
+		<img data-canonical-src="https://codecov.io/gh/venaturum/staircase/branch/master/graph/badge.svg?token=AsjexD8Xbh"/></a>
 </p>
 <p align="center">
 	<a href="https://mybinder.org/v2/gh/venaturum/staircase/CondaBuild?filepath=docs%2Fexamples" alt="Binder">
-        <img src="https://mybinder.org/badge_logo.svg" /></a>	
+        <img data-canonical-src="https://mybinder.org/badge_logo.svg" /></a>	
+	<a href="https://colab.research.google.com/github/venaturum/staircase/blob/master/docs/examples/Index.ipynb" alt="Colab">
+        <img data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" /></a>		
 </p>
 
 The leading use-case for the staircase package is for the creation and analysis of step functions.
