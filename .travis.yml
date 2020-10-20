@@ -4,6 +4,7 @@ language: python
 python:
   - "3.6"
   - "3.7"
+  - "3.8"
 
 install:
   - git remote set-branches --add origin CondaBuild
@@ -25,7 +26,7 @@ install:
   - conda install --use-local staircase
   - conda info -a
 script:
-  - pytest -v --color=yes --cov=staircase tests
+  - pytest -v --color=yes --cov-report=xml --cov=staircase tests
 after_success:
   - conda install -c conda-forge codecov
   - codecov
