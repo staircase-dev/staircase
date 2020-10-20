@@ -818,15 +818,15 @@ class Stairs():
         """
         Implementation of the layer function for when start parameter is single-valued
         """
-        if start is None:
+        if pd.isna(start):
             start = float('-inf')
-        if value is None:
+        if pd.isna(value):
             value = 1
         self[start] = self._get(start,0) + value
         if start != float('-inf') and self[start] == 0:
             self._pop(start)
         
-        if end != None:
+        if not pd.isna(end):
             self[end] = self._get(end,0) - value
             if self[end] == 0 or end == float('inf'):
                 self._pop(end)
@@ -848,11 +848,11 @@ class Stairs():
         if values is None: values = [1]*max(len(starts), len(ends))
         
         for start, value in zip(starts, values):
-            if np.isnan(start):
+            if pd.isna(start):
                 start = float('-inf')
             self[start] = self._get(start,0) + value
         for end, value in zip(ends, values):
-            if not np.isnan(end):
+            if not pd.isna(end):
                 self[end] = self._get(end,0) - value
         self.cached_cumulative = None
         return self
