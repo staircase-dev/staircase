@@ -3,6 +3,7 @@ import itertools
 import staircase.stairs as stairs
 import pandas as pd
 import numpy as np
+import staircase.test_data as test_data
 
 def _expand_interval_definition(start, end=None, value=1):
     return start, end, value
@@ -674,3 +675,12 @@ def test_s1_rolling_mean(s1_fix, kwargs, expected_index, expected_vals):
     rm = s1_fix.rolling_mean(**kwargs)
     assert list(rm.values) == expected_vals
     assert list(rm.index) == expected_index
+    
+def test_eq():
+    assert stairs.Stairs(3, use_dates=True) == 3
+    
+def test_ne(s1_fix):
+    assert s1_fix != 3
+    
+def test_make_test_data():
+    assert type(test_data.make_test_data(dates=True)) == pd.DataFrame

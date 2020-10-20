@@ -3,6 +3,7 @@ import itertools
 import pandas as pd
 import numpy as np
 import staircase.stairs as stairs
+import staircase.test_data as test_data
 
 def _expand_interval_definition(start, end=None, value=1):
     return start, end, value
@@ -199,7 +200,7 @@ def test_deepcopy(init_value):
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2]) 
 def test_layer1(init_value):    
-    intervals_to_add = [(-2,1),(3,5),(1,5),(-5,-3)]
+    intervals_to_add = [(-2,1),(3,5),(1,5),(-5,-3), (None,0), (0, None)]
     int_seq = stairs.Stairs(init_value)
     int_seq2 = stairs.Stairs(init_value)
     for start,end in intervals_to_add:
@@ -358,6 +359,12 @@ def test_mean2(s1_fix, s2_fix):
     assert abs(s1_fix.mean(2,8) - 1.125) < 0.000001
     assert abs(s2_fix.mean(2,8) - -0.45833333) < 0.000001
     
+def test_integrate_0():
+    assert stairs.Stairs(0).layer(None, 0).integrate() == 0
+    
+def test_mean_nan():
+    assert stairs.Stairs(0).layer(None, 0).mean() is np.nan
+
 def test_to_dataframe(s1_fix):
     s1_fix.to_dataframe()
  
@@ -721,6 +728,84 @@ def test_s1_resample_mean(s1_fix, x, kwargs, expected_val):
 ])         
 def test_s1_resample_max(s1_fix, x, kwargs, expected_val):
     assert s1_fix.resample(x, **kwargs)._cumulative().items()[1:] == list(zip(x, expected_val))
+  
+
+def test_plot(s1_fix):
+    s1_fix.plot()  
+    
+def test_add_1(s1_fix, s2_fix):
+    (s1_fix + s2_fix).step_changes() == {
+        -4: -1.75,
+        -2: -1.75,
+        1: 1.25,
+        2: 4.5,
+        2.5: -2.5,
+        3: 2.5,
+        4: 2.5,
+        5: -5.25,
+        6: -2.5,
+        7: 2.5,
+        8: 5,
+        10: -4.5
+    }
+    
+def test_add_1(s1_fix):
+    s = (s1_fix + 3)
+    assert s(float('-inf')) == 3
+    assert s.step_changes() == s1_fix.step_changes()
+    
+def test_divide_exception(s1_fix, s2_fix):
+    with pytest.raises(ZeroDivisionError):
+        assert s1_fix/s2_fix
+    
+def test_divide(s1_fix, s2_fix):
+    assert (s1_fix/(s2_fix+1)).step_changes() == {
+        -4: -1.75,
+         -2: 4.083333333333334,
+         1: -2.5,
+         2: 0.25,
+         2.5: 0.4166666666666667,
+         3: 5.0,
+         4: -4.583333333333333,
+         5: -2.25,
+         6: 1.6666666666666665,
+         7: -0.8333333333333333,
+         8: 0.4166666666666667,
+         10: 0.08333333333333333
+    }
+    
+def test_eq():
+    assert stairs.Stairs(3) == 3
+    
+def test_ne(s1_fix):
+    assert s1_fix != 3
+    
+def test_diff(s1_fix):
+    assert s1_fix.diff(1).step_changes() == {
+         -4: -1.75,
+         -3: 1.75,
+         1: 2,
+         2: -2,
+         3: 2.5,
+         4: -2.5,
+         5: -0.75,
+         6: -1.75,
+         7: 2.5,
+         10: 0.5,
+         11: -0.5,
+    }
+    
+def test_str(s1_fix):
+    assert str(s1_fix) is not None
+    assert str(s1_fix) != ''
+    
+def test_repr(s1_fix):
+    assert repr(s1_fix) is not None
+    assert repr(s1_fix) != ''    
+    
+ 
+def test_make_test_data():
+    assert type(test_data.make_test_data()) == pd.DataFrame
     
     
 # @pytest.mark.parametrize("index, init_val", [(1,1.25), (2,-2.5), (3,3.25), (4,-4)])         

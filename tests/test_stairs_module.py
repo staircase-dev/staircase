@@ -144,6 +144,117 @@ def test_aggregate_9(IS1, IS2):
 
 def test_aggregate_10(IS1, IS2):
     assert stairs.aggregate((IS1, IS2), np.mean, points=[-2,2,5,8]).step_changes() == {-2.0: -1.75, 2.0: 2.875, 5.0: -1.375, 8.0: 2.5}
+    
+def test_mean_1(IS1, IS2):
+    assert stairs._mean({1:IS1, 2:IS2}).step_changes() == {-4.0: -0.875,
+                                                                -2.0: -0.875,
+                                                                1.0: 0.625,
+                                                                2.0: 2.25,
+                                                                2.5: -1.25,
+                                                                3.0: 1.25,
+                                                                4.0: 1.25,
+                                                                5.0: -2.625,
+                                                                6.0: -1.25,
+                                                                7.0: 1.25,
+                                                                8.0: 2.5,
+                                                                10.0: -2.25}
+                                                                     
+def test_mean_2(IS1, IS2):
+    assert stairs._mean(pd.Series([IS1, IS2])).step_changes() == {-4.0: -0.875,
+                                                                                -2.0: -0.875,
+                                                                                1.0: 0.625,
+                                                                                2.0: 2.25,
+                                                                                2.5: -1.25,
+                                                                                3.0: 1.25,
+                                                                                4.0: 1.25,
+                                                                                5.0: -2.625,
+                                                                                6.0: -1.25,
+                                                                                7.0: 1.25,
+                                                                                8.0: 2.5,
+                                                                                10.0: -2.25}
+
+def test_mean_3(IS1, IS2):
+    assert stairs._mean(np.array([IS1, IS2])).step_changes() == {-4.0: -0.875,
+                                                                                -2.0: -0.875,
+                                                                                1.0: 0.625,
+                                                                                2.0: 2.25,
+                                                                                2.5: -1.25,
+                                                                                3.0: 1.25,
+                                                                                4.0: 1.25,
+                                                                                5.0: -2.625,
+                                                                                6.0: -1.25,
+                                                                                7.0: 1.25,
+                                                                                8.0: 2.5,
+                                                                                10.0: -2.25}
+
+def test_mean_4(IS1, IS2):
+    assert stairs._mean([IS1, IS2]).step_changes() == {-4.0: -0.875,
+                                                                    -2.0: -0.875,
+                                                                    1.0: 0.625,
+                                                                    2.0: 2.25,
+                                                                    2.5: -1.25,
+                                                                    3.0: 1.25,
+                                                                    4.0: 1.25,
+                                                                    5.0: -2.625,
+                                                                    6.0: -1.25,
+                                                                    7.0: 1.25,
+                                                                    8.0: 2.5,
+                                                                    10.0: -2.25}
+
+def test_mean_5(IS1, IS2):
+    assert stairs._mean((IS1, IS2)).step_changes() == {-4.0: -0.875,
+                                                                    -2.0: -0.875,
+                                                                    1.0: 0.625,
+                                                                    2.0: 2.25,
+                                                                    2.5: -1.25,
+                                                                    3.0: 1.25,
+                                                                    4.0: 1.25,
+                                                                    5.0: -2.625,
+                                                                    6.0: -1.25,
+                                                                    7.0: 1.25,
+                                                                    8.0: 2.5,
+                                                                    10.0: -2.25}
+                                                                    
+def test_median_1(IS1, IS2):
+    assert stairs._median({1:IS1, 2:IS2, 3:IS1+IS2}).step_changes() == {
+        -4.0: -1.75,
+        1.0: -0.5,
+        2.0: 4.25,
+        2.5: -2.25,
+        3.0: 2.5,
+        4.0: 0.5,
+        5.0: -3.25,
+        6.0: -2.0,
+        7.0: 2.0,
+        8.0: 5.0,
+        10.0: -4.5,
+    }                                                                 
+                                                                   
+def test_max_1(IS1, IS2):
+    assert stairs._max({1:IS1, 2:IS2}).step_changes() == {
+        -2.0: -1.75,
+         1.0: 2.0,
+         2.0: 1.75,
+         2.5: -1.75,
+         3.0: 2.5,
+         5.0: -0.75,
+         6.0: -2.5,
+         7.0: 0.5,
+         8.0: 5.0,
+         10.0: -5.0,
+    }   
+    
+def test_min_1(IS1, IS2):
+    assert stairs._min({1:IS1, 2:IS2}).step_changes() == {
+        -4.0: -1.75,
+         1.0: -0.75,
+         2.0: 2.75,
+         2.5: -0.75,
+         4.0: 2.5,
+         5.0: -4.5,
+         7.0: 2.0,
+         10.0: 0.5,
+    }   
 
 def test_sample_1(IS1, IS2):
     sample = stairs.sample(pd.Series([IS1, IS2]))
@@ -249,3 +360,45 @@ def test_corr_matrix1(IS1, IS2):
 def test_corr_matrix2(IS1, IS2):    
     assert _matrix_close_to_zeros(stairs.corr([IS1, IS2],0, 12).values - np.array([[1, -0.07452442], [-0.07452442,  1]]))    
     
+
+def test_convert_date_to_float():
+    assert stairs._convert_date_to_float(None) is None
+    
+    
+def test_convert_float_to_date():
+    assert stairs._convert_float_to_date(1) == stairs.origin + pd.Timedelta(1, 'h')
+    
+    
+def test_get_union_of_points_exception():
+    with pytest.raises(TypeError):
+        assert stairs._get_union_of_points(None)
+        
+def test_using_dates_exception():
+    with pytest.raises(TypeError):
+        assert stairs._using_dates(None)
+        
+def test_sample_series_expand_key(IS1, IS2):
+    s = pd.Series(
+        [IS1, IS2],
+        index = pd.MultiIndex.from_product([("A",), ("X","Y")], names=['first', 'second'])
+    )
+    df = stairs.sample(s, [-4,-2,1,3], expand_key=True)
+    df = df.sort_values(list(df.columns)).reset_index(drop=True)
+    assert df.to_dict() == {
+        'points': {0: -4, 1: -4, 2: -2, 3: -2, 4: 1, 5: 1, 6: 3, 7: 3},
+        'value': {0: -1.75, 1: 0.0, 2: -1.75, 3: -1.75, 4: -2.5, 5: 0.25, 6: -0.5, 7: 2.75},
+        'first': {0: 'A', 1: 'A', 2: 'A', 3: 'A', 4: 'A', 5: 'A', 6: 'A', 7: 'A'},
+        'second': {0: 'X', 1: 'Y', 2: 'X', 3: 'Y', 4: 'Y', 5: 'X', 6: 'Y', 7: 'X'}
+    }
+    
+# def test_sample_series_(IS1, IS2):
+    # s = pd.Series(
+        # [IS1, IS2],
+        # index = pd.MultiIndex.from_product([("A",), ("X","Y")], names=['first', 'second'])
+    # )
+    # df = stairs.sample(s, [-4,-2,1,3], expand_key=False)
+    # df = df.sort_values(list(df.columns)).reset_index(drop=True)
+    # assert df.to_dict() == {'points': {0: -4, 1: -4, 2: -2, 3: -2, 4: 1, 5: 1, 6: 3, 7: 3},
+        # 'key': {0: ('A', 'X'), 1: ('A', 'Y'), 2: ('A', 'X'), 3: ('A', 'Y'), 4: ('A', 'X'), 5: ('A', 'Y'), 6: ('A', 'X'), 7: ('A', 'Y')},
+        # 'value': {0: -1.75, 1: 0.0, 2: -1.75, 3: -1.75, 4: 0.25, 5: -2.5, 6: 2.75,7: -0.5}
+        # }
