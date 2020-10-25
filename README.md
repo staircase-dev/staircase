@@ -8,8 +8,8 @@
         <img src="https://img.shields.io/pypi/pyversions/staircase" /></a>
     <a href="https://pypi.org/project/staircase/" alt="PyPI version">
         <img src="https://img.shields.io/pypi/v/staircase" /></a>
-    <a href="https://anaconda.org/venaturum/staircase" alt="Conda version">
-        <img src="https://img.shields.io/conda/v/venaturum/staircase" /></a>
+    <a href="https://anaconda.org/conda-forge/staircase" alt="Conda Forge version">
+        <img src="https://anaconda.org/conda-forge/staircase/badges/version.svg" /></a>
     <a href="https://staircase.mit-license.org/" alt="License">
         <img src="http://img.shields.io/:license-mit-blue.svg?style=flat-square"></a>
 </p>
@@ -100,7 +100,7 @@ python -m pip install staircase
 or also with conda:
 
 ```bash
-conda install -c venaturum staircase
+conda install -c conda-forge staircase
 ```
 
 ## Documentation
