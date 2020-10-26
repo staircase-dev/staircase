@@ -15,7 +15,7 @@
 </p>
 <p align="center">
 	<a href="https://travis-ci.com/github/venaturum/staircase" alt"Travis CI">
-		<img src="https://travis-ci.com/venaturum/staircase.svg?branch=master"/></a>
+		<img src="https://travis-ci.com/venaturum/staircase.svg?branch=CondaBuild"/></a>
     <a href="https://railing.readthedocs.io/en/latest/" alt="Read the Docs">
         <img src="https://readthedocs.org/projects/railing/badge/?version=latest" /></a>
 	<a href="https://www.codacy.com/gh/venaturum/staircase/dashboard" alt="Codacy Grade">
