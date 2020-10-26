@@ -21,7 +21,7 @@
 	<a href="https://www.codacy.com/gh/venaturum/staircase/dashboard" alt="Codacy Grade">
         <img src="https://app.codacy.com/project/badge/Grade/04eb9240feec4b4e95b20b96d060d38c" /></a>	
 	<a href="https://codecov.io/gh/venaturum/staircase"  alt="Codecov coverage">
-		<img src="https://codecov.io/gh/venaturum/staircase/branch/master/graph/badge.svg?token=AsjexD8Xbh"/></a>
+		<img src="https://codecov.io/gh/venaturum/staircase/branch/master/graph/badge.svg"/></a>
 </p>
 <p align="center">
 	<a href="https://mybinder.org/v2/gh/venaturum/staircase/CondaBuild?filepath=docs%2Fexamples" alt="Binder">
