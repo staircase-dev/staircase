@@ -4,7 +4,7 @@
 Learning resources
 ===================
 
-Below are a variety of resources to help with learning how to use the staircase package.  If you have a question please post to [Stack Overflow](https://stackoverflow.com/) and use the tag **staircase**.
+Below are a variety of resources to help with learning how to use the staircase package.  If you have a question please post to `Stack Overflow <https://stackoverflow.com/>`_ and use the tag **staircase**.
 
 .. _resources.pyconline_video:
 
