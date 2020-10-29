@@ -8,20 +8,20 @@
         <img src="https://img.shields.io/pypi/pyversions/staircase" /></a>
     <a href="https://pypi.org/project/staircase/" alt="PyPI version">
         <img src="https://img.shields.io/pypi/v/staircase" /></a>
-    <a href="https://anaconda.org/venaturum/staircase" alt="Conda version">
-        <img src="https://img.shields.io/conda/v/venaturum/staircase" /></a>
+    <a href="https://anaconda.org/conda-forge/staircase" alt="Conda Forge version">
+        <img src="https://anaconda.org/conda-forge/staircase/badges/version.svg" /></a>
     <a href="https://staircase.mit-license.org/" alt="License">
         <img src="http://img.shields.io/:license-mit-blue.svg?style=flat-square"></a>
 </p>
 <p align="center">
-	<a href="https://travis-ci.org/venaturum/staircase" alt"Travis CI">
-		<img src="https://img.shields.io/travis/venaturum/staircase"/></a>
+	<a href="https://travis-ci.com/github/venaturum/staircase" alt"Travis CI">
+		<img src="https://travis-ci.com/venaturum/staircase.svg?branch=master"/></a>
     <a href="https://railing.readthedocs.io/en/latest/" alt="Read the Docs">
         <img src="https://readthedocs.org/projects/railing/badge/?version=latest" /></a>
 	<a href="https://www.codacy.com/gh/venaturum/staircase/dashboard" alt="Codacy Grade">
         <img src="https://app.codacy.com/project/badge/Grade/04eb9240feec4b4e95b20b96d060d38c" /></a>	
 	<a href="https://codecov.io/gh/venaturum/staircase"  alt="Codecov coverage">
-		<img src="https://codecov.io/gh/venaturum/staircase/branch/master/graph/badge.svg?token=AsjexD8Xbh"/></a>
+		<img src="https://codecov.io/gh/venaturum/staircase/branch/master/graph/badge.svg"/></a>
 </p>
 <p align="center">
 	<a href="https://mybinder.org/v2/gh/venaturum/staircase/CondaBuild?filepath=docs%2Fexamples" alt="Binder">
@@ -100,7 +100,7 @@ python -m pip install staircase
 or also with conda:
 
 ```bash
-conda install -c venaturum staircase
+conda install -c conda-forge staircase
 ```
 
 ## Documentation

@@ -7,6 +7,6 @@ To install the latest version from PyPI::
 
     python -m pip install staircase
 
-To install the latest version from Anaconda::
+To install the latest version from Anaconda Cloud::
 
-    conda install -c venaturum staircase
+    conda install -c conda-forge staircase
