@@ -11,6 +11,7 @@ from sortedcontainers import SortedDict, SortedSet
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import pytz
 import math
 import warnings
 from pandas.plotting import register_matplotlib_converters
@@ -21,31 +22,56 @@ from .docstrings import stairs_module as SM_docs
 warnings.simplefilter('default')
 
 origin = pd.to_datetime('2000-1-1')
+tz_default = None
+use_dates_default = False
 
+class Default():
+    pass
+    
+_default = Default()
+    
+    
+def _set_default_timezone(tz=None):
+    global tz_default
+    tz_default = pytz.timezone(tz) if tz else None
+    
+def _get_default_timezone():
+    return tz_default
+    
+def _get_default_use_dates():
+    return use_dates_default
+    
 def _verify_window(left_delta, right_delta, zero):
     assert left_delta <= zero, "left_delta must not be positive"
     assert right_delta >= zero, "right_delta must not be negative"
     assert right_delta - left_delta > zero, "window length must be non-zero"
+    
+def _check_binop_timezones(first, second):
+    assert first.tz == second.tz, "operands must have the same timezone, or none at all"
 
-def _convert_date_to_float(val):
+def _convert_date_to_float(val, tz=None):
     if val is None:
         return None
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
-        deltas = pd.TimedeltaIndex(val - origin)
-        return deltas.days*24 + deltas.seconds/3600
-    return (val - origin).total_seconds()/3600
+        #if val.dt.tz is None and tz is not None:
+        #    val = val.dt.tz_localize(tz)
+        deltas = pd.TimedeltaIndex(val - origin.tz_localize(tz))
+        return list(deltas/pd.Timedelta(1, 'h'))
+    #if val.tz is None and tz is not None:
+    #    val = val.tz_localize(tz)
+    return (val - origin.tz_localize(tz))/pd.Timedelta(1, 'h')
     
-def _convert_float_to_date(val):
+def _convert_float_to_date(val, tz=None):
     if hasattr(val, "__iter__"):
-        if not isinstance(val, pd.Series):
-            val = pd.Series(val)
-        return list(pd.to_datetime(val*3600, unit='s', origin=origin))
-    return pd.to_datetime(val*3600, unit='s', origin=origin)
+        if not isinstance(val, np.ndarray):
+            val = np.array(val)
+        return list(pd.to_timedelta(val*3600, unit='s') + origin.tz_localize(tz))
+    return pd.to_timedelta(val*3600, unit='s') + origin.tz_localize(tz)
 
-def _from_cumulative(cumulative, use_dates=False):
-    return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates)
+def _from_cumulative(cumulative, use_dates=False, tz=None):
+    return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates, tz)
 
 def _min_pair(stairs1, stairs2):
     """
@@ -60,6 +86,7 @@ def _min_pair(stairs1, stairs2):
 
     """
     assert isinstance(stairs1, Stairs) and isinstance(stairs2, Stairs), "Arguments to min must be both of type Stairs."
+    assert stairs1.tz == stairs2.tz
     new_instance = stairs1-stairs2
     cumulative = new_instance._cumulative()
     for key,value in cumulative.items():
@@ -67,7 +94,7 @@ def _min_pair(stairs1, stairs2):
             cumulative[key] = 0
     deltas = [cumulative.values()[0]]
     deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))
-    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
+    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates, tz=stairs1.tz)
     return new_instance + stairs2
     
 def _max_pair(stairs1, stairs2):
@@ -83,6 +110,7 @@ def _max_pair(stairs1, stairs2):
 
     """
     assert isinstance(stairs1, Stairs) and isinstance(stairs2, Stairs), "Arguments to max must be both of type Stairs."
+    assert stairs1.tz == stairs2.tz
     new_instance = stairs1-stairs2
     cumulative = new_instance._cumulative()
     for key,value in cumulative.items():
@@ -90,17 +118,17 @@ def _max_pair(stairs1, stairs2):
             cumulative[key] = 0
     deltas = [cumulative.values()[0]]
     deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))
-    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates)
+    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates, tz=stairs1.tz)
     return new_instance + stairs2
 
-def _compare(cumulative, zero_comparator, use_dates=False):
+def _compare(cumulative, zero_comparator, use_dates=False, tz=None):
     truth = cumulative.copy()
     for key,value in truth.items():
         new_val = int(zero_comparator(float(value)))
         truth[key] = new_val
     deltas = [truth.values()[0]]
     deltas.extend(np.subtract(truth.values()[1:], truth.values()[:-1]))
-    new_instance = Stairs(dict(zip(truth.keys(), deltas)), use_dates=use_dates)
+    new_instance = Stairs(dict(zip(truth.keys(), deltas)), use_dates, tz)
     new_instance._reduce()
     return new_instance
 
@@ -132,13 +160,16 @@ def _get_union_of_points(collection):
 def _using_dates(collection):
 
     def dict_use_dates():
-        return next(iter(collection.values())).use_dates
+        s = next(iter(collection.values()))
+        return s.use_dates, s.tz
         
     def series_use_dates():
-        return collection.values[0].use_dates
+        s = collection.values[0]
+        return s.use_dates, s.tz
         
     def array_use_dates():
-        return collection[0].use_dates
+        s = collection[0]
+        return s.use_dates, s.tz
     
     for func in (dict_use_dates, series_use_dates, array_use_dates):
         try:
@@ -182,13 +213,13 @@ def sample(collection, points=None, how='right', expand_key=True):
     --------
     Stairs.sample
     """
-    use_dates = _using_dates(collection)
+    use_dates, tz = _using_dates(collection)
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
         points = _get_union_of_points(collection)
         if use_dates:
             points.discard(float('-inf'))
-            points = _convert_float_to_date(list(points)) #bugfix - pandas>=1.1 breaks with points as type SortedSet
+            points = _convert_float_to_date(list(points), tz) #bugfix - pandas>=1.1 breaks with points as type SortedSet
     else:
         if not hasattr(points, "__iter__"):
             points = [points]
@@ -236,15 +267,15 @@ def aggregate(collection, func, points=None):
         Stairs_dict = collection
     else:
         Stairs_dict = dict(enumerate(collection))
-    use_dates = _using_dates(collection)
+    use_dates, tz = _using_dates(collection)
     df = sample(Stairs_dict, points, expand_key=False)
     aggregation = df.pivot_table(index="points", columns="key", values="value").aggregate(func, axis=1)
     if use_dates:
-        aggregation.index = _convert_date_to_float(aggregation.index)
+        aggregation.index = _convert_date_to_float(aggregation.index, tz=tz)
     aggregation[float('-inf')] = func([val._sample_raw(float('-inf')) for key,val in Stairs_dict.items()])
     step_changes = aggregation.sort_index().diff().fillna(0)
     #groupby.sum is necessary on next line as step_changes series may not have unique index elements
-    return Stairs(dict(step_changes.groupby(level=0).sum()), use_dates=use_dates)._reduce()
+    return Stairs(dict(step_changes.groupby(level=0).sum()), use_dates=use_dates, tz=tz)._reduce()
     
 @append_doc(SM_docs.mean_example)
 def _mean(collection):
@@ -450,7 +481,7 @@ def cov(collection, lower=float('-inf'), upper=float('inf')):
     """
     return(_pairwise_commutative_operation_matrix(collection, Stairs.cov, False, lower=lower, upper=upper))
     
-class Stairs():
+class Stairs:
     """
     An instance of a Stairs class is used to represent a :ref:`step function <getting_started.step_function>`.
     
@@ -460,7 +491,7 @@ class Stairs():
     See the :ref:`Stairs API <api.Stairs>` for details of methods.
     """
     
-    def __init__(self, value=0, use_dates=False):
+    def __init__(self, value=0, use_dates=_default, tz=_default):
         """
         Initialise a Stairs instance.
         
@@ -475,6 +506,11 @@ class Stairs():
         -------
         :class:`Stairs`
         """
+        if use_dates == _default:
+            use_dates = _get_default_use_dates()
+        if tz == _default:
+            tz = _get_default_timezone()
+        
         self._sorted_dict = SortedDict()
         if isinstance(value, dict):
             self._sorted_dict = SortedDict(value)
@@ -482,6 +518,7 @@ class Stairs():
             self._sorted_dict = SortedDict()
             self._sorted_dict[float('-inf')] = value
         self.use_dates = use_dates
+        self.tz = tz
         self.cached_cumulative = None
         
         #bypass date mapping
@@ -530,7 +567,7 @@ class Stairs():
         -------
         :class:`Stairs`
         """
-        new_instance = Stairs(use_dates=self.use_dates)
+        new_instance = Stairs(use_dates=self.use_dates, tz=self.tz)
         for key,value in self._items():
             new_instance[key] = value
         return new_instance
@@ -560,7 +597,7 @@ class Stairs():
             register_matplotlib_converters()
             x = list(cumulative.keys())
             x[0] = x[1]-0.00001
-            ax.step(_convert_float_to_date(x), list(cumulative.values()), where='post', **kwargs)
+            ax.step(_convert_float_to_date(x, self.tz), list(cumulative.values()), where='post', **kwargs)
         else:
             ax.step(cumulative.keys(), cumulative.values(), where='post', **kwargs)
         return ax
@@ -715,13 +752,13 @@ class Stairs():
     @add_doc(_sample.__doc__)
     def sample(self, x, how='right', aggfunc=None, window=(0,0), lower_how='right', upper_how='left'):
         #wrapper for dates
-        x = _convert_date_to_float(x)
+        x = _convert_date_to_float(x, self.tz)
         if aggfunc is not None:
             left_delta, right_delta = window
             if isinstance(left_delta, pd.Timedelta):
-                left_delta = _convert_date_to_float(origin + left_delta) - _convert_date_to_float(origin) #convert to hrs
+                left_delta = _convert_date_to_float(origin + left_delta, self.tz) - _convert_date_to_float(origin, self.tz) #convert to hrs
             if isinstance(right_delta, pd.Timedelta):
-                right_delta = _convert_date_to_float(origin + right_delta) - _convert_date_to_float(origin) #convert to hrs
+                right_delta = _convert_date_to_float(origin + right_delta, self.tz) - _convert_date_to_float(origin, self.tz) #convert to hrs
                 window = (left_delta, right_delta)
         return self._sample(x,how,aggfunc,window,lower_how,upper_how)
     
@@ -763,11 +800,11 @@ class Stairs():
             x = [x,]
         new_cumulative = SortedDict({float('-inf'):self._sample(float('-inf'))})
         new_cumulative.update({point:self._sample(point, how, aggfunc, window, lower_how, upper_how) for point in x})
-        return _from_cumulative(new_cumulative, self.use_dates)
+        return _from_cumulative(new_cumulative, self.use_dates, self.tz)
 
     @add_doc(_resample.__doc__)
     def resample(self, x, how='right', aggfunc=None, window=(0,0)):
-        x = _convert_date_to_float(x)
+        x = _convert_date_to_float(x, self.tz)
         if aggfunc is not None:
             assert len(window) == 2, "Window should be a array-like object of length 2."
             left_delta, right_delta = window
@@ -808,9 +845,9 @@ class Stairs():
 
     @add_doc(_layer.__doc__)
     def layer(self, start=None, end=None, value=None):
-        start = _convert_date_to_float(start)
+        start = _convert_date_to_float(start, self.tz)
         if end is not None:
-            end = _convert_date_to_float(end)
+            end = _convert_date_to_float(end, self.tz)
         return self._layer(start, end, value)
 
         
@@ -874,7 +911,7 @@ class Stairs():
     
     @add_doc(_step_changes.__doc__)
     def step_changes(self):
-        return dict(zip(_convert_float_to_date(self._keys()[1:]), self._values()[1:]))
+        return dict(zip(_convert_float_to_date(self._keys()[1:], self.tz), self._values()[1:]))
 
     @append_doc(SC_docs.negate_example)
     def negate(self):
@@ -915,7 +952,9 @@ class Stairs():
         Stairs.subtract
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         new_instance = self.copy()
         for key, value in other._items():
             new_instance[key] = self._get(key,0) + value
@@ -941,7 +980,9 @@ class Stairs():
         Stairs.add
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         other = -other
         return self + other
     
@@ -954,7 +995,7 @@ class Stairs():
         b._layer_multiple(a_keys, None, [0]*len(a_keys))
         
         multiplied_cumulative_values = func(a._cumulative().values(), b._cumulative().values())
-        new_instance = _from_cumulative(dict(zip(a._keys(), multiplied_cumulative_values)), use_dates=self.use_dates)
+        new_instance = _from_cumulative(dict(zip(a._keys(), multiplied_cumulative_values)), use_dates=self.use_dates, tz=self.tz)
         new_instance._reduce()
         return new_instance
         
@@ -976,6 +1017,10 @@ class Stairs():
         --------
         Stairs.multiply
         """
+        if not isinstance(other, Stairs):
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         if not bool(other.make_boolean()):
             raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
         
@@ -997,6 +1042,10 @@ class Stairs():
         --------
         Stairs.divide
         """
+        if not isinstance(other, Stairs):
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         return self._mul_or_div(other, np.multiply)
         
     def _cumulative(self):
@@ -1038,7 +1087,7 @@ class Stairs():
         Stairs.make_boolean
         """
         new_instance = self.make_boolean()
-        new_instance = Stairs(1) - new_instance
+        new_instance = Stairs(1, self.use_dates, self.tz) - new_instance
         return new_instance
     
     @append_doc(SC_docs.logical_and_example)
@@ -1058,6 +1107,7 @@ class Stairs():
         Stairs.logical_or
         """
         assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
+        _check_binop_timezones(self, other)
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _min_pair(self_bool, other_bool)
@@ -1079,6 +1129,7 @@ class Stairs():
         Stairs.logical_and
         """
         assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
+        _check_binop_timezones(self, other)
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _max_pair(self_bool, other_bool)
@@ -1100,9 +1151,11 @@ class Stairs():
         Stairs.gt, Stairs.le, Stairs.ge
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__lt__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
     
     @append_doc(SC_docs.gt_example)
     def gt(self, other):
@@ -1121,9 +1174,11 @@ class Stairs():
         Stairs.lt, Stairs.le, Stairs.ge
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__gt__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)        
     
     @append_doc(SC_docs.le_example)
     def le(self, other):
@@ -1142,9 +1197,11 @@ class Stairs():
         Stairs.lt, Stairs.gt, Stairs.ge
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__le__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)        
 
     @append_doc(SC_docs.ge_example)
     def ge(self, other):
@@ -1163,9 +1220,11 @@ class Stairs():
         Stairs.lt, Stairs.gt, Stairs.le
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__ge__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)                
     
     @append_doc(SC_docs.eq_example)
     def eq(self, other):
@@ -1184,9 +1243,11 @@ class Stairs():
         Stairs.ne, Stairs.identical
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__eq__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)           
     
     @append_doc(SC_docs.ne_example)
     def ne(self, other):
@@ -1205,9 +1266,11 @@ class Stairs():
         Stairs.eq, Stairs.identical
         """
         if not isinstance(other, Stairs):
-            other = Stairs(other)
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__ne__
-        return _compare((other-self)._cumulative(), comparator, use_dates = self.use_dates or other.use_dates)
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
     
     @append_doc(SC_docs.identical_example)
     def identical(self, other):
@@ -1222,6 +1285,7 @@ class Stairs():
         --------
         Stairs.eq, Stairs.ne
         """
+        _check_binop_timezones(self, other)
         return bool(self == other)
     
     def _reduce(self):
@@ -1289,9 +1353,9 @@ class Stairs():
     @add_doc(_get_integral_and_mean.__doc__)
     def get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
         if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower)
+            lower = _convert_date_to_float(lower, self.tz)
         if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper)
+            upper = _convert_date_to_float(upper, self.tz)
         return self._get_integral_and_mean(lower, upper)
                 
     @append_doc(SC_docs.integrate_example)
@@ -1736,9 +1800,9 @@ class Stairs():
         set of floats
         """
         if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower)
+            lower = _convert_date_to_float(lower, self.tz)
         if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper)
+            upper = _convert_date_to_float(upper, self.tz)
         return self._values_in_range(lower, upper, lower_how, upper_how)
         
     def _values_in_range(self, lower=float('-inf'), upper=float('inf'), lower_how='right', upper_how='left'):
@@ -1849,14 +1913,14 @@ class Stairs():
             s[float('-inf')] = self[float('-inf')]
         if upper != float('inf'):
             s[upper] = s.get(upper,0)-value_at_right
-        return Stairs(s, use_dates=self.use_dates)
+        return Stairs(s, self.use_dates, self.tz)
 
     @add_doc(_clip.__doc__)
     def clip(self, lower=float('-inf'), upper=float('inf')):
         if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower)
+            lower = _convert_date_to_float(lower, self.tz)
         if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper)
+            upper = _convert_date_to_float(upper, self.tz)
         return self._clip(lower, upper)
     
     @append_doc(SC_docs.shift_example)
@@ -1889,7 +1953,8 @@ class Stairs():
                 (key + delta for key in self._keys()),
                 self._values()
             )),
-            use_dates=self.use_dates
+            self.use_dates,
+            self.tz,
         )
         
     @append_doc(SC_docs.diff_example)
@@ -1985,8 +2050,8 @@ class Stairs():
         starts = self._keys()
         ends = self._keys()[1:]
         if self.use_dates:
-            starts = [pd.NaT] + _convert_float_to_date(np.array(starts[1:]))
-            ends = _convert_float_to_date(np.array(ends)) + [pd.NaT]
+            starts = [pd.NaT] + _convert_float_to_date(np.array(starts[1:]), self.tz)
+            ends = _convert_float_to_date(np.array(ends), self.tz) + [pd.NaT]
         else:
             ends.append(float('inf'))
         values = self._cumulative().values()
@@ -2012,7 +2077,8 @@ class Stairs():
         """
         Return str(self)
         """
-        return f"<staircase.Stairs, id={id(self)}, dates={self.use_dates}>"
+        tzinfo = f", tz={self.tz}" if self.use_dates else ""
+        return f"<staircase.Stairs, id={id(self)}, dates={self.use_dates}{tzinfo}>"
 
     def __repr__(self):
         """

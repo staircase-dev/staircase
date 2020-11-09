@@ -4,8 +4,8 @@ import numpy as np
 import staircase.stairs as stairs
 from sortedcontainers import SortedSet
 
-@pytest.fixture
-def IS1():
+
+def stairs1():
     int_seq1 = stairs.Stairs(0, use_dates=True)
     int_seq1.layer(pd.Timestamp(2020,1,1),pd.Timestamp(2020,1,10),2)
     int_seq1.layer(pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5),2.5)
@@ -13,158 +13,196 @@ def IS1():
     int_seq1.layer(pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,10),-2.5)
     return int_seq1
 
-@pytest.fixture
-def IS2():    
+def stairs2():    
     int_seq2 = stairs.Stairs(0, use_dates=True)
     int_seq2.layer(pd.Timestamp(2020,1,1),pd.Timestamp(2020,1,7),-2.5)
     int_seq2.layer(pd.Timestamp(2020,1,8),pd.Timestamp(2020,1,10),5)
     int_seq2.layer(pd.Timestamp(2020,1,2),pd.Timestamp(2020,1,5),4.5)
     int_seq2.layer(pd.Timestamp(2020,1,2,12),pd.Timestamp(2020,1,4),-2.5)
     return int_seq2
-
-def test_min_pair(IS1, IS2):
-    assert stairs._min_pair(IS1,IS2).step_changes() == {pd.Timestamp('2020-01-01'): -2.5,
-                                                        pd.Timestamp('2020-01-02'): 4.5,
-                                                        pd.Timestamp('2020-01-02 12:00:00'): -2.5,
-                                                        pd.Timestamp('2020-01-04'): 2.5,
-                                                        pd.Timestamp('2020-01-05'): -4.5,
-                                                        pd.Timestamp('2020-01-07'): 2.0,
-                                                        pd.Timestamp('2020-01-10'): 0.5}
-
-def test_max_pair(IS1, IS2):
-    assert stairs._max_pair(IS1,IS2).step_changes() == {pd.Timestamp('2020-01-01'): 2.0,
-                                                        pd.Timestamp('2020-01-03'): 2.5,
-                                                        pd.Timestamp('2020-01-05'): -2.5,
-                                                        pd.Timestamp('2020-01-06'): -2.5,
-                                                        pd.Timestamp('2020-01-07'): 0.5,
-                                                        pd.Timestamp('2020-01-08'): 5.0,
-                                                        pd.Timestamp('2020-01-10'): -5.0}
     
+def stairs3(tz):
+    int_seq1 = stairs.Stairs(0, use_dates=True, tz=tz)
+    int_seq1.layer(pd.Timestamp(2020,1,1).tz_localize(tz),pd.Timestamp(2020,1,10).tz_localize(tz),2)
+    int_seq1.layer(pd.Timestamp(2020,1,3).tz_localize(tz),pd.Timestamp(2020,1,5).tz_localize(tz),2.5)
+    int_seq1.layer(pd.Timestamp(2020,1,6).tz_localize(tz),pd.Timestamp(2020,1,7).tz_localize(tz),-2.5)
+    int_seq1.layer(pd.Timestamp(2020,1,7).tz_localize(tz),pd.Timestamp(2020,1,10).tz_localize(tz),-2.5)
+    return int_seq1
+
+def stairs4(tz):    
+    int_seq2 = stairs.Stairs(0, use_dates=True, tz=tz)
+    int_seq2.layer(pd.Timestamp(2020,1,1).tz_localize(tz),pd.Timestamp(2020,1,7).tz_localize(tz),-2.5)
+    int_seq2.layer(pd.Timestamp(2020,1,8).tz_localize(tz),pd.Timestamp(2020,1,10).tz_localize(tz),5)
+    int_seq2.layer(pd.Timestamp(2020,1,2).tz_localize(tz),pd.Timestamp(2020,1,5).tz_localize(tz),4.5)
+    int_seq2.layer(pd.Timestamp(2020,1,2,12).tz_localize(tz),pd.Timestamp(2020,1,4).tz_localize(tz),-2.5)
+    return int_seq2
+
+
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
+def test_min_pair(IS1, IS2):
+    assert stairs._min_pair(IS1,IS2).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): -2.5,
+                                                        pd.Timestamp('2020-01-02').tz_localize(IS1.tz): 4.5,
+                                                        pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): -2.5,
+                                                        pd.Timestamp('2020-01-04').tz_localize(IS1.tz): 2.5,
+                                                        pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -4.5,
+                                                        pd.Timestamp('2020-01-07').tz_localize(IS1.tz): 2.0,
+                                                        pd.Timestamp('2020-01-10').tz_localize(IS1.tz): 0.5}
+
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
+def test_max_pair(IS1, IS2):
+    assert stairs._max_pair(IS1,IS2).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): 2.0,
+                                                        pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.5,
+                                                        pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.5,
+                                                        pd.Timestamp('2020-01-06').tz_localize(IS1.tz): -2.5,
+                                                        pd.Timestamp('2020-01-07').tz_localize(IS1.tz): 0.5,
+                                                        pd.Timestamp('2020-01-08').tz_localize(IS1.tz): 5.0,
+                                                        pd.Timestamp('2020-01-10').tz_localize(IS1.tz): -5.0}
+
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])      
 def test_get_union_of_points_1(IS1, IS2):
     union = list(stairs._get_union_of_points({1:IS1, 2:IS2}))
     union.pop(0)
-    assert stairs._convert_float_to_date(union) == [pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-02'),  pd.Timestamp('2020-01-02 12:00:00'),
-                                                        pd.Timestamp('2020-01-03'), pd.Timestamp('2020-01-04'), pd.Timestamp('2020-01-05'),
-                                                        pd.Timestamp('2020-01-06'), pd.Timestamp('2020-01-07'), pd.Timestamp('2020-01-08'), pd.Timestamp('2020-01-10')]
+    assert stairs._convert_float_to_date(union, IS1.tz) == [pd.Timestamp('2020-01-01').tz_localize(IS1.tz), pd.Timestamp('2020-01-02').tz_localize(IS1.tz),  pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-03').tz_localize(IS1.tz), pd.Timestamp('2020-01-04').tz_localize(IS1.tz), pd.Timestamp('2020-01-05').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-06').tz_localize(IS1.tz), pd.Timestamp('2020-01-07').tz_localize(IS1.tz), pd.Timestamp('2020-01-08').tz_localize(IS1.tz), pd.Timestamp('2020-01-10').tz_localize(IS1.tz)]
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_get_union_of_points_2(IS1, IS2):
     union = list(stairs._get_union_of_points(pd.Series([IS1, IS2])))
     union.pop(0)
-    assert stairs._convert_float_to_date(union) == [pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-02'),  pd.Timestamp('2020-01-02 12:00:00'),
-                                                        pd.Timestamp('2020-01-03'), pd.Timestamp('2020-01-04'), pd.Timestamp('2020-01-05'),
-                                                        pd.Timestamp('2020-01-06'), pd.Timestamp('2020-01-07'), pd.Timestamp('2020-01-08'), pd.Timestamp('2020-01-10')]
+    assert stairs._convert_float_to_date(union, IS1.tz) == [pd.Timestamp('2020-01-01').tz_localize(IS1.tz), pd.Timestamp('2020-01-02').tz_localize(IS1.tz),  pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-03').tz_localize(IS1.tz), pd.Timestamp('2020-01-04').tz_localize(IS1.tz), pd.Timestamp('2020-01-05').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-06').tz_localize(IS1.tz), pd.Timestamp('2020-01-07').tz_localize(IS1.tz), pd.Timestamp('2020-01-08').tz_localize(IS1.tz), pd.Timestamp('2020-01-10').tz_localize(IS1.tz)]
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_get_union_of_points_3(IS1, IS2):
     union = list(stairs._get_union_of_points(np.array([IS1, IS2])))
     union.pop(0)
-    assert stairs._convert_float_to_date(union) == [pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-02'),  pd.Timestamp('2020-01-02 12:00:00'),
-                                                        pd.Timestamp('2020-01-03'), pd.Timestamp('2020-01-04'), pd.Timestamp('2020-01-05'),
-                                                        pd.Timestamp('2020-01-06'), pd.Timestamp('2020-01-07'), pd.Timestamp('2020-01-08'), pd.Timestamp('2020-01-10')]
+    assert stairs._convert_float_to_date(union, IS1.tz) == [pd.Timestamp('2020-01-01').tz_localize(IS1.tz), pd.Timestamp('2020-01-02').tz_localize(IS1.tz),  pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-03').tz_localize(IS1.tz), pd.Timestamp('2020-01-04').tz_localize(IS1.tz), pd.Timestamp('2020-01-05').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-06').tz_localize(IS1.tz), pd.Timestamp('2020-01-07').tz_localize(IS1.tz), pd.Timestamp('2020-01-08').tz_localize(IS1.tz), pd.Timestamp('2020-01-10').tz_localize(IS1.tz)]
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_get_union_of_points_4(IS1, IS2):
     union = list(stairs._get_union_of_points([IS1, IS2]))
     union.pop(0)
-    assert stairs._convert_float_to_date(union) == [pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-02'),  pd.Timestamp('2020-01-02 12:00:00'),
-                                                        pd.Timestamp('2020-01-03'), pd.Timestamp('2020-01-04'), pd.Timestamp('2020-01-05'),
-                                                        pd.Timestamp('2020-01-06'), pd.Timestamp('2020-01-07'), pd.Timestamp('2020-01-08'), pd.Timestamp('2020-01-10')]
+    assert stairs._convert_float_to_date(union, IS1.tz) == [pd.Timestamp('2020-01-01').tz_localize(IS1.tz), pd.Timestamp('2020-01-02').tz_localize(IS1.tz),  pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-03').tz_localize(IS1.tz), pd.Timestamp('2020-01-04').tz_localize(IS1.tz), pd.Timestamp('2020-01-05').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-06').tz_localize(IS1.tz), pd.Timestamp('2020-01-07').tz_localize(IS1.tz), pd.Timestamp('2020-01-08').tz_localize(IS1.tz), pd.Timestamp('2020-01-10').tz_localize(IS1.tz)]
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_get_union_of_points_5(IS1, IS2):
     union = list(stairs._get_union_of_points((IS1, IS2)))
     union.pop(0)
-    assert stairs._convert_float_to_date(union) == [pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-02'),  pd.Timestamp('2020-01-02 12:00:00'),
-                                                        pd.Timestamp('2020-01-03'), pd.Timestamp('2020-01-04'), pd.Timestamp('2020-01-05'),
-                                                        pd.Timestamp('2020-01-06'), pd.Timestamp('2020-01-07'), pd.Timestamp('2020-01-08'), pd.Timestamp('2020-01-10')]
+    assert stairs._convert_float_to_date(union, IS1.tz) == [pd.Timestamp('2020-01-01').tz_localize(IS1.tz), pd.Timestamp('2020-01-02').tz_localize(IS1.tz),  pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-03').tz_localize(IS1.tz), pd.Timestamp('2020-01-04').tz_localize(IS1.tz), pd.Timestamp('2020-01-05').tz_localize(IS1.tz),
+                                                        pd.Timestamp('2020-01-06').tz_localize(IS1.tz), pd.Timestamp('2020-01-07').tz_localize(IS1.tz), pd.Timestamp('2020-01-08').tz_localize(IS1.tz), pd.Timestamp('2020-01-10').tz_localize(IS1.tz)]
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_using_dates_1(IS1, IS2):
     assert stairs._using_dates({1:IS1, 2:IS2})
     
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])      
 def test_using_dates_2(IS1, IS2):
     assert stairs._using_dates(pd.Series([IS1, IS2]))
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_using_dates_3(IS1, IS2):
     assert stairs._using_dates(np.array([IS1, IS2]))
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_using_dates_4(IS1, IS2):
     assert stairs._using_dates([IS1, IS2])
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_using_dates_5(IS1, IS2):
     assert stairs._using_dates((IS1, IS2))
     
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])      
 def test_aggregate_1(IS1, IS2):
-    assert stairs.aggregate({1:IS1, 2:IS2}, np.mean).step_changes() == {pd.Timestamp('2020-01-01'): -0.25, pd.Timestamp('2020-01-02'): 2.25, pd.Timestamp('2020-01-02 12:00:00'): -1.25,
-                                                                         pd.Timestamp('2020-01-03'): 1.25, pd.Timestamp('2020-01-04'): 1.25, pd.Timestamp('2020-01-05'): -3.5,
-                                                                         pd.Timestamp('2020-01-06'): -1.25, pd.Timestamp('2020-01-07'): 1.25, pd.Timestamp('2020-01-08'): 2.5,
-                                                                         pd.Timestamp('2020-01-10'): -2.25}
+    assert stairs.aggregate({1:IS1, 2:IS2}, np.mean).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): -0.25, pd.Timestamp('2020-01-02').tz_localize(IS1.tz): 2.25, pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): -1.25,
+                                                                         pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-04').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -3.5,
+                                                                         pd.Timestamp('2020-01-06').tz_localize(IS1.tz): -1.25, pd.Timestamp('2020-01-07').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-08').tz_localize(IS1.tz): 2.5,
+                                                                         pd.Timestamp('2020-01-10').tz_localize(IS1.tz): -2.25}
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_aggregate_2(IS1, IS2):
-    assert stairs.aggregate(pd.Series([IS1, IS2]), np.mean).step_changes() == {pd.Timestamp('2020-01-01'): -0.25, pd.Timestamp('2020-01-02'): 2.25, pd.Timestamp('2020-01-02 12:00:00'): -1.25,
-                                                                         pd.Timestamp('2020-01-03'): 1.25, pd.Timestamp('2020-01-04'): 1.25, pd.Timestamp('2020-01-05'): -3.5,
-                                                                         pd.Timestamp('2020-01-06'): -1.25, pd.Timestamp('2020-01-07'): 1.25, pd.Timestamp('2020-01-08'): 2.5,
-                                                                         pd.Timestamp('2020-01-10'): -2.25}
+    assert stairs.aggregate(pd.Series([IS1, IS2]), np.mean).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): -0.25, pd.Timestamp('2020-01-02').tz_localize(IS1.tz): 2.25, pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): -1.25,
+                                                                         pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-04').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -3.5,
+                                                                         pd.Timestamp('2020-01-06').tz_localize(IS1.tz): -1.25, pd.Timestamp('2020-01-07').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-08').tz_localize(IS1.tz): 2.5,
+                                                                         pd.Timestamp('2020-01-10').tz_localize(IS1.tz): -2.25}
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_aggregate_3(IS1, IS2):
-    assert stairs.aggregate(np.array([IS1, IS2]), np.mean).step_changes() == {pd.Timestamp('2020-01-01'): -0.25, pd.Timestamp('2020-01-02'): 2.25, pd.Timestamp('2020-01-02 12:00:00'): -1.25,
-                                                                         pd.Timestamp('2020-01-03'): 1.25, pd.Timestamp('2020-01-04'): 1.25, pd.Timestamp('2020-01-05'): -3.5,
-                                                                         pd.Timestamp('2020-01-06'): -1.25, pd.Timestamp('2020-01-07'): 1.25, pd.Timestamp('2020-01-08'): 2.5,
-                                                                         pd.Timestamp('2020-01-10'): -2.25}
+    assert stairs.aggregate(np.array([IS1, IS2]), np.mean).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): -0.25, pd.Timestamp('2020-01-02').tz_localize(IS1.tz): 2.25, pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): -1.25,
+                                                                         pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-04').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -3.5,
+                                                                         pd.Timestamp('2020-01-06').tz_localize(IS1.tz): -1.25, pd.Timestamp('2020-01-07').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-08').tz_localize(IS1.tz): 2.5,
+                                                                         pd.Timestamp('2020-01-10').tz_localize(IS1.tz): -2.25}
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_aggregate_4(IS1, IS2):
-    assert stairs.aggregate([IS1, IS2], np.mean).step_changes() == {pd.Timestamp('2020-01-01'): -0.25, pd.Timestamp('2020-01-02'): 2.25, pd.Timestamp('2020-01-02 12:00:00'): -1.25,
-                                                                         pd.Timestamp('2020-01-03'): 1.25, pd.Timestamp('2020-01-04'): 1.25, pd.Timestamp('2020-01-05'): -3.5,
-                                                                         pd.Timestamp('2020-01-06'): -1.25, pd.Timestamp('2020-01-07'): 1.25, pd.Timestamp('2020-01-08'): 2.5,
-                                                                         pd.Timestamp('2020-01-10'): -2.25}
+    assert stairs.aggregate([IS1, IS2], np.mean).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): -0.25, pd.Timestamp('2020-01-02').tz_localize(IS1.tz): 2.25, pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): -1.25,
+                                                                         pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-04').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -3.5,
+                                                                         pd.Timestamp('2020-01-06').tz_localize(IS1.tz): -1.25, pd.Timestamp('2020-01-07').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-08').tz_localize(IS1.tz): 2.5,
+                                                                         pd.Timestamp('2020-01-10').tz_localize(IS1.tz): -2.25}
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_aggregate_5(IS1, IS2):
-    assert stairs.aggregate((IS1, IS2), np.mean).step_changes() == {pd.Timestamp('2020-01-01'): -0.25, pd.Timestamp('2020-01-02'): 2.25, pd.Timestamp('2020-01-02 12:00:00'): -1.25,
-                                                                         pd.Timestamp('2020-01-03'): 1.25, pd.Timestamp('2020-01-04'): 1.25, pd.Timestamp('2020-01-05'): -3.5,
-                                                                         pd.Timestamp('2020-01-06'): -1.25, pd.Timestamp('2020-01-07'): 1.25, pd.Timestamp('2020-01-08'): 2.5,
-                                                                         pd.Timestamp('2020-01-10'): -2.25}
+    assert stairs.aggregate((IS1, IS2), np.mean).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): -0.25, pd.Timestamp('2020-01-02').tz_localize(IS1.tz): 2.25, pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): -1.25,
+                                                                         pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-04').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -3.5,
+                                                                         pd.Timestamp('2020-01-06').tz_localize(IS1.tz): -1.25, pd.Timestamp('2020-01-07').tz_localize(IS1.tz): 1.25, pd.Timestamp('2020-01-08').tz_localize(IS1.tz): 2.5,
+                                                                         pd.Timestamp('2020-01-10').tz_localize(IS1.tz): -2.25}
                                                                          
-                                                                    
+
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])                                                                      
 def test_aggregate_6(IS1, IS2):
     assert stairs.aggregate(
     {1:IS1, 2:IS2}, 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
-    ).step_changes() == {pd.Timestamp('2020-01-03'): 2.0,
-                         pd.Timestamp('2020-01-05'): -2.25,
-                         pd.Timestamp('2020-01-09'): 2.5}
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
+    ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
+                         pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
+                         pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
+                         
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])                           
 def test_aggregate_7(IS1, IS2):
     assert stairs.aggregate(
     pd.Series([IS1, IS2]), 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
-    ).step_changes() == {pd.Timestamp('2020-01-03'): 2.0,
-                         pd.Timestamp('2020-01-05'): -2.25,
-                         pd.Timestamp('2020-01-09'): 2.5}
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
+    ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
+                         pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
+                         pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_aggregate_8(IS1, IS2):
     assert stairs.aggregate(
     np.array([IS1, IS2]), 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
-    ).step_changes() == {pd.Timestamp('2020-01-03'): 2.0,
-                         pd.Timestamp('2020-01-05'): -2.25,
-                         pd.Timestamp('2020-01-09'): 2.5}
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
+    ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
+                         pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
+                         pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
 
-
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_aggregate_9(IS1, IS2):
     assert stairs.aggregate(
     [IS1, IS2], 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
-    ).step_changes() == {pd.Timestamp('2020-01-03'): 2.0,
-                         pd.Timestamp('2020-01-05'): -2.25,
-                         pd.Timestamp('2020-01-09'): 2.5}
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
+    ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
+                         pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
+                         pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
 
+@pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_aggregate_10(IS1, IS2):
     assert stairs.aggregate(
     (IS1, IS2), 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
-    ).step_changes() == {pd.Timestamp('2020-01-03'): 2.0,
-                         pd.Timestamp('2020-01-05'): -2.25,
-                         pd.Timestamp('2020-01-09'): 2.5}
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
+    ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
+                         pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
+                         pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
                          
 
 def _matrix_close_to_zeros(x):
@@ -177,8 +215,8 @@ def _matrix_close_to_zeros(x):
 # = array([[3.50119325, 0.05618318],
 #          [0.05618318, 4.28396767]])
 
-def test_cov_matrix1(IS1, IS2):
-    assert _matrix_close_to_zeros(stairs.cov([IS1, IS2], pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)).values - np.array([[3.50119325, 0.05618318], [0.05618318, 4.28396767]]))
+def test_cov_matrix1():
+    assert _matrix_close_to_zeros(stairs.cov([stairs1(), stairs2()], pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)).values - np.array([[3.50119325, 0.05618318], [0.05618318, 4.28396767]]))
 
 # low, high = pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)
 # total_secs = int((high-low).total_seconds())
@@ -187,8 +225,8 @@ def test_cov_matrix1(IS1, IS2):
 # = array([[ 3.97147733, -1.01257284],
 #          [-1.01257284,  6.91668318]
        
-def test_cov_matrix2(IS1, IS2):
-    assert _matrix_close_to_zeros(stairs.cov([IS1, IS2], pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)).values - np.array([[3.97147733, -1.01257284], [-1.01257284,  6.91668318]])) 
+def test_cov_matrix2():
+    assert _matrix_close_to_zeros(stairs.cov([stairs1(), stairs2()], pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)).values - np.array([[3.97147733, -1.01257284], [-1.01257284,  6.91668318]])) 
     
     
 # low, high = pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)
@@ -198,8 +236,8 @@ def test_cov_matrix2(IS1, IS2):
 # = array([[1, 0.01450692],
 #          [0.01450692, 1]])
     
-def test_corr_matrix1(IS1, IS2):
-    assert _matrix_close_to_zeros(stairs.corr([IS1, IS2], pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)).values - np.array([[1, 0.01450692], [0.01450692, 1]]))    
+def test_corr_matrix1():
+    assert _matrix_close_to_zeros(stairs.corr([stairs1(), stairs2()], pd.Timestamp(2019,12,30), pd.Timestamp(2020,1,8,16)).values - np.array([[1, 0.01450692], [0.01450692, 1]]))    
 
 
 # low, high = pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)
@@ -209,8 +247,8 @@ def test_corr_matrix1(IS1, IS2):
 # = array([[1, -0.19319741],
 #          [-0.19319741, 1]]) 
        
-def test_corr_matrix2(IS1, IS2):
-    assert _matrix_close_to_zeros(stairs.corr([IS1, IS2], pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)).values - np.array([[1, -0.19319741], [-0.19319741, 1]]))
+def test_corr_matrix2():
+    assert _matrix_close_to_zeros(stairs.corr([stairs1(), stairs2()], pd.Timestamp(2020,1,2), pd.Timestamp(2020,1,11,3)).values - np.array([[1, -0.19319741], [-0.19319741, 1]]))
     
     
 
