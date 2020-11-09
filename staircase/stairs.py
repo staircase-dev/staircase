@@ -45,6 +45,9 @@ def _verify_window(left_delta, right_delta, zero):
     assert left_delta <= zero, "left_delta must not be positive"
     assert right_delta >= zero, "right_delta must not be negative"
     assert right_delta - left_delta > zero, "window length must be non-zero"
+    
+def _check_binop_timezones(first, second):
+    assert first.tz == second.tz, "operands must have the same timezone, or none at all"
 
 def _convert_date_to_float(val, tz=None):
     if val is None:
@@ -52,12 +55,12 @@ def _convert_date_to_float(val, tz=None):
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
-        if val.dt.tz is None and tz is not None:
-            val = val.dt.tz_localize(tz)
+        #if val.dt.tz is None and tz is not None:
+        #    val = val.dt.tz_localize(tz)
         deltas = pd.TimedeltaIndex(val - origin.tz_localize(tz))
         return list(deltas/pd.Timedelta(1, 'h'))
-    if val.tz is None and tz is not None:
-        val = val.tz_localize(tz)
+    #if val.tz is None and tz is not None:
+    #    val = val.tz_localize(tz)
     return (val - origin.tz_localize(tz))/pd.Timedelta(1, 'h')
     
 def _convert_float_to_date(val, tz=None):
@@ -950,6 +953,8 @@ class Stairs:
         """
         if not isinstance(other, Stairs):
             other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         new_instance = self.copy()
         for key, value in other._items():
             new_instance[key] = self._get(key,0) + value
@@ -976,6 +981,8 @@ class Stairs:
         """
         if not isinstance(other, Stairs):
             other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         other = -other
         return self + other
     
@@ -1010,6 +1017,10 @@ class Stairs:
         --------
         Stairs.multiply
         """
+        if not isinstance(other, Stairs):
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         if not bool(other.make_boolean()):
             raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
         
@@ -1031,6 +1042,10 @@ class Stairs:
         --------
         Stairs.divide
         """
+        if not isinstance(other, Stairs):
+            other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         return self._mul_or_div(other, np.multiply)
         
     def _cumulative(self):
@@ -1092,6 +1107,7 @@ class Stairs:
         Stairs.logical_or
         """
         assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
+        _check_binop_timezones(self, other)
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _min_pair(self_bool, other_bool)
@@ -1113,6 +1129,7 @@ class Stairs:
         Stairs.logical_and
         """
         assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
+        _check_binop_timezones(self, other)
         self_bool = self.make_boolean()
         other_bool = other.make_boolean()
         return _max_pair(self_bool, other_bool)
@@ -1135,6 +1152,8 @@ class Stairs:
         """
         if not isinstance(other, Stairs):
             other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__lt__
         return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
     
@@ -1156,6 +1175,8 @@ class Stairs:
         """
         if not isinstance(other, Stairs):
             other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__gt__
         return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)        
     
@@ -1177,6 +1198,8 @@ class Stairs:
         """
         if not isinstance(other, Stairs):
             other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__le__
         return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)        
 
@@ -1198,6 +1221,8 @@ class Stairs:
         """
         if not isinstance(other, Stairs):
             other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__ge__
         return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)                
     
@@ -1219,6 +1244,8 @@ class Stairs:
         """
         if not isinstance(other, Stairs):
             other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__eq__
         return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)           
     
@@ -1240,6 +1267,8 @@ class Stairs:
         """
         if not isinstance(other, Stairs):
             other = Stairs(other, self.use_dates, self.tz)
+        else:
+            _check_binop_timezones(self, other)
         comparator = float(0).__ne__
         return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
     
@@ -1256,6 +1285,7 @@ class Stairs:
         --------
         Stairs.eq, Stairs.ne
         """
+        _check_binop_timezones(self, other)
         return bool(self == other)
     
     def _reduce(self):
