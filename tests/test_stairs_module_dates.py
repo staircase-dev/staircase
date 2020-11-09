@@ -23,18 +23,18 @@ def stairs2():
     
 def stairs3(tz):
     int_seq1 = stairs.Stairs(0, use_dates=True, tz=tz)
-    int_seq1.layer(pd.Timestamp(2020,1,1),pd.Timestamp(2020,1,10),2)
-    int_seq1.layer(pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5),2.5)
-    int_seq1.layer(pd.Timestamp(2020,1,6),pd.Timestamp(2020,1,7),-2.5)
-    int_seq1.layer(pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,10),-2.5)
+    int_seq1.layer(pd.Timestamp(2020,1,1).tz_localize(tz),pd.Timestamp(2020,1,10).tz_localize(tz),2)
+    int_seq1.layer(pd.Timestamp(2020,1,3).tz_localize(tz),pd.Timestamp(2020,1,5).tz_localize(tz),2.5)
+    int_seq1.layer(pd.Timestamp(2020,1,6).tz_localize(tz),pd.Timestamp(2020,1,7).tz_localize(tz),-2.5)
+    int_seq1.layer(pd.Timestamp(2020,1,7).tz_localize(tz),pd.Timestamp(2020,1,10).tz_localize(tz),-2.5)
     return int_seq1
 
 def stairs4(tz):    
     int_seq2 = stairs.Stairs(0, use_dates=True, tz=tz)
-    int_seq2.layer(pd.Timestamp(2020,1,1),pd.Timestamp(2020,1,7),-2.5)
-    int_seq2.layer(pd.Timestamp(2020,1,8),pd.Timestamp(2020,1,10),5)
-    int_seq2.layer(pd.Timestamp(2020,1,2),pd.Timestamp(2020,1,5),4.5)
-    int_seq2.layer(pd.Timestamp(2020,1,2,12),pd.Timestamp(2020,1,4),-2.5)
+    int_seq2.layer(pd.Timestamp(2020,1,1).tz_localize(tz),pd.Timestamp(2020,1,7).tz_localize(tz),-2.5)
+    int_seq2.layer(pd.Timestamp(2020,1,8).tz_localize(tz),pd.Timestamp(2020,1,10).tz_localize(tz),5)
+    int_seq2.layer(pd.Timestamp(2020,1,2).tz_localize(tz),pd.Timestamp(2020,1,5).tz_localize(tz),4.5)
+    int_seq2.layer(pd.Timestamp(2020,1,2,12).tz_localize(tz),pd.Timestamp(2020,1,4).tz_localize(tz),-2.5)
     return int_seq2
 
 
@@ -159,7 +159,7 @@ def test_aggregate_6(IS1, IS2):
     assert stairs.aggregate(
     {1:IS1, 2:IS2}, 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
     ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
                          pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
                          pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
@@ -169,7 +169,7 @@ def test_aggregate_7(IS1, IS2):
     assert stairs.aggregate(
     pd.Series([IS1, IS2]), 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
     ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
                          pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
                          pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
@@ -179,7 +179,7 @@ def test_aggregate_8(IS1, IS2):
     assert stairs.aggregate(
     np.array([IS1, IS2]), 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
     ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
                          pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
                          pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
@@ -189,7 +189,7 @@ def test_aggregate_9(IS1, IS2):
     assert stairs.aggregate(
     [IS1, IS2], 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
     ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
                          pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
                          pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
@@ -199,7 +199,7 @@ def test_aggregate_10(IS1, IS2):
     assert stairs.aggregate(
     (IS1, IS2), 
     np.mean, 
-    [pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5), pd.Timestamp(2020,1,7),pd.Timestamp(2020,1,9)]
+    [pd.Timestamp(2020,1,3).tz_localize(IS1.tz),pd.Timestamp(2020,1,5).tz_localize(IS1.tz), pd.Timestamp(2020,1,7).tz_localize(IS1.tz),pd.Timestamp(2020,1,9).tz_localize(IS1.tz)]
     ).step_changes() == {pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.0,
                          pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.25,
                          pd.Timestamp('2020-01-09').tz_localize(IS1.tz): 2.5}
