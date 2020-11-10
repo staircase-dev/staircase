@@ -2,6 +2,13 @@
 Changelog
 =========
 
+v1.6.0 2020-11-10
+
+- support for :ref:`timezones<resources.articles>` added
+- bugfix for :func:`staircase.sample` when *points* == None (-inf is no longer included)
+- bugfix for :func:`staircase.aggregate` where Stairs objects have non-zero value at -inf
+
+
 v1.5.2 2020-10-20
 
 - bugfix for :meth:`staircase.Stairs.layer` when None appears in vector parameters start and end
