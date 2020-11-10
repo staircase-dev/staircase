@@ -217,8 +217,8 @@ def sample(collection, points=None, how='right', expand_key=True):
     #assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
         points = _get_union_of_points(collection)
+        points.discard(float('-inf'))
         if use_dates:
-            points.discard(float('-inf'))
             points = _convert_float_to_date(list(points), tz) #bugfix - pandas>=1.1 breaks with points as type SortedSet
     else:
         if not hasattr(points, "__iter__"):
@@ -274,6 +274,7 @@ def aggregate(collection, func, points=None):
         aggregation.index = _convert_date_to_float(aggregation.index, tz=tz)
     aggregation[float('-inf')] = func([val._sample_raw(float('-inf')) for key,val in Stairs_dict.items()])
     step_changes = aggregation.sort_index().diff().fillna(0)
+    step_changes[float('-inf')] = aggregation[float('-inf')]
     #groupby.sum is necessary on next line as step_changes series may not have unique index elements
     return Stairs(dict(step_changes.groupby(level=0).sum()), use_dates=use_dates, tz=tz)._reduce()
     
@@ -1178,7 +1179,7 @@ class Stairs:
         else:
             _check_binop_timezones(self, other)
         comparator = float(0).__gt__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)        
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
     
     @append_doc(SC_docs.le_example)
     def le(self, other):
@@ -1201,7 +1202,7 @@ class Stairs:
         else:
             _check_binop_timezones(self, other)
         comparator = float(0).__le__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)        
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
 
     @append_doc(SC_docs.ge_example)
     def ge(self, other):
@@ -1224,7 +1225,7 @@ class Stairs:
         else:
             _check_binop_timezones(self, other)
         comparator = float(0).__ge__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)                
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
     
     @append_doc(SC_docs.eq_example)
     def eq(self, other):
@@ -1247,7 +1248,7 @@ class Stairs:
         else:
             _check_binop_timezones(self, other)
         comparator = float(0).__eq__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)           
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
     
     @append_doc(SC_docs.ne_example)
     def ne(self, other):
@@ -1270,7 +1271,7 @@ class Stairs:
         else:
             _check_binop_timezones(self, other)
         comparator = float(0).__ne__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
+        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
     
     @append_doc(SC_docs.identical_example)
     def identical(self, other):
