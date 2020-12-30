@@ -597,8 +597,9 @@ class Stairs:
         if self.use_dates:
             register_matplotlib_converters()
             x = list(cumulative.keys())
-            x[0] = x[1]-0.00001
-            ax.step(_convert_float_to_date(x, self.tz), list(cumulative.values()), where='post', **kwargs)
+            if len(x) > 1:
+                x[0] = x[1]-0.00001 #first element would otherwise be -inf which can't be plotted
+                ax.step(_convert_float_to_date(x, self.tz), list(cumulative.values()), where='post', **kwargs)
         else:
             ax.step(cumulative.keys(), cumulative.values(), where='post', **kwargs)
         return ax
