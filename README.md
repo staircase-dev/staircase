@@ -9,7 +9,7 @@
     <a href="https://pypi.org/project/staircase/" alt="PyPI version">
         <img src="https://img.shields.io/pypi/v/staircase" /></a>
     <a href="https://anaconda.org/conda-forge/staircase" alt="Conda Forge version">
-        <img src="https://anaconda.org/conda-forge/staircase/badges/version.svg" /></a>
+        <img src="https://anaconda.org/conda-forge/staircase/badges/version.svg?branch=master&kill_cache=1" /></a>
     <a href="https://staircase.mit-license.org/" alt="License">
         <img src="http://img.shields.io/:license-mit-blue.svg?style=flat-square"></a>
 </p>

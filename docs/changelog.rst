@@ -2,6 +2,11 @@
 Changelog
 =========
 
+v1.6.1 2020-12-30
+
+- bugfix for :meth:`staircase.Stairs.plot` when using datetimes and step function has no step changes
+
+
 v1.6.0 2020-11-10
 
 - support for :ref:`timezones<resources.articles>` added
