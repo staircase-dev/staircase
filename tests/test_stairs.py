@@ -2,7 +2,9 @@ import pytest
 import itertools
 import pandas as pd
 import numpy as np
-import staircase.stairs as stairs
+
+from staircase import Stairs
+import staircase.core.stairs as stairs
 import staircase.test_data as test_data
 
 def _expand_interval_definition(start, end=None, value=1):
@@ -17,7 +19,7 @@ def _compare_iterables(it1, it2):
     return True
  
 def s1():
-    int_seq1 = stairs.Stairs(0)
+    int_seq1 = Stairs(0)
     int_seq1.layer(1,10,2)
     int_seq1.layer(-4,5,-1.75)
     int_seq1.layer(3,5,2.5)
@@ -26,7 +28,7 @@ def s1():
     return int_seq1
 
 def s2():    
-    int_seq2 = stairs.Stairs(0)
+    int_seq2 = Stairs(0)
     int_seq2.layer(1,7,-2.5)
     int_seq2.layer(8,10,5)
     int_seq2.layer(2,5,4.5)
@@ -35,7 +37,7 @@ def s2():
     return int_seq2
  
 def s3(): #boolean    
-    int_seq = stairs.Stairs(0)
+    int_seq = Stairs(0)
     int_seq.layer(-10,10,1)
     int_seq.layer(-8,-7,-1)
     int_seq.layer(-5,-2,-1)
@@ -45,7 +47,7 @@ def s3(): #boolean
     return int_seq
 
 def s4(): #boolean      
-    int_seq = stairs.Stairs(0)
+    int_seq = Stairs(0)
     int_seq.layer(-11,9,1)
     int_seq.layer(-9.5,-8,-1)
     int_seq.layer(-7.5,-7,-1)
@@ -73,30 +75,30 @@ def s4_fix():
 
     
 def test_init():
-    assert stairs.Stairs(0).identical(stairs.Stairs())
-    assert stairs.Stairs().identical(stairs.Stairs(0))
+    assert Stairs(0).identical(Stairs())
+    assert Stairs().identical(Stairs(0))
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])      
 def test_init2(init_value):
-    int_seq = stairs.Stairs(init_value)
-    assert int_seq.number_of_steps() == 0, "Initialised stairs.Stairs should have exactly one interval"
+    int_seq = Stairs(init_value)
+    assert int_seq.number_of_steps() == 0, "Initialised Stairs should have exactly one interval"
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])      
 def test_init3(init_value):
-    int_seq = stairs.Stairs(init_value)
-    assert int_seq.step_changes() == {}, "Initialised stairs.Stairs should not have any finite interval endpoints"
+    int_seq = Stairs(init_value)
+    assert int_seq.step_changes() == {}, "Initialised Stairs should not have any finite interval endpoints"
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])      
 def test_init4(init_value):
-    int_seq = stairs.Stairs(init_value)
-    assert int_seq(-1) == init_value, "Initialised stairs.Stairs should have initial value everywhere"
-    assert int_seq(0) == init_value, "Initialised stairs.Stairs should have initial value everywhere"
-    assert int_seq(1) == init_value, "Initialised stairs.Stairs should have initial value everywhere"
+    int_seq = Stairs(init_value)
+    assert int_seq(-1) == init_value, "Initialised Stairs should have initial value everywhere"
+    assert int_seq(0) == init_value, "Initialised Stairs should have initial value everywhere"
+    assert int_seq(1) == init_value, "Initialised Stairs should have initial value everywhere"
     
 @pytest.mark.parametrize("init_value, added_interval", itertools.product([0, 1.25, -1.25], [(-2,1),(3,5,2),(1,5,-1),(-5,-3,3), (3,), (2,None,2)])) 
 def test_one_finite_interval(init_value, added_interval):
     e = 0.0001
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     int_seq.layer(*added_interval)
     start, end, value = _expand_interval_definition(*added_interval)
     assert int_seq.number_of_steps() == 2 - (end is None), "One finite interval added to initial infinite interval should result in 3 intervals"
@@ -114,7 +116,7 @@ def test_one_finite_interval(init_value, added_interval):
 @pytest.mark.parametrize("init_value, endpoints, value", itertools.product([0, 1.25, -1.25, 2, -2], [(-2,1,3), (-2,-1,3), (-3,-2,-1), (1,2,3)], [-1,2,3])) 
 def test_two_adjacent_finite_interval_same_value(init_value, endpoints, value):
     e = 0.0001
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     point1, point2, point3 = endpoints
     int_seq.layer(point1,point2,value)
     int_seq.layer(point2,point3,value)
@@ -131,7 +133,7 @@ def test_two_adjacent_finite_interval_same_value(init_value, endpoints, value):
 @pytest.mark.parametrize("init_value, endpoints, value, delta", itertools.product([0, 1.25, -1.25, 2, -2], [(-2,1,3), (-2,-1,3), (-3,-2,-1), (1,2,3)], [-1,2,4], [3,-3, 1.5, -1.5])) 
 def test_two_adjacent_finite_interval_different_value(init_value, endpoints, value, delta):
     e = 0.0001
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     point1, point2, point3 = endpoints
     int_seq.layer(point1,point2,value)
     int_seq.layer(point2,point3,value+delta)
@@ -148,7 +150,7 @@ def test_two_adjacent_finite_interval_different_value(init_value, endpoints, val
 @pytest.mark.parametrize("init_value, endpoints, value, delta", itertools.product([0, 1.25, -1.25, 2, -2], [(-2,1,2,3), (-3,-2,-1,3), (-4,-3,-2,-1), (0,1,2,3)], [-1,2,4], [3,-3, 1.5, -1.5])) 
 def test_two_overlapping_finite_interval(init_value, endpoints, value, delta):
     e = 0.0001
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     point1, point2, point3, point4 = endpoints
     int_seq.layer(point1,point3,value)
     int_seq.layer(point2,point4,value+delta)
@@ -167,7 +169,7 @@ def test_two_overlapping_finite_interval(init_value, endpoints, value, delta):
 @pytest.mark.parametrize("init_value, endpoints, value, delta", itertools.product([0, 1.25, -1.25, 2, -2], [(-2,1,2,3), (-3,-2,-1,3), (-4,-3,-2,-1), (0,1,2,3)], [-1,2,4], [3,-3, 1.5, -1.5])) 
 def test_two_finite_interval_one_subinterval(init_value, endpoints, value, delta):
     e = 0.0001
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     point1, point2, point3, point4 = endpoints
     int_seq.layer(point1,point4,value)
     int_seq.layer(point2,point3,value+delta)
@@ -185,14 +187,14 @@ def test_two_finite_interval_one_subinterval(init_value, endpoints, value, delta
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])   
 def test_copy_and_equality(init_value):
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     int_seq_copy = int_seq.copy()
     assert int_seq.identical(int_seq_copy)
     assert int_seq_copy.identical(int_seq)
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])   
 def test_deepcopy(init_value):
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     int_seq_copy = int_seq.copy()
     int_seq_copy.layer(1,2)
     assert not int_seq.identical(int_seq_copy)
@@ -201,8 +203,8 @@ def test_deepcopy(init_value):
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2]) 
 def test_layer1(init_value):    
     intervals_to_add = [(-2,1),(3,5),(1,5),(-5,-3), (None,0), (0, None)]
-    int_seq = stairs.Stairs(init_value)
-    int_seq2 = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
+    int_seq2 = Stairs(init_value)
     for start,end in intervals_to_add:
         int_seq.layer(start,end)
     starts, ends = list(zip(*intervals_to_add))
@@ -213,8 +215,8 @@ def test_layer1(init_value):
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2]) 
 def test_layer2(init_value):    
     intervals_to_add = [(-2,1,1),(3,5,2),(1,5,-1),(-5,-3,3)]
-    int_seq = stairs.Stairs(init_value)
-    int_seq2 = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
+    int_seq2 = Stairs(init_value)
     for interval in intervals_to_add:
         int_seq.layer(*interval)
     starts, ends, values = list(zip(*intervals_to_add))
@@ -227,7 +229,7 @@ def test_layer2(init_value):
 def test_make_boolean(s2_fix):
     int_seq = s2_fix
     calc = int_seq.make_boolean()
-    expected = stairs.Stairs()
+    expected = Stairs()
     expected.layer(-2,7,1)
     expected.layer(8,10,1)
     assert calc.identical(expected), "Boolean calculation not what it should be"
@@ -236,7 +238,7 @@ def test_make_boolean(s2_fix):
 def test_invert(s2_fix):
     int_seq = s2_fix
     calc = ~int_seq
-    expected = stairs.Stairs(1)
+    expected = Stairs(1)
     expected.layer(-2,7,-1)
     expected.layer(8,10,-1)
     assert calc.identical(expected), "Invert calculation not what it should be"
@@ -244,7 +246,7 @@ def test_invert(s2_fix):
 
 def test_and(s3_fix, s4_fix): 
     calc = s3_fix & s4_fix
-    expected = stairs.Stairs(0)
+    expected = Stairs(0)
     expected.layer(-10,-9.5)
     expected.layer(-7,-5)
     expected.layer(-2,0)
@@ -255,7 +257,7 @@ def test_and(s3_fix, s4_fix):
 
 def test_or(s3_fix, s4_fix): 
     calc = s3_fix | s4_fix
-    expected = stairs.Stairs(0)
+    expected = Stairs(0)
     expected.layer(-11,-7.5)
     expected.layer(-7,0.5)
     expected.layer(1,7)
@@ -267,7 +269,7 @@ def test_or(s3_fix, s4_fix):
 
 def test_lt(s1_fix, s2_fix): 
     calc = s1_fix < s2_fix
-    expected = stairs.Stairs(0)
+    expected = Stairs(0)
     expected.layer(-4,-2)
     expected.layer(2,2.5)
     expected.layer(7,10)
@@ -276,7 +278,7 @@ def test_lt(s1_fix, s2_fix):
 
 def test_gt(s1_fix, s2_fix): 
     calc = s1_fix > s2_fix
-    expected = stairs.Stairs(0)
+    expected = Stairs(0)
     expected.layer(1,2)
     expected.layer(2.5,7)
     assert calc.identical(expected), "GT calculation not what it should be"
@@ -284,7 +286,7 @@ def test_gt(s1_fix, s2_fix):
     
 def test_le(s1_fix, s2_fix): 
     calc = s1_fix <= s2_fix
-    expected = stairs.Stairs(1)
+    expected = Stairs(1)
     expected.layer(1,2,-1)
     expected.layer(2.5,7,-1)
     assert calc.identical(expected), "LE calculation not what it should be"
@@ -292,7 +294,7 @@ def test_le(s1_fix, s2_fix):
     
 def test_ge(s1_fix, s2_fix): 
     calc = s1_fix >= s2_fix
-    expected = stairs.Stairs(1)
+    expected = Stairs(1)
     expected.layer(-4,-2,-1)
     expected.layer(2,2.5,-1)
     expected.layer(7,10,-1)
@@ -301,7 +303,7 @@ def test_ge(s1_fix, s2_fix):
 
 def test_eq(s1_fix, s2_fix): 
     calc = s1_fix == s2_fix
-    expected = stairs.Stairs(1)
+    expected = Stairs(1)
     expected.layer(-4,-2,-1)
     expected.layer(1,10,-1)
     assert calc.identical(expected), "EQ calculation not what it should be"
@@ -309,7 +311,7 @@ def test_eq(s1_fix, s2_fix):
 
 def test_eq(s1_fix, s2_fix): 
     calc = s1_fix == s2_fix
-    expected = stairs.Stairs(1)
+    expected = Stairs(1)
     expected.layer(-4,-2,-1)
     expected.layer(1,10,-1)
     assert calc.identical(expected), "EQ calculation not what it should be"
@@ -317,7 +319,7 @@ def test_eq(s1_fix, s2_fix):
 
 def test_ne(s1_fix, s2_fix): 
     calc = s1_fix != s2_fix
-    expected = stairs.Stairs(0)
+    expected = Stairs(0)
     expected.layer(-4,-2,1)
     expected.layer(1,10,1)
     assert calc.identical(expected), "NOT EQUAL calculation not what it should be"
@@ -325,22 +327,22 @@ def test_ne(s1_fix, s2_fix):
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])         
 def test_base_integrate_0_2(init_value):
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     assert int_seq.integrate(0,2) == 2*init_value
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])         
 def test_base_integrate_neg1_1(init_value):
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     assert int_seq.integrate(-1,1) == 2*init_value
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])         
 def test_base_integrate_neg2_0(init_value):
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     assert int_seq.integrate(-2,0) == 2*init_value
     
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])         
 def test_base_integrate_point5_1(init_value):
-    int_seq = stairs.Stairs(init_value)
+    int_seq = Stairs(init_value)
     assert int_seq.integrate(0.5,1) == 0.5*init_value
 
 def test_integrate1(s1_fix, s2_fix):
@@ -360,10 +362,10 @@ def test_mean2(s1_fix, s2_fix):
     assert abs(s2_fix.mean(2,8) - -0.45833333) < 0.000001
     
 def test_integrate_0():
-    assert stairs.Stairs(0).layer(None, 0).integrate() == 0
+    assert Stairs(0).layer(None, 0).integrate() == 0
     
 def test_mean_nan():
-    assert stairs.Stairs(0).layer(None, 0).mean() is np.nan
+    assert Stairs(0).layer(None, 0).mean() is np.nan
 
 def test_to_dataframe(s1_fix):
     s1_fix.to_dataframe()
@@ -775,7 +777,7 @@ def test_divide(s1_fix, s2_fix):
     }
     
 def test_eq():
-    assert stairs.Stairs(3) == 3
+    assert Stairs(3) == 3
     
 def test_ne(s1_fix):
     assert s1_fix != 3
@@ -812,12 +814,12 @@ def test_make_test_data():
 # def test_base_subtraction(IS_set, index, init_val):
     # int_seq = IS_set[index]
     # int_seq2 = IS_set[index-1]
-    # assert (int_seq - int_seq2).identical(stairs.Stairs(init_val))
+    # assert (int_seq - int_seq2).identical(Stairs(init_val))
     
 # @pytest.mark.parametrize("init_value, interval_a_b", itertools.product([0, 1.25, -1.25, 2, -2], [ ((-2,1),(3,5,2)), ((-2,1),(1,5,2)), ((-2,1),(0,5,2)), ((1,2),(3,5,2))]))  
 # def test_two_interval_add_commutivity(init_value, interval_a_b):
     # ''' non-overlapping interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq_copy = int_seq.copy()
     # interval_a, interval_b = interval_a_b
     # int_seq.layer(*interval_a).layer(*interval_b)
@@ -834,7 +836,7 @@ def test_make_test_data():
             # height = interval[2]
         # return (interval[1] - interval[0])*height
             
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # interval_a, interval_b = interval_a_b
     # interval_a_area = get_area(interval_a)
     # interval_b_area = get_area(interval_b)
@@ -846,7 +848,7 @@ def test_make_test_data():
 # @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])     
 # def test_two_interval_add_commutivity1(init_value):
     # ''' non-overlapping interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq_copy = int_seq.copy()
     # int_seq.layer(-2,1).layer(3,5,2)
     # int_seq_copy.layer(3,5,2).layer(-2,1)
@@ -856,7 +858,7 @@ def test_make_test_data():
 # @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])  
 # def test_two_interval_add_commutivity2(init_value):
     # ''' endpoint = startpoint interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq_copy = int_seq.copy()
     # int_seq.layer(-2,1).layer(1,5,2)
     # int_seq_copy.layer(1,5,2).layer(-2,1)
@@ -866,7 +868,7 @@ def test_make_test_data():
 # @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])  
 # def test_two_interval_add_commutivity3(init_value):
     # ''' overlapping (non subset) interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq_copy = int_seq.copy()
     # int_seq.layer(-2,1).layer(0,5,2)
     # int_seq_copy.layer(0,5,2).layer(-2,1)
@@ -876,7 +878,7 @@ def test_make_test_data():
 # @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])  
 # def test_two_interval_add_commutivity4(init_value):
     # ''' overlapping (subset) interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq_copy = int_seq.copy()
     # int_seq.layer(1,2).layer(0,5,2)
     # int_seq_copy.layer(0,5,2).layer(1,2)
@@ -886,7 +888,7 @@ def test_make_test_data():
 # @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])  
 # def test_two_interval_add_integrate1(init_value):
     # ''' non-overlapping interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq.layer(-2,1).layer(3,5,2)
     # assert int_seq.integarate)
 
@@ -894,20 +896,20 @@ def test_make_test_data():
 # @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])  
 # def test_two_interval_add_integrate2(init_value):
     # ''' endpoint = startpoint interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq.layer(-2,1).layer(1,5,2)
     # assert int_seq.identical(int_seq_copy)
     
 # @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])  
 # def test_two_interval_add_integrate3(init_value):
     # ''' overlapping (non subset) interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq.layer(-2,1).layer(0,5,2)
     # assert int_seq.identical(int_seq_copy)
     
 # @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])  
 # def test_two_interval_add_integrate4(init_value):
     # ''' overlapping (subset) interval adds'''
-    # int_seq = stairs.Stairs(init_value)
+    # int_seq = Stairs(init_value)
     # int_seq.layer(1,2).layer(0,5,2)
     # assert int_seq.identical(int_seq_copy)

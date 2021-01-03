@@ -16,9 +16,10 @@ import math
 import warnings
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
-from .docstrings.decorator import add_doc, append_doc
-from .docstrings import stairs_class as SC_docs
-from .docstrings import stairs_module as SM_docs
+from staircase.docstrings.decorator import add_doc, append_doc
+from staircase.docstrings import stairs_class as SC_docs
+from staircase.docstrings import stairs_module as SM_docs
+from staircase.core import ops
 warnings.simplefilter('default')
 
 origin = pd.to_datetime('2000-1-1')
@@ -45,9 +46,6 @@ def _verify_window(left_delta, right_delta, zero):
     assert left_delta <= zero, "left_delta must not be positive"
     assert right_delta >= zero, "right_delta must not be negative"
     assert right_delta - left_delta > zero, "window length must be non-zero"
-    
-def _check_binop_timezones(first, second):
-    assert first.tz == second.tz, "operands must have the same timezone, or none at all"
 
 def _convert_date_to_float(val, tz=None):
     if val is None:
@@ -55,12 +53,8 @@ def _convert_date_to_float(val, tz=None):
     if hasattr(val, "__iter__"):
         if not isinstance(val, pd.Series):
             val = pd.Series(val)
-        #if val.dt.tz is None and tz is not None:
-        #    val = val.dt.tz_localize(tz)
         deltas = pd.TimedeltaIndex(val - origin.tz_localize(tz))
         return list(deltas/pd.Timedelta(1, 'h'))
-    #if val.tz is None and tz is not None:
-    #    val = val.tz_localize(tz)
     return (val - origin.tz_localize(tz))/pd.Timedelta(1, 'h')
     
 def _convert_float_to_date(val, tz=None):
@@ -72,65 +66,6 @@ def _convert_float_to_date(val, tz=None):
 
 def _from_cumulative(cumulative, use_dates=False, tz=None):
     return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates, tz)
-
-def _min_pair(stairs1, stairs2):
-    """
-    Calculates the minimum of two Stairs objects.  It can be thought of as calculating the minimum of two step functions.
-
-    Parameters:
-        stairs1 (Stairs)
-        stairs2 (Stairs)
-
-    Returns:
-        Stairs: the result of the calculation
-
-    """
-    assert isinstance(stairs1, Stairs) and isinstance(stairs2, Stairs), "Arguments to min must be both of type Stairs."
-    assert stairs1.tz == stairs2.tz
-    new_instance = stairs1-stairs2
-    cumulative = new_instance._cumulative()
-    for key,value in cumulative.items():
-        if value > 0:
-            cumulative[key] = 0
-    deltas = [cumulative.values()[0]]
-    deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))
-    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates, tz=stairs1.tz)
-    return new_instance + stairs2
-    
-def _max_pair(stairs1, stairs2):
-    """
-    Calculates the maximum of two Stairs objects.  It can be thought of as calculating the maximum of two step functions.
-
-    Parameters:
-        stairs1 (Stairs)
-        stairs2 (Stairs)
-
-    Returns:
-        Stairs: the result of the calculation
-
-    """
-    assert isinstance(stairs1, Stairs) and isinstance(stairs2, Stairs), "Arguments to max must be both of type Stairs."
-    assert stairs1.tz == stairs2.tz
-    new_instance = stairs1-stairs2
-    cumulative = new_instance._cumulative()
-    for key,value in cumulative.items():
-        if value < 0:
-            cumulative[key] = 0
-    deltas = [cumulative.values()[0]]
-    deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))
-    new_instance = Stairs(dict(zip(new_instance._keys(), deltas)), use_dates=stairs1.use_dates or stairs2.use_dates, tz=stairs1.tz)
-    return new_instance + stairs2
-
-def _compare(cumulative, zero_comparator, use_dates=False, tz=None):
-    truth = cumulative.copy()
-    for key,value in truth.items():
-        new_val = int(zero_comparator(float(value)))
-        truth[key] = new_val
-    deltas = [truth.values()[0]]
-    deltas.extend(np.subtract(truth.values()[1:], truth.values()[:-1]))
-    new_instance = Stairs(dict(zip(truth.keys(), deltas)), use_dates, tz)
-    new_instance._reduce()
-    return new_instance
 
 def _get_union_of_points(collection):
     
@@ -572,6 +507,10 @@ class Stairs:
         for key,value in self._items():
             new_instance[key] = value
         return new_instance
+        
+    @classmethod    
+    def from_cumulative(cls, cumulative, use_dates=False, tz=None):
+        return cls(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates, tz)
 
     def plot(self, ax=None, **kwargs):
         """
@@ -914,381 +853,11 @@ class Stairs:
     @add_doc(_step_changes.__doc__)
     def step_changes(self):
         return dict(zip(_convert_float_to_date(self._keys()[1:], self.tz), self._values()[1:]))
-
-    @append_doc(SC_docs.negate_example)
-    def negate(self):
-        """
-        An operator which produces a new Stairs instance representing the multiplication of the step function by -1.
-        
-        Should be used as an operator, i.e. by utilising the symbol -.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing the multiplication of the step function by -1
-            
-        See Also
-        --------
-        Stairs.subtract
-        """
-        new_instance = self.copy()
-        for key,delta in new_instance._items():
-            new_instance[key] = -delta
-        new_instance.cached_cumulative = None
-        return new_instance
-    
-    @append_doc(SC_docs.add_example)
-    def add(self, other):
-        """
-        An operator facilitating the addition of two step functions.
-        
-        Should be used as an operator, i.e. by utilising the symbol +.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing the addition of two step functions
-            
-        See Also
-        --------
-        Stairs.subtract
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        new_instance = self.copy()
-        for key, value in other._items():
-            new_instance[key] = self._get(key,0) + value
-        new_instance._reduce()
-        new_instance.use_dates = self.use_dates or other.use_dates
-        new_instance.cached_cumulative = None
-        return new_instance
-    
-    @append_doc(SC_docs.subtract_example)
-    def subtract(self, other):
-        """
-        An operator facilitating the subtraction of one step function from another.
-        
-        Should be used as an operator, i.e. by utilising the symbol -.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing the subtraction of one step function from another
-        
-        See Also
-        --------
-        Stairs.add
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        other = -other
-        return self + other
-    
-    def _mul_or_div(self, other, func):
-        a = self.copy()
-        b = other.copy()
-        a_keys = a._keys()
-        b_keys = b._keys()
-        a._layer_multiple(b_keys, None, [0]*len(b_keys))
-        b._layer_multiple(a_keys, None, [0]*len(a_keys))
-        
-        multiplied_cumulative_values = func(a._cumulative().values(), b._cumulative().values())
-        new_instance = _from_cumulative(dict(zip(a._keys(), multiplied_cumulative_values)), use_dates=self.use_dates, tz=self.tz)
-        new_instance._reduce()
-        return new_instance
-        
-    @append_doc(SC_docs.divide_example)
-    def divide(self, other):
-        """
-        An operator facilitating the division of one step function by another.
-
-        The divisor should cannot be zero-valued anywhere.
-
-        Should be used as an operator, i.e. by utilising the symbol /.  See examples below.
-
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing the division of one step function by another
-            
-        See Also
-        --------
-        Stairs.multiply
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        if not bool(other.make_boolean()):
-            raise ZeroDivisionError("Divisor Stairs instance must not be zero-valued at any point")
-        
-        return self._mul_or_div(other, np.divide)
-    
-    @append_doc(SC_docs.multiply_example)
-    def multiply(self, other):
-        r"""
-        An operator facilitating the multiplication of one step function with another.
-        
-        Should be used as an operator, i.e. by utilising the symbol \*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing the multiplication of one step function from another
-        
-        See Also
-        --------
-        Stairs.divide
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        return self._mul_or_div(other, np.multiply)
         
     def _cumulative(self):
         if self.cached_cumulative == None:
             self.cached_cumulative = SortedDict(zip(self._keys(), np.cumsum(self._values())))
         return self.cached_cumulative
-    
-    @append_doc(SC_docs.make_boolean_example)
-    def make_boolean(self):
-        """
-        Returns a boolean-valued step function indicating where *self* is non-zero.
-        
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* is non-zero
-        
-        See Also
-        --------
-        Stairs.invert
-        """
-        new_instance = self != Stairs(0)
-        return new_instance
-    
-    @append_doc(SC_docs.invert_example)
-    def invert(self):
-        """
-        Returns a boolean-valued step function indicating where *self* is zero-valued.
-        
-        Equivalent to ~*self*
-        
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* is zero-valued
-        
-        See Also
-        --------
-        Stairs.make_boolean
-        """
-        new_instance = self.make_boolean()
-        new_instance = Stairs(1, self.use_dates, self.tz) - new_instance
-        return new_instance
-    
-    @append_doc(SC_docs.logical_and_example)
-    def logical_and(self, other):
-        """
-        Returns a boolean-valued step function indicating where *self* and *other* are non-zero.
-        
-        Equivalent to *self* & *other*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* & *other*
-            
-        See Also
-        --------
-        Stairs.logical_or
-        """
-        assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
-        _check_binop_timezones(self, other)
-        self_bool = self.make_boolean()
-        other_bool = other.make_boolean()
-        return _min_pair(self_bool, other_bool)
-    
-    @append_doc(SC_docs.logical_or_example)
-    def logical_or(self, other):
-        """
-        Returns a boolean-valued step function indicating where *self* or *other* are non-zero.
-        
-        Equivalent to *self* | *other*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* | *other*
-        
-        See Also
-        --------
-        Stairs.logical_and
-        """
-        assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
-        _check_binop_timezones(self, other)
-        self_bool = self.make_boolean()
-        other_bool = other.make_boolean()
-        return _max_pair(self_bool, other_bool)
-
-    @append_doc(SC_docs.lt_example)
-    def lt(self, other):
-        """
-        Returns a boolean-valued step function indicating where *self* is strictly less than *other*.
-        
-        Equivalent to *self* < *other*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* < *other*
-            
-        See Also
-        --------
-        Stairs.gt, Stairs.le, Stairs.ge
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        comparator = float(0).__lt__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
-    
-    @append_doc(SC_docs.gt_example)
-    def gt(self, other):
-        """
-        Returns a boolean-valued step function indicating where *self* is strictly greater than *other*.
-        
-        Equivalent to *self* > *other*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* > *other*
-            
-        See Also
-        --------
-        Stairs.lt, Stairs.le, Stairs.ge
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        comparator = float(0).__gt__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
-    
-    @append_doc(SC_docs.le_example)
-    def le(self, other):
-        """
-        Returns a boolean-valued step function indicating where *self* is less than, or equal to, *other*.
-        
-        Equivalent to *self* <= *other*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* <= *other*
-            
-        See Also
-        --------
-        Stairs.lt, Stairs.gt, Stairs.ge
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        comparator = float(0).__le__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
-
-    @append_doc(SC_docs.ge_example)
-    def ge(self, other):
-        """
-        Returns a boolean-valued step function indicating where *self* is greater than, or equal to, *other*.
-        
-        Equivalent to *self* >= *other*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* >= *other*
-            
-        See Also
-        --------
-        Stairs.lt, Stairs.gt, Stairs.le
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        comparator = float(0).__ge__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
-    
-    @append_doc(SC_docs.eq_example)
-    def eq(self, other):
-        """
-        Returns a boolean-valued step function indicating where *self* is equal to *other*.
-        
-        Equivalent to *self* == *other*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* == *other*
-            
-        See Also
-        --------
-        Stairs.ne, Stairs.identical
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        comparator = float(0).__eq__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
-    
-    @append_doc(SC_docs.ne_example)
-    def ne(self, other):
-        """
-        Returns a boolean-valued step function indicating where *self* is not equal to *other*.
-        
-        Equivalent to *self* != *other*.  See examples below.
-              
-        Returns
-        -------
-        :class:`Stairs`
-            A new instance representing where *self* != *other*
-            
-        See Also
-        --------
-        Stairs.eq, Stairs.identical
-        """
-        if not isinstance(other, Stairs):
-            other = Stairs(other, self.use_dates, self.tz)
-        else:
-            _check_binop_timezones(self, other)
-        comparator = float(0).__ne__
-        return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
-    
-    @append_doc(SC_docs.identical_example)
-    def identical(self, other):
-        """
-        Returns True if *self* and *other* represent the same step functions.
-        
-        Returns
-        -------
-        boolean
-        
-        See Also
-        --------
-        Stairs.eq, Stairs.ne
-        """
-        _check_binop_timezones(self, other)
-        return bool(self == other)
     
     def _reduce(self):
         to_remove = [key for key,val in self._items()[1:] if val == 0]
@@ -1308,14 +877,6 @@ class Stairs:
             return float((~self).integrate()) < 0.0000001
         return dict(self._sorted_dict) == {float('-inf'): 1}
 
-    
-    # def __bool__(self):
-        # self._reduce()
-        # if self._len() != 1:
-            # return False
-        # value = self._values()[0]
-        # return value == 1
-    
     @append_doc(SC_docs.integral_and_mean_example)
     def _get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
         """
@@ -2092,20 +1653,9 @@ class Stairs:
     def __call__(self, *args, **kwargs):
         return self.sample(*args, **kwargs)
     
-    __neg__ = negate
-    __mul__ = multiply
-    __truediv__ = divide
-    __add__ = add
-    __sub__ = subtract
-    __or__ = logical_or
-    __and__ = logical_and
-    __invert__ = invert
-    __eq__ = eq
-    __ne__ = ne
-    __lt__ = lt
-    __gt__ = gt
-    __le__ = le
-    __ge__ = ge
+
+
+
     
 _stairs_methods = {
     'mean':Stairs.mean,
@@ -2114,3 +1664,5 @@ _stairs_methods = {
     'max':Stairs.max,
     'min':Stairs.min,
 }
+
+ops.add_operations(Stairs)

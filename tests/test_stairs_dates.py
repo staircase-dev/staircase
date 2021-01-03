@@ -1,9 +1,11 @@
 import pytest
 import itertools
-import staircase.stairs as stairs
 import pandas as pd
 import numpy as np
+
+from staircase import Stairs
 import staircase.test_data as test_data
+import staircase.core.stairs as stairs
 
 def _expand_interval_definition(start, end=None, value=1):
     return start, end, value
@@ -17,7 +19,7 @@ def _compare_iterables(it1, it2):
     return True
     
 def s1():
-    int_seq1 = stairs.Stairs(0, use_dates=True)
+    int_seq1 = Stairs(0, use_dates=True)
     int_seq1.layer(pd.Timestamp(2020,1,1),pd.Timestamp(2020,1,10),2)
     int_seq1.layer(pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5),2.5)
     int_seq1.layer(pd.Timestamp(2020,1,6),pd.Timestamp(2020,1,7),-2.5)
@@ -25,7 +27,7 @@ def s1():
     return int_seq1
 
 def s2():    
-    int_seq2 = stairs.Stairs(0, use_dates=True)
+    int_seq2 = Stairs(0, use_dates=True)
     int_seq2.layer(pd.Timestamp(2020,1,1),pd.Timestamp(2020,1,7),-2.5)
     int_seq2.layer(pd.Timestamp(2020,1,8),pd.Timestamp(2020,1,10),5)
     int_seq2.layer(pd.Timestamp(2020,1,2),pd.Timestamp(2020,1,5),4.5)
@@ -33,7 +35,7 @@ def s2():
     return int_seq2
     
 def s3(): #boolean    
-    int_seq = stairs.Stairs(0, use_dates=True)
+    int_seq = Stairs(0, use_dates=True)
     int_seq.layer(pd.Timestamp(2020,1,10),pd.Timestamp(2020,1,30),1)
     int_seq.layer(pd.Timestamp(2020,1,12),pd.Timestamp(2020,1,13),-1)
     int_seq.layer(pd.Timestamp(2020,1,15),pd.Timestamp(2020,1,18),-1)
@@ -43,7 +45,7 @@ def s3(): #boolean
     return int_seq
 
 def s4(): #boolean      
-    int_seq = stairs.Stairs(0, use_dates=True)
+    int_seq = Stairs(0, use_dates=True)
     int_seq.layer(pd.Timestamp(2020,1,9),pd.Timestamp(2020,1,29),1)
     int_seq.layer(pd.Timestamp(2020,1,10,12),pd.Timestamp(2020,1,12),-1)
     int_seq.layer(pd.Timestamp(2020,1,12,12),pd.Timestamp(2020,1,13),-1)
@@ -185,16 +187,16 @@ def test_percentile_dates_4(s1_fix):
     assert s1_fix.percentile(80, lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == 4.5, "Expected 80th percentile to be 4.5"
     
 def test_percentile_stairs_dates_1(s1_fix):
-    assert s1_fix.percentile_stairs() == stairs.Stairs().layer(0,400/9, -0.5).layer(400/9, 700/9, 2).layer(700/9, None, 4.5)
+    assert s1_fix.percentile_stairs() == Stairs().layer(0,400/9, -0.5).layer(400/9, 700/9, 2).layer(700/9, None, 4.5)
 
 def test_percentile_stairs_dates_2(s1_fix):
-    assert s1_fix.percentile_stairs(upper=pd.Timestamp(2020,1,6)) == stairs.Stairs().layer(0,60,2).layer(60, None, 4.5)
+    assert s1_fix.percentile_stairs(upper=pd.Timestamp(2020,1,6)) == Stairs().layer(0,60,2).layer(60, None, 4.5)
 
 def test_percentile_stairs_dates_3(s1_fix):
-    assert s1_fix.percentile_stairs(lower=pd.Timestamp(2020,1,4)) == stairs.Stairs().layer(0,400/6,-0.5).layer(400/6, 500/6, 2).layer(500/6, None, 4.5)
+    assert s1_fix.percentile_stairs(lower=pd.Timestamp(2020,1,4)) == Stairs().layer(0,400/6,-0.5).layer(400/6, 500/6, 2).layer(500/6, None, 4.5)
     
 def test_percentile_stairs_dates_4(s1_fix):
-    assert s1_fix.percentile_stairs(lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == stairs.Stairs().layer(0,50,-0.5).layer(50, 75, 2).layer(75, None, 4.5)
+    assert s1_fix.percentile_stairs(lower=pd.Timestamp(2020,1,4),upper=pd.Timestamp(2020,1,8)) == Stairs().layer(0,50,-0.5).layer(50, 75, 2).layer(75, None, 4.5)
 
 def test_plot(s1_fix):
     s1_fix.plot()
@@ -677,7 +679,7 @@ def test_s1_rolling_mean(s1_fix, kwargs, expected_index, expected_vals):
     assert list(rm.index) == expected_index
     
 def test_eq():
-    assert stairs.Stairs(3, use_dates=True) == 3
+    assert Stairs(3, use_dates=True) == 3
     
 def test_ne(s1_fix):
     assert s1_fix != 3

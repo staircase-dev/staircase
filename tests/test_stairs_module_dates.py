@@ -1,12 +1,15 @@
 import pytest
 import pandas as pd
 import numpy as np
-import staircase.stairs as stairs
 from sortedcontainers import SortedSet
+
+from staircase import Stairs
+from staircase.core.aggregation import _max_pair, _min_pair
+import staircase.core.stairs as stairs
 
 
 def stairs1():
-    int_seq1 = stairs.Stairs(0, use_dates=True)
+    int_seq1 = Stairs(0, use_dates=True)
     int_seq1.layer(pd.Timestamp(2020,1,1),pd.Timestamp(2020,1,10),2)
     int_seq1.layer(pd.Timestamp(2020,1,3),pd.Timestamp(2020,1,5),2.5)
     int_seq1.layer(pd.Timestamp(2020,1,6),pd.Timestamp(2020,1,7),-2.5)
@@ -14,7 +17,7 @@ def stairs1():
     return int_seq1
 
 def stairs2():    
-    int_seq2 = stairs.Stairs(0, use_dates=True)
+    int_seq2 = Stairs(0, use_dates=True)
     int_seq2.layer(pd.Timestamp(2020,1,1),pd.Timestamp(2020,1,7),-2.5)
     int_seq2.layer(pd.Timestamp(2020,1,8),pd.Timestamp(2020,1,10),5)
     int_seq2.layer(pd.Timestamp(2020,1,2),pd.Timestamp(2020,1,5),4.5)
@@ -22,7 +25,7 @@ def stairs2():
     return int_seq2
     
 def stairs3(tz):
-    int_seq1 = stairs.Stairs(0, use_dates=True, tz=tz)
+    int_seq1 = Stairs(0, use_dates=True, tz=tz)
     int_seq1.layer(pd.Timestamp(2020,1,1).tz_localize(tz),pd.Timestamp(2020,1,10).tz_localize(tz),2)
     int_seq1.layer(pd.Timestamp(2020,1,3).tz_localize(tz),pd.Timestamp(2020,1,5).tz_localize(tz),2.5)
     int_seq1.layer(pd.Timestamp(2020,1,6).tz_localize(tz),pd.Timestamp(2020,1,7).tz_localize(tz),-2.5)
@@ -30,7 +33,7 @@ def stairs3(tz):
     return int_seq1
 
 def stairs4(tz):    
-    int_seq2 = stairs.Stairs(0, use_dates=True, tz=tz)
+    int_seq2 = Stairs(0, use_dates=True, tz=tz)
     int_seq2.layer(pd.Timestamp(2020,1,1).tz_localize(tz),pd.Timestamp(2020,1,7).tz_localize(tz),-2.5)
     int_seq2.layer(pd.Timestamp(2020,1,8).tz_localize(tz),pd.Timestamp(2020,1,10).tz_localize(tz),5)
     int_seq2.layer(pd.Timestamp(2020,1,2).tz_localize(tz),pd.Timestamp(2020,1,5).tz_localize(tz),4.5)
@@ -40,7 +43,7 @@ def stairs4(tz):
 
 @pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_min_pair(IS1, IS2):
-    assert stairs._min_pair(IS1,IS2).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): -2.5,
+    assert _min_pair(IS1,IS2).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): -2.5,
                                                         pd.Timestamp('2020-01-02').tz_localize(IS1.tz): 4.5,
                                                         pd.Timestamp('2020-01-02 12:00:00').tz_localize(IS1.tz): -2.5,
                                                         pd.Timestamp('2020-01-04').tz_localize(IS1.tz): 2.5,
@@ -50,7 +53,7 @@ def test_min_pair(IS1, IS2):
 
 @pytest.mark.parametrize("IS1, IS2", [[stairs1(), stairs2()], [stairs3(None), stairs4(None)], [stairs3('UTC'), stairs4('UTC')],[stairs3('Australia/Sydney'), stairs4('Australia/Sydney')]])  
 def test_max_pair(IS1, IS2):
-    assert stairs._max_pair(IS1,IS2).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): 2.0,
+    assert _max_pair(IS1,IS2).step_changes() == {pd.Timestamp('2020-01-01').tz_localize(IS1.tz): 2.0,
                                                         pd.Timestamp('2020-01-03').tz_localize(IS1.tz): 2.5,
                                                         pd.Timestamp('2020-01-05').tz_localize(IS1.tz): -2.5,
                                                         pd.Timestamp('2020-01-06').tz_localize(IS1.tz): -2.5,
