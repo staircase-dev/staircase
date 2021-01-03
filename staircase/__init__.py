@@ -7,9 +7,12 @@ except Exception:
 
 from staircase.core.stairs import (
     Stairs, sample, resample,
-    aggregate, hist_from_ecdf,
+    aggregate,
     corr, cov
 )
+
+from staircase.core.stats import hist_from_ecdf
+
 from staircase.core.stairs import _mean as mean
 from staircase.core.stairs import _median as median
 from staircase.core.stairs import _min as min

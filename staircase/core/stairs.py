@@ -13,16 +13,15 @@ import numpy as np
 import pandas as pd
 import pytz
 import math
-import warnings
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 from staircase.docstrings.decorator import add_doc, append_doc
 from staircase.docstrings import stairs_class as SC_docs
 from staircase.docstrings import stairs_module as SM_docs
-from staircase.core import ops
-warnings.simplefilter('default')
+from staircase.core import ops, stats
+from staircase.core.tools.datetimes import origin, _convert_date_to_float, _convert_float_to_date
 
-origin = pd.to_datetime('2000-1-1')
+
 tz_default = None
 use_dates_default = False
 
@@ -47,22 +46,7 @@ def _verify_window(left_delta, right_delta, zero):
     assert right_delta >= zero, "right_delta must not be negative"
     assert right_delta - left_delta > zero, "window length must be non-zero"
 
-def _convert_date_to_float(val, tz=None):
-    if val is None:
-        return None
-    if hasattr(val, "__iter__"):
-        if not isinstance(val, pd.Series):
-            val = pd.Series(val)
-        deltas = pd.TimedeltaIndex(val - origin.tz_localize(tz))
-        return list(deltas/pd.Timedelta(1, 'h'))
-    return (val - origin.tz_localize(tz))/pd.Timedelta(1, 'h')
-    
-def _convert_float_to_date(val, tz=None):
-    if hasattr(val, "__iter__"):
-        if not isinstance(val, np.ndarray):
-            val = np.array(val)
-        return list(pd.to_timedelta(val*3600, unit='s') + origin.tz_localize(tz))
-    return pd.to_timedelta(val*3600, unit='s') + origin.tz_localize(tz)
+
 
 def _from_cumulative(cumulative, use_dates=False, tz=None):
     return Stairs(dict(zip(cumulative.keys(),np.insert(np.diff(list(cumulative.values())), 0, [next(iter(cumulative.values()))]))), use_dates, tz)
@@ -313,45 +297,6 @@ def resample(container, x, how='right'):
     if isinstance(container, np.ndarray):
         return np.array([s.resample(x, how) for s in container])
     return type(container)([s.resample(x, how) for s in container])
-    
-@append_doc(SM_docs.hist_from_ecdf_example)
-def hist_from_ecdf(ecdf, bin_edges=None, closed='left'):
-    """
-    Calculates a histogram from a Stairs instance corresponding to an
-    `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_.
-    
-    Such ecdf stair instances are returned from :meth:`Stairs.ecdf_stairs`.  This function predominantly exists
-    to allow users to store the result of a ecdf stairs instance locally, and experiment with bin_edges without
-    requiring the recalculation of the ecdf.
-
-    Parameters
-    ----------
-    ecdf : :class:`Stairs`
-        lower bound of the step-function domain on which to perform the calculation
-    bin_edges : int, float, optional
-        defines the bin edges for the histogram (it is the domain of the ecdf that is being binned).
-        If not specified the bin_edges will be assumed to be the integers which cover the domain of the ecdf
-    closed: {'left', 'right'}, default 'left'
-        determines whether the bins, which are half-open intervals, are left-closed , or right-closed
-          
-    Returns
-    -------
-    :class:`pandas.Series`
-        A Series, with a :class:`pandas.IntervalIndex`, representing the values of the histogram
-        
-    See Also
-    --------
-    Stairs.hist
-    Stairs.ecdf_stairs
-    """
-    if bin_edges is None:
-        round_func = math.floor if closed == 'left' else math.ceil
-        bin_edges = range(round_func(min(ecdf.step_changes().keys()))-(closed=='right'), round_func(max(ecdf.step_changes().keys())) + (closed=='left') + 1)
-    return pd.Series(
-        data = [ecdf(c2, how=closed) - ecdf(c1, how=closed) for c1, c2 in zip(bin_edges[:-1], bin_edges[1:])],
-        index = pd.IntervalIndex.from_tuples([(c1,c2) for  c1, c2 in zip(bin_edges[:-1], bin_edges[1:])], closed=closed),
-        dtype='float64',
-    )
         
 def _pairwise_commutative_operation_matrix(collection, op, assume_ones_diagonal, **kwargs):
     series = pd.Series(collection)
@@ -462,7 +407,7 @@ class Stairs:
             self.sample = self._sample
             self.resample = self._resample
             self.layer = self._layer
-            self.get_integral_and_mean = self._get_integral_and_mean
+            self.get_integral_and_mean = stats.statistic._get_integral_and_mean
             self.clip = self._clip
             self.values_in_range = self._values_in_range
             self.step_changes = self._step_changes
@@ -877,171 +822,6 @@ class Stairs:
             return float((~self).integrate()) < 0.0000001
         return dict(self._sorted_dict) == {float('-inf'): 1}
 
-    @append_doc(SC_docs.integral_and_mean_example)
-    def _get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates the integral, and the mean of the step function.
-        
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        tuple
-            The area and mean are returned as a pair
-            
-        See Also
-        --------
-        Stairs.integrate, Stairs.mean
-        """
-        new_instance = self.clip(lower, upper)
-        if new_instance.number_of_steps() < 2:
-            return 0, np.nan
-        if lower != float('-inf'):
-            new_instance[lower] = new_instance._get(lower,0)
-        if upper != float('inf'):
-            new_instance[upper] = new_instance._get(upper,0)
-        cumulative = new_instance._cumulative()
-        widths = np.subtract(cumulative.keys()[2:], cumulative.keys()[1:-1])
-        heights = cumulative.values()[1:-1]
-        area = np.multiply(widths, heights).sum()
-        mean = area/(cumulative.keys()[-1] - cumulative.keys()[1])
-        return area, mean
-
-    @add_doc(_get_integral_and_mean.__doc__)
-    def get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
-        if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower, self.tz)
-        if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper, self.tz)
-        return self._get_integral_and_mean(lower, upper)
-                
-    @append_doc(SC_docs.integrate_example)
-    def integrate(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates the integral of the step function.
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        float
-            The area
-            
-        See Also
-        --------
-        Stairs.get_integral_and_mean
-        """
-        area, _ = self.get_integral_and_mean(lower, upper)
-        return area
-    
-    @append_doc(SC_docs.mean_example)
-    def mean(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates the mean of the step function.
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        float
-            The mean
-        
-        See Also
-        --------
-        Stairs.rolling_mean, Stairs.get_integral_and_mean, Stairs.median, Stairs.mode
-        """
-        _, mean = self.get_integral_and_mean(lower, upper)
-        return mean
-    
-    @append_doc(SC_docs.median_example)
-    def median(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates the median of the step function.
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        float
-            The median
-            
-        See Also
-        --------
-        Stairs.mean, Stairs.mode, Stairs.percentile, Stairs.percentile_Stairs
-        """
-        return self.percentile(50, lower, upper)
-    
-    @append_doc(SC_docs.var_example)
-    def var(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates the variance of the step function.
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        float
-            The variance of the step function
-            
-        See Also
-        --------
-        Stairs.std
-        """
-        percentile_minus_mean = (self.percentile_stairs(lower, upper) - self.mean(lower, upper))._cumulative()
-        return (
-            _from_cumulative(
-                dict(zip(percentile_minus_mean.keys(), (val*val for val in percentile_minus_mean.values())))
-            ).integrate(0,100)/100
-        )
-        
-    @append_doc(SC_docs.std_example)
-    def std(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates the standard deviation of the step function.
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        float
-            The standard deviation of the step function
-            
-        See Also
-        --------
-        Stairs.var
-        """
-        return np.sqrt(self.var(lower, upper))
         
     @append_doc(SC_docs.describe_example)
     def describe(self, lower=float('-inf'), upper=float('inf'), percentiles=(25, 50, 75)):
@@ -1164,181 +944,6 @@ class Stairs:
                 upper = upper - lag
             other = other.shift(-lag)
         return self.cov(other, lower, upper)/(self.std(lower, upper)*other.std(lower,upper))
-    
-    @append_doc(SC_docs.percentile_example)
-    def percentile(self, x, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates the x-th percentile of the step function's values
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        float
-            The x-th percentile
-            
-        See Also
-        --------
-        Stairs.median, Stairs.percentile_stairs
-        """
-        assert 0 <= x <= 100
-        percentiles = self.percentile_stairs(lower, upper)
-        return (percentiles(x, how='left') + percentiles(x, how='right'))/2
-
-    @append_doc(SC_docs.percentile_stairs_example)
-    def percentile_stairs(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates a percentile function (and returns a corresponding Stairs instance)
-        
-        This method can be used for efficiency gains if substituting for multiple calls
-        to percentile() with the same lower and upper parameters
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp, optional
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp, optional
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        :class:`Stairs`
-            An instance representing a percentile function
-            
-        See Also
-        --------
-        Stairs.percentile
-        """
-        temp_df = (
-            self.clip(lower,upper)
-            .to_dataframe()
-        )
-        
-        assert temp_df.shape[0] >= 3, "Step function composed only of infinite length intervals.  Provide bounds by 'lower' and 'upper' parameters"
-
-        temp_df = (
-            temp_df
-            .iloc[1:-1]
-            .assign(duration = lambda df: df.end-df.start)
-            .groupby('value').sum()
-            .assign(duration = lambda df: np.cumsum(df.duration/df.duration.sum()))
-            .assign(duration = lambda df: df.duration.shift())
-            .fillna(0)
-        )
-        percentile_step_func = Stairs()
-        for start,end,value in zip(temp_df.duration.values, np.append(temp_df.duration.values[1:],1), temp_df.index):
-            percentile_step_func.layer(start*100,end*100,value)
-        #percentile_step_func._popitem()
-        percentile_step_func[100]=0
-        return percentile_step_func
-        
-    def percentile_Stairs(self, lower=float('-inf'), upper=float('inf')):
-        """Deprecated.  Use Stairs.percentile_stairs."""
-        warnings.warn(
-            "Stairs.percentile_Stairs will be deprecated in version 2.0.0, use Stairs.percentile_stairs instead",
-             PendingDeprecationWarning
-        )
-        return self.percentile_stairs(lower, upper)
-        
-    @append_doc(SC_docs.ecdf_stairs_example)
-    def ecdf_stairs(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_
-        for the corresponding step function values (and returns the result as a Stairs instance)
-       
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp, optional
-            lower bound of the step-function domain on which to perform the calculation
-        upper : int, float or pandas.Timestamp, optional
-            upper bound of the step-function domain to perform the calculation
-              
-        Returns
-        -------
-        :class:`Stairs`
-            An instance representing an empirical cumulative distribution function for the step function values
-            
-        See Also
-        --------
-        staircase.hist_from_ecdf
-        Stairs.hist
-        """
-        def _switch_first_key_to_zero(d):
-            d[0] = d.get(0,0) + d.pop(float('-inf'))
-            return d
-
-        _ecdf = _switch_first_key_to_zero(
-            self.percentile_stairs(lower, upper)
-            ._sorted_dict.copy()
-        )
-        
-        return Stairs().layer(np.cumsum(list(_ecdf.values())[:-1]), None, np.diff(list(_ecdf.keys()))/100)
-    
-    @append_doc(SC_docs.hist_example)
-    def hist(self, lower=float('-inf'), upper=float('inf'), bin_edges=None, closed='left'):
-        """
-        Calculates a histogram for the corresponding step function values
-       
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp, optional
-            lower bound of the step-function domain on which to perform the calculation
-        upper : int, float or pandas.Timestamp, optional
-            upper bound of the step-function domain to perform the calculation
-        bin_edges : array-like of int or float, optional
-            defines the bin edges for the histogram (remember it is the step-function range that is being binned).
-            If not specified the bin_edges will be assumed to be the integers which cover the step function range
-        closed: {'left', 'right'}, default 'left'
-            determines whether the bins, which are half-open intervals, are left-closed , or right-closed
-              
-        Returns
-        -------
-        :class:`pandas.Series`
-            A Series, with a :class:`pandas.IntervalIndex`, representing the values of the histogram
-            
-        See Also
-        --------
-        staircase.hist_from_ecdf
-        Stairs.ecdf_stairs
-        """
-        _ecdf = self.ecdf_stairs(lower, upper)
-        return hist_from_ecdf(_ecdf, bin_edges, closed)
-        
-
-    
-    @append_doc(SC_docs.mode_example)
-    def mode(self, lower=float('-inf'), upper=float('inf')):
-        """
-        Calculates the mode of the step function.
-        
-        If there is more than one mode only the smallest is returned
-        
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp, optional
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp, optional
-            upper bound of the interval on which to perform the calculation
-              
-        Returns
-        -------
-        float
-            The mode
-            
-        See Also
-        --------
-        Stairs.mean, Stairs.median
-        """
-        df = (self.clip(lower,upper)
-                .to_dataframe().iloc[1:-1]
-                .assign(duration = lambda df: df.end-df.start)
-        )
-        return df.value.loc[df.duration.idxmax()]
 
     @append_doc(SC_docs.values_in_range_example)
     def values_in_range(self, lower=float('-inf'), upper=float('inf'), lower_how='right', upper_how='left'):
@@ -1654,9 +1259,9 @@ class Stairs:
         return self.sample(*args, **kwargs)
     
 
+ops.add_operations(Stairs)
+stats.add_operations(Stairs)
 
-
-    
 _stairs_methods = {
     'mean':Stairs.mean,
     'median':Stairs.median,
@@ -1664,5 +1269,3 @@ _stairs_methods = {
     'max':Stairs.max,
     'min':Stairs.min,
 }
-
-ops.add_operations(Stairs)
