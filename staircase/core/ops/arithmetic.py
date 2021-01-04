@@ -4,7 +4,7 @@ from staircase.util._decorators import Appender
 from staircase.core.ops import docstrings
 import staircase as sc
 
-@Appender(docstrings.negate_example)
+@Appender(docstrings.negate_example, join='\n', indents=1)
 def negate(self):
     """
     An operator which produces a new Stairs instance representing the multiplication of the step function by -1.
@@ -26,7 +26,7 @@ def negate(self):
     new_instance.cached_cumulative = None
     return new_instance
 
-@Appender(docstrings.add_example)
+@Appender(docstrings.add_example, join='\n', indents=1)
 def add(self, other):
     """
     An operator facilitating the addition of two step functions.
@@ -54,7 +54,7 @@ def add(self, other):
     new_instance.cached_cumulative = None
     return new_instance
 
-@Appender(docstrings.subtract_example)
+@Appender(docstrings.subtract_example, join='\n', indents=1)
 def subtract(self, other):
     """
     An operator facilitating the subtraction of one step function from another.
@@ -90,7 +90,7 @@ def _mul_or_div(self, other, op):
     new_instance._reduce()
     return new_instance
         
-@Appender(docstrings.divide_example)
+@Appender(docstrings.divide_example, join='\n', indents=1)
 def divide(self, other):
     """
     An operator facilitating the division of one step function by another.
@@ -117,7 +117,7 @@ def divide(self, other):
     
     return _mul_or_div(self, other, np.divide)
 
-@Appender(docstrings.multiply_example)
+@Appender(docstrings.multiply_example, join='\n', indents=1)
 def multiply(self, other):
     r"""
     An operator facilitating the multiplication of one step function with another.

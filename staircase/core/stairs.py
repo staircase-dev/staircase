@@ -407,7 +407,7 @@ class Stairs:
             self.sample = self._sample
             self.resample = self._resample
             self.layer = self._layer
-            self.get_integral_and_mean = stats.statistic._get_integral_and_mean
+            self.get_integral_and_mean = self._get_integral_and_mean
             self.clip = self._clip
             self.values_in_range = self._values_in_range
             self.step_changes = self._step_changes

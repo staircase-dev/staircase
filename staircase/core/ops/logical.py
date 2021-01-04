@@ -5,7 +5,7 @@ from staircase.core.ops import docstrings
 import staircase as sc
 
 
-@Appender(docstrings.make_boolean_example)
+@Appender(docstrings.make_boolean_example, join='\n', indents=1)
 def make_boolean(self):
     """
     Returns a boolean-valued step function indicating where *self* is non-zero.
@@ -22,7 +22,7 @@ def make_boolean(self):
     new_instance = self != sc.Stairs(0)
     return new_instance
 
-@Appender(docstrings.invert_example)
+@Appender(docstrings.invert_example, join='\n', indents=1)
 def invert(self):
     """
     Returns a boolean-valued step function indicating where *self* is zero-valued.
@@ -42,7 +42,7 @@ def invert(self):
     new_instance = sc.Stairs(1, self.use_dates, self.tz) - new_instance
     return new_instance
 
-@Appender(docstrings.logical_and_example)
+@Appender(docstrings.logical_and_example, join='\n', indents=1)
 def logical_and(self, other):
     """
     Returns a boolean-valued step function indicating where *self* and *other* are non-zero.
@@ -64,7 +64,7 @@ def logical_and(self, other):
     other_bool = other.make_boolean()
     return _min_pair(self_bool, other_bool)
 
-@Appender(docstrings.logical_or_example)
+@Appender(docstrings.logical_or_example, join='\n', indents=1)
 def logical_or(self, other):
     """
     Returns a boolean-valued step function indicating where *self* or *other* are non-zero.

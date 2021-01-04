@@ -15,7 +15,7 @@ def _compare(cumulative, zero_comparator, use_dates=False, tz=None):
     new_instance._reduce()
     return new_instance
 
-@Appender(docstrings.lt_example)
+@Appender(docstrings.lt_example, join='\n', indents=1)
 def lt(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is strictly less than *other*.
@@ -38,7 +38,7 @@ def lt(self, other):
     comparator = float(0).__lt__
     return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)    
 
-@Appender(docstrings.gt_example)
+@Appender(docstrings.gt_example, join='\n', indents=1)
 def gt(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is strictly greater than *other*.
@@ -61,7 +61,7 @@ def gt(self, other):
     comparator = float(0).__gt__
     return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
 
-@Appender(docstrings.le_example)
+@Appender(docstrings.le_example, join='\n', indents=1)
 def le(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is less than, or equal to, *other*.
@@ -84,7 +84,7 @@ def le(self, other):
     comparator = float(0).__le__
     return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
 
-@Appender(docstrings.ge_example)
+@Appender(docstrings.ge_example, join='\n', indents=1)
 def ge(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is greater than, or equal to, *other*.
@@ -107,7 +107,7 @@ def ge(self, other):
     comparator = float(0).__ge__
     return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
 
-@Appender(docstrings.eq_example)
+@Appender(docstrings.eq_example, join='\n', indents=1)
 def eq(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is equal to *other*.
@@ -130,7 +130,7 @@ def eq(self, other):
     comparator = float(0).__eq__
     return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
 
-@Appender(docstrings.ne_example)
+@Appender(docstrings.ne_example, join='\n', indents=1)
 def ne(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is not equal to *other*.
@@ -153,7 +153,7 @@ def ne(self, other):
     comparator = float(0).__ne__
     return _compare((other-self)._cumulative(), comparator, self.use_dates or other.use_dates, self.tz)
     
-@Appender(docstrings.identical_example)
+@Appender(docstrings.identical_example, join='\n', indents=1)
 def identical(self, other):
     """
     Returns True if *self* and *other* represent the same step functions.

@@ -10,7 +10,7 @@ import staircase as sc
 
 warnings.simplefilter('default')
 
-@Appender(docstrings.percentile_stairs_example)
+@Appender(docstrings.percentile_stairs_example, join='\n', indents=1)
 def percentile_stairs(self, lower=float('-inf'), upper=float('inf')):
     """
     Calculates a percentile function (and returns a corresponding Stairs instance)
@@ -64,7 +64,7 @@ def percentile_Stairs(self, lower=float('-inf'), upper=float('inf')):
     )
     return percentile_stairs(self, lower, upper)
     
-@Appender(docstrings.ecdf_stairs_example)
+@Appender(docstrings.ecdf_stairs_example, join='\n', indents=1)
 def ecdf_stairs(self, lower=float('-inf'), upper=float('inf')):
     """
     Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_
@@ -98,7 +98,7 @@ def ecdf_stairs(self, lower=float('-inf'), upper=float('inf')):
     
     return sc.Stairs().layer(np.cumsum(list(_ecdf.values())[:-1]), None, np.diff(list(_ecdf.keys()))/100)
 
-@Appender(docstrings.hist_from_ecdf_example)
+@Appender(docstrings.hist_from_ecdf_example, join='\n', indents=1)
 def hist_from_ecdf(ecdf, bin_edges=None, closed='left'):
     """
     Calculates a histogram from a Stairs instance corresponding to an
@@ -137,7 +137,7 @@ def hist_from_ecdf(ecdf, bin_edges=None, closed='left'):
         dtype='float64',
     )
     
-@Appender(docstrings.hist_example)
+@Appender(docstrings.hist_example, join='\n', indents=1)
 def hist(self, lower=float('-inf'), upper=float('inf'), bin_edges=None, closed='left'):
     """
     Calculates a histogram for the corresponding step function values
