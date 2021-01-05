@@ -3,7 +3,7 @@ sphinx
 nbsphinx
 sortedcontainers
 matplotlib
-pandas
+pandas<1.2
 numpy
 seaborn
 pytz
