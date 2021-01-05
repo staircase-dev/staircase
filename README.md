@@ -15,7 +15,7 @@
 </p>
 <p align="center">
 	<a href="https://travis-ci.com/github/venaturum/staircase" alt"Travis CI">
-		<img src="https://travis-ci.com/venaturum/staircase.svg?branch=CondaBuild"/></a>
+		<img src="https://travis-ci.com/venaturum/staircase.svg"/></a>
     <a href="https://railing.readthedocs.io/en/latest/" alt="Read the Docs">
         <img src="https://readthedocs.org/projects/railing/badge/?version=latest" /></a>
 	<a href="https://www.codacy.com/gh/venaturum/staircase/dashboard" alt="Codacy Grade">
@@ -24,7 +24,7 @@
 		<img src="https://codecov.io/gh/venaturum/staircase/branch/master/graph/badge.svg"/></a>
 </p>
 <p align="center">
-	<a href="https://mybinder.org/v2/gh/venaturum/staircase/CondaBuild?filepath=docs%2Fexamples" alt="Binder">
+	<a href="https://mybinder.org/v2/gh/venaturum/staircase/master?filepath=docs%2Fexamples" alt="Binder">
         <img src="https://mybinder.org/badge_logo.svg" /></a>	
 	<a href="https://colab.research.google.com/github/venaturum/staircase/blob/master/docs/examples/Index.ipynb" alt="Colab">
         <img src="https://colab.research.google.com/assets/colab-badge.svg" /></a>		
