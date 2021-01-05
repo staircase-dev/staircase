@@ -56,6 +56,9 @@ nbsphinx = "^0.5"
 sphinx-autobuild = "*"
 guzzle-sphinx-theme = "^0.7.11"
 
+[tool.poetry.extras]
+codecov = ["codecov"]
+
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/venaturum/staircase/issues"
 

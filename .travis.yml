@@ -5,9 +5,9 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
-  - "3.9"
+
 before_install:
-  - pip install poetry codecov
+  - pip install poetry
     
 install:
   - poetry install
@@ -16,4 +16,5 @@ script:
   - poetry run pytest -v --color=yes --cov-report=xml --cov=staircase tests
   
 after_success:
-  - codecov
+  - poetry install --extras codecov
+  - poetry run codecov
