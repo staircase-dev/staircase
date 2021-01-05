@@ -12,10 +12,16 @@
 #from numpydoc.docscrape import NumpyDocString
 #from sphinx.ext.autosummary import _import_by_name
 import guzzle_sphinx_theme
+
+#for sphinx
 import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
+
+#for nbsphinx
+os.environ['PYTHONPATH'] = os.path.abspath(parentdir)
+
 import staircase as sc
 
 
@@ -83,11 +89,7 @@ s2 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1)
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
-html_theme = 'alabaster'
-html_theme = "sphinx_rtd_theme"
-#html_theme = "nature"
-#html_theme = "bizstyle"
+
 html_theme = "guzzle_sphinx_theme"
 
 html_theme_path = guzzle_sphinx_theme.html_theme_path()
