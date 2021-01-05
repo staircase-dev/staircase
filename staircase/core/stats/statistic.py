@@ -28,9 +28,6 @@ def _get_integral_and_mean(self, lower=float('-inf'), upper=float('inf')):
     --------
     Stairs.integrate, Stairs.mean
     """
-    print(self)
-    print(lower)
-    print(upper)
     new_instance = self.clip(lower, upper)
     if new_instance.number_of_steps() < 2:
         return 0, np.nan
