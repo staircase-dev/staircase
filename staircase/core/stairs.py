@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytz
-import math
 from pandas.plotting import register_matplotlib_converters
 
 from staircase.docstrings.decorator import add_doc, append_doc

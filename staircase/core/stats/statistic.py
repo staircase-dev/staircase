@@ -2,7 +2,6 @@ import numpy as np
 from pandas import Timestamp
 from staircase.core.stats.distribution import percentile_stairs
 from staircase.core.tools.datetimes import (
-    check_binop_timezones,
     _convert_date_to_float,
     _convert_float_to_date,
 )
