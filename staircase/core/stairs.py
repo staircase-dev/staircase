@@ -15,7 +15,6 @@ import pytz
 import math
 from pandas.plotting import register_matplotlib_converters
 
-register_matplotlib_converters()
 from staircase.docstrings.decorator import add_doc, append_doc
 from staircase.docstrings import stairs_class as SC_docs
 from staircase.docstrings import stairs_module as SM_docs
@@ -26,6 +25,7 @@ from staircase.core.tools.datetimes import (
     _convert_float_to_date,
 )
 
+register_matplotlib_converters()
 
 tz_default = None
 use_dates_default = False
@@ -114,7 +114,7 @@ def _using_dates(collection):
     for func in (dict_use_dates, series_use_dates, array_use_dates):
         try:
             return func()
-        except:
+        except Exception:
             pass
     raise TypeError(
         "Could not determine if Stairs collection is using dates.  Collection should be a tuple, list, numpy array, dict or pandas.Series."
@@ -125,12 +125,12 @@ def _using_dates(collection):
 def sample(collection, points=None, how="right", expand_key=True):
     """
     Takes a dict-like collection of Stairs instances and evaluates their values across a common set of points.
-    
+
     Technically the results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
     or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See
     :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
-        
-    
+
+
     Parameters
     ----------
     collection : dictionary or pandas.Series
@@ -144,13 +144,13 @@ def sample(collection, points=None, how="right", expand_key=True):
     expand_key: boolean, default True
         used when collection is a multi-index pandas.Series.  Indicates if index should be expanded from
         tuple to columns in a dataframe.
-        
+
     Returns
     -------
     :class:`pandas.DataFrame`
         A dataframe, in tidy format, with three columns: points, key, value.  The column key contains
         the identifiers used in the dict-like object specified by 'collection'.
-        
+
     See Also
     --------
     Stairs.sample
@@ -186,7 +186,7 @@ def sample(collection, points=None, how="right", expand_key=True):
             result = result.join(
                 pd.DataFrame(result.key.tolist(), columns=collection.index.names)
             ).drop(columns="key")
-        except:
+        except Exception:
             pass
     return result
 
@@ -195,7 +195,7 @@ def sample(collection, points=None, how="right", expand_key=True):
 def aggregate(collection, func, points=None):
     """
     Takes a collection of Stairs instances and returns a single instance representing the aggregation.
-    
+
     Parameters
     ----------
     collection : tuple, list, numpy array, dict or pandas.Series
@@ -204,15 +204,15 @@ def aggregate(collection, func, points=None):
         The function to apply, eg numpy.max
     points: vector of floats or dates
         Points at which to evaluate.  Defaults to union of all step changes.  Equivalent to applying Stairs.resample().
-        
+
     Returns
     ----------
     :class:`Stairs`
-    
+
     Notes
     -----
     The points at which to aggregate will include -infinity whether explicitly included or not.
-    
+
     See Also
     --------
     staircase.mean, staircase.median, staircase.min, staircase.max
@@ -243,16 +243,16 @@ def aggregate(collection, func, points=None):
 def _mean(collection):
     """
     Takes a collection of Stairs instances and returns the mean of the corresponding step functions.
-    
+
     Parameters
     ----------
     collection : tuple, list, numpy array, dict or pandas.Series
         The Stairs instances to aggregate using a mean function
-    
+
     Returns
     -------
     :class:`Stairs`
-    
+
     See Also
     --------
     staircase.aggregate, staircase.median, staircase.min, staircase.max
@@ -264,16 +264,16 @@ def _mean(collection):
 def _median(collection):
     """
     Takes a collection of Stairs instances and returns the median of the corresponding step functions.
-    
+
     Parameters
     ----------
     collection : tuple, list, numpy array, dict or pandas.Series
         The Stairs instances to aggregate using a median function
-    
+
     Returns
     -------
     :class:`Stairs`
-    
+
     See Also
     --------
     staircase.aggregate, staircase.mean, staircase.min, staircase.max
@@ -285,16 +285,16 @@ def _median(collection):
 def _min(collection):
     """
     Takes a collection of Stairs instances and returns the minimum of the corresponding step functions.
-    
+
     Parameters
     ----------
     collection : tuple, list, numpy array, dict or pandas.Series
         The Stairs instances to aggregate using a min function
-    
+
     Returns
     -------
     :class:`Stairs`
-    
+
     See Also
     --------
     staircase.aggregate, staircase.mean, staircase.median, staircase.max
@@ -306,16 +306,16 @@ def _min(collection):
 def _max(collection):
     """
     Takes a collection of Stairs instances and returns the maximum of the corresponding step functions.
-    
+
     Parameters
     ----------
     collection : tuple, list, numpy array, dict or pandas.Series
         The Stairs instances to aggregate using a max function
-    
+
     Returns
     -------
     :class:`Stairs`
-    
+
     See Also
     --------
     staircase.aggregate, staircase.mean, staircase.median, staircase.min
@@ -326,11 +326,11 @@ def _max(collection):
 def resample(container, x, how="right"):
     """
     Applies the Stairs.resample function to a 1D container, eg tuple, list, numpy array, pandas series, dictionary
-    
+
     Returns
     -------
     type(container)
-    
+
     See Also
     --------
     Stairs.resample
@@ -363,7 +363,7 @@ def _pairwise_commutative_operation_matrix(
 def corr(collection, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the correlation matrix for a collection of :class:`Stairs` instances
-    
+
     Parameters
     ----------
     collection: :class:`pandas.Series`, dict, or array-like of :class:`Stairs` values
@@ -372,12 +372,12 @@ def corr(collection, lower=float("-inf"), upper=float("inf")):
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     :class:`pandas.DataFrame`
         The correlation matrix
-        
+
     See Also
     --------
     Stairs.corr, staircase.cov
@@ -391,7 +391,7 @@ def corr(collection, lower=float("-inf"), upper=float("inf")):
 def cov(collection, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the covariance matrix for a collection of :class:`Stairs` instances
-    
+
     Parameters
     ----------
     collection: :class:`pandas.Series`, dict, or array-like of :class:`Stairs` values
@@ -400,12 +400,12 @@ def cov(collection, lower=float("-inf"), upper=float("inf")):
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     :class:`pandas.DataFrame`
         The covariance matrix
-        
+
     See Also
     --------
     Stairs.cov, staircase.corr
@@ -418,24 +418,24 @@ def cov(collection, lower=float("-inf"), upper=float("inf")):
 class Stairs:
     """
     An instance of a Stairs class is used to represent a :ref:`step function <getting_started.step_function>`.
-    
+
     The Stairs class encapsulates a `SortedDict <http://www.grantjenks.com/docs/sortedcontainers/sorteddict.html>`_
     which is used to hold the points at which the step function changes, and by how much.
-    
+
     See the :ref:`Stairs API <api.Stairs>` for details of methods.
     """
 
     def __init__(self, value=0, use_dates=_default, tz=_default):
         """
         Initialise a Stairs instance.
-        
+
         Parameters
         ----------
         value : float, default 0
             The value of the step function at negative infinity.
         use_dates: bool, default False
             Allows the step function to be defined with `Pandas.Timestamp <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html>`_.
-        
+
         Returns
         -------
         :class:`Stairs`
@@ -490,7 +490,7 @@ class Stairs:
     def copy(self, deep=None):
         """
         Returns a deep copy of this Stairs instance
-        
+
         Parameters
         ----------
         deep : None
@@ -525,7 +525,7 @@ class Stairs:
     def plot(self, ax=None, **kwargs):
         """
         Makes a step plot representing the finite intervals belonging to the Stairs instance.
-        
+
         Uses matplotlib as a backend.
 
         Parameters
@@ -534,7 +534,7 @@ class Stairs:
             Allows the axes, on which to plot, to be specified
         **kwargs
             Options to pass to :function: `matplotlib.pyplot.step`
-        
+
         Returns
         -------
         :class:`matplotlib.axes.Axes`
@@ -576,11 +576,11 @@ class Stairs:
             if points where step changes occur do not coincide with x then this parameter
             has no effect.  Where a step changes occurs at a point given by x, this parameter
             determines if the step function is evaluated at the interval to the left, or the right.
-            
+
         Returns
         -------
         float, or list of floats
-        
+
         See Also
         --------
         staircase.sample
@@ -620,8 +620,8 @@ class Stairs:
         The window around each point is defined by two values paired into an array-like parameter called *window*.
         These two scalars are the distance from the point to the left boundary of the window, and the right boundary
         of the window respectively.
-        
-        
+
+
         Parameters
         ----------
         x : int, float or vector data
@@ -636,11 +636,11 @@ class Stairs:
         upper_how: {'left', 'right'}, default 'left'
             Determines how the right window boundary should be evaluated.
             If 'right' then :math:`\\lim_{x \\to upper_how^{+}} f(x)` is included in the window.
-            
+
         Returns
         -------
         float, or list of floats
-        
+
         See Also
         --------
         staircase.sample
@@ -678,16 +678,16 @@ class Stairs:
         This method can be used to directly sample values of the corresponding step function at the points
         provided, or alternatively calculate aggregations over some window around each point.  The first of these
         is performed when *aggfunc* is None.
-        
+
         If *aggfunc* is None then the results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
         or :math:`\\lim_{x \\to z^{+}} f(x)`, when how = 'left' or how = 'right' respectively. See
         :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
-        
+
         If *aggfunc* is not None then a window, around each point x (referred to as the focal point), over which to aggregate is required.
         The window is defined by two values paired into an array-like parameter called *window*.
         These two scalars are the distance from the focal point to the left boundary of the window, and the right boundary
         of the window respectively.
-        
+
         The function can be called using parentheses.  See example below.
 
         Parameters
@@ -709,11 +709,11 @@ class Stairs:
         upper_how: {'left', 'right'}, default 'left'
             Only relevant if *aggfunc* is not None.  Determines how the right window boundary should be evaluated.
             If 'right' then :math:`\\lim_{x \\to upper_how^{+}} f(x)` is included in the window.
-            
+
         Returns
         -------
         float, or list of floats
-        
+
         See Also
         --------
         staircase.sample
@@ -786,11 +786,11 @@ class Stairs:
         upper_how: {'left', 'right'}, default 'left'
             Only relevant if *aggfunc* is not None.  Determines how the right window boundary should be evaluated.
             If 'right' then :math:`\\lim_{x \\to upper_how^{+}} f(x)` is included in the window.
-         
+
         Returns
         -------
         :class:`Stairs`
-      
+
         See Also
         --------
         staircase.resample
@@ -835,8 +835,8 @@ class Stairs:
     def _layer(self, start=None, end=None, value=None):
         """
         Changes the value of the step function.
-        
-        
+
+
         Parameters
         ----------
         start : int, float or vector data, optional
@@ -845,12 +845,12 @@ class Stairs:
             end time(s) of the interval(s)
         value: int, float or vector data, optional
             value(s) of the interval(s)
-              
+
         Returns
         -------
         :class:`Stairs`
             The current instance is returned to facilitate method chaining
-        
+
         """
         if hasattr(start, "__iter__") or hasattr(end, "__iter__"):
             layer_func = self._layer_multiple
@@ -914,11 +914,11 @@ class Stairs:
     def _step_changes(self):
         """
         Returns a dictionary of key, value pairs of indicating where step changes occur in the step function, and the change in value
-        
+
         Returns
         -------
         dictionary
-        
+
         See Also
         --------
         Stairs.number_of_steps
@@ -932,7 +932,7 @@ class Stairs:
         )
 
     def _cumulative(self):
-        if self.cached_cumulative == None:
+        if self.cached_cumulative is None:
             self.cached_cumulative = SortedDict(
                 zip(self._keys(), np.cumsum(self._values()))
             )
@@ -947,7 +947,7 @@ class Stairs:
     def __bool__(self):
         """
         Return True if and only if step function has a value of 1 everywhere.
-        
+
         Returns
         -------
         boolean
@@ -962,7 +962,7 @@ class Stairs:
     ):
         """
         Generate descriptive statistics.
-        
+
         Parameters
         ----------
         lower : int, float or pandas.Timestamp
@@ -971,11 +971,11 @@ class Stairs:
             upper bound of the interval on which to perform the calculation
         percentiles: array-like of float, default [25, 50, 70]
             The percentiles to include in output.  Numbers should be in the range 0 to 100.
-              
+
         Returns
         -------
         :class:`pandas.Series`
-            
+
         See Also
         --------
         Stairs.mean, Stairs.std, Stairs.min, Stairs.percentile, Stairs.max
@@ -1002,7 +1002,7 @@ class Stairs:
         The calculation is between two step functions described by *self* and *other*.
         If lag is None or 0 then covariance is calculated, otherwise cross-covariance is calculated.
         Autocovariance is a special case of cross-covariance when *other* is equal to *self*.
-        
+
         Parameters
         ----------
         other: :class:`Stairs`
@@ -1018,12 +1018,12 @@ class Stairs:
             only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
             If 'pre' then the domain over which the calculation is performed is the overlap
             of the original domain and the translated domain.
-            
+
         Returns
         -------
         float
             The covariance (or cross-covariance) between *self* and *other*
-            
+
         See Also
         --------
         Stairs.corr, staircase.cov, staircase.corr
@@ -1041,13 +1041,13 @@ class Stairs:
     def corr(self, other, lower=float("-inf"), upper=float("inf"), lag=0, clip="pre"):
         """
         Calculates either correlation, autocorrelation or cross-correlation.
-        
+
         All calculations are based off the `Pearson correlation coefficient <https://en.wikipedia.org/wiki/Pearson_correlation_coefficient>`_.
-        
+
         The calculation is between two step functions described by *self* and *other*.
         If lag is None or 0 then correlation is calculated, otherwise cross-correlation is calculated.
         Autocorrelation is a special case of cross-correlation when *other* is equal to *self*.
-        
+
         Parameters
         ----------
         other: :class:`Stairs`
@@ -1063,12 +1063,12 @@ class Stairs:
             only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
             If 'pre' then the domain over which the calculation is performed is the overlap
             of the original domain and the translated domain.
-            
+
         Returns
         -------
         float
             The correlation (or cross-correlation) between *self* and *other*
-            
+
         See Also
         --------
         Stairs.cov, staircase.corr, staircase.cov
@@ -1092,7 +1092,7 @@ class Stairs:
     ):
         """
         Returns the range of the step function as a set of discrete values.
-        
+
         Parameters
         ----------
         lower : int, float or pandas.Timestamp, optional
@@ -1105,7 +1105,7 @@ class Stairs:
         upper_how: {'left', 'right'}, default 'left'
             Determines how the step function should be evaluated at *upper*.
             If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
-              
+
         Returns
         -------
         set of floats
@@ -1143,11 +1143,11 @@ class Stairs:
     ):
         """
         Calculates the minimum value of the step function
-        
+
         If an interval which to calculate over is specified it is interpreted
         as a closed interval, with *lower_how* and *upper_how* indicating how the step function
         should be evaluated at the at the endpoints of the interval.
-        
+
         Parameters
         ----------
         lower : int, float or pandas.Timestamp, optional
@@ -1160,12 +1160,12 @@ class Stairs:
         upper_how: {'left', 'right'}, default 'left'
             Determines how the step function should be evaluated at *upper*.
             If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
-              
+
         Returns
         -------
         float
             The minimum value of the step function
-            
+
         See Also
         --------
         Stairs.max, staircase.min
@@ -1182,11 +1182,11 @@ class Stairs:
     ):
         """
         Calculates the maximum value of the step function
-        
+
         If an interval which to calculate over is specified it is interpreted
         as a closed interval, with *lower_how* and *upper_how* indicating how the step function
         should be evaluated at the at the endpoints of the interval.
-        
+
         Parameters
         ----------
         lower : int, float or pandas.Timestamp, optional
@@ -1199,12 +1199,12 @@ class Stairs:
         upper_how: {'left', 'right'}, default 'left'
             Determines how the step function should be evaluated at *upper*.
             If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
-              
+
         Returns
         -------
         float
             The maximum value of the step function
-            
+
         See Also
         --------
         Stairs.min, staircase.max
@@ -1215,14 +1215,14 @@ class Stairs:
     def _clip(self, lower=float("-inf"), upper=float("inf")):
         """
         Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
-        
+
         Parameters
         ----------
         lower : int, float or pandas.Timestamp
             lower bound of the interval
         upper : int, float or pandas.Timestamp
             upper bound of the interval
-              
+
         Returns
         -------
         :class:`Stairs`
@@ -1262,20 +1262,20 @@ class Stairs:
     def shift(self, delta):
         """
         Returns a stairs instance corresponding to a horizontal translation by delta
-        
+
         If delta is positive the corresponding step function is moved right.
         If delta is negative the corresponding step function is moved left.
-        
+
         Parameters
         ----------
         delta : int, float or pandas.Timedelta
             the amount by which to translate.  A pandas.Timedelta is only valid when using dates.
             If using dates and delta is an int or float, then it is interpreted as a number of hours.
-              
+
         Returns
         -------
         :class:`Stairs`
-        
+
         See Also
         --------
         Stairs.diff
@@ -1294,17 +1294,17 @@ class Stairs:
         """
         Returns a stairs instance corresponding to the difference between the step function corresponding to *self*
         and the same step-function translated by delta.
-        
+
         Parameters
         ----------
         delta : int, float or pandas.Timedelta
             the amount by which to translate.  A pandas.Timestamp is only valid when using dates.
             If using dates and delta is an int or float, then it is interpreted as a number of hours.
-              
+
         Returns
         -------
         :class:`Stairs`
-        
+
         See Also
         --------
         Stairs.shift
@@ -1315,21 +1315,21 @@ class Stairs:
     def rolling_mean(self, window=(0, 0), lower=float("-inf"), upper=float("inf")):
         """
         Returns coordinates defining rolling mean
-        
+
         The rolling mean of a step function is a continous piece-wise linear function, hence it can
         be described by a sequence of x,y coordinates which mark where function changes gradient.  These
         x,y coordinates are returned as a :class:`pandas.Series` which could then be used with
         :meth:`matplotlib.axes.Axes.plot`, or equivalent, to visualise.
-        
+
         A rolling mean requires a window around a point x (referred to as the focal point) to be defined.
         In this implementation the window is defined by two values paired into an array-like parameter called *window*.
         These two numbers are the distance from the focal point to the left boundary of the window, and the right boundary
         of the window respectively.  This allows for trailing windows, leading windows and everything between
         (including a centred window).
-        
+
         If *lower* or *upper* is specified then only coordinates corresponding to windows contained within
         [lower, upper] are included.
-        
+
         Parameters
         ----------
         window : array-like of int, float or pandas.Timedelta
@@ -1338,11 +1338,11 @@ class Stairs:
             used to indicate the lower bound of the domain of the calculation
         upper : int, float, pandas.Timestamp, or None, default None
             used to indicate the upper bound of the domain of the calculation
-              
+
         Returns
         -------
         :class:`pandas.Series`
-        
+
         See Also
         --------
         Stairs.mean
@@ -1372,10 +1372,10 @@ class Stairs:
     def to_dataframe(self):
         """
         Returns a pandas.DataFrame with columns 'start', 'end' and 'value'
-        
+
         The rows of the dataframe can be interpreted as the interval definitions
         which make up the step function.
-        
+
         Returns
         -------
         :class:`pandas.DataFrame`

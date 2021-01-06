@@ -62,4 +62,7 @@ codecov = ["codecov"]
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/venaturum/staircase/issues"
 
+[tool.black]
+exclude = "staircase/test_data.py"
+
 

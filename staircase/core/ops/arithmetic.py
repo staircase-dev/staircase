@@ -9,14 +9,14 @@ import staircase as sc
 def negate(self):
     """
     An operator which produces a new Stairs instance representing the multiplication of the step function by -1.
-    
+
     Should be used as an operator, i.e. by utilising the symbol -.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing the multiplication of the step function by -1
-        
+
     See Also
     --------
     Stairs.subtract
@@ -32,14 +32,14 @@ def negate(self):
 def add(self, other):
     """
     An operator facilitating the addition of two step functions.
-    
+
     Should be used as an operator, i.e. by utilising the symbol +.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing the addition of two step functions
-        
+
     See Also
     --------
     Stairs.subtract
@@ -61,14 +61,14 @@ def add(self, other):
 def subtract(self, other):
     """
     An operator facilitating the subtraction of one step function from another.
-    
+
     Should be used as an operator, i.e. by utilising the symbol -.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing the subtraction of one step function from another
-    
+
     See Also
     --------
     Stairs.add
@@ -114,7 +114,7 @@ def divide(self, other):
     -------
     :class:`Stairs`
         A new instance representing the division of one step function by another
-        
+
     See Also
     --------
     Stairs.multiply
@@ -135,20 +135,20 @@ def divide(self, other):
 def multiply(self, other):
     r"""
     An operator facilitating the multiplication of one step function with another.
-    
+
     Should be used as an operator, i.e. by utilising the symbol \*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing the multiplication of one step function from another
-    
+
     See Also
     --------
     Stairs.divide
     """
     if not isinstance(other, sc.Stairs):
-        other = Stairs(other, self.use_dates, self.tz)
+        other = sc.Stairs(other, self.use_dates, self.tz)
     else:
         check_binop_timezones(self, other)
     return _mul_or_div(self, other, np.multiply)

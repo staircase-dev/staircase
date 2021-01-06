@@ -15,22 +15,22 @@ warnings.simplefilter("default")
 def percentile_stairs(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates a percentile function (and returns a corresponding Stairs instance)
-    
+
     This method can be used for efficiency gains if substituting for multiple calls
     to percentile() with the same lower and upper parameters
-    
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp, optional
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp, optional
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     :class:`Stairs`
         An instance representing a percentile function
-        
+
     See Also
     --------
     Stairs.percentile
@@ -75,19 +75,19 @@ def ecdf_stairs(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_
     for the corresponding step function values (and returns the result as a Stairs instance)
-   
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp, optional
         lower bound of the step-function domain on which to perform the calculation
     upper : int, float or pandas.Timestamp, optional
         upper bound of the step-function domain to perform the calculation
-          
+
     Returns
     -------
     :class:`Stairs`
         An instance representing an empirical cumulative distribution function for the step function values
-        
+
     See Also
     --------
     staircase.hist_from_ecdf
@@ -112,7 +112,7 @@ def hist_from_ecdf(ecdf, bin_edges=None, closed="left"):
     """
     Calculates a histogram from a Stairs instance corresponding to an
     `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_.
-    
+
     Such ecdf stair instances are returned from :meth:`Stairs.ecdf_stairs`.  This function predominantly exists
     to allow users to store the result of a ecdf stairs instance locally, and experiment with bin_edges without
     requiring the recalculation of the ecdf.
@@ -126,12 +126,12 @@ def hist_from_ecdf(ecdf, bin_edges=None, closed="left"):
         If not specified the bin_edges will be assumed to be the integers which cover the domain of the ecdf
     closed: {'left', 'right'}, default 'left'
         determines whether the bins, which are half-open intervals, are left-closed , or right-closed
-          
+
     Returns
     -------
     :class:`pandas.Series`
         A Series, with a :class:`pandas.IntervalIndex`, representing the values of the histogram
-        
+
     See Also
     --------
     Stairs.hist
@@ -159,7 +159,7 @@ def hist_from_ecdf(ecdf, bin_edges=None, closed="left"):
 def hist(self, lower=float("-inf"), upper=float("inf"), bin_edges=None, closed="left"):
     """
     Calculates a histogram for the corresponding step function values
-   
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp, optional
@@ -171,12 +171,12 @@ def hist(self, lower=float("-inf"), upper=float("inf"), bin_edges=None, closed="
         If not specified the bin_edges will be assumed to be the integers which cover the step function range
     closed: {'left', 'right'}, default 'left'
         determines whether the bins, which are half-open intervals, are left-closed , or right-closed
-          
+
     Returns
     -------
     :class:`pandas.Series`
         A Series, with a :class:`pandas.IntervalIndex`, representing the values of the histogram
-        
+
     See Also
     --------
     staircase.hist_from_ecdf

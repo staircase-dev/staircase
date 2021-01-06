@@ -15,20 +15,20 @@ import staircase as sc
 def _get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the integral, and the mean of the step function.
-    
-    
+
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     tuple
         The area and mean are returned as a pair
-        
+
     See Also
     --------
     Stairs.integrate, Stairs.mean
@@ -61,19 +61,19 @@ def get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
 def integrate(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the integral of the step function.
-    
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     float
         The area
-        
+
     See Also
     --------
     Stairs.get_integral_and_mean
@@ -86,19 +86,19 @@ def integrate(self, lower=float("-inf"), upper=float("inf")):
 def mean(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the mean of the step function.
-    
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     float
         The mean
-    
+
     See Also
     --------
     Stairs.rolling_mean, Stairs.get_integral_and_mean, Stairs.median, Stairs.mode
@@ -111,19 +111,19 @@ def mean(self, lower=float("-inf"), upper=float("inf")):
 def percentile(self, x, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the x-th percentile of the step function's values
-    
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     float
         The x-th percentile
-        
+
     See Also
     --------
     Stairs.median, Stairs.percentile_stairs
@@ -137,19 +137,19 @@ def percentile(self, x, lower=float("-inf"), upper=float("inf")):
 def median(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the median of the step function.
-    
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     float
         The median
-        
+
     See Also
     --------
     Stairs.mean, Stairs.mode, Stairs.percentile, Stairs.percentile_Stairs
@@ -161,21 +161,21 @@ def median(self, lower=float("-inf"), upper=float("inf")):
 def mode(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the mode of the step function.
-    
+
     If there is more than one mode only the smallest is returned
-    
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp, optional
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp, optional
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     float
         The mode
-        
+
     See Also
     --------
     Stairs.mean, Stairs.median
@@ -193,19 +193,19 @@ def mode(self, lower=float("-inf"), upper=float("inf")):
 def var(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the variance of the step function.
-    
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     float
         The variance of the step function
-        
+
     See Also
     --------
     Stairs.std
@@ -230,19 +230,19 @@ def var(self, lower=float("-inf"), upper=float("inf")):
 def std(self, lower=float("-inf"), upper=float("inf")):
     """
     Calculates the standard deviation of the step function.
-    
+
     Parameters
     ----------
     lower : int, float or pandas.Timestamp
         lower bound of the interval on which to perform the calculation
     upper : int, float or pandas.Timestamp
         upper bound of the interval on which to perform the calculation
-          
+
     Returns
     -------
     float
         The standard deviation of the step function
-        
+
     See Also
     --------
     Stairs.var

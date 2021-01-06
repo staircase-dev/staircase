@@ -1,10 +1,10 @@
 add_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1+s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1+s2"), stair_list):
@@ -15,10 +15,10 @@ Examples
 subtract_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1-s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1-s2"), stair_list):
@@ -29,10 +29,10 @@ Examples
 divide_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, (s2+2), s1/(s2+2)]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2+2", "s1/(s2+2)"), stair_list):
@@ -43,10 +43,10 @@ Examples
 multiply_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1*s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1*s2"), stair_list):
@@ -57,10 +57,10 @@ Examples
 negate_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> s1.plot()
     >>> (-s1).plot(color='r')
 """
@@ -68,10 +68,10 @@ Examples
 lt_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1 < s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 < s2"), stair_list):
@@ -82,10 +82,10 @@ Examples
 gt_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1 > s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 > s2"), stair_list):
@@ -96,10 +96,10 @@ Examples
 le_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1 <= s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 <= s2"), stair_list):
@@ -110,10 +110,10 @@ Examples
 ge_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1 >= s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 >= s2"), stair_list):
@@ -124,10 +124,10 @@ Examples
 eq_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1 == s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 == s2"), stair_list):
@@ -139,10 +139,10 @@ Examples
 ne_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1 != s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 != s2"), stair_list):
@@ -165,10 +165,10 @@ False
 make_boolean_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s2, s2.make_boolean()]
     >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s2", "s2.make_boolean()"), stair_list):
@@ -179,10 +179,10 @@ Examples
 invert_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s2, ~s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s2", "~s2"), stair_list):
@@ -194,10 +194,10 @@ Examples
 logical_and_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1 & s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 & s2"), stair_list):
@@ -208,10 +208,10 @@ Examples
 logical_or_example = """
 Examples
 --------
-    
+
 .. plot::
     :context: close-figs
-    
+
     >>> stair_list = [s1, s2, s1 | s2]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2", "s1 | s2"), stair_list):

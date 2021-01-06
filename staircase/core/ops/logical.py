@@ -9,12 +9,12 @@ import staircase as sc
 def make_boolean(self):
     """
     Returns a boolean-valued step function indicating where *self* is non-zero.
-    
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* is non-zero
-    
+
     See Also
     --------
     Stairs.invert
@@ -27,14 +27,14 @@ def make_boolean(self):
 def invert(self):
     """
     Returns a boolean-valued step function indicating where *self* is zero-valued.
-    
+
     Equivalent to ~*self*
-    
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* is zero-valued
-    
+
     See Also
     --------
     Stairs.make_boolean
@@ -48,14 +48,14 @@ def invert(self):
 def logical_and(self, other):
     """
     Returns a boolean-valued step function indicating where *self* and *other* are non-zero.
-    
+
     Equivalent to *self* & *other*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* & *other*
-        
+
     See Also
     --------
     Stairs.logical_or
@@ -71,14 +71,14 @@ def logical_and(self, other):
 def logical_or(self, other):
     """
     Returns a boolean-valued step function indicating where *self* or *other* are non-zero.
-    
+
     Equivalent to *self* | *other*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* | *other*
-    
+
     See Also
     --------
     Stairs.logical_and

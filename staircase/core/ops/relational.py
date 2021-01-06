@@ -21,14 +21,14 @@ def _compare(cumulative, zero_comparator, use_dates=False, tz=None):
 def lt(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is strictly less than *other*.
-    
+
     Equivalent to *self* < *other*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* < *other*
-        
+
     See Also
     --------
     Stairs.gt, Stairs.le, Stairs.ge
@@ -50,14 +50,14 @@ def lt(self, other):
 def gt(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is strictly greater than *other*.
-    
+
     Equivalent to *self* > *other*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* > *other*
-        
+
     See Also
     --------
     Stairs.lt, Stairs.le, Stairs.ge
@@ -79,14 +79,14 @@ def gt(self, other):
 def le(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is less than, or equal to, *other*.
-    
+
     Equivalent to *self* <= *other*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* <= *other*
-        
+
     See Also
     --------
     Stairs.lt, Stairs.gt, Stairs.ge
@@ -108,14 +108,14 @@ def le(self, other):
 def ge(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is greater than, or equal to, *other*.
-    
+
     Equivalent to *self* >= *other*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* >= *other*
-        
+
     See Also
     --------
     Stairs.lt, Stairs.gt, Stairs.le
@@ -137,14 +137,14 @@ def ge(self, other):
 def eq(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is equal to *other*.
-    
+
     Equivalent to *self* == *other*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* == *other*
-        
+
     See Also
     --------
     Stairs.ne, Stairs.identical
@@ -166,14 +166,14 @@ def eq(self, other):
 def ne(self, other):
     """
     Returns a boolean-valued step function indicating where *self* is not equal to *other*.
-    
+
     Equivalent to *self* != *other*.  See examples below.
-          
+
     Returns
     -------
     :class:`Stairs`
         A new instance representing where *self* != *other*
-        
+
     See Also
     --------
     Stairs.eq, Stairs.identical
@@ -195,11 +195,11 @@ def ne(self, other):
 def identical(self, other):
     """
     Returns True if *self* and *other* represent the same step functions.
-    
+
     Returns
     -------
     boolean
-    
+
     See Also
     --------
     Stairs.eq, Stairs.ne
