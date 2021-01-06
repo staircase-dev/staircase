@@ -218,4 +218,3 @@ Examples
     ...     stair_instance.plot(ax)
     ...     ax.set_title(title)
 """
-

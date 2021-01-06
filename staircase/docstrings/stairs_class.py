@@ -1,4 +1,3 @@
-
 sample_example = """
         Examples
         --------
@@ -37,7 +36,6 @@ resample_example = """
             ...     stair_instance.plot(ax)
             ...     ax.set_title(title)
 """
-
 
 
 layer_example = """

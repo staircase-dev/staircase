@@ -1,4 +1,3 @@
-
 sample_example = """
     Examples
     --------
