@@ -64,5 +64,3 @@ codecov = ["codecov"]
 
 [tool.black]
 exclude = "staircase/test_data.py"
-
-
