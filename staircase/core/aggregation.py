@@ -6,11 +6,11 @@ import staircase as sc
 def _make_extremum_func(extrema):
     """
     Used to generate _min_pair and _max_pair respectively to cut code duplication
-    
+
     Parameters
     ----------
     extrema : {"minimum", "maximum"}
-    
+
     Returns:
         Callable
     """
