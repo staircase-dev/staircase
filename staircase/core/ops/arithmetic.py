@@ -1,19 +1,9 @@
 import operator
 import numpy as np
-from staircase.core.tools.datetimes import check_binop_timezones
+from staircase.core.tools import _sanitize_binary_operands
 from staircase.util._decorators import Appender
 from staircase.core.ops import docstrings
 import staircase as sc
-
-
-def _sanitize_binary_operands(self, other, copy_other=False):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-        if copy_other:
-            other = other.copy()
-    return self.copy(), other
 
 
 @Appender(docstrings.negate_docstring, join="\n", indents=1)

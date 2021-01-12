@@ -1,5 +1,5 @@
 import numpy as np
-from staircase.core.tools.datetimes import check_binop_timezones
+from staircase.core.tools import _sanitize_binary_operands
 from staircase.util._decorators import Appender
 from staircase.core.ops import docstrings
 import staircase as sc
@@ -17,97 +17,29 @@ def _compare(cumulative, zero_comparator, use_dates=False, tz=None):
     return new_instance
 
 
-@Appender(docstrings.lt_docstring, join="\n", indents=1)
-def lt(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    comparator = float(0).__lt__
-    return _compare(
-        (other - self)._cumulative(),
-        comparator,
-        self.use_dates or other.use_dates,
-        self.tz,
-    )
+def _make_relational_func(comparator, docstring):
+    @Appender(docstring, join="\n", indents=1)
+    def func(self, other):
+        self, other = _sanitize_binary_operands(self, other)
+        return _compare(
+            (other - self)._cumulative(),
+            comparator,
+            self.use_dates or other.use_dates,
+            self.tz,
+        )
+
+    return func
 
 
-@Appender(docstrings.gt_docstring, join="\n", indents=1)
-def gt(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    comparator = float(0).__gt__
-    return _compare(
-        (other - self)._cumulative(),
-        comparator,
-        self.use_dates or other.use_dates,
-        self.tz,
-    )
-
-
-@Appender(docstrings.le_docstring, join="\n", indents=1)
-def le(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    comparator = float(0).__le__
-    return _compare(
-        (other - self)._cumulative(),
-        comparator,
-        self.use_dates or other.use_dates,
-        self.tz,
-    )
-
-
-@Appender(docstrings.ge_docstring, join="\n", indents=1)
-def ge(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    comparator = float(0).__ge__
-    return _compare(
-        (other - self)._cumulative(),
-        comparator,
-        self.use_dates or other.use_dates,
-        self.tz,
-    )
-
-
-@Appender(docstrings.eq_docstring, join="\n", indents=1)
-def eq(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    comparator = float(0).__eq__
-    return _compare(
-        (other - self)._cumulative(),
-        comparator,
-        self.use_dates or other.use_dates,
-        self.tz,
-    )
-
-
-@Appender(docstrings.ne_docstring, join="\n", indents=1)
-def ne(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    comparator = float(0).__ne__
-    return _compare(
-        (other - self)._cumulative(),
-        comparator,
-        self.use_dates or other.use_dates,
-        self.tz,
-    )
+lt = _make_relational_func(float(0).__lt__, docstrings.lt_docstring)
+gt = _make_relational_func(float(0).__gt__, docstrings.gt_docstring)
+le = _make_relational_func(float(0).__le__, docstrings.le_docstring)
+ge = _make_relational_func(float(0).__ge__, docstrings.ge_docstring)
+eq = _make_relational_func(float(0).__eq__, docstrings.eq_docstring)
+ne = _make_relational_func(float(0).__ne__, docstrings.ne_docstring)
 
 
 @Appender(docstrings.identical_docstring, join="\n", indents=1)
 def identical(self, other):
-    check_binop_timezones(self, other)
+    self, other = _sanitize_binary_operands(self, other)
     return bool(self == other)
