@@ -1,3 +1,4 @@
+import operator
 import numpy as np
 from staircase.core.tools.datetimes import check_binop_timezones
 from staircase.util._decorators import Appender
@@ -24,65 +25,54 @@ def negate(self):
     return new_instance
 
 
-@Appender(docstrings.add_docstring, join="\n", indents=1)
-def add(self, other):
-    new_instance, other = _sanitize_binary_operands(self, other)
-    for key, value in other._items():
-        new_instance[key] = self._get(key, 0) + value
-    new_instance._reduce()
-    new_instance.use_dates = self.use_dates or other.use_dates
-    new_instance.cached_cumulative = None
-    return new_instance
+def _make_add_subtract_func(docstring, op):
+    @Appender(docstring, join="\n", indents=1)
+    def func(self, other):
+        new_instance, other = _sanitize_binary_operands(self, other)
+        for key, value in other._items():
+            new_instance[key] = op(self._get(key, 0), value)
+        new_instance._reduce()
+        new_instance.use_dates = self.use_dates or other.use_dates
+        new_instance.cached_cumulative = None
+        return new_instance
+
+    return func
 
 
-@Appender(docstrings.subtract_docstring, join="\n", indents=1)
-def subtract(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    other = -other
-    return self + other
+add = _make_add_subtract_func(docstrings.add_docstring, operator.add)
+subtract = _make_add_subtract_func(docstrings.subtract_docstring, operator.sub)
 
 
-def _mul_or_div(self, other, op):
-    a = self.copy()
-    b = other.copy()
-    a_keys = a._keys()
-    b_keys = b._keys()
-    a._layer_multiple(b_keys, None, [0] * len(b_keys))
-    b._layer_multiple(a_keys, None, [0] * len(a_keys))
+def _make_mul_div_func(docstring, op):
 
-    multiplied_cumulative_values = op(
-        a._cumulative().values(), b._cumulative().values()
-    )
-    new_instance = sc.Stairs.from_cumulative(
-        dict(zip(a._keys(), multiplied_cumulative_values)),
-        use_dates=self.use_dates,
-        tz=self.tz,
-    )
-    new_instance._reduce()
-    return new_instance
+    is_divide = op == np.divide
 
+    @Appender(docstring, join="\n", indents=1)
+    def func(self, other):
+        self_copy, other_copy = _sanitize_binary_operands(self, other, copy_other=True)
+        if is_divide and not bool(other.make_boolean()):
+            raise ZeroDivisionError(
+                "Divisor Stairs instance must not be zero-valued at any point"
+            )
 
-@Appender(docstrings.divide_docstring, join="\n", indents=1)
-def divide(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    if not bool(other.make_boolean()):
-        raise ZeroDivisionError(
-            "Divisor Stairs instance must not be zero-valued at any point"
+        self_keys = self._keys()
+        other_keys = other._keys()
+        self_copy._layer_multiple(other_keys, None, [0] * len(other_keys))
+        other_copy._layer_multiple(self_keys, None, [0] * len(self_keys))
+
+        multiplied_cumulative_values = op(
+            self_copy._cumulative().values(), other_copy._cumulative().values()
         )
+        new_instance = sc.Stairs.from_cumulative(
+            dict(zip(self_copy._keys(), multiplied_cumulative_values)),
+            use_dates=self.use_dates,
+            tz=self.tz,
+        )
+        new_instance._reduce()
+        return new_instance
 
-    return _mul_or_div(self, other, np.divide)
+    return func
 
 
-@Appender(docstrings.multiply_docstring, join="\n", indents=1)
-def multiply(self, other):
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    return _mul_or_div(self, other, np.multiply)
+multiply = _make_mul_div_func(docstrings.multiply_docstring, np.multiply)
+divide = _make_mul_div_func(docstrings.divide_docstring, np.divide)
