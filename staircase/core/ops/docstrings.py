@@ -1,8 +1,8 @@
 _symbol_map = {
-    "add": "+",
-    "subtract": "-",
-    "multiply": r"*",
-    "divide": "/",
+    "addition": "+",
+    "subtraction": "-",
+    "multiplication": r"*",
+    "division": "/",
     "lt": "<",
     "le": "<=",
     "gt": ">",
@@ -16,10 +16,10 @@ _symbol_map = {
 }
 
 _see_also_map = {
-    "add": "Stairs.subtract",
-    "subtract": "Stairs.add",
-    "multiply": "Stairs.multiply",
-    "divide": "Stairs.divide",
+    "addition": "Stairs.subtract",
+    "subtraction": "Stairs.add",
+    "multiplication": "Stairs.divide",
+    "division": "Stairs.multiply",
     "lt": "Stairs.gt, Stairs.le, Stairs.ge",
     "le": "Stairs.lt, Stairs.gt, Stairs.ge",
     "gt": "Stairs.lt, Stairs.le, Stairs.ge",
@@ -43,10 +43,10 @@ _relationship_map = {
 }
 
 _plots_map = {
-    "add": "s1, s2, s1+s2",
-    "subtract": "s1, s2, s1-s2",
-    "multiply": "s1, s2, s1*s2",
-    "divide": "s1, s2, s1/(s2+2)",
+    "addition": "s1, s2, s1+s2",
+    "subtraction": "s1, s2, s1-s2",
+    "multiplication": "s1, s2, s1*s2",
+    "division": "s1, s2, s1/(s2+2)",
     "lt": "s1, s2, s1<s2",
     "le": "s1, s2, s1<=s2",
     "gt": "s1, s2, s1>s2",
@@ -84,7 +84,7 @@ def _gen_example(operation):
 
 
 _arithmetic_binop_docstring_header = """
-A binary operator facilitating the {operation} for step functions.
+A binary operator facilitating the {operation} of step functions.
 """
 
 _logical_binop_docstring_header = """
@@ -118,10 +118,10 @@ See Also
 {{example}}
 """
 
-_common_unop_docstring = _common_docstring.format(op_string="{symbol}\ *self*")
+_common_unop_docstring = _common_docstring.format(op_string=r"{symbol}\ *self*")
 _common_binop_docstring = _common_docstring.format(op_string="*self* {symbol} *other*")
 
-_arithmetic_binops = ("add", "subtract", "multiply", "divide")
+_arithmetic_binops = ("addition", "subtraction", "multiplication", "division")
 _relational_binops = ("lt", "le", "gt", "ge", "eq", "ne")
 _logical_binops = {"and", "or"}
 
@@ -129,7 +129,7 @@ _logical_binops = {"and", "or"}
 def _get_header(operation):
     if operation in _arithmetic_binops:
         result = _arithmetic_binop_docstring_header.format(operation=operation)
-        if operation == "divide":
+        if operation == "division":
             result = result + "\nThe divisor should cannot be zero-valued anywhere.\n"
         return result
     if operation in _relational_binops:
@@ -157,10 +157,10 @@ def _gen_op_docstring(operation):
     return docstring.format(symbol=symbol, see_also=see_also, example=example,)
 
 
-add_docstring = _gen_op_docstring("add")
-subtract_docstring = _gen_op_docstring("subtract")
-multiply_docstring = _gen_op_docstring("multiply")
-divide_docstring = _gen_op_docstring("divide")
+add_docstring = _gen_op_docstring("addition")
+subtract_docstring = _gen_op_docstring("subtraction")
+multiply_docstring = _gen_op_docstring("multiplication")
+divide_docstring = _gen_op_docstring("division")
 negate_docstring = _gen_op_docstring("negate")
 lt_docstring = _gen_op_docstring("lt")
 le_docstring = _gen_op_docstring("le")
