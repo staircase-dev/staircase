@@ -17,22 +17,8 @@ def _compare(cumulative, zero_comparator, use_dates=False, tz=None):
     return new_instance
 
 
-@Appender(docstrings.lt_example, join="\n", indents=1)
+@Appender(docstrings.lt_docstring, join="\n", indents=1)
 def lt(self, other):
-    """
-    Returns a boolean-valued step function indicating where *self* is strictly less than *other*.
-
-    Equivalent to *self* < *other*.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing where *self* < *other*
-
-    See Also
-    --------
-    Stairs.gt, Stairs.le, Stairs.ge
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
@@ -46,22 +32,8 @@ def lt(self, other):
     )
 
 
-@Appender(docstrings.gt_example, join="\n", indents=1)
+@Appender(docstrings.gt_docstring, join="\n", indents=1)
 def gt(self, other):
-    """
-    Returns a boolean-valued step function indicating where *self* is strictly greater than *other*.
-
-    Equivalent to *self* > *other*.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing where *self* > *other*
-
-    See Also
-    --------
-    Stairs.lt, Stairs.le, Stairs.ge
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
@@ -75,22 +47,8 @@ def gt(self, other):
     )
 
 
-@Appender(docstrings.le_example, join="\n", indents=1)
+@Appender(docstrings.le_docstring, join="\n", indents=1)
 def le(self, other):
-    """
-    Returns a boolean-valued step function indicating where *self* is less than, or equal to, *other*.
-
-    Equivalent to *self* <= *other*.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing where *self* <= *other*
-
-    See Also
-    --------
-    Stairs.lt, Stairs.gt, Stairs.ge
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
@@ -104,22 +62,8 @@ def le(self, other):
     )
 
 
-@Appender(docstrings.ge_example, join="\n", indents=1)
+@Appender(docstrings.ge_docstring, join="\n", indents=1)
 def ge(self, other):
-    """
-    Returns a boolean-valued step function indicating where *self* is greater than, or equal to, *other*.
-
-    Equivalent to *self* >= *other*.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing where *self* >= *other*
-
-    See Also
-    --------
-    Stairs.lt, Stairs.gt, Stairs.le
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
@@ -133,22 +77,8 @@ def ge(self, other):
     )
 
 
-@Appender(docstrings.eq_example, join="\n", indents=1)
+@Appender(docstrings.eq_docstring, join="\n", indents=1)
 def eq(self, other):
-    """
-    Returns a boolean-valued step function indicating where *self* is equal to *other*.
-
-    Equivalent to *self* == *other*.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing where *self* == *other*
-
-    See Also
-    --------
-    Stairs.ne, Stairs.identical
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
@@ -162,22 +92,8 @@ def eq(self, other):
     )
 
 
-@Appender(docstrings.ne_example, join="\n", indents=1)
+@Appender(docstrings.ne_docstring, join="\n", indents=1)
 def ne(self, other):
-    """
-    Returns a boolean-valued step function indicating where *self* is not equal to *other*.
-
-    Equivalent to *self* != *other*.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing where *self* != *other*
-
-    See Also
-    --------
-    Stairs.eq, Stairs.identical
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
@@ -191,18 +107,7 @@ def ne(self, other):
     )
 
 
-@Appender(docstrings.identical_example, join="\n", indents=1)
+@Appender(docstrings.identical_docstring, join="\n", indents=1)
 def identical(self, other):
-    """
-    Returns True if *self* and *other* represent the same step functions.
-
-    Returns
-    -------
-    boolean
-
-    See Also
-    --------
-    Stairs.eq, Stairs.ne
-    """
     check_binop_timezones(self, other)
     return bool(self == other)

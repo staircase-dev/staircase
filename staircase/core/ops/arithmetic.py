@@ -5,22 +5,18 @@ from staircase.core.ops import docstrings
 import staircase as sc
 
 
-@Appender(docstrings.negate_example, join="\n", indents=1)
+def _sanitize_binary_operands(self, other, copy_other=False):
+    if not isinstance(other, sc.Stairs):
+        other = sc.Stairs(other, self.use_dates, self.tz)
+    else:
+        check_binop_timezones(self, other)
+        if copy_other:
+            other = other.copy()
+    return self.copy(), other
+
+
+@Appender(docstrings.negate_docstring, join="\n", indents=1)
 def negate(self):
-    """
-    An operator which produces a new Stairs instance representing the multiplication of the step function by -1.
-
-    Should be used as an operator, i.e. by utilising the symbol -.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing the multiplication of the step function by -1
-
-    See Also
-    --------
-    Stairs.subtract
-    """
     new_instance = self.copy()
     for key, delta in new_instance._items():
         new_instance[key] = -delta
@@ -28,27 +24,9 @@ def negate(self):
     return new_instance
 
 
-@Appender(docstrings.add_example, join="\n", indents=1)
+@Appender(docstrings.add_docstring, join="\n", indents=1)
 def add(self, other):
-    """
-    An operator facilitating the addition of two step functions.
-
-    Should be used as an operator, i.e. by utilising the symbol +.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing the addition of two step functions
-
-    See Also
-    --------
-    Stairs.subtract
-    """
-    if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
-    else:
-        check_binop_timezones(self, other)
-    new_instance = self.copy()
+    new_instance, other = _sanitize_binary_operands(self, other)
     for key, value in other._items():
         new_instance[key] = self._get(key, 0) + value
     new_instance._reduce()
@@ -57,22 +35,8 @@ def add(self, other):
     return new_instance
 
 
-@Appender(docstrings.subtract_example, join="\n", indents=1)
+@Appender(docstrings.subtract_docstring, join="\n", indents=1)
 def subtract(self, other):
-    """
-    An operator facilitating the subtraction of one step function from another.
-
-    Should be used as an operator, i.e. by utilising the symbol -.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing the subtraction of one step function from another
-
-    See Also
-    --------
-    Stairs.add
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
@@ -101,24 +65,8 @@ def _mul_or_div(self, other, op):
     return new_instance
 
 
-@Appender(docstrings.divide_example, join="\n", indents=1)
+@Appender(docstrings.divide_docstring, join="\n", indents=1)
 def divide(self, other):
-    """
-    An operator facilitating the division of one step function by another.
-
-    The divisor should cannot be zero-valued anywhere.
-
-    Should be used as an operator, i.e. by utilising the symbol /.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing the division of one step function by another
-
-    See Also
-    --------
-    Stairs.multiply
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
@@ -131,22 +79,8 @@ def divide(self, other):
     return _mul_or_div(self, other, np.divide)
 
 
-@Appender(docstrings.multiply_example, join="\n", indents=1)
+@Appender(docstrings.multiply_docstring, join="\n", indents=1)
 def multiply(self, other):
-    r"""
-    An operator facilitating the multiplication of one step function with another.
-
-    Should be used as an operator, i.e. by utilising the symbol \*.  See examples below.
-
-    Returns
-    -------
-    :class:`Stairs`
-        A new instance representing the multiplication of one step function from another
-
-    See Also
-    --------
-    Stairs.divide
-    """
     if not isinstance(other, sc.Stairs):
         other = sc.Stairs(other, self.use_dates, self.tz)
     else:
