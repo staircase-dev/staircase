@@ -18,19 +18,17 @@ def invert(self):
     return new_instance
 
 
-@Appender(docstrings.logical_and_docstring, join="\n", indents=1)
-def logical_and(self, other):
-    assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
-    check_binop_timezones(self, other)
-    self_bool = self.make_boolean()
-    other_bool = other.make_boolean()
-    return _min_pair(self_bool, other_bool)
+def _make_logical_func(pair_func, docstring):
+    @Appender(docstring, join="\n", indents=1)
+    def func(self, other):
+        assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
+        check_binop_timezones(self, other)
+        self_bool = self.make_boolean()
+        other_bool = other.make_boolean()
+        return pair_func(self_bool, other_bool)
+
+    return func
 
 
-@Appender(docstrings.logical_or_docstring, join="\n", indents=1)
-def logical_or(self, other):
-    assert isinstance(other, type(self)), "Arguments must be both of type Stairs."
-    check_binop_timezones(self, other)
-    self_bool = self.make_boolean()
-    other_bool = other.make_boolean()
-    return _max_pair(self_bool, other_bool)
+logical_and = _make_logical_func(_min_pair, docstrings.logical_and_docstring)
+logical_or = _make_logical_func(_max_pair, docstrings.logical_or_docstring)
