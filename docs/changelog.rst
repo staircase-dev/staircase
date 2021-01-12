@@ -2,6 +2,11 @@
 Changelog
 =========
 
+v1.6.2 2020-01-13
+
+- efficiency improvement for :meth:`staircase.Stairs.multiply`
+
+
 v1.6.1 2020-12-30
 
 - bugfix for :meth:`staircase.Stairs.plot` when using datetimes and step function has no step changes
