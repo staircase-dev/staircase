@@ -25,3 +25,26 @@ def _convert_float_to_date(val, tz=None):
             val = np.array(val)
         return list(to_timedelta(val * 3600, unit="s") + origin.tz_localize(tz))
     return to_timedelta(val * 3600, unit="s") + origin.tz_localize(tz)
+
+
+def _using_dates(collection):
+    def dict_use_dates():
+        s = next(iter(collection.values()))
+        return s.use_dates, s.tz
+
+    def series_use_dates():
+        s = collection.values[0]
+        return s.use_dates, s.tz
+
+    def array_use_dates():
+        s = collection[0]
+        return s.use_dates, s.tz
+
+    for func in (dict_use_dates, series_use_dates, array_use_dates):
+        try:
+            return func()
+        except Exception:
+            pass
+    raise TypeError(
+        "Could not determine if Stairs collection is using dates.  Collection should be a tuple, list, numpy array, dict or pandas.Series."
+    )
