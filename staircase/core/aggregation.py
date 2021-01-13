@@ -26,7 +26,6 @@ def _make_extremum_func(extrema):
 
         Returns:
             Stairs: the result of the calculation
-
         """
         assert isinstance(stairs1, sc.Stairs) and isinstance(
             stairs2, sc.Stairs

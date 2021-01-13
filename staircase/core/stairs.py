@@ -16,7 +16,6 @@ from pandas.plotting import register_matplotlib_converters
 
 from staircase.docstrings.decorator import add_doc, append_doc
 from staircase.docstrings import stairs_class as SC_docs
-from staircase.docstrings import stairs_module as SM_docs
 from staircase.core import ops, stats
 from staircase.core.tools.datetimes import (
     origin,
