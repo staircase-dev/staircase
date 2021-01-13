@@ -67,6 +67,10 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
     'examples/Index.ipynb'
 ]
 
+suppress_warnings = [
+    "nbsphinx.ipykernel",
+]
+
 autosummary_generate = True
 
 master_doc = 'index'
