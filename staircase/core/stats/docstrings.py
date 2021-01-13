@@ -1,4 +1,4 @@
-var_example = """
+_std_var_example = """
 Examples
 --------
 
@@ -6,18 +6,21 @@ Examples
     :context: close-figs
 
     >>> s1.plot()
-
-.. plot::
-    :context: close-figs
-
-    >>> s1.var()
-    0.6875
-
-    >>> s1.var(lower=0, upper=6)
-    0.4722222222222224
+    >>> s1.{func}()
+    {result1}
+    >>> s1.{func}(lower=0, upper=6)
+    {result2}
 """
 
-std_example = """
+var_example = _std_var_example.format(
+    func="var", result1="0.6875", result2="0.4722222222222224",
+)
+
+std_example = _std_var_example.format(
+    func="std", result1="0.82915619758885", result2="0.6871842709362769",
+)
+
+integrate_mean_example = """
 Examples
 --------
 
@@ -25,52 +28,17 @@ Examples
     :context: close-figs
 
     >>> s1.plot()
-
-.. plot::
-    :context: close-figs
-
-    >>> s1.std()
-    0.82915619758885
-
-    >>> s1.std(lower=0, upper=6)
-    0.6871842709362769
+    >>> s1.{func}(3, 4.5)
+    {result}
 """
 
-integral_and_mean_example = """
-Examples
---------
+integral_and_mean_example = integrate_mean_example.format(
+    func="get_integral_and_mean", result="(0.5, 0.3333333333333333)",
+)
 
-.. plot::
-    :context: close-figs
+integrate_example = integrate_mean_example.format(func="integrate", result="0.5",)
 
-    >>> s1.plot()
-    >>> s1.get_integral_and_mean(3, 4.5)
-    (0.5, 0.3333333333333333)
-"""
-
-integrate_example = """
-Examples
---------
-
-.. plot::
-    :context: close-figs
-
-    >>> s1.plot()
-    >>> s1.integrate(3, 4.5)
-    0.5
-"""
-
-mean_example = """
-Examples
---------
-
-.. plot::
-    :context: close-figs
-
-    >>> s1.plot()
-    >>> s1.mean(3, 4.5)
-    0.3333333333333333
-"""
+mean_example = integrate_mean_example.format(func="mean", result="0.3333333333333333",)
 
 mode_example = """
 Examples
@@ -232,3 +200,85 @@ Examples
     [1, 3)     0.5
     dtype: float64
 """
+
+
+def _get_example(calculation):
+
+    return {
+        "mean": mean_example,
+        "integrate": integrate_example,
+        "integral_and_mean": integral_and_mean_example,
+        "percentile": percentile_stairs_example,
+        "median": median_example,
+        "mode": mode_example,
+        "var": var_example,
+        "std": std_example,
+    }[calculation]
+
+
+_calc_map = {
+    "integrate": "integral",
+    "integral_and_mean": "integral, and the mean",
+    "percentile": "x-th percentile",
+    "var": "variance",
+    "std": "standard deviation",
+}
+
+_see_also_map = {
+    "mean": "Stairs.rolling_mean, Stairs.get_integral_and_mean, Stairs.median, Stairs.mode",
+    "integrate": "Stairs.get_integral_and_mean",
+    "integral_and_mean": "Stairs.integrate, Stairs.mean",
+    "percentile": "Stairs.median, Stairs.percentile_stairs",
+    "median": "Stairs.mean, Stairs.mode, Stairs.percentile, Stairs.percentile_stairs",
+    "mode": "Stairs.mean, Stairs.median",
+    "var": "Stairs.std",
+    "std": "Stairs.var",
+}
+
+_common_docstring = """
+Calculates the {{calc}} of the step function.
+
+Parameters
+----------
+lower : int, float or pandas.Timestamp
+    lower bound of the interval on which to perform the calculation
+upper : int, float or pandas.Timestamp
+    upper bound of the interval on which to perform the calculation
+
+Returns
+-------
+{return_type}
+     The {{calc}} of the step function
+
+See Also
+--------
+{{see_also}}
+
+{{example}}
+"""
+
+_float_return_docstring = _common_docstring.format(return_type="float")
+_tuple_return_docstring = _common_docstring.format(return_type="tuple")
+
+
+def _gen_docstring(calculation):
+
+    calc = _calc_map.get(calculation, calculation)
+    see_also = _see_also_map[calculation]
+    example = _get_example(calculation)
+
+    if calculation == "integral_and_mean":
+        docstring = _tuple_return_docstring
+    else:
+        docstring = _float_return_docstring
+    return docstring.format(calc=calc, see_also=see_also, example=example,)
+
+
+mean_docstring = _gen_docstring("mean")
+integrate_docstring = _gen_docstring("integrate")
+percentile_docstring = _gen_docstring("percentile")
+median_docstring = _gen_docstring("median")
+mode_docstring = _gen_docstring("mode")
+var_docstring = _gen_docstring("var")
+std_docstring = _gen_docstring("std")
+integral_and_mean_docstring = _gen_docstring("integral_and_mean")
