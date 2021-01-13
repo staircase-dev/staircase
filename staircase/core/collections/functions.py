@@ -88,7 +88,7 @@ def aggregate(collection, func, points=None):
 
     Parameters
     ----------
-    collection : tuple, list, numpy array, dict or pandas.Series
+    collection: tuple, list, numpy array, dict or pandas.Series
         The Stairs instances to aggregate
     func: a function taking a 1 dimensional vector of floats, and returning a single float
         The function to apply, eg numpy.max
@@ -129,87 +129,23 @@ def aggregate(collection, func, points=None):
     )._reduce()
 
 
-@Appender(docstrings.mean_example, join="\n", indents=1)
+@Appender(docstrings.mean_docstring, join="\n", indents=1)
 def _mean(collection):
-    """
-    Takes a collection of Stairs instances and returns the mean of the corresponding step functions.
-
-    Parameters
-    ----------
-    collection : tuple, list, numpy array, dict or pandas.Series
-        The Stairs instances to aggregate using a mean function
-
-    Returns
-    -------
-    :class:`Stairs`
-
-    See Also
-    --------
-    staircase.aggregate, staircase.median, staircase.min, staircase.max
-    """
     return aggregate(collection, np.mean)
 
 
-@Appender(docstrings.median_example, join="\n", indents=1)
+@Appender(docstrings.median_docstring, join="\n", indents=1)
 def _median(collection):
-    """
-    Takes a collection of Stairs instances and returns the median of the corresponding step functions.
-
-    Parameters
-    ----------
-    collection : tuple, list, numpy array, dict or pandas.Series
-        The Stairs instances to aggregate using a median function
-
-    Returns
-    -------
-    :class:`Stairs`
-
-    See Also
-    --------
-    staircase.aggregate, staircase.mean, staircase.min, staircase.max
-    """
     return aggregate(collection, np.median)
 
 
-@Appender(docstrings.min_example, join="\n", indents=1)
+@Appender(docstrings.min_docstring, join="\n", indents=1)
 def _min(collection):
-    """
-    Takes a collection of Stairs instances and returns the minimum of the corresponding step functions.
-
-    Parameters
-    ----------
-    collection : tuple, list, numpy array, dict or pandas.Series
-        The Stairs instances to aggregate using a min function
-
-    Returns
-    -------
-    :class:`Stairs`
-
-    See Also
-    --------
-    staircase.aggregate, staircase.mean, staircase.median, staircase.max
-    """
     return aggregate(collection, np.min)
 
 
-@Appender(docstrings.max_example, join="\n", indents=1)
+@Appender(docstrings.max_docstring, join="\n", indents=1)
 def _max(collection):
-    """
-    Takes a collection of Stairs instances and returns the maximum of the corresponding step functions.
-
-    Parameters
-    ----------
-    collection : tuple, list, numpy array, dict or pandas.Series
-        The Stairs instances to aggregate using a max function
-
-    Returns
-    -------
-    :class:`Stairs`
-
-    See Also
-    --------
-    staircase.aggregate, staircase.mean, staircase.median, staircase.min
-    """
     return aggregate(collection, np.max)
 
 
@@ -236,70 +172,24 @@ def resample(container, x, how="right"):
     return type(container)([s.resample(x, how) for s in container])
 
 
-def _pairwise_commutative_operation_matrix(
-    collection, op, assume_ones_diagonal, **kwargs
-):
-    series = pd.Series(collection)
-    size = series.shape[0]
-    vals = np.ones(shape=(size, size))
-    for i in range(size):
-        for j in range(i + assume_ones_diagonal, size):
-            vals[i, j] = op(series.iloc[i], series.iloc[j], **kwargs)
-            vals[j, i] = vals[i, j]
-    return pd.DataFrame(vals, index=series.index, columns=series.index)
+def _make_corr_cov_func(docstring, stairs_method, assume_ones_diagonal):
+    @Appender(docstring, join="\n", indents=1)
+    def func(collection, lower=float("-inf"), upper=float("inf")):
+        series = pd.Series(collection)
+        size = series.shape[0]
+        vals = np.ones(shape=(size, size))
+        for i in range(size):
+            for j in range(i + assume_ones_diagonal, size):
+                vals[i, j] = stairs_method(series.iloc[i], series.iloc[j], lower, upper)
+                vals[j, i] = vals[i, j]
+        return pd.DataFrame(vals, index=series.index, columns=series.index)
+
+    return func
 
 
-@Appender(docstrings.corr_example, join="\n", indents=1)
-def corr(collection, lower=float("-inf"), upper=float("inf")):
-    """
-    Calculates the correlation matrix for a collection of :class:`Stairs` instances
-
-    Parameters
-    ----------
-    collection: :class:`pandas.Series`, dict, or array-like of :class:`Stairs` values
-        the stairs instances with which to compute the correlation matrix
-    lower : int, float or pandas.Timestamp
-        lower bound of the interval on which to perform the calculation
-    upper : int, float or pandas.Timestamp
-        upper bound of the interval on which to perform the calculation
-
-    Returns
-    -------
-    :class:`pandas.DataFrame`
-        The correlation matrix
-
-    See Also
-    --------
-    Stairs.corr, staircase.cov
-    """
-    return _pairwise_commutative_operation_matrix(
-        collection, Stairs.corr, True, lower=lower, upper=upper
-    )
-
-
-@Appender(docstrings.cov_example, join="\n", indents=1)
-def cov(collection, lower=float("-inf"), upper=float("inf")):
-    """
-    Calculates the covariance matrix for a collection of :class:`Stairs` instances
-
-    Parameters
-    ----------
-    collection: :class:`pandas.Series`, dict, or array-like of :class:`Stairs` values
-        the stairs instances with which to compute the covariance matrix
-    lower : int, float or pandas.Timestamp
-        lower bound of the interval on which to perform the calculation
-    upper : int, float or pandas.Timestamp
-        upper bound of the interval on which to perform the calculation
-
-    Returns
-    -------
-    :class:`pandas.DataFrame`
-        The covariance matrix
-
-    See Also
-    --------
-    Stairs.cov, staircase.corr
-    """
-    return _pairwise_commutative_operation_matrix(
-        collection, Stairs.cov, False, lower=lower, upper=upper
-    )
+corr = _make_corr_cov_func(
+    docstrings.corr_docstring, Stairs.corr, assume_ones_diagonal=True
+)
+cov = _make_corr_cov_func(
+    docstrings.cov_docstring, Stairs.cov, assume_ones_diagonal=False
+)

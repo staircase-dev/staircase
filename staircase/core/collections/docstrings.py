@@ -11,24 +11,6 @@ sample_footer = """
     7     4.0    s2    -1.0
 """
 
-_plots_map = {
-    "addition": "s1, s2, s1+s2",
-    "subtraction": "s1, s2, s1-s2",
-    "multiplication": "s1, s2, s1*s2",
-    "division": "s1, s2, s1/(s2+2)",
-    "lt": "s1, s2, s1<s2",
-    "le": "s1, s2, s1<=s2",
-    "gt": "s1, s2, s1>s2",
-    "ge": "s1, s2, s1>=s2",
-    "eq": "s1, s2, s1==s2",
-    "ne": "s1, s2, s1!=s2",
-    "and": "s1, s2, s1&s2",
-    "or": "s1, s2, s1|s2",
-    "invert": "s2, ~s2",
-    "make_boolean": "s2, s2.make_boolean()",
-    "negate": "s1, -s1",
-}
-
 _plot_titles_map = {
     "sample": ["s1", "s2"],
     "min": ["s1", "s2", "sc.min([s1,s2])"],
@@ -82,7 +64,7 @@ Examples
     dtype: object
 """
 
-corr_example = (
+cov_example = (
     _corr_cov_header
     + """
     >>> sc.cov(pd.Series([s1, s2, s1+s2], index=['s1', 's2', 's1+s2']))
@@ -99,7 +81,7 @@ corr_example = (
 """
 )
 
-cov_example = (
+corr_example = (
     _corr_cov_header
     + """
     >>> sc.corr(pd.Series([s1, s2, s1+s2], index=['s1', 's2', 's1+s2']))
@@ -115,3 +97,97 @@ cov_example = (
     2  0.700249   0.792407   1.000000
 """
 )
+
+
+def _get_example(calculation):
+
+    return {
+        "min": min_example,
+        "max": max_example,
+        "mean": mean_example,
+        "median": median_example,
+        "corr": corr_example,
+        "cov": cov_example,
+    }[calculation]
+
+
+_see_also_map = {
+    "min": "staircase.aggregate, staircase.mean, staircase.median, staircase.max",
+    "max": "staircase.aggregate, staircase.mean, staircase.median, staircase.min",
+    "mean": "staircase.aggregate, staircase.median, staircase.min, staircase.max",
+    "median": "staircase.aggregate, staircase.mean, staircase.min, staircase.max",
+    "corr": "Stairs.corr, staircase.cov",
+    "cov": "Stairs.cov, staircase.corr",
+}
+
+_calc_map = {
+    "min": "minimum",
+    "max": "maximum",
+    "corr": "correlation",
+    "cov": "covariance",
+}
+
+
+_return_stairs_docstring = """
+Takes a collection of Stairs instances and returns the {calc} of the corresponding step functions.
+
+Parameters
+----------
+collection : tuple, list, numpy array, dict or pandas.Series
+    The Stairs instances to aggregate using a {calc} function
+
+Returns
+-------
+:class:`Stairs`
+
+See Also
+--------
+{see_also}
+
+{example}
+"""
+
+_corr_cov_docstring = """
+Calculates the {calc} matrix for a collection of :class:`Stairs` instances
+
+Parameters
+----------
+collection: :class:`pandas.Series`, dict, or array-like of :class:`Stairs` values
+    the stairs instances with which to compute the {calc} matrix
+lower : int, float or pandas.Timestamp
+    lower bound of the interval on which to perform the calculation
+upper : int, float or pandas.Timestamp
+    upper bound of the interval on which to perform the calculation
+
+Returns
+-------
+:class:`pandas.DataFrame`
+    The {calc} matrix
+
+See Also
+--------
+{see_also}
+
+{example}
+"""
+
+
+def _gen_docstring(calculation):
+
+    calc = _calc_map.get(calculation, calculation)
+    see_also = _see_also_map[calculation]
+    example = _get_example(calculation)
+
+    if calculation in ("cov", "corr"):
+        docstring = _corr_cov_docstring
+    else:
+        docstring = _return_stairs_docstring
+    return docstring.format(calc=calc, see_also=see_also, example=example,)
+
+
+min_docstring = _gen_docstring("min")
+max_docstring = _gen_docstring("max")
+mean_docstring = _gen_docstring("mean")
+median_docstring = _gen_docstring("median")
+cov_docstring = _gen_docstring("cov")
+corr_docstring = _gen_docstring("corr")
