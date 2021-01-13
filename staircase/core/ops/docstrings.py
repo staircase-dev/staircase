@@ -42,22 +42,22 @@ _relationship_map = {
     "ne": "not equal to",
 }
 
-_plots_map = {
-    "addition": "s1, s2, s1+s2",
-    "subtraction": "s1, s2, s1-s2",
-    "multiplication": "s1, s2, s1*s2",
-    "division": "s1, s2, s1/(s2+2)",
-    "lt": "s1, s2, s1<s2",
-    "le": "s1, s2, s1<=s2",
-    "gt": "s1, s2, s1>s2",
-    "ge": "s1, s2, s1>=s2",
-    "eq": "s1, s2, s1==s2",
-    "ne": "s1, s2, s1!=s2",
-    "and": "s1, s2, s1&s2",
-    "or": "s1, s2, s1|s2",
-    "invert": "s2, ~s2",
-    "make_boolean": "s2, s2.make_boolean()",
-    "negate": "s1, -s1",
+_plot_titles_map = {
+    "addition": ["s1", "s2", "s1+s2"],
+    "subtraction": ["s1", "s2", "s1-s2"],
+    "multiplication": ["s1", "s2", "s1*s2"],
+    "division": ["s1", "s2", "s1/(s2+2)"],
+    "lt": ["s1", "s2", "s1<s2"],
+    "le": ["s1", "s2", "s1<=s2"],
+    "gt": ["s1", "s2", "s1>s2"],
+    "ge": ["s1", "s2", "s1>=s2"],
+    "eq": ["s1", "s2", "s1==s2"],
+    "ne": ["s1", "s2", "s1!=s2"],
+    "and": ["s1", "s2", "s1&s2"],
+    "or": ["s1", "s2", "s1|s2"],
+    "invert": ["s2", "~s2"],
+    "make_boolean": ["s2", "s2.make_boolean()"],
+    "negate": ["s1", "-s1"],
 }
 
 _example = """
@@ -76,10 +76,9 @@ Examples
 
 
 def _gen_example(operation):
-    plots = _plots_map[operation]
-    plot_titles = "[" + ",".join([f'"{x.strip()}"' for x in plots.split(",")]) + "]"
-    ncols = len(plots.split(","))
-
+    plot_titles = _plot_titles_map[operation]
+    ncols = len(plot_titles)
+    plots = ", ".join(plot_titles)
     return _example.format(plots=plots, ncols=ncols, plot_titles=plot_titles)
 
 
