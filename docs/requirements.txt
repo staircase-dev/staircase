@@ -9,3 +9,4 @@ seaborn
 pytz
 Pygments==2.6.1
 guzzle_sphinx_theme
+toml

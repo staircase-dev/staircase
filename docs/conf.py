@@ -34,6 +34,12 @@ author = 'Riley Clement'
 version = sc.__version__
 if 'untagged' in version:
     version = 'latest'
+elif 'unknown' in version:  #for when not installed
+    try:
+        import toml
+        version = dict(toml.load(parentdir + "/pyproject.toml"))["tool"]["poetry"]["version"]
+    except:
+        pass
 version = version.split('+')[0]
 
 # -- General configuration ---------------------------------------------------
