@@ -39,11 +39,10 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.6"
-sortedcontainers = "^2.1"
+sortedcontainers = "^2"
 pandas = ">=0.24,<2"
-numpy = "^1.16"
-matplotlib = "^3"
-seaborn = ">=0.8.0"
+numpy = "^1.12"
+matplotlib = ">=2"
 pytz = "*"
 
 
@@ -55,6 +54,7 @@ sphinx = "*"
 nbsphinx = "^0.5"
 sphinx-autobuild = "*"
 guzzle-sphinx-theme = "^0.7.11"
+seaborn = ">=0.8.0"
 
 [tool.poetry.extras]
 codecov = ["codecov"]
