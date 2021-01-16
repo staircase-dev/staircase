@@ -21,6 +21,8 @@ from staircase.core.tools.datetimes import (
     origin,
     _convert_date_to_float,
     _convert_float_to_date,
+    _maybe_convert_from_timedeltas,
+    _maybe_convert_from_timestamps,
 )
 
 register_matplotlib_converters()
@@ -394,20 +396,7 @@ class Stairs:
         # wrapper for dates
         x = _convert_date_to_float(x, self.tz)
         if aggfunc is not None:
-            left_delta, right_delta = window
-            if isinstance(left_delta, pd.Timedelta):
-                left_delta = _convert_date_to_float(
-                    origin + left_delta, self.tz
-                ) - _convert_date_to_float(
-                    origin, self.tz
-                )  # convert to hrs
-            if isinstance(right_delta, pd.Timedelta):
-                right_delta = _convert_date_to_float(
-                    origin + right_delta, self.tz
-                ) - _convert_date_to_float(
-                    origin, self.tz
-                )  # convert to hrs
-                window = (left_delta, right_delta)
+            window = _maybe_convert_from_timedeltas(window)
         return self._sample(x, how, aggfunc, window, lower_how, upper_how)
 
     @append_doc(SC_docs.resample_example)
@@ -470,20 +459,7 @@ class Stairs:
         x = _convert_date_to_float(x, self.tz)
         if aggfunc is not None:
             assert len(window) == 2, "Window should be a array-like object of length 2."
-            left_delta, right_delta = window
-            if isinstance(left_delta, pd.Timedelta):
-                left_delta = _convert_date_to_float(
-                    origin + left_delta
-                ) - _convert_date_to_float(
-                    origin
-                )  # convert to hrs
-            if isinstance(right_delta, pd.Timedelta):
-                right_delta = _convert_date_to_float(
-                    origin + right_delta
-                ) - _convert_date_to_float(
-                    origin
-                )  # convert to hrs
-            window = (left_delta, right_delta)
+            window = _maybe_convert_from_timedeltas(window)
         return self._resample(
             x, how, aggfunc, window, lower_how="right", upper_how="left"
         )
@@ -517,9 +493,7 @@ class Stairs:
 
     @add_doc(_layer.__doc__)
     def layer(self, start=None, end=None, value=None):
-        start = _convert_date_to_float(start, self.tz)
-        if end is not None:
-            end = _convert_date_to_float(end, self.tz)
+        start, end = _maybe_convert_from_timestamps((start, end), self.tz)
         return self._layer(start, end, value)
 
     def _layer_single(self, start=None, end=None, value=None):
@@ -767,10 +741,7 @@ class Stairs:
         -------
         set of floats
         """
-        if isinstance(lower, pd.Timestamp):
-            lower = _convert_date_to_float(lower, self.tz)
-        if isinstance(upper, pd.Timestamp):
-            upper = _convert_date_to_float(upper, self.tz)
+        lower, upper = _maybe_convert_from_timestamps((lower, upper), self.tz)
         return self._values_in_range(lower, upper, lower_how, upper_how)
 
     def _values_in_range(

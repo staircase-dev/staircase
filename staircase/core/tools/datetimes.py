@@ -1,4 +1,11 @@
-from pandas import Series, Timedelta, TimedeltaIndex, to_datetime, to_timedelta
+from pandas import (
+    Series,
+    Timedelta,
+    TimedeltaIndex,
+    Timestamp,
+    to_datetime,
+    to_timedelta,
+)
 import numpy as np
 
 origin = to_datetime("2000-1-1")
@@ -25,6 +32,20 @@ def _convert_float_to_date(val, tz=None):
             val = np.array(val)
         return list(to_timedelta(val * 3600, unit="s") + origin.tz_localize(tz))
     return to_timedelta(val * 3600, unit="s") + origin.tz_localize(tz)
+
+
+def _maybe_convert_from_timedeltas(iterable):
+    def maybe_convert(x):
+        return x / Timedelta("1 hr") if isinstance(x, Timedelta) else x
+
+    return [maybe_convert(x) for x in iterable]
+
+
+def _maybe_convert_from_timestamps(iterable, tz):
+    def maybe_convert(x):
+        return _convert_date_to_float(x, tz) if isinstance(x, Timestamp) else x
+
+    return [maybe_convert(x) for x in iterable]
 
 
 def _using_dates(collection):
