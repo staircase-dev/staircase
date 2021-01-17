@@ -11,9 +11,9 @@ from sortedcontainers import SortedDict, SortedSet
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pytz
 from pandas.plotting import register_matplotlib_converters
-
+import pytz
+from staircase.defaults import default
 from staircase.docstrings.decorator import add_doc, append_doc
 from staircase.docstrings import stairs_class as SC_docs
 from staircase.core import ops, poly, stats
@@ -27,29 +27,6 @@ from staircase.core.tools.datetimes import (
 
 register_matplotlib_converters()
 
-tz_default = None
-use_dates_default = False
-
-
-class Default:
-    pass
-
-
-_default = Default()
-
-
-def _set_default_timezone(tz=None):
-    global tz_default
-    tz_default = pytz.timezone(tz) if tz else None
-
-
-def _get_default_timezone():
-    return tz_default
-
-
-def _get_default_use_dates():
-    return use_dates_default
-
 
 class Stairs:
     """
@@ -61,7 +38,7 @@ class Stairs:
     See the :ref:`Stairs API <api.Stairs>` for details of methods.
     """
 
-    def __init__(self, value=0, use_dates=_default, tz=_default):
+    def __init__(self, value=0, use_dates=default, tz=default):
         """
         Initialise a Stairs instance.
 
@@ -76,10 +53,11 @@ class Stairs:
         -------
         :class:`Stairs`
         """
-        if use_dates == _default:
-            use_dates = _get_default_use_dates()
-        if tz == _default:
-            tz = _get_default_timezone()
+        if use_dates == default:
+            use_dates = default.get_default("use_dates")
+        if tz == default:
+            default_tz = default.get_default("tz")
+            tz = pytz.timezone(default_tz) if default_tz else None
 
         self._sorted_dict = SortedDict()
         if isinstance(value, dict):

@@ -12,6 +12,8 @@ from staircase.core.collections.functions import (
     sample,
 )
 
+from staircase.defaults import default
+
 from staircase.core.stats import hist_from_ecdf
 
 from .test_data import make_test_data
@@ -28,10 +30,10 @@ def get_version():
 
         return get_distribution(__name__).version
 
-    def default():
+    def default_version():
         return "unknown"
 
-    for func in (get_version_post_py38, get_version_pre_py38, default):
+    for func in (get_version_post_py38, get_version_pre_py38, default_version):
         try:
             return func()
         except Exception:
