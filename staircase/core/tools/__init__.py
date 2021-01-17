@@ -37,6 +37,7 @@ def _get_union_of_points(collection):
         "Collection should be a tuple, list, numpy array, dict or pandas.Series."
     )
 
+
 def _get_stairs_method(name):
     return {
         "mean": sc.Stairs.mean,
@@ -45,12 +46,14 @@ def _get_stairs_method(name):
         "max": sc.Stairs.max,
         "min": sc.Stairs.min,
     }[name]
-    
+
+
 def _verify_window(left_delta, right_delta, zero):
     assert left_delta <= zero, "left_delta must not be positive"
     assert right_delta >= zero, "right_delta must not be negative"
     assert right_delta - left_delta > zero, "window length must be non-zero"
-    
+
+
 def _from_cumulative(cumulative, use_dates=False, tz=None):
     return sc.Stairs(
         dict(

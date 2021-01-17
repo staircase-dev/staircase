@@ -184,7 +184,7 @@ Examples
     {1: 1, 2: -1, 3: 1, 4: -2, 5: 1}
 """
 
-    
+
 values_in_range_docstring = """
 Returns the range of the step function as a set of discrete values.
 
@@ -239,7 +239,7 @@ Returns
 -------
 :class:`Stairs`
     Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
-    
+
 Examples
 --------
 

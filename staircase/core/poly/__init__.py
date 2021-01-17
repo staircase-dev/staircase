@@ -9,6 +9,7 @@ from staircase.core.poly.methods import (
     values_in_range,
 )
 
+
 def add_methods(cls):
     cls._layer_multiple = _layer_multiple
     cls.clip = clip

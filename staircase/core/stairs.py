@@ -91,7 +91,7 @@ class Stairs:
         self.tz = tz
         self.cached_cumulative = None
 
-        #runtime._add_operations(self, use_dates)
+        # runtime._add_operations(self, use_dates)
 
         self._get = self._sorted_dict.get
         self._items = self._sorted_dict.items
@@ -339,8 +339,6 @@ class Stairs:
             self.std(lower, upper) * other.std(lower, upper)
         )
 
-
-
     @append_doc(SC_docs.min_example)
     def min(
         self,
@@ -584,6 +582,7 @@ class Stairs:
 
     def __call__(self, *args, **kwargs):
         return self.sample(*args, **kwargs)
+
 
 poly.add_methods(Stairs)
 ops.add_operations(Stairs)

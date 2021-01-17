@@ -57,9 +57,7 @@ def _sample_raw(self, x, how="right"):
                 vals = [self[float("-inf")]]
             else:
                 vals = []
-            vals.extend(
-                [val for key, val in shifted_cumulative.items() if key in x]
-            )
+            vals.extend([val for key, val in shifted_cumulative.items() if key in x])
             return vals
     elif x == float("-inf"):
         return self._values()[0]
@@ -70,6 +68,7 @@ def _sample_raw(self, x, how="right"):
         else:
             preceding_boundary_index = cumulative.bisect_left(x) - 1
         return cumulative.values()[preceding_boundary_index]
+
 
 def _sample_agg(self, x, window, aggfunc, lower_how="right", upper_how="left"):
     """
@@ -137,6 +136,7 @@ def _sample(
     else:
         return _sample_agg(self, x, window, aggfunc, lower_how, upper_how)
 
+
 @Appender(docstrings.sample_docstring, join="\n", indents=1)
 def sample(
     self,
@@ -151,6 +151,7 @@ def sample(
         x = _convert_date_to_float(x, self.tz)
         window = _maybe_convert_from_timedeltas(window)
     return _sample(self, x, how, aggfunc, window, lower_how, upper_how)
+
 
 @Appender(docstrings.resample_docstring, join="\n", indents=1)
 def _resample(
@@ -177,14 +178,22 @@ def _resample(
     )
     return _from_cumulative(new_cumulative, self.use_dates, self.tz)
 
+
 @Appender(docstrings.resample_docstring, join="\n", indents=1)
-def resample(self, x, how="right", aggfunc=None, window=(0, 0), lower_how="right", upper_how="left"):
+def resample(
+    self,
+    x,
+    how="right",
+    aggfunc=None,
+    window=(0, 0),
+    lower_how="right",
+    upper_how="left",
+):
     if self.use_dates:
         x = _convert_date_to_float(x, self.tz)
         window = _maybe_convert_from_timedeltas(window)
-    return _resample(
-        self, x, how, aggfunc, window, lower_how, upper_how
-    )
+    return _resample(self, x, how, aggfunc, window, lower_how, upper_how)
+
 
 @Appender(docstrings.layer_docstring, join="\n", indents=1)
 def _layer(self, start=None, end=None, value=None):
@@ -194,11 +203,13 @@ def _layer(self, start=None, end=None, value=None):
         layer_func = _layer_single
     return layer_func(self, start, end, value)
 
+
 @Appender(docstrings.layer_docstring, join="\n", indents=1)
 def layer(self, start=None, end=None, value=None):
     if self.use_dates:
         start, end = _maybe_convert_from_timestamps((start, end), self.tz)
     return _layer(self, start, end, value)
+
 
 def _layer_single(self, start=None, end=None, value=None):
     """
@@ -219,6 +230,7 @@ def _layer_single(self, start=None, end=None, value=None):
 
     self.cached_cumulative = None
     return self
+
 
 def _layer_multiple(self, starts=None, ends=None, values=None):
     """
@@ -245,6 +257,7 @@ def _layer_multiple(self, starts=None, ends=None, values=None):
     self.cached_cumulative = None
     return self
 
+
 @Appender(docstrings.step_changes_docstring, join="\n", indents=1)
 def step_changes(self):
     if self.use_dates:
@@ -252,26 +265,20 @@ def step_changes(self):
             zip(_convert_float_to_date(self._keys()[1:], self.tz), self._values()[1:])
         )
     return dict(self._items()[1:])
-    
+
+
 @Appender(docstrings.values_in_range_docstring, join="\n", indents=1)
 def values_in_range(
-    self,
-    lower=float("-inf"),
-    upper=float("inf"),
-    lower_how="right",
-    upper_how="left",
+    self, lower=float("-inf"), upper=float("inf"), lower_how="right", upper_how="left",
 ):
     if self.use_dates:
         lower, upper = _maybe_convert_from_timestamps((lower, upper), self.tz)
     return _values_in_range(self, lower, upper, lower_how, upper_how)
 
+
 @Appender(docstrings.values_in_range_docstring, join="\n", indents=1)
 def _values_in_range(
-    self,
-    lower=float("-inf"),
-    upper=float("inf"),
-    lower_how="right",
-    upper_how="left",
+    self, lower=float("-inf"), upper=float("inf"), lower_how="right", upper_how="left",
 ):
     interior_points = [key for key in self._keys() if lower < key < upper]
     endpoint_vals = _sample_raw(self, [lower], how="right") + _sample_raw(
@@ -282,7 +289,8 @@ def _values_in_range(
     if upper_how == "right":
         endpoint_vals += _sample_raw(self, [upper], how="right")
     return set(_sample_raw(self, interior_points) + endpoint_vals)
-    
+
+
 @Appender(docstrings.clip_docstring, join="\n", indents=1)
 def _clip(self, lower=float("-inf"), upper=float("inf")):
     assert (
@@ -307,12 +315,14 @@ def _clip(self, lower=float("-inf"), upper=float("inf")):
         s[upper] = s.get(upper, 0) - value_at_right
     return sc.Stairs(s, self.use_dates, self.tz)
 
+
 @Appender(docstrings.clip_docstring, join="\n", indents=1)
 def clip(self, lower=float("-inf"), upper=float("inf")):
     if self.use_dates:
         lower, upper = _maybe_convert_from_timestamps((lower, upper), self.tz)
     return _clip(self, lower, upper)
-    
+
+
 @Appender(integral_and_mean_docstring, join="\n", indents=1)
 def _get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
     new_instance = self.clip(lower, upper)
