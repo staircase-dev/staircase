@@ -1,6 +1,4 @@
 from staircase.core.stats.statistic import (
-    _get_integral_and_mean,
-    get_integral_and_mean,
     integrate,
     mean,
     median,
@@ -19,10 +17,7 @@ from staircase.core.stats.distribution import (
 )
 
 
-def add_operations(cls):
-
-    cls._get_integral_and_mean = _get_integral_and_mean
-    cls.get_integral_and_mean = get_integral_and_mean
+def add_methods(cls):
     cls.integrate = integrate
     cls.mean = mean
     cls.median = median

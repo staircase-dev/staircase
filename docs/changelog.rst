@@ -2,6 +2,11 @@
 Changelog
 =========
 
+v1.7.0
+
+- bugfix for missing *lower_how* and *upper_how* parameters in :meth:`staircase.Stairs.resample`
+
+
 v1.6.2 2020-01-13
 
 - efficiency improvement for :meth:`staircase.Stairs.multiply`

@@ -1,89 +1,3 @@
-sample_example = """
-        Examples
-        --------
-
-        .. plot::
-            :context: close-figs
-
-            >>> s1.plot()
-            >>> s1(3.5)
-            1
-            >>> s1([1, 2, 4.5, 6])
-            [1, 0, -1, 0]
-            >>> s1([1, 2, 4.5, 6], how="left")
-            [0, 1, -1, 0]
-            >>> s1([1, 2, 4.5], aggfunc="mean", window=(-0.5, 0.5))
-            [0.5, 0.5, -1.0]
-            >>> s1([1, 2, 4.5], aggfunc="max", window=(-0.5, 0.5))
-            [1, 1, -1]
-            >>> s1([1, 2, 4.5], aggfunc="max", window=(-0.5, 0.5), lower_how="left")
-            [1, 1, 1]
-            >>> s1([1, 2, 4.5], aggfunc="max", window=(-0.5, 0.5), upper_how="right")
-            [1, 1, 0]
-"""
-
-
-resample_example = """
-        Examples
-        --------
-
-        .. plot::
-            :context: close-figs
-
-            >>> stair_list = [s1, s1.resample([1.5,2.5,4,4.5])]
-            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5), sharey=True, sharex=True)
-            >>> for ax, title, stair_instance in zip(axes, ("s1", "s1 resampled"), stair_list):
-            ...     stair_instance.plot(ax)
-            ...     ax.set_title(title)
-"""
-
-
-layer_example = """
-        Examples
-        --------
-
-        .. plot::
-            :context: close-figs
-
-            >>> import staircase as sc
-            ... (sc.Stairs()
-            ...     .layer(1,3)
-            ...     .layer(4,5,-2)
-            ...     .plot()
-            ... )
-
-        .. plot::
-            :context: close-figs
-
-            >>> import pandas as pd
-            >>> import staircase as sc
-            >>> data = pd.DataFrame({"starts":[1,4,5.5],
-            ...                      "ends":[3,5,7],
-            ...                      "values":[-1,2,-3]})
-            >>> data
-               starts  ends  values
-            0     1.0     3      -1
-            1     4.0     5       2
-            2     5.5     7      -3
-            >>> (sc.Stairs(1.5)
-            ...     .layer(data["starts"], data["ends"], data["values"])
-            ...     .plot()
-            ... )
-"""
-
-step_changes_example = """
-        Examples
-        --------
-
-        .. plot::
-            :context: close-figs
-
-            >>> s1.plot()
-            >>> s1.step_changes()
-            {1: 1, 2: -1, 3: 1, 4: -2, 5: 1}
-"""
-
-
 number_of_steps_example = """
         Examples
         --------
@@ -131,20 +45,6 @@ max_example = """
             >>> s1.max(4, 5, upper_how='right')
             0
 
-"""
-
-clip_example = """
-        Examples
-        --------
-
-        .. plot::
-            :context: close-figs
-
-            >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5))
-            >>> s1.plot(axes[0])
-            >>> s1.clip(2,4).plot(axes[1])
-            >>> s1.clip(2,4).mean()
-            0.5
 """
 
 shift_example = """
@@ -398,25 +298,4 @@ rolling_mean_example = """
             ...     series.plot(ax=ax, label='rolling mean')
             ...     ax.set_title(title)
             ...     ax.legend()
-"""
-
-values_in_range_example = """
-        Examples
-        --------
-
-        .. plot::
-            :context: close-figs
-
-            >>> s2.plot()
-            >>> s2.values_in_range()
-            {-1.0, 0.0, 0.5}
-            >>> s2.values_in_range(lower=2)
-            {-1.0, 0.0}
-            >>> s2.values_in_range(lower=2, lower_how="left")
-            {-1.0, 0.0, 0.5}
-            >>> s2.values_in_range(upper=2)
-            {0.0, 0.5}
-            >>> s2.values_in_range(upper=3, upper_how="right")
-            {-1.0, 0.0, 0.5}
-
 """

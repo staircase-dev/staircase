@@ -7,41 +7,15 @@ from staircase.core.stats import docstrings
 import staircase as sc
 
 
-@Appender(docstrings.integral_and_mean_docstring, join="\n", indents=1)
-def _get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
-    new_instance = self.clip(lower, upper)
-    if new_instance.number_of_steps() < 2:
-        return 0, np.nan
-    if lower != float("-inf"):
-        new_instance[lower] = new_instance._get(lower, 0)
-    if upper != float("inf"):
-        new_instance[upper] = new_instance._get(upper, 0)
-    cumulative = new_instance._cumulative()
-    widths = np.subtract(cumulative.keys()[2:], cumulative.keys()[1:-1])
-    heights = cumulative.values()[1:-1]
-    area = np.multiply(widths, heights).sum()
-    mean = area / (cumulative.keys()[-1] - cumulative.keys()[1])
-    return area, mean
-
-
-@Appender(docstrings.integral_and_mean_docstring, join="\n", indents=1)
-def get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
-    if isinstance(lower, Timestamp):
-        lower = _convert_date_to_float(lower, self.tz)
-    if isinstance(upper, Timestamp):
-        upper = _convert_date_to_float(upper, self.tz)
-    return _get_integral_and_mean(self, lower, upper)
-
-
 @Appender(docstrings.integrate_docstring, join="\n", indents=1)
 def integrate(self, lower=float("-inf"), upper=float("inf")):
-    area, _ = get_integral_and_mean(self, lower, upper)
+    area, _ = self.get_integral_and_mean(lower, upper)
     return area
 
 
 @Appender(docstrings.mean_docstring, join="\n", indents=1)
 def mean(self, lower=float("-inf"), upper=float("inf")):
-    _, mean = get_integral_and_mean(self, lower, upper)
+    _, mean = self.get_integral_and_mean(lower, upper)
     return mean
 
 

@@ -1,3 +1,4 @@
+import numpy as np
 from sortedcontainers import SortedSet
 from staircase.core.tools.datetimes import check_binop_timezones
 import staircase as sc
@@ -34,4 +35,34 @@ def _get_union_of_points(collection):
             pass
     raise TypeError(
         "Collection should be a tuple, list, numpy array, dict or pandas.Series."
+    )
+
+def _get_stairs_method(name):
+    return {
+        "mean": sc.Stairs.mean,
+        "median": sc.Stairs.median,
+        "mode": sc.Stairs.mode,
+        "max": sc.Stairs.max,
+        "min": sc.Stairs.min,
+    }[name]
+    
+def _verify_window(left_delta, right_delta, zero):
+    assert left_delta <= zero, "left_delta must not be positive"
+    assert right_delta >= zero, "right_delta must not be negative"
+    assert right_delta - left_delta > zero, "window length must be non-zero"
+    
+def _from_cumulative(cumulative, use_dates=False, tz=None):
+    return sc.Stairs(
+        dict(
+            zip(
+                cumulative.keys(),
+                np.insert(
+                    np.diff(list(cumulative.values())),
+                    0,
+                    [next(iter(cumulative.values()))],
+                ),
+            )
+        ),
+        use_dates,
+        tz,
     )

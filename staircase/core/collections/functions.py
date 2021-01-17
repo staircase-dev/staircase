@@ -9,6 +9,7 @@ from staircase.core.tools import _get_union_of_points
 from staircase.util._decorators import Appender
 from staircase.core.collections import docstrings
 from staircase.core.stairs import Stairs
+from staircase.core.poly.methods import _sample_raw
 
 
 @Appender(docstrings.sample_example, join="\n", indents=1)
@@ -119,7 +120,7 @@ def aggregate(collection, func, points=None):
     if use_dates:
         aggregation.index = _convert_date_to_float(aggregation.index, tz=tz)
     aggregation[float("-inf")] = func(
-        [val._sample_raw(float("-inf")) for key, val in Stairs_dict.items()]
+        [_sample_raw(val, float("-inf")) for key, val in Stairs_dict.items()]
     )
     step_changes = aggregation.sort_index().diff().fillna(0)
     step_changes[float("-inf")] = aggregation[float("-inf")]
