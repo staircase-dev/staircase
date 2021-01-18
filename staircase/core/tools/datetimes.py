@@ -43,7 +43,11 @@ def _maybe_convert_from_timedeltas(iterable):
 
 def _maybe_convert_from_timestamps(iterable, tz):
     def maybe_convert(x):
-        return _convert_date_to_float(x, tz) if isinstance(x, Timestamp) else x
+        return (
+            _convert_date_to_float(x, tz)
+            if isinstance(x, Timestamp) or hasattr(x, "__iter__")
+            else x
+        )
 
     return [maybe_convert(x) for x in iterable]
 

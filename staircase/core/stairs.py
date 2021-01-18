@@ -56,8 +56,7 @@ class Stairs:
         if use_dates == default:
             use_dates = default.get_default("use_dates")
         if tz == default:
-            default_tz = default.get_default("tz")
-            tz = pytz.timezone(default_tz) if default_tz else None
+            tz = default.get_default("tz")
 
         self._sorted_dict = SortedDict()
         if isinstance(value, dict):
