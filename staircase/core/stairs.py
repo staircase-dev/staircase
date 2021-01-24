@@ -60,16 +60,26 @@ class Stairs:
 
         self._sorted_dict = SortedDict()
         if isinstance(value, dict):
+            raise AssertionError("Do not let this code execute")
             self._sorted_dict = SortedDict(value)
         else:
+            self.init_value = value
             self._sorted_dict = SortedDict()
-            self._sorted_dict[float("-inf")] = value
+            #self._sorted_dict[float("-inf")] = value
         self.use_dates = use_dates
         self.tz = tz
         self.cached_cumulative = None
 
         # runtime._add_operations(self, use_dates)
 
+        self._bind_sorted_dict_methods()
+
+    # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING
+
+    def get_init_value(self):
+        return self.init_value
+        
+    def _bind_sorted_dict_methods(self):
         self._get = self._sorted_dict.get
         self._items = self._sorted_dict.items
         self._keys = self._sorted_dict.keys
@@ -77,9 +87,12 @@ class Stairs:
         self._pop = self._sorted_dict.pop
         self._len = self._sorted_dict.__len__
         self._popitem = self._sorted_dict.popitem
-
-    # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING
-
+        
+    def _replace_sorted_dict(self, _sorted_dict):
+        self._sorted_dict = _sorted_dict
+        self._bind_sorted_dict_methods()
+        
+        
     def __getitem__(self, *args, **kwargs):
         """
         f'{dict.__getitem__.__doc__}'
@@ -105,28 +118,19 @@ class Stairs:
         -------
         :class:`Stairs`
         """
-        new_instance = Stairs(use_dates=self.use_dates, tz=self.tz)
+        new_instance = Stairs(value=self.init_value, use_dates=self.use_dates, tz=self.tz)
         for key, value in self._items():
             new_instance[key] = value
         return new_instance
 
     @classmethod
-    def from_cumulative(cls, cumulative, use_dates=False, tz=None):
-        return cls(
-            dict(
-                zip(
-                    cumulative.keys(),
-                    np.insert(
-                        np.diff(list(cumulative.values())),
-                        0,
-                        [next(iter(cumulative.values()))],
-                    ),
-                )
-            ),
-            use_dates,
-            tz,
+    def from_cumulative(cls, init_value, cumulative, use_dates=False, tz=None):
+        new_instance = cls(init_value, use_dates, tz)
+        new_instance._sorted_dict = SortedDict(
+            zip(cumulative.keys(), np.diff(np.array([init_value] + list(cumulative.values()))))
         )
-
+        return new_instance   
+           
     def plot(self, ax=None, **kwargs):
         """
         Makes a step plot representing the finite intervals belonging to the Stairs instance.
@@ -148,32 +152,29 @@ class Stairs:
             _, ax = plt.subplots()
 
         cumulative = self._cumulative()
+        cumulative_keys = cumulative.keys()
         if self.use_dates:
             register_matplotlib_converters()
-            x = list(cumulative.keys())
-            if len(x) > 1:
-                x[0] = (
-                    x[1] - 0.00001
-                )  # first element would otherwise be -inf which can't be plotted
-                ax.step(
-                    _convert_float_to_date(x, self.tz),
-                    list(cumulative.values()),
-                    where="post",
-                    **kwargs,
-                )
+            x = [cumulative.keys()[0]-0.00000001] + list(cumulative.keys())
+            ax.step(
+                _convert_float_to_date(x, self.tz),
+                [self.init_value] + list(cumulative.values()),
+                where="post",
+                **kwargs,
+            )
         else:
-            ax.step(cumulative.keys(), cumulative.values(), where="post", **kwargs)
+            ax.step([float('inf')] + list(cumulative_keys), [self.init_value] + list(cumulative.values()), where="post", **kwargs)
         return ax
 
     def _cumulative(self):
         if self.cached_cumulative is None:
             self.cached_cumulative = SortedDict(
-                zip(self._keys(), np.cumsum(self._values()))
+                zip(self._keys(), np.cumsum(self._values()) + self.init_value)
             )
         return self.cached_cumulative
 
     def _reduce(self):
-        to_remove = [key for key, val in self._items()[1:] if val == 0]
+        to_remove = [key for key, val in self._items() if val == 0]
         for key in to_remove:
             self._pop(key)
         return self
@@ -186,9 +187,17 @@ class Stairs:
         -------
         boolean
         """
-        if self.number_of_steps() >= 2:
+        number_of_steps = self.number_of_steps()
+        if self.init_value != 1:
+            return False
+        elif number_of_steps == 0:
+            return True
+        elif number_of_steps % 2 == 1:
+            return False
+        elif not set(self._cumulative().values()).issubset({0,1}):
+            return False
+        else:
             return float((~self).integrate()) < 0.0000001
-        return dict(self._sorted_dict) == {float("-inf"): 1}
 
     @append_doc(SC_docs.describe_example)
     def describe(
@@ -419,11 +428,13 @@ class Stairs:
         if isinstance(delta, pd.Timedelta):
             assert self.use_dates, "delta is of type pandas.Timedelta, expected float"
             delta = delta.total_seconds() / 3600
-        return Stairs(
-            dict(zip((key + delta for key in self._keys()), self._values())),
+        new_instance = Stairs(
+            self.init_value,
             self.use_dates,
             self.tz,
         )
+        new_instance._replace_sorted_dict(SortedDict(zip((key + delta for key in self._keys()), self._values())))
+        return new_instance
 
     @append_doc(SC_docs.diff_example)
     def diff(self, delta):
@@ -516,14 +527,14 @@ class Stairs:
         -------
         :class:`pandas.DataFrame`
         """
-        starts = self._keys()
-        ends = self._keys()[1:]
         if self.use_dates:
-            starts = [pd.NaT] + _convert_float_to_date(np.array(starts[1:]), self.tz)
-            ends = _convert_float_to_date(np.array(ends), self.tz) + [pd.NaT]
+            starts = [pd.NaT] + _convert_float_to_date(np.array(self._keys()), self.tz)
+            ends = _convert_float_to_date(np.array(self._keys()), self.tz) + [pd.NaT]
         else:
-            ends.append(float("inf"))
-        values = self._cumulative().values()
+            starts = [float("-inf")] + list(self._keys())
+            ends = list(self._keys()) + [float("inf")]
+        
+        values = [self.init_value] + list(self._cumulative().values())
         df = pd.DataFrame(
             {"start": list(starts), "end": list(ends), "value": list(values)}
         )  # bugfix for pandas 1.1
@@ -542,7 +553,7 @@ class Stairs:
         --------
         Stairs.step_changes
         """
-        return len(self._keys()) - 1
+        return len(self._keys())
 
     def __str__(self):
         """

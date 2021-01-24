@@ -136,7 +136,6 @@ def test_max_pair(IS1, IS2):
 )
 def test_get_union_of_points_1(IS1, IS2):
     union = list(_get_union_of_points({1: IS1, 2: IS2}))
-    union.pop(0)
     assert _convert_float_to_date(union, IS1.tz) == [
         pd.Timestamp("2020-01-01").tz_localize(IS1.tz),
         pd.Timestamp("2020-01-02").tz_localize(IS1.tz),
@@ -162,7 +161,6 @@ def test_get_union_of_points_1(IS1, IS2):
 )
 def test_get_union_of_points_2(IS1, IS2):
     union = list(_get_union_of_points(pd.Series([IS1, IS2])))
-    union.pop(0)
     assert _convert_float_to_date(union, IS1.tz) == [
         pd.Timestamp("2020-01-01").tz_localize(IS1.tz),
         pd.Timestamp("2020-01-02").tz_localize(IS1.tz),
@@ -188,7 +186,6 @@ def test_get_union_of_points_2(IS1, IS2):
 )
 def test_get_union_of_points_3(IS1, IS2):
     union = list(_get_union_of_points(np.array([IS1, IS2])))
-    union.pop(0)
     assert _convert_float_to_date(union, IS1.tz) == [
         pd.Timestamp("2020-01-01").tz_localize(IS1.tz),
         pd.Timestamp("2020-01-02").tz_localize(IS1.tz),
@@ -214,7 +211,6 @@ def test_get_union_of_points_3(IS1, IS2):
 )
 def test_get_union_of_points_4(IS1, IS2):
     union = list(_get_union_of_points([IS1, IS2]))
-    union.pop(0)
     assert _convert_float_to_date(union, IS1.tz) == [
         pd.Timestamp("2020-01-01").tz_localize(IS1.tz),
         pd.Timestamp("2020-01-02").tz_localize(IS1.tz),
@@ -240,7 +236,6 @@ def test_get_union_of_points_4(IS1, IS2):
 )
 def test_get_union_of_points_5(IS1, IS2):
     union = list(_get_union_of_points((IS1, IS2)))
-    union.pop(0)
     assert _convert_float_to_date(union, IS1.tz) == [
         pd.Timestamp("2020-01-01").tz_localize(IS1.tz),
         pd.Timestamp("2020-01-02").tz_localize(IS1.tz),

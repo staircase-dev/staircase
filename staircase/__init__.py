@@ -18,6 +18,7 @@ from staircase.core.stats import hist_from_ecdf
 
 from .test_data import make_test_data
 
+from staircase.constants import inf
 
 def get_version():
     def get_version_post_py38():

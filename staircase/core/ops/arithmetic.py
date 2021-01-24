@@ -1,16 +1,18 @@
+from sortedcontainers import SortedDict
 import operator
 import numpy as np
-from staircase.core.tools import _sanitize_binary_operands
+from staircase.core.tools import _sanitize_binary_operands, _from_cumulative
 from staircase.util._decorators import Appender
 from staircase.core.ops import docstrings
 import staircase as sc
 
-
+#todo, this can be done better
 @Appender(docstrings.negate_docstring, join="\n", indents=1)
 def negate(self):
     new_instance = self.copy()
     for key, delta in new_instance._items():
         new_instance[key] = -delta
+    new_instance.init_value = -new_instance.init_value
     new_instance.cached_cumulative = None
     return new_instance
 
@@ -22,6 +24,7 @@ def _make_add_subtract_func(docstring, op):
         for key, value in other._items():
             new_instance[key] = op(self._get(key, 0), value)
         new_instance._reduce()
+        new_instance.init_value = op(new_instance.init_value, other.init_value)
         new_instance.use_dates = self.use_dates or other.use_dates
         new_instance.cached_cumulative = None
         return new_instance
@@ -53,12 +56,12 @@ def _make_mul_div_func(docstring, op):
         multiplied_cumulative_values = op(
             self_copy._cumulative().values(), other_copy._cumulative().values()
         )
-        new_instance = sc.Stairs.from_cumulative(
-            dict(zip(self_copy._keys(), multiplied_cumulative_values)),
+        new_instance = _from_cumulative(
+            init_value = self.init_value*other.init_value,
+            cumulative = dict(zip(self_copy._keys(), multiplied_cumulative_values)),
             use_dates=self.use_dates,
             tz=self.tz,
         )
-        new_instance._reduce()
         return new_instance
 
     return func

@@ -5,7 +5,7 @@ from staircase.core.tools.datetimes import (
     _convert_float_to_date,
     _using_dates,
 )
-from staircase.core.tools import _get_union_of_points
+from staircase.core.tools import _from_cumulative, _get_union_of_points
 from staircase.util._decorators import Appender
 from staircase.core.collections import docstrings
 from staircase.core.stairs import Stairs
@@ -117,17 +117,27 @@ def aggregate(collection, func, points=None):
     aggregation = df.pivot_table(
         index="points", columns="key", values="value"
     ).aggregate(func, axis=1)
+    
     if use_dates:
         aggregation.index = _convert_date_to_float(aggregation.index, tz=tz)
-    aggregation[float("-inf")] = func(
-        [_sample_raw(val, float("-inf")) for key, val in Stairs_dict.items()]
+    init_val = func(
+        [val.init_value for _, val in Stairs_dict.items()]
     )
-    step_changes = aggregation.sort_index().diff().fillna(0)
-    step_changes[float("-inf")] = aggregation[float("-inf")]
+    return _from_cumulative(
+        init_val,
+        dict(aggregation),
+        use_dates,
+        tz,
+    )
+    
+    
+    #step_changes = aggregation.sort_index().diff().fillna(0)
+    #step_changes[float("-inf")] = aggregation[float("-inf")]
     # groupby.sum is necessary on next line as step_changes series may not have unique index elements
-    return Stairs(
-        dict(step_changes.groupby(level=0).sum()), use_dates=use_dates, tz=tz
-    )._reduce()
+    #new_instance = Stairs(
+    #    
+    #    dict(step_changes.groupby(level=0).sum()), use_dates=use_dates, tz=tz
+    #)._reduce()
 
 
 @Appender(docstrings.mean_docstring, join="\n", indents=1)

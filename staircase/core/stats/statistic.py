@@ -2,6 +2,7 @@ import numpy as np
 from pandas import Timestamp
 from staircase.core.stats.distribution import percentile_stairs
 from staircase.core.tools.datetimes import _convert_date_to_float
+from staircase.core.tools import _from_cumulative
 from staircase.util._decorators import Appender
 from staircase.core.stats import docstrings
 import staircase as sc
@@ -46,13 +47,14 @@ def mode(self, lower=float("-inf"), upper=float("inf")):
 def var(self, lower=float("-inf"), upper=float("inf")):
     percentile_minus_mean = (
         percentile_stairs(self, lower, upper) - self.mean(lower, upper)
-    )._cumulative()
+    )
     return (
-        sc.Stairs.from_cumulative(
+        _from_cumulative(
+            percentile_minus_mean.init_value,
             dict(
                 zip(
-                    percentile_minus_mean.keys(),
-                    (val * val for val in percentile_minus_mean.values()),
+                    percentile_minus_mean._keys(),
+                    (val * val for val in percentile_minus_mean._cumulative().values()),
                 )
             )
         ).integrate(0, 100)

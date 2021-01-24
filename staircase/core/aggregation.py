@@ -1,7 +1,8 @@
+from sortedcontainers import SortedDict
 import operator
 import numpy as np
 import staircase as sc
-
+from staircase.core.tools import _from_cumulative
 
 def _make_extremum_func(extrema):
     """
@@ -36,13 +37,15 @@ def _make_extremum_func(extrema):
         for key, value in cumulative.items():
             if comparator(value, 0):
                 cumulative[key] = 0
-        deltas = [cumulative.values()[0]]
-        deltas.extend(np.subtract(cumulative.values()[1:], cumulative.values()[:-1]))
-        new_instance = sc.Stairs(
-            dict(zip(new_instance._keys(), deltas)),
-            use_dates=stairs1.use_dates or stairs2.use_dates,
+        init_val = int(comparator(new_instance.init_value, 0))
+        
+        new_instance = _from_cumulative(
+            init_val, 
+            SortedDict(zip(new_instance._keys(), cumulative.values())),
+            use_dates=stairs1.use_dates,
             tz=stairs1.tz,
         )
+        
         return new_instance + stairs2
 
     return extremum_func

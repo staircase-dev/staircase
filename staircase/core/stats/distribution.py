@@ -94,13 +94,15 @@ def ecdf_stairs(self, lower=float("-inf"), upper=float("inf")):
     Stairs.hist
     """
 
-    def _switch_first_key_to_zero(d):
+    def _switch_first_key_to_zero(d): #delete
         d[0] = d.get(0, 0) + d.pop(float("-inf"))
         return d
-
-    _ecdf = _switch_first_key_to_zero(
-        percentile_stairs(self, lower, upper)._sorted_dict.copy()
-    )
+    
+    ps = percentile_stairs(self, lower, upper)
+    
+    _ecdf = ps._sorted_dict.copy()
+    _ecdf[0] = _ecdf.get(0,0) + ps.init_value 
+  
 
     return sc.Stairs().layer(
         np.cumsum(list(_ecdf.values())[:-1]), None, np.diff(list(_ecdf.keys())) / 100

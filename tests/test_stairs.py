@@ -269,7 +269,7 @@ def test_two_finite_interval_one_subinterval(init_value, endpoints, value, delta
         int_seq.step_changes(), (point1, point2, point3, point4)
     ), "Finite endpoints are not what is expected"
     assert (
-        int_seq(float("-inf")) == init_value
+        int_seq.get_init_value() == init_value
     ), "Adding finite interval should not change initial value"
     assert (
         int_seq(float("inf")) == init_value
@@ -514,7 +514,7 @@ def test_hist_left_closed(stairs_instance, bounds, cuts):
 
     hist = stairs_instance.hist(bin_edges=cuts, lower=bounds[0], upper=bounds[1])
     expected = make_expected_result(hist.index, *bounds)
-    assert (hist.apply(round, 5) == expected.apply(round, 5)).all()
+    assert (hist.apply(round, 5) == expected.apply(round, 5)).all(), f"{bounds}, {cuts}"
 
 
 @pytest.mark.parametrize(
@@ -857,46 +857,46 @@ def test_s1_sample_max(s1_fix, x, kwargs, expected_val):
         (
             [-4, -2, 1, 3],
             {"aggfunc": "mean", "window": (-0.5, 0.5)},
-            [-0.875, -1.75, -0.75, 1.5],
+            {-4:-0.875, -2:-0.875, 1:1, 3:2.25},
         ),
         (
             [-4, -2, 1, 3],
             {"aggfunc": "mean", "window": (-1, 0)},
-            [0.0, -1.75, -1.75, 0.25],
+            {-2:-1.75, 3:2},
         ),
         (
             [-4, -2, 1, 3],
             {"aggfunc": "mean", "window": (0, 1)},
-            [-1.75, -1.75, 0.25, 2.75],
+            {-4:-1.75, 1:2, 3:2.5},
         ),
     ],
 )
 def test_s1_resample_mean(s1_fix, x, kwargs, expected_val):
-    assert s1_fix.resample(x, **kwargs)._cumulative().items()[1:] == list(
-        zip(x, expected_val)
-    )
+    assert s1_fix.resample(x, **kwargs).step_changes() == expected_val
 
 
 @pytest.mark.parametrize(
     "x, kwargs, expected_val",
     [
-        ([0, 2, 7], {"aggfunc": "max", "window": (-1, 1)}, [-1.75, 0.25, -0.5],),
+        (
+            [0, 2, 7],
+            {"aggfunc": "max", "window": (-1, 1)},
+            {0:-1.75, 2:2, 7:-0.75},
+        ),
         (
             [0, 2, 7],
             {"aggfunc": "max", "window": (-1, 1), "lower_how": "left"},
-            [-1.75, 0.25, 2.0],
+            {0:-1.75, 2:2, 7:1.75},
         ),
         (
             [0, 2, 7],
             {"aggfunc": "max", "window": (-1, 1), "upper_how": "right"},
-            [0.25, 2.75, -0.5],
+            {0:0.25, 2:2.5, 7:-3.25}
         ),
     ],
 )
 def test_s1_resample_max(s1_fix, x, kwargs, expected_val):
-    assert s1_fix.resample(x, **kwargs)._cumulative().items()[1:] == list(
-        zip(x, expected_val)
-    )
+    assert s1_fix.resample(x, **kwargs).step_changes() == expected_val
 
 
 def test_plot(s1_fix):

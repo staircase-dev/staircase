@@ -5,6 +5,7 @@ from staircase.util._decorators import Appender
 from staircase.core.poly import docstrings
 from staircase.core.stats.docstrings import integral_and_mean_docstring
 import staircase as sc
+from staircase.constants import inf
 from staircase.core.tools import (
     _from_cumulative,
     _get_stairs_method,
@@ -51,22 +52,24 @@ def _sample_raw(self, x, how="right"):
             return [cumulative[_x] for _x in x]
         else:
             shifted_cumulative = SortedDict(
-                zip(cumulative.keys()[1:], cumulative.values()[:-1])
+                zip(cumulative.keys(), [self.init_value] + list(cumulative.values()[:-1]))
             )
-            if float("-inf") in x:
-                vals = [self[float("-inf")]]
+            if -inf in x:
+                vals = [self.init_value]
             else:
                 vals = []
             vals.extend([val for key, val in shifted_cumulative.items() if key in x])
             return vals
-    elif x == float("-inf"):
-        return self._values()[0]
+    elif x == -inf or self.number_of_steps() == 0:
+        return self.get_init_value()
     else:
         cumulative = self._cumulative()
         if how == "right":
             preceding_boundary_index = cumulative.bisect_right(x) - 1
         else:
             preceding_boundary_index = cumulative.bisect_left(x) - 1
+        if preceding_boundary_index < 0:
+            return self.init_value
         return cumulative.values()[preceding_boundary_index]
 
 
@@ -169,14 +172,14 @@ def _resample(
         x = [
             x,
         ]
-    new_cumulative = SortedDict({float("-inf"): _sample(self, float("-inf"))})
-    new_cumulative.update(
+    
+    new_cumulative = SortedDict(
         {
             point: _sample(self, point, how, aggfunc, window, lower_how, upper_how)
             for point in x
         }
     )
-    return _from_cumulative(new_cumulative, self.use_dates, self.tz)
+    return _from_cumulative(self.init_value, new_cumulative, self.use_dates, self.tz)
 
 
 @Appender(docstrings.resample_docstring, join="\n", indents=1)
@@ -215,17 +218,18 @@ def _layer_single(self, start=None, end=None, value=None):
     """
     Implementation of the layer function for when start parameter is single-valued
     """
-    if pd.isna(start):
-        start = float("-inf")
     if pd.isna(value):
         value = 1
-    self[start] = self._get(start, 0) + value
-    if start != float("-inf") and self[start] == 0:
-        self._pop(start)
+    if pd.isna(start):
+        self.init_value += value
+    else:
+        self[start] = self._get(start, 0) + value
+        if self[start] == 0:
+            self._pop(start)
 
     if not pd.isna(end):
         self[end] = self._get(end, 0) - value
-        if self[end] == 0 or end == float("inf"):
+        if self[end] == 0:
             self._pop(end)
 
     self.cached_cumulative = None
@@ -241,7 +245,7 @@ def _layer_multiple(self, starts=None, ends=None, values=None):
             assert len(vector) == len(values)
 
     if starts is None:
-        starts = [float("-inf")] * len(ends)
+        starts = [None] * len(ends)
     if ends is None:
         ends = []
     if values is None:
@@ -249,22 +253,24 @@ def _layer_multiple(self, starts=None, ends=None, values=None):
 
     for start, value in zip(starts, values):
         if pd.isna(start):
-            start = float("-inf")
-        self[start] = self._get(start, 0) + value
+            self.init_value += value
+        else:
+            self[start] = self._get(start, 0) + value
+
     for end, value in zip(ends, values):
         if not pd.isna(end):
             self[end] = self._get(end, 0) - value
     self.cached_cumulative = None
-    return self
+    return self #do not call _reduce.  It breaks multiplication.
 
 
 @Appender(docstrings.step_changes_docstring, join="\n", indents=1)
 def step_changes(self):
     if self.use_dates:
         return dict(
-            zip(_convert_float_to_date(self._keys()[1:], self.tz), self._values()[1:])
+            zip(_convert_float_to_date(self._keys(), self.tz), self._values())
         )
-    return dict(self._items()[1:])
+    return dict(self._items())
 
 
 @Appender(docstrings.values_in_range_docstring, join="\n", indents=1)
@@ -302,19 +308,25 @@ def _clip(self, lower=float("-inf"), upper=float("inf")):
     cumulative = self._cumulative()
     left_boundary_index = cumulative.bisect_right(lower) - 1
     right_boundary_index = cumulative.bisect_right(upper) - 1
-    value_at_left = cumulative.values()[left_boundary_index]
-    value_at_right = cumulative.values()[right_boundary_index]
-    s = dict(self._items()[left_boundary_index + 1 : right_boundary_index + 1])
-    s[float("-inf")] = 0
-    if lower != float("-inf"):
-        s[float("-inf")] = 0
-        s[lower] = value_at_left
+    if left_boundary_index < 0:
+        value_at_left = self.init_value
     else:
-        s[float("-inf")] = self[float("-inf")]
+        value_at_left = cumulative.values()[left_boundary_index]
+    if right_boundary_index < 0:
+        value_at_right = self.init_value
+    else:
+        value_at_right = cumulative.values()[right_boundary_index]
+    s = SortedDict(self._items()[max(0,left_boundary_index + 1) : max(0,right_boundary_index + 1)])
+    if lower != float("-inf"):
+        s[lower] = value_at_left
+        init_val = 0
+    else:
+        init_val = self.get_init_value()
     if upper != float("inf"):
         s[upper] = s.get(upper, 0) - value_at_right
-    return sc.Stairs(s, self.use_dates, self.tz)
-
+    new_instance = sc.Stairs(init_val, self.use_dates, self.tz)
+    new_instance._replace_sorted_dict(s)
+    return new_instance
 
 @Appender(docstrings.clip_docstring, join="\n", indents=1)
 def clip(self, lower=float("-inf"), upper=float("inf")):
@@ -333,10 +345,10 @@ def _get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
     if upper != float("inf"):
         new_instance[upper] = new_instance._get(upper, 0)
     cumulative = new_instance._cumulative()
-    widths = np.subtract(cumulative.keys()[2:], cumulative.keys()[1:-1])
-    heights = cumulative.values()[1:-1]
+    widths = np.diff(cumulative.keys())
+    heights = cumulative.values()[:-1]
     area = np.multiply(widths, heights).sum()
-    mean = area / (cumulative.keys()[-1] - cumulative.keys()[1])
+    mean = area / (cumulative.keys()[-1] - cumulative.keys()[0])
     return area, mean
 
 

@@ -1,5 +1,5 @@
 import numpy as np
-from sortedcontainers import SortedSet
+from sortedcontainers import SortedDict, SortedSet
 from staircase.core.tools.datetimes import check_binop_timezones
 import staircase as sc
 
@@ -40,11 +40,11 @@ def _get_union_of_points(collection):
 
 def _get_stairs_method(name):
     return {
-        "mean": sc.Stairs.mean,
-        "median": sc.Stairs.median,
-        "mode": sc.Stairs.mode,
-        "max": sc.Stairs.max,
-        "min": sc.Stairs.min,
+        "mean": sc.core.stats.statistic.mean,
+        "median": sc.core.stats.statistic.median,
+        "mode": sc.core.stats.statistic.mode,
+        "max": sc.core.stairs.Stairs.max,
+        "min": sc.core.stairs.Stairs.min,
     }[name]
 
 
@@ -54,18 +54,10 @@ def _verify_window(left_delta, right_delta, zero):
     assert right_delta - left_delta > zero, "window length must be non-zero"
 
 
-def _from_cumulative(cumulative, use_dates=False, tz=None):
-    return sc.Stairs(
-        dict(
-            zip(
-                cumulative.keys(),
-                np.insert(
-                    np.diff(list(cumulative.values())),
-                    0,
-                    [next(iter(cumulative.values()))],
-                ),
-            )
-        ),
-        use_dates,
-        tz,
-    )
+def _from_cumulative(init_value, cumulative, use_dates=False, tz=None):
+    new_instance = sc.Stairs(init_value, use_dates, tz)
+    new_instance._replace_sorted_dict(SortedDict(
+        zip(cumulative.keys(), np.diff(np.array([init_value] + list(cumulative.values()))))
+    ))
+    return new_instance._reduce()
+        
