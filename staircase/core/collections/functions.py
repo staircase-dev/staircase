@@ -1,10 +1,6 @@
 import pandas as pd
 import numpy as np
-from staircase.core.tools.datetimes import (
-    _convert_date_to_float,
-    _convert_float_to_date,
-    _using_dates,
-)
+from staircase.constants import inf
 from staircase.core.tools import _from_cumulative, _get_union_of_points
 from staircase.util._decorators import Appender
 from staircase.core.collections import docstrings
@@ -46,15 +42,10 @@ def sample(collection, points=None, how="right", expand_key=True):
     --------
     Stairs.sample
     """
-    use_dates, tz = _using_dates(collection)
     # assert len(set([type(x) for x in collection.values()])) == 1, "collection must contain values of same type"
     if points is None:
         points = _get_union_of_points(collection)
-        points.discard(float("-inf"))
-        if use_dates:
-            points = _convert_float_to_date(
-                list(points), tz
-            )  # bugfix - pandas>=1.1 breaks with points as type SortedSet
+        points.discard(-inf)
     else:
         if not hasattr(points, "__iter__"):
             points = [points]
@@ -112,32 +103,13 @@ def aggregate(collection, func, points=None):
         Stairs_dict = collection
     else:
         Stairs_dict = dict(enumerate(collection))
-    use_dates, tz = _using_dates(collection)
     df = sample(Stairs_dict, points, expand_key=False)
     aggregation = df.pivot_table(
         index="points", columns="key", values="value"
     ).aggregate(func, axis=1)
-    
-    if use_dates:
-        aggregation.index = _convert_date_to_float(aggregation.index, tz=tz)
-    init_val = func(
-        [val.init_value for _, val in Stairs_dict.items()]
-    )
-    return _from_cumulative(
-        init_val,
-        dict(aggregation),
-        use_dates,
-        tz,
-    )
-    
-    
-    #step_changes = aggregation.sort_index().diff().fillna(0)
-    #step_changes[float("-inf")] = aggregation[float("-inf")]
-    # groupby.sum is necessary on next line as step_changes series may not have unique index elements
-    #new_instance = Stairs(
-    #    
-    #    dict(step_changes.groupby(level=0).sum()), use_dates=use_dates, tz=tz
-    #)._reduce()
+
+    init_val = func([val.init_value for _, val in Stairs_dict.items()])
+    return _from_cumulative(init_val, dict(aggregation),)
 
 
 @Appender(docstrings.mean_docstring, join="\n", indents=1)

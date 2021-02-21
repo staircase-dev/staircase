@@ -6,12 +6,6 @@ from sortedcontainers import SortedSet
 from staircase import Stairs
 from staircase.core.aggregation import _max_pair, _min_pair
 from staircase.core.tools import _get_union_of_points
-from staircase.core.tools.datetimes import (
-    _convert_date_to_float,
-    _convert_float_to_date,
-    _using_dates,
-)
-from staircase.core.stairs import origin
 import staircase as sc
 
 
@@ -93,27 +87,6 @@ def test_get_union_of_points_5(IS1, IS2):
     _get_union_of_points((IS1, IS2)) == SortedSet(
         [float("-inf"), -4, -2, 1, 2, 2.5, 3, 4, 5, 6, 7, 8, 10]
     )
-
-
-def test_using_dates_1(IS1, IS2):
-    assert not _using_dates({1: IS1, 2: IS2})[0]
-
-
-def test_using_dates_2(IS1, IS2):
-    assert not _using_dates(pd.Series([IS1, IS2]))[0]
-
-
-def test_using_dates_3(IS1, IS2):
-    assert not _using_dates(np.array([IS1, IS2]))[0]
-
-
-def test_using_dates_4(IS1, IS2):
-    assert not _using_dates([IS1, IS2])[0]
-
-
-def test_using_dates_5(IS1, IS2):
-    assert not _using_dates((IS1, IS2))[0]
-
 
 def test_aggregate_1(IS1, IS2):
     assert sc.aggregate({1: IS1, 2: IS2}, np.mean).step_changes() == {
@@ -721,12 +694,12 @@ def test_corr_matrix2(IS1, IS2):
     )
 
 
-def test_convert_date_to_float():
-    assert _convert_date_to_float(None) is None
+# def test_convert_date_to_float():
+    # assert _convert_date_to_float(None) is None
 
 
-def test_convert_float_to_date():
-    assert _convert_float_to_date(1) == origin + pd.Timedelta(1, "h")
+# def test_convert_float_to_date():
+    # assert _convert_float_to_date(1) == origin + pd.Timedelta(1, "h")
 
 
 def test_get_union_of_points_exception():
@@ -734,9 +707,9 @@ def test_get_union_of_points_exception():
         assert _get_union_of_points(None)
 
 
-def test_using_dates_exception():
-    with pytest.raises(TypeError):
-        assert _using_dates(None)
+# def test_using_dates_exception():
+    # with pytest.raises(TypeError):
+        # assert _using_dates(None)
 
 
 def test_sample_series_expand_key(IS1, IS2):

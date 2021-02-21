@@ -6,15 +6,15 @@ from staircase.core.ops import docstrings
 import staircase as sc
 
 
-def _compare(init_val_diff, cumulative, zero_comparator, use_dates=False, tz=None):
+def _compare(init_val_diff, cumulative, zero_comparator):
     truth = cumulative.copy()
     for key, value in truth.items():
         new_val = int(zero_comparator(float(value)))
         truth[key] = new_val
     init_val = int(zero_comparator(float(init_val_diff)))
-    new_instance = sc.Stairs(init_val, use_dates, tz)
+    new_instance = sc.Stairs(init_val)
     if len(truth) > 0:
-        deltas = [truth.values()[0]-init_val]
+        deltas = [truth.values()[0] - init_val]
         deltas.extend(np.diff(truth.values()))
         new_instance._replace_sorted_dict(SortedDict(zip(truth.keys(), deltas)))
         new_instance._reduce()
@@ -28,13 +28,7 @@ def _make_relational_func(comparator, docstring):
     def func(self, other):
         self, other = _sanitize_binary_operands(self, other)
         diff = other - self
-        return _compare(
-            diff.get_init_value(),
-            diff._cumulative(),
-            comparator,
-            self.use_dates or other.use_dates,
-            self.tz,
-        )
+        return _compare(diff.get_init_value(), diff._cumulative(), comparator,)
 
     return func
 

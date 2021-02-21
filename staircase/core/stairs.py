@@ -12,18 +12,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas.plotting import register_matplotlib_converters
-import pytz
-from staircase.defaults import default
+from staircase.constants import inf
 from staircase.docstrings.decorator import add_doc, append_doc
 from staircase.docstrings import stairs_class as SC_docs
 from staircase.core import ops, poly, stats
-from staircase.core.tools.datetimes import (
-    origin,
-    _convert_date_to_float,
-    _convert_float_to_date,
-    _maybe_convert_from_timedeltas,
-    _maybe_convert_from_timestamps,
-)
 
 register_matplotlib_converters()
 
@@ -38,7 +30,7 @@ class Stairs:
     See the :ref:`Stairs API <api.Stairs>` for details of methods.
     """
 
-    def __init__(self, value=0, use_dates=default, tz=default):
+    def __init__(self, value=0):
         """
         Initialise a Stairs instance.
 
@@ -46,18 +38,11 @@ class Stairs:
         ----------
         value : float, default 0
             The value of the step function at negative infinity.
-        use_dates: bool, default False
-            Allows the step function to be defined with `Pandas.Timestamp <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html>`_.
 
         Returns
         -------
         :class:`Stairs`
         """
-        if use_dates == default:
-            use_dates = default.get_default("use_dates")
-        if tz == default:
-            tz = default.get_default("tz")
-
         self._sorted_dict = SortedDict()
         if isinstance(value, dict):
             raise AssertionError("Do not let this code execute")
@@ -65,20 +50,15 @@ class Stairs:
         else:
             self.init_value = value
             self._sorted_dict = SortedDict()
-            #self._sorted_dict[float("-inf")] = value
-        self.use_dates = use_dates
-        self.tz = tz
+
         self.cached_cumulative = None
-
-        # runtime._add_operations(self, use_dates)
-
         self._bind_sorted_dict_methods()
 
     # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING
 
     def get_init_value(self):
         return self.init_value
-        
+
     def _bind_sorted_dict_methods(self):
         self._get = self._sorted_dict.get
         self._items = self._sorted_dict.items
@@ -87,12 +67,11 @@ class Stairs:
         self._pop = self._sorted_dict.pop
         self._len = self._sorted_dict.__len__
         self._popitem = self._sorted_dict.popitem
-        
+
     def _replace_sorted_dict(self, _sorted_dict):
         self._sorted_dict = _sorted_dict
         self._bind_sorted_dict_methods()
-        
-        
+
     def __getitem__(self, *args, **kwargs):
         """
         f'{dict.__getitem__.__doc__}'
@@ -118,19 +97,22 @@ class Stairs:
         -------
         :class:`Stairs`
         """
-        new_instance = Stairs(value=self.init_value, use_dates=self.use_dates, tz=self.tz)
+        new_instance = Stairs(value=self.init_value)
         for key, value in self._items():
             new_instance[key] = value
         return new_instance
 
     @classmethod
-    def from_cumulative(cls, init_value, cumulative, use_dates=False, tz=None):
-        new_instance = cls(init_value, use_dates, tz)
+    def from_cumulative(cls, init_value, cumulative):
+        new_instance = cls(init_value)
         new_instance._sorted_dict = SortedDict(
-            zip(cumulative.keys(), np.diff(np.array([init_value] + list(cumulative.values()))))
+            zip(
+                cumulative.keys(),
+                np.diff(np.array([init_value] + list(cumulative.values()))),
+            )
         )
-        return new_instance   
-           
+        return new_instance
+
     def plot(self, ax=None, **kwargs):
         """
         Makes a step plot representing the finite intervals belonging to the Stairs instance.
@@ -153,17 +135,10 @@ class Stairs:
 
         cumulative = self._cumulative()
         cumulative_keys = cumulative.keys()
-        if self.use_dates:
-            register_matplotlib_converters()
-            x = [cumulative.keys()[0]-0.00000001] + list(cumulative.keys())
-            ax.step(
-                _convert_float_to_date(x, self.tz),
-                [self.init_value] + list(cumulative.values()),
-                where="post",
-                **kwargs,
-            )
-        else:
-            ax.step([float('inf')] + list(cumulative_keys), [self.init_value] + list(cumulative.values()), where="post", **kwargs)
+        register_matplotlib_converters()
+        ax.step(
+            list(cumulative_keys), list(cumulative.values()), where="post", **kwargs
+        )
         return ax
 
     def _cumulative(self):
@@ -194,15 +169,13 @@ class Stairs:
             return True
         elif number_of_steps % 2 == 1:
             return False
-        elif not set(self._cumulative().values()).issubset({0,1}):
+        elif not set(self._cumulative().values()).issubset({0, 1}):
             return False
         else:
             return float((~self).integrate()) < 0.0000001
 
     @append_doc(SC_docs.describe_example)
-    def describe(
-        self, lower=float("-inf"), upper=float("inf"), percentiles=(25, 50, 75)
-    ):
+    def describe(self, lower=-inf, upper=inf, percentiles=(25, 50, 75)):
         """
         Generate descriptive statistics.
 
@@ -238,7 +211,7 @@ class Stairs:
         )
 
     @append_doc(SC_docs.cov_example)
-    def cov(self, other, lower=float("-inf"), upper=float("inf"), lag=0, clip="pre"):
+    def cov(self, other, lower=-inf, upper=inf, lag=0, clip="pre"):
         """
         Calculates either covariance, autocovariance or cross-covariance.
 
@@ -273,7 +246,7 @@ class Stairs:
         """
         if lag != 0:
             assert clip in ["pre", "post"]
-            if clip == "pre" and upper != float("inf"):
+            if clip == "pre" and upper != inf:
                 upper = upper - lag
             other = other.shift(-lag)
         return (self * other).mean(lower, upper) - self.mean(lower, upper) * other.mean(
@@ -281,7 +254,7 @@ class Stairs:
         )
 
     @append_doc(SC_docs.corr_example)
-    def corr(self, other, lower=float("-inf"), upper=float("inf"), lag=0, clip="pre"):
+    def corr(self, other, lower=-inf, upper=inf, lag=0, clip="pre"):
         """
         Calculates either correlation, autocorrelation or cross-correlation.
 
@@ -318,7 +291,7 @@ class Stairs:
         """
         if lag != 0:
             assert clip in ["pre", "post"]
-            if clip == "pre" and upper != float("inf"):
+            if clip == "pre" and upper != inf:
                 upper = upper - lag
             other = other.shift(-lag)
         return self.cov(other, lower, upper) / (
@@ -327,11 +300,7 @@ class Stairs:
 
     @append_doc(SC_docs.min_example)
     def min(
-        self,
-        lower=float("-inf"),
-        upper=float("inf"),
-        lower_how="right",
-        upper_how="left",
+        self, lower=-inf, upper=inf, lower_how="right", upper_how="left",
     ):
         """
         Calculates the minimum value of the step function
@@ -366,11 +335,7 @@ class Stairs:
 
     @append_doc(SC_docs.max_example)
     def max(
-        self,
-        lower=float("-inf"),
-        upper=float("inf"),
-        lower_how="right",
-        upper_how="left",
+        self, lower=-inf, upper=inf, lower_how="right", upper_how="left",
     ):
         """
         Calculates the maximum value of the step function
@@ -425,15 +390,10 @@ class Stairs:
         --------
         Stairs.diff
         """
-        if isinstance(delta, pd.Timedelta):
-            assert self.use_dates, "delta is of type pandas.Timedelta, expected float"
-            delta = delta.total_seconds() / 3600
-        new_instance = Stairs(
-            self.init_value,
-            self.use_dates,
-            self.tz,
+        new_instance = Stairs(self.init_value,)
+        new_instance._replace_sorted_dict(
+            SortedDict(zip((key + delta for key in self._keys()), self._values()))
         )
-        new_instance._replace_sorted_dict(SortedDict(zip((key + delta for key in self._keys()), self._values())))
         return new_instance
 
     @append_doc(SC_docs.diff_example)
@@ -459,7 +419,7 @@ class Stairs:
         return self - self.shift(delta)
 
     @append_doc(SC_docs.rolling_mean_example)
-    def rolling_mean(self, window=(0, 0), lower=float("-inf"), upper=float("inf")):
+    def rolling_mean(self, window=(0, 0), lower=-inf, upper=inf):
         """
         Returns coordinates defining rolling mean
 
@@ -497,9 +457,6 @@ class Stairs:
         assert len(window) == 2, "Window should be a listlike object of length 2."
         left_delta, right_delta = window
         clipped = self.clip(lower, upper)
-        if clipped.use_dates:
-            left_delta = pd.Timedelta(left_delta, "h")
-            right_delta = pd.Timedelta(right_delta, "h")
         change_points = list(
             SortedSet(
                 [c - right_delta for c in clipped.step_changes().keys()]
@@ -510,9 +467,9 @@ class Stairs:
             clipped.sample(change_points, aggfunc="mean", window=window),
             index=change_points,
         )
-        if lower != float("-inf"):
+        if lower != -inf:
             s = s.loc[s.index >= lower - left_delta]
-        if upper != float("inf"):
+        if upper != inf:
             s = s.loc[s.index <= upper - right_delta]
         return s
 
@@ -527,13 +484,9 @@ class Stairs:
         -------
         :class:`pandas.DataFrame`
         """
-        if self.use_dates:
-            starts = [pd.NaT] + _convert_float_to_date(np.array(self._keys()), self.tz)
-            ends = _convert_float_to_date(np.array(self._keys()), self.tz) + [pd.NaT]
-        else:
-            starts = [float("-inf")] + list(self._keys())
-            ends = list(self._keys()) + [float("inf")]
-        
+        starts = [-inf] + list(self._keys())
+        ends = list(self._keys()) + [inf]
+
         values = [self.init_value] + list(self._cumulative().values())
         df = pd.DataFrame(
             {"start": list(starts), "end": list(ends), "value": list(values)}
@@ -559,8 +512,7 @@ class Stairs:
         """
         Return str(self)
         """
-        tzinfo = f", tz={self.tz}" if self.use_dates else ""
-        return f"<staircase.Stairs, id={id(self)}, dates={self.use_dates}{tzinfo}>"
+        return f"<staircase.Stairs, id={id(self)}>"
 
     def __repr__(self):
         """

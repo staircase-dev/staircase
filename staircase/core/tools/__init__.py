@@ -1,14 +1,12 @@
 import numpy as np
 from sortedcontainers import SortedDict, SortedSet
-from staircase.core.tools.datetimes import check_binop_timezones
 import staircase as sc
 
 
 def _sanitize_binary_operands(self, other, copy_other=False):
     if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(other, self.use_dates, self.tz)
+        other = sc.Stairs(other)
     else:
-        check_binop_timezones(self, other)
         if copy_other:
             other = other.copy()
     return self.copy(), other
@@ -48,16 +46,21 @@ def _get_stairs_method(name):
     }[name]
 
 
-def _verify_window(left_delta, right_delta, zero):
+def _verify_window(left_delta, right_delta):
+    zero = type(left_delta)(0)
     assert left_delta <= zero, "left_delta must not be positive"
     assert right_delta >= zero, "right_delta must not be negative"
     assert right_delta - left_delta > zero, "window length must be non-zero"
 
 
-def _from_cumulative(init_value, cumulative, use_dates=False, tz=None):
-    new_instance = sc.Stairs(init_value, use_dates, tz)
-    new_instance._replace_sorted_dict(SortedDict(
-        zip(cumulative.keys(), np.diff(np.array([init_value] + list(cumulative.values()))))
-    ))
+def _from_cumulative(init_value, cumulative):
+    new_instance = sc.Stairs(init_value)
+    new_instance._replace_sorted_dict(
+        SortedDict(
+            zip(
+                cumulative.keys(),
+                np.diff(np.array([init_value] + list(cumulative.values()))),
+            )
+        )
+    )
     return new_instance._reduce()
-        

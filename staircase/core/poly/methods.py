@@ -11,12 +11,6 @@ from staircase.core.tools import (
     _get_stairs_method,
     _verify_window,
 )
-from staircase.core.tools.datetimes import (
-    _convert_date_to_float,
-    _convert_float_to_date,
-    _maybe_convert_from_timedeltas,
-    _maybe_convert_from_timestamps,
-)
 
 
 def _sample_raw(self, x, how="right"):
@@ -48,11 +42,22 @@ def _sample_raw(self, x, how="right"):
     if hasattr(x, "__iter__"):
         new_instance = _layer_multiple(self.copy(), x, None, [0] * len(x))
         cumulative = new_instance._cumulative()
+
+        def cumval(_x):
+            if _x == -inf:
+                return self.init_value
+            elif _x == inf:
+                return cumulative.values()[-1]
+            return cumulative[_x]
+
         if how == "right":
-            return [cumulative[_x] for _x in x]
+            return [cumval(_x) for _x in x]
         else:
             shifted_cumulative = SortedDict(
-                zip(cumulative.keys(), [self.init_value] + list(cumulative.values()[:-1]))
+                zip(
+                    cumulative.keys(),
+                    [self.init_value] + list(cumulative.values()[:-1]),
+                )
             )
             if -inf in x:
                 vals = [self.init_value]
@@ -109,7 +114,7 @@ def _sample_agg(self, x, window, aggfunc, lower_how="right", upper_how="left"):
     if isinstance(aggfunc, str):
         aggfunc = _get_stairs_method(aggfunc)
     left_delta, right_delta = window
-    _verify_window(left_delta, right_delta, 0)
+    _verify_window(left_delta, right_delta)
     kwargs = (
         {"lower_how": lower_how, "upper_how": upper_how}
         if aggfunc in [sc.Stairs.min, sc.Stairs.max]
@@ -124,23 +129,6 @@ def _sample_agg(self, x, window, aggfunc, lower_how="right", upper_how="left"):
 
 
 @Appender(docstrings.sample_docstring, join="\n", indents=1)
-def _sample(
-    self,
-    x,
-    how="right",
-    aggfunc=None,
-    window=(0, 0),
-    lower_how="right",
-    upper_how="left",
-):
-    # not using dates
-    if aggfunc is None:
-        return _sample_raw(self, x, how)
-    else:
-        return _sample_agg(self, x, window, aggfunc, lower_how, upper_how)
-
-
-@Appender(docstrings.sample_docstring, join="\n", indents=1)
 def sample(
     self,
     x,
@@ -150,14 +138,14 @@ def sample(
     lower_how="right",
     upper_how="left",
 ):
-    if self.use_dates:
-        x = _convert_date_to_float(x, self.tz)
-        window = _maybe_convert_from_timedeltas(window)
-    return _sample(self, x, how, aggfunc, window, lower_how, upper_how)
+    if aggfunc is None:
+        return _sample_raw(self, x, how)
+    else:
+        return _sample_agg(self, x, window, aggfunc, lower_how, upper_how)
 
 
 @Appender(docstrings.resample_docstring, join="\n", indents=1)
-def _resample(
+def resample(
     self,
     x,
     how="right",
@@ -172,46 +160,23 @@ def _resample(
         x = [
             x,
         ]
-    
+
     new_cumulative = SortedDict(
         {
-            point: _sample(self, point, how, aggfunc, window, lower_how, upper_how)
+            point: sample(self, point, how, aggfunc, window, lower_how, upper_how)
             for point in x
         }
     )
-    return _from_cumulative(self.init_value, new_cumulative, self.use_dates, self.tz)
-
-
-@Appender(docstrings.resample_docstring, join="\n", indents=1)
-def resample(
-    self,
-    x,
-    how="right",
-    aggfunc=None,
-    window=(0, 0),
-    lower_how="right",
-    upper_how="left",
-):
-    if self.use_dates:
-        x = _convert_date_to_float(x, self.tz)
-        window = _maybe_convert_from_timedeltas(window)
-    return _resample(self, x, how, aggfunc, window, lower_how, upper_how)
+    return _from_cumulative(self.init_value, new_cumulative)
 
 
 @Appender(docstrings.layer_docstring, join="\n", indents=1)
-def _layer(self, start=None, end=None, value=None):
+def layer(self, start=None, end=None, value=None):
     if hasattr(start, "__iter__") or hasattr(end, "__iter__"):
         layer_func = _layer_multiple
     else:
         layer_func = _layer_single
     return layer_func(self, start, end, value)
-
-
-@Appender(docstrings.layer_docstring, join="\n", indents=1)
-def layer(self, start=None, end=None, value=None):
-    if self.use_dates:
-        start, end = _maybe_convert_from_timestamps((start, end), self.tz)
-    return _layer(self, start, end, value)
 
 
 def _layer_single(self, start=None, end=None, value=None):
@@ -220,14 +185,14 @@ def _layer_single(self, start=None, end=None, value=None):
     """
     if pd.isna(value):
         value = 1
-    if pd.isna(start):
+    if pd.isna(start) or start == -inf:
         self.init_value += value
     else:
         self[start] = self._get(start, 0) + value
         if self[start] == 0:
             self._pop(start)
 
-    if not pd.isna(end):
+    if not pd.isna(end) and end != inf:
         self[end] = self._get(end, 0) - value
         if self[end] == 0:
             self._pop(end)
@@ -252,41 +217,28 @@ def _layer_multiple(self, starts=None, ends=None, values=None):
         values = [1] * max(len(starts), len(ends))
 
     for start, value in zip(starts, values):
-        if pd.isna(start):
+        if pd.isna(start) or start == -inf:
             self.init_value += value
-        else:
+        elif start != inf:
             self[start] = self._get(start, 0) + value
 
     for end, value in zip(ends, values):
-        if not pd.isna(end):
+        if not pd.isna(end) and end != inf:
             self[end] = self._get(end, 0) - value
     self.cached_cumulative = None
-    return self #do not call _reduce.  It breaks multiplication.
+    return self  # do not call _reduce.  It breaks multiplication.
 
 
 @Appender(docstrings.step_changes_docstring, join="\n", indents=1)
 def step_changes(self):
-    if self.use_dates:
-        return dict(
-            zip(_convert_float_to_date(self._keys(), self.tz), self._values())
-        )
     return dict(self._items())
 
 
 @Appender(docstrings.values_in_range_docstring, join="\n", indents=1)
 def values_in_range(
-    self, lower=float("-inf"), upper=float("inf"), lower_how="right", upper_how="left",
+    self, lower=-inf, upper=inf, lower_how="right", upper_how="left",
 ):
-    if self.use_dates:
-        lower, upper = _maybe_convert_from_timestamps((lower, upper), self.tz)
-    return _values_in_range(self, lower, upper, lower_how, upper_how)
-
-
-@Appender(docstrings.values_in_range_docstring, join="\n", indents=1)
-def _values_in_range(
-    self, lower=float("-inf"), upper=float("inf"), lower_how="right", upper_how="left",
-):
-    interior_points = [key for key in self._keys() if lower < key < upper]
+    interior_points = [key for key in self._keys() if lower < key and upper > key]
     endpoint_vals = _sample_raw(self, [lower], how="right") + _sample_raw(
         self, [upper], how="left"
     )
@@ -298,7 +250,7 @@ def _values_in_range(
 
 
 @Appender(docstrings.clip_docstring, join="\n", indents=1)
-def _clip(self, lower=float("-inf"), upper=float("inf")):
+def clip(self, lower=-inf, upper=inf):
     assert (
         lower is not None and upper is not None
     ), "clip function should not be called with no parameters."
@@ -306,8 +258,10 @@ def _clip(self, lower=float("-inf"), upper=float("inf")):
         lower < upper
     ), "Value of parameter 'lower' must be less than the value of parameter 'upper'"
     cumulative = self._cumulative()
-    left_boundary_index = cumulative.bisect_right(lower) - 1
-    right_boundary_index = cumulative.bisect_right(upper) - 1
+    left_boundary_index = -1 if lower == -inf else cumulative.bisect_right(lower) - 1
+    right_boundary_index = (
+        len(cumulative) - 1 if upper == inf else cumulative.bisect_right(upper) - 1
+    )
     if left_boundary_index < 0:
         value_at_left = self.init_value
     else:
@@ -316,33 +270,31 @@ def _clip(self, lower=float("-inf"), upper=float("inf")):
         value_at_right = self.init_value
     else:
         value_at_right = cumulative.values()[right_boundary_index]
-    s = SortedDict(self._items()[max(0,left_boundary_index + 1) : max(0,right_boundary_index + 1)])
-    if lower != float("-inf"):
+    s = SortedDict(
+        self._items()[
+            max(0, left_boundary_index + 1) : max(0, right_boundary_index + 1)
+        ]
+    )
+    if lower != -inf:
         s[lower] = value_at_left
         init_val = 0
     else:
         init_val = self.get_init_value()
-    if upper != float("inf"):
+    if upper != inf:
         s[upper] = s.get(upper, 0) - value_at_right
-    new_instance = sc.Stairs(init_val, self.use_dates, self.tz)
+    new_instance = sc.Stairs(init_val)
     new_instance._replace_sorted_dict(s)
     return new_instance
 
-@Appender(docstrings.clip_docstring, join="\n", indents=1)
-def clip(self, lower=float("-inf"), upper=float("inf")):
-    if self.use_dates:
-        lower, upper = _maybe_convert_from_timestamps((lower, upper), self.tz)
-    return _clip(self, lower, upper)
-
 
 @Appender(integral_and_mean_docstring, join="\n", indents=1)
-def _get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
+def get_integral_and_mean(self, lower=-inf, upper=inf):
     new_instance = self.clip(lower, upper)
     if new_instance.number_of_steps() < 2:
         return 0, np.nan
-    if lower != float("-inf"):
+    if lower != -inf:
         new_instance[lower] = new_instance._get(lower, 0)
-    if upper != float("inf"):
+    if upper != inf:
         new_instance[upper] = new_instance._get(upper, 0)
     cumulative = new_instance._cumulative()
     widths = np.diff(cumulative.keys())
@@ -350,10 +302,3 @@ def _get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
     area = np.multiply(widths, heights).sum()
     mean = area / (cumulative.keys()[-1] - cumulative.keys()[0])
     return area, mean
-
-
-@Appender(integral_and_mean_docstring, join="\n", indents=1)
-def get_integral_and_mean(self, lower=float("-inf"), upper=float("inf")):
-    if self.use_dates:
-        lower, upper = _maybe_convert_from_timestamps((lower, upper), self.tz)
-    return _get_integral_and_mean(self, lower, upper)

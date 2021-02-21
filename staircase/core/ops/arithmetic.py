@@ -6,7 +6,8 @@ from staircase.util._decorators import Appender
 from staircase.core.ops import docstrings
 import staircase as sc
 
-#todo, this can be done better
+
+# todo, this can be done better
 @Appender(docstrings.negate_docstring, join="\n", indents=1)
 def negate(self):
     new_instance = self.copy()
@@ -25,7 +26,6 @@ def _make_add_subtract_func(docstring, op):
             new_instance[key] = op(self._get(key, 0), value)
         new_instance._reduce()
         new_instance.init_value = op(new_instance.init_value, other.init_value)
-        new_instance.use_dates = self.use_dates or other.use_dates
         new_instance.cached_cumulative = None
         return new_instance
 
@@ -57,10 +57,8 @@ def _make_mul_div_func(docstring, op):
             self_copy._cumulative().values(), other_copy._cumulative().values()
         )
         new_instance = _from_cumulative(
-            init_value = self.init_value*other.init_value,
-            cumulative = dict(zip(self_copy._keys(), multiplied_cumulative_values)),
-            use_dates=self.use_dates,
-            tz=self.tz,
+            init_value=self.init_value * other.init_value,
+            cumulative=dict(zip(self_copy._keys(), multiplied_cumulative_values)),
         )
         return new_instance
 

@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 
 from staircase import Stairs
+from staircase.constants import inf
 import staircase.test_data as test_data
 import staircase.core.stairs as stairs
 
@@ -22,7 +23,7 @@ def _compare_iterables(it1, it2):
 
 
 def s1():
-    int_seq1 = Stairs(0, use_dates=True)
+    int_seq1 = Stairs(0)
     int_seq1.layer(pd.Timestamp(2020, 1, 1), pd.Timestamp(2020, 1, 10), 2)
     int_seq1.layer(pd.Timestamp(2020, 1, 3), pd.Timestamp(2020, 1, 5), 2.5)
     int_seq1.layer(pd.Timestamp(2020, 1, 6), pd.Timestamp(2020, 1, 7), -2.5)
@@ -31,7 +32,7 @@ def s1():
 
 
 def s2():
-    int_seq2 = Stairs(0, use_dates=True)
+    int_seq2 = Stairs(0)
     int_seq2.layer(pd.Timestamp(2020, 1, 1), pd.Timestamp(2020, 1, 7), -2.5)
     int_seq2.layer(pd.Timestamp(2020, 1, 8), pd.Timestamp(2020, 1, 10), 5)
     int_seq2.layer(pd.Timestamp(2020, 1, 2), pd.Timestamp(2020, 1, 5), 4.5)
@@ -40,7 +41,7 @@ def s2():
 
 
 def s3():  # boolean
-    int_seq = Stairs(0, use_dates=True)
+    int_seq = Stairs(0)
     int_seq.layer(pd.Timestamp(2020, 1, 10), pd.Timestamp(2020, 1, 30), 1)
     int_seq.layer(pd.Timestamp(2020, 1, 12), pd.Timestamp(2020, 1, 13), -1)
     int_seq.layer(pd.Timestamp(2020, 1, 15), pd.Timestamp(2020, 1, 18), -1)
@@ -51,7 +52,7 @@ def s3():  # boolean
 
 
 def s4():  # boolean
-    int_seq = Stairs(0, use_dates=True)
+    int_seq = Stairs(0)
     int_seq.layer(pd.Timestamp(2020, 1, 9), pd.Timestamp(2020, 1, 29), 1)
     int_seq.layer(pd.Timestamp(2020, 1, 10, 12), pd.Timestamp(2020, 1, 12), -1)
     int_seq.layer(pd.Timestamp(2020, 1, 12, 12), pd.Timestamp(2020, 1, 13), -1)
@@ -191,44 +192,44 @@ def test_mean_dates_4(s1_fix):
 
 
 def test_integrate_dates_1(s1_fix):
-    assert s1_fix.integrate() == 312, "Expected integral to be 312"
+    assert s1_fix.integrate() == pd.Timedelta(days=13), "Expected integral to be 13 days"
 
 
 def test_integrate_dates_2(s1_fix):
     assert (
-        s1_fix.integrate(upper=pd.Timestamp(2020, 1, 6)) == 360
-    ), "Expected integral to be 360"
+        s1_fix.integrate(upper=pd.Timestamp(2020, 1, 6)) == pd.Timedelta(days=15)
+    ), "Expected integral to be 15 days"
 
 
 def test_integrate_dates_3(s1_fix):
     assert (
-        s1_fix.integrate(lower=pd.Timestamp(2020, 1, 4)) == 108
-    ), "Expected integral to be 108"
+        s1_fix.integrate(lower=pd.Timestamp(2020, 1, 4)) == pd.Timedelta(hours=108)
+    ), "Expected integral to be 108 hours"
 
 
 def test_integrate_dates_4(s1_fix):
     assert (
         s1_fix.integrate(lower=pd.Timestamp(2020, 1, 4), upper=pd.Timestamp(2020, 1, 8))
-        == 132
-    ), "Expected integral to be 132"
+        == pd.Timedelta(hours=132)
+    ), "Expected integral to be 132 hours"
 
 
 def test_integral_and_mean_dates_1(s1_fix):
     integral, mean = s1_fix.get_integral_and_mean()
     assert abs(mean - 13 / 9) <= 0.00001, "Expected mean to be 13/9"
-    assert integral == 312, "Expected integral to be 312"
+    assert integral == pd.Timedelta(hours=312), "Expected integral to be 312 hours"
 
 
 def test_integral_and_mean_dates_2(s1_fix):
     integral, mean = s1_fix.get_integral_and_mean(upper=pd.Timestamp(2020, 1, 6))
     assert mean == 3, "Expected mean to be 3"
-    assert integral == 360, "Expected integral to be 360"
+    assert integral == pd.Timedelta(days=15), "Expected integral to be 15"
 
 
 def test_integral_and_mean_3(s1_fix):
     integral, mean = s1_fix.get_integral_and_mean(lower=pd.Timestamp(2020, 1, 4))
     assert mean == 0.75, "Expected mean to be 0.75"
-    assert integral == 108, "Expected integral to be 108"
+    assert integral == pd.Timedelta(hours=108), "Expected integral to be 108 hours"
 
 
 def test_integral_and_mean_dates_4(s1_fix):
@@ -236,7 +237,7 @@ def test_integral_and_mean_dates_4(s1_fix):
         lower=pd.Timestamp(2020, 1, 4), upper=pd.Timestamp(2020, 1, 8)
     )
     assert mean == 1.375, "Expected mean to be 1.375"
-    assert integral == 132, "Expected integral to be 132"
+    assert integral == pd.Timedelta(hours=132), "Expected integral to be 132 hours"
 
 
 def test_percentile_dates_1(s1_fix):
@@ -333,19 +334,19 @@ def test_plot(s1_fix):
 
 def test_resample_dates_1(s1_fix):
     assert s1_fix.resample(pd.Timestamp(2020, 1, 4)).step_changes() == {
-        pd.Timestamp(2020, 1, 4).tz_localize(s1_fix.tz): 4.5
+        pd.Timestamp(2020, 1, 4).tz_localize(s1_fix._keys()[0].tz): 4.5
     }
 
 
 def test_resample_dates_2(s1_fix):
     assert s1_fix.resample(pd.Timestamp(2020, 1, 6), how="right").step_changes() == {
-        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix.tz): -0.5
+        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix._keys()[0].tz): -0.5
     }
 
 
 def test_resample_dates_3(s1_fix):
     assert s1_fix.resample(pd.Timestamp(2020, 1, 6), how="left").step_changes() == {
-        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix.tz): 2
+        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix._keys()[0].tz): 2
     }
 
 
@@ -353,8 +354,8 @@ def test_resample_dates_4(s1_fix):
     assert s1_fix.resample(
         [pd.Timestamp(2020, 1, 4), pd.Timestamp(2020, 1, 6)]
     ).step_changes() == {
-        pd.Timestamp(2020, 1, 4).tz_localize(s1_fix.tz): 4.5,
-        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix.tz): -5.0,
+        pd.Timestamp(2020, 1, 4).tz_localize(s1_fix._keys()[0].tz): 4.5,
+        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix._keys()[0].tz): -5.0,
     }
 
 
@@ -362,8 +363,8 @@ def test_resample_dates_5(s1_fix):
     assert s1_fix.resample(
         [pd.Timestamp(2020, 1, 4), pd.Timestamp(2020, 1, 6)], how="right"
     ).step_changes() == {
-        pd.Timestamp(2020, 1, 4).tz_localize(s1_fix.tz): 4.5,
-        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix.tz): -5.0,
+        pd.Timestamp(2020, 1, 4).tz_localize(s1_fix._keys()[0].tz): 4.5,
+        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix._keys()[0].tz): -5.0,
     }
 
 
@@ -371,8 +372,8 @@ def test_resample_dates_6(s1_fix):
     assert s1_fix.resample(
         [pd.Timestamp(2020, 1, 4), pd.Timestamp(2020, 1, 6)], how="left"
     ).step_changes() == {
-        pd.Timestamp(2020, 1, 4).tz_localize(s1_fix.tz): 4.5,
-        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix.tz): -2.5,
+        pd.Timestamp(2020, 1, 4).tz_localize(s1_fix._keys()[0].tz): 4.5,
+        pd.Timestamp(2020, 1, 6).tz_localize(s1_fix._keys()[0].tz): -2.5,
     }
 
 
@@ -412,11 +413,11 @@ def test_sample_dates_6(s1_fix):
 
 def test_step_changes_dates(s1_fix):
     assert s1_fix.step_changes() == {
-        pd.Timestamp("2020-01-01 00:00:00").tz_localize(s1_fix.tz): 2,
-        pd.Timestamp("2020-01-03 00:00:00").tz_localize(s1_fix.tz): 2.5,
-        pd.Timestamp("2020-01-05 00:00:00").tz_localize(s1_fix.tz): -2.5,
-        pd.Timestamp("2020-01-06 00:00:00").tz_localize(s1_fix.tz): -2.5,
-        pd.Timestamp("2020-01-10 00:00:00").tz_localize(s1_fix.tz): 0.5,
+        pd.Timestamp("2020-01-01 00:00:00").tz_localize(s1_fix._keys()[0].tz): 2,
+        pd.Timestamp("2020-01-03 00:00:00").tz_localize(s1_fix._keys()[0].tz): 2.5,
+        pd.Timestamp("2020-01-05 00:00:00").tz_localize(s1_fix._keys()[0].tz): -2.5,
+        pd.Timestamp("2020-01-06 00:00:00").tz_localize(s1_fix._keys()[0].tz): -2.5,
+        pd.Timestamp("2020-01-10 00:00:00").tz_localize(s1_fix._keys()[0].tz): 0.5,
     }
 
 
@@ -424,20 +425,20 @@ def test_dataframe_dates(s1_fix):
     ans = pd.DataFrame(
         {
             "start": [
-                pd.NaT,
-                pd.to_datetime("2020-01-01").tz_localize(s1_fix.tz),
-                pd.to_datetime("2020-01-03").tz_localize(s1_fix.tz),
-                pd.to_datetime("2020-01-05").tz_localize(s1_fix.tz),
-                pd.to_datetime("2020-01-06").tz_localize(s1_fix.tz),
-                pd.to_datetime("2020-01-10").tz_localize(s1_fix.tz),
+                -inf,
+                pd.to_datetime("2020-01-01").tz_localize(s1_fix._keys()[0].tz),
+                pd.to_datetime("2020-01-03").tz_localize(s1_fix._keys()[0].tz),
+                pd.to_datetime("2020-01-05").tz_localize(s1_fix._keys()[0].tz),
+                pd.to_datetime("2020-01-06").tz_localize(s1_fix._keys()[0].tz),
+                pd.to_datetime("2020-01-10").tz_localize(s1_fix._keys()[0].tz),
             ],
             "end": [
-                pd.to_datetime("2020-01-01").tz_localize(s1_fix.tz),
-                pd.to_datetime("2020-01-03").tz_localize(s1_fix.tz),
-                pd.to_datetime("2020-01-05").tz_localize(s1_fix.tz),
-                pd.to_datetime("2020-01-06").tz_localize(s1_fix.tz),
-                pd.to_datetime("2020-01-10").tz_localize(s1_fix.tz),
-                pd.NaT,
+                pd.to_datetime("2020-01-01").tz_localize(s1_fix._keys()[0].tz),
+                pd.to_datetime("2020-01-03").tz_localize(s1_fix._keys()[0].tz),
+                pd.to_datetime("2020-01-05").tz_localize(s1_fix._keys()[0].tz),
+                pd.to_datetime("2020-01-06").tz_localize(s1_fix._keys()[0].tz),
+                pd.to_datetime("2020-01-10").tz_localize(s1_fix._keys()[0].tz),
+                inf,
             ],
             "value": [0, 2, 4.5, 2, -0.5, 0],
         }
@@ -447,32 +448,32 @@ def test_dataframe_dates(s1_fix):
 
 def test_add_dates(s1_fix, s2_fix):
     ans = {
-        pd.Timestamp("2020-01-01 00:00:00").tz_localize(s1_fix.tz): -0.5,
-        pd.Timestamp("2020-01-02 00:00:00").tz_localize(s1_fix.tz): 4.5,
-        pd.Timestamp("2020-01-02 12:00:00").tz_localize(s1_fix.tz): -2.5,
-        pd.Timestamp("2020-01-03 00:00:00").tz_localize(s1_fix.tz): 2.5,
-        pd.Timestamp("2020-01-04 00:00:00").tz_localize(s1_fix.tz): 2.5,
-        pd.Timestamp("2020-01-05 00:00:00").tz_localize(s1_fix.tz): -7.0,
-        pd.Timestamp("2020-01-06 00:00:00").tz_localize(s1_fix.tz): -2.5,
-        pd.Timestamp("2020-01-07 00:00:00").tz_localize(s1_fix.tz): 2.5,
-        pd.Timestamp("2020-01-08 00:00:00").tz_localize(s1_fix.tz): 5,
-        pd.Timestamp("2020-01-10 00:00:00").tz_localize(s1_fix.tz): -4.5,
+        pd.Timestamp("2020-01-01 00:00:00").tz_localize(s1_fix._keys()[0].tz): -0.5,
+        pd.Timestamp("2020-01-02 00:00:00").tz_localize(s1_fix._keys()[0].tz): 4.5,
+        pd.Timestamp("2020-01-02 12:00:00").tz_localize(s1_fix._keys()[0].tz): -2.5,
+        pd.Timestamp("2020-01-03 00:00:00").tz_localize(s1_fix._keys()[0].tz): 2.5,
+        pd.Timestamp("2020-01-04 00:00:00").tz_localize(s1_fix._keys()[0].tz): 2.5,
+        pd.Timestamp("2020-01-05 00:00:00").tz_localize(s1_fix._keys()[0].tz): -7.0,
+        pd.Timestamp("2020-01-06 00:00:00").tz_localize(s1_fix._keys()[0].tz): -2.5,
+        pd.Timestamp("2020-01-07 00:00:00").tz_localize(s1_fix._keys()[0].tz): 2.5,
+        pd.Timestamp("2020-01-08 00:00:00").tz_localize(s1_fix._keys()[0].tz): 5,
+        pd.Timestamp("2020-01-10 00:00:00").tz_localize(s1_fix._keys()[0].tz): -4.5,
     }
     assert (s1_fix + s2_fix).step_changes() == ans
 
 
 def test_subtract_dates(s1_fix, s2_fix):
     ans = {
-        pd.Timestamp("2020-01-01 00:00:00").tz_localize(s1_fix.tz): 4.5,
-        pd.Timestamp("2020-01-02 00:00:00").tz_localize(s1_fix.tz): -4.5,
-        pd.Timestamp("2020-01-02 12:00:00").tz_localize(s1_fix.tz): 2.5,
-        pd.Timestamp("2020-01-03 00:00:00").tz_localize(s1_fix.tz): 2.5,
-        pd.Timestamp("2020-01-04 00:00:00").tz_localize(s1_fix.tz): -2.5,
-        pd.Timestamp("2020-01-05 00:00:00").tz_localize(s1_fix.tz): 2.0,
-        pd.Timestamp("2020-01-06 00:00:00").tz_localize(s1_fix.tz): -2.5,
-        pd.Timestamp("2020-01-07 00:00:00").tz_localize(s1_fix.tz): -2.5,
-        pd.Timestamp("2020-01-08 00:00:00").tz_localize(s1_fix.tz): -5,
-        pd.Timestamp("2020-01-10 00:00:00").tz_localize(s1_fix.tz): 5.5,
+        pd.Timestamp("2020-01-01 00:00:00").tz_localize(s1_fix._keys()[0].tz): 4.5,
+        pd.Timestamp("2020-01-02 00:00:00").tz_localize(s1_fix._keys()[0].tz): -4.5,
+        pd.Timestamp("2020-01-02 12:00:00").tz_localize(s1_fix._keys()[0].tz): 2.5,
+        pd.Timestamp("2020-01-03 00:00:00").tz_localize(s1_fix._keys()[0].tz): 2.5,
+        pd.Timestamp("2020-01-04 00:00:00").tz_localize(s1_fix._keys()[0].tz): -2.5,
+        pd.Timestamp("2020-01-05 00:00:00").tz_localize(s1_fix._keys()[0].tz): 2.0,
+        pd.Timestamp("2020-01-06 00:00:00").tz_localize(s1_fix._keys()[0].tz): -2.5,
+        pd.Timestamp("2020-01-07 00:00:00").tz_localize(s1_fix._keys()[0].tz): -2.5,
+        pd.Timestamp("2020-01-08 00:00:00").tz_localize(s1_fix._keys()[0].tz): -5,
+        pd.Timestamp("2020-01-10 00:00:00").tz_localize(s1_fix._keys()[0].tz): 5.5,
     }
     assert (s1_fix - s2_fix).step_changes() == ans
 
@@ -561,22 +562,17 @@ def test_hist_default_bins(stairs_instance, bounds, closed):
     assert abs(hist.sum() - 1) < 0.000001
 
 
-@pytest.mark.parametrize(
-    "stairs_instance, hrs",
-    itertools.product([s1(), s2(), s3(), s4()], [-24, -6, 6, 24],),
-)
-def test_shift(stairs_instance, hrs):
+def test_shift(s1_fix):
+    ans = Stairs(0)
+    ans.layer(pd.Timestamp(2020, 1, 2), pd.Timestamp(2020, 1, 11), 2)
+    ans.layer(pd.Timestamp(2020, 1, 4), pd.Timestamp(2020, 1, 6), 2.5)
+    ans.layer(pd.Timestamp(2020, 1, 7), pd.Timestamp(2020, 1, 8), -2.5)
+    ans.layer(pd.Timestamp(2020, 1, 8), pd.Timestamp(2020, 1, 11), -2.5)
+    
     assert bool(
-        stairs_instance.shift(hrs) == stairs_instance.shift(pd.Timedelta(hrs, unit="H"))
+        s1_fix.shift(pd.Timedelta(24, unit="H")) == ans
     )
-    assert not bool(
-        stairs_instance.shift(hrs)
-        == stairs_instance.shift(pd.Timedelta(hrs + 0.000001, unit="H"))
-    )
-    assert not bool(
-        stairs_instance.shift(hrs)
-        == stairs_instance.shift(pd.Timedelta(hrs - 0.000001, unit="H"))
-    )
+
 
 
 # low, high = pd.Timestamp(2020,1,1), pd.Timestamp(2020,1,10)
@@ -1108,7 +1104,7 @@ def test_s1_rolling_mean(s1_fix, kwargs, expected_index, expected_vals):
 
 
 def test_eq():
-    assert Stairs(3, use_dates=True) == 3
+    assert Stairs(3) == 3
 
 
 def test_ne(s1_fix):

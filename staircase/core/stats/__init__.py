@@ -13,7 +13,6 @@ from staircase.core.stats.distribution import (
     hist,
     hist_from_ecdf,
     percentile_stairs,
-    percentile_Stairs,
 )
 
 
@@ -30,4 +29,3 @@ def add_methods(cls):
     cls.hist = hist
     cls.hist_from_ecdf = hist_from_ecdf
     cls.percentile_stairs = percentile_stairs
-    cls.percentile_Stairs = percentile_Stairs

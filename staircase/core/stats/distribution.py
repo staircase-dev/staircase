@@ -1,18 +1,14 @@
 import math
-import warnings
-
 import numpy as np
 from pandas import IntervalIndex, Series
-
+from staircase.constants import inf
 from staircase.util._decorators import Appender
 from staircase.core.stats import docstrings
 import staircase as sc
 
-warnings.simplefilter("default")
-
 
 @Appender(docstrings.percentile_stairs_example, join="\n", indents=1)
-def percentile_stairs(self, lower=float("-inf"), upper=float("inf")):
+def percentile_stairs(self, lower=-inf, upper=inf):
     """
     Calculates a percentile function (and returns a corresponding Stairs instance)
 
@@ -61,17 +57,8 @@ def percentile_stairs(self, lower=float("-inf"), upper=float("inf")):
     return percentile_step_func
 
 
-def percentile_Stairs(self, lower=float("-inf"), upper=float("inf")):
-    """Deprecated.  Use Stairs.percentile_stairs."""
-    warnings.warn(
-        "Stairs.percentile_Stairs will be deprecated in version 2.0.0, use Stairs.percentile_stairs instead",
-        PendingDeprecationWarning,
-    )
-    return percentile_stairs(self, lower, upper)
-
-
 @Appender(docstrings.ecdf_stairs_example, join="\n", indents=1)
-def ecdf_stairs(self, lower=float("-inf"), upper=float("inf")):
+def ecdf_stairs(self, lower=-inf, upper=inf):
     """
     Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_
     for the corresponding step function values (and returns the result as a Stairs instance)
@@ -94,15 +81,14 @@ def ecdf_stairs(self, lower=float("-inf"), upper=float("inf")):
     Stairs.hist
     """
 
-    def _switch_first_key_to_zero(d): #delete
-        d[0] = d.get(0, 0) + d.pop(float("-inf"))
+    def _switch_first_key_to_zero(d):  # delete
+        d[0] = d.get(0, 0) + d.pop(-inf)
         return d
-    
+
     ps = percentile_stairs(self, lower, upper)
-    
+
     _ecdf = ps._sorted_dict.copy()
-    _ecdf[0] = _ecdf.get(0,0) + ps.init_value 
-  
+    _ecdf[0] = _ecdf.get(0, 0) + ps.init_value
 
     return sc.Stairs().layer(
         np.cumsum(list(_ecdf.values())[:-1]), None, np.diff(list(_ecdf.keys())) / 100
@@ -158,7 +144,7 @@ def hist_from_ecdf(ecdf, bin_edges=None, closed="left"):
 
 
 @Appender(docstrings.hist_example, join="\n", indents=1)
-def hist(self, lower=float("-inf"), upper=float("inf"), bin_edges=None, closed="left"):
+def hist(self, lower=-inf, upper=inf, bin_edges=None, closed="left"):
     """
     Calculates a histogram for the corresponding step function values
 
