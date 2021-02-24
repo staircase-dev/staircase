@@ -244,7 +244,7 @@ lower : int, float or pandas.Timestamp
     lower bound of the interval on which to perform the calculation
 upper : int, float or pandas.Timestamp
     upper bound of the interval on which to perform the calculation
-
+{{extra_params}}
 Returns
 -------
 {return_type}
@@ -271,7 +271,19 @@ def _gen_docstring(calculation):
         docstring = _tuple_return_docstring
     else:
         docstring = _float_return_docstring
-    return docstring.format(calc=calc, see_also=see_also, example=example,)
+    
+    if calculation in ("mean", "integrate", "integral_and_mean"):
+        extra_params = "\n".join(
+            [
+                "datetime : bool, default False",
+                "    if True performs calculations using datetime.timedelta instead of pandas.Timedelta",
+                "",
+            ]
+        )
+    else:
+        extra_params = ""
+        
+    return docstring.format(calc=calc, extra_params=extra_params,see_also=see_also, example=example,)
 
 
 mean_docstring = _gen_docstring("mean")

@@ -9,14 +9,14 @@ import staircase as sc
 
 
 @Appender(docstrings.integrate_docstring, join="\n", indents=1)
-def integrate(self, lower=-inf, upper=inf):
-    area, _ = self.get_integral_and_mean(lower, upper)
+def integrate(self, lower=-inf, upper=inf, datetime=False):
+    area, _ = self.get_integral_and_mean(lower, upper, datetime)
     return area
 
 
 @Appender(docstrings.mean_docstring, join="\n", indents=1)
-def mean(self, lower=-inf, upper=inf):
-    _, mean = self.get_integral_and_mean(lower, upper)
+def mean(self, lower=-inf, upper=inf, datetime=False):
+    _, mean = self.get_integral_and_mean(lower, upper, datetime)
     return mean
 
 

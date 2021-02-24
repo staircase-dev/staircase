@@ -134,10 +134,11 @@ class Stairs:
             _, ax = plt.subplots()
 
         cumulative = self._cumulative()
-        cumulative_keys = cumulative.keys()
+        cumulative_keys = list(cumulative.keys())
+        cumulative_values = list(cumulative.values())
         register_matplotlib_converters()
         ax.step(
-            list(cumulative_keys), list(cumulative.values()), where="post", **kwargs
+            [cumulative_keys[0]] + cumulative_keys, [self.init_value] + cumulative_values, where="post", **kwargs
         )
         return ax
 

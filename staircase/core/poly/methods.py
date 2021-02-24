@@ -1,3 +1,4 @@
+import datetime as dt
 import pandas as pd
 import numpy as np
 from sortedcontainers import SortedDict
@@ -288,7 +289,7 @@ def clip(self, lower=-inf, upper=inf):
 
 
 @Appender(integral_and_mean_docstring, join="\n", indents=1)
-def get_integral_and_mean(self, lower=-inf, upper=inf):
+def get_integral_and_mean(self, lower=-inf, upper=inf, datetime=False):
     new_instance = self.clip(lower, upper)
     if new_instance.number_of_steps() < 2:
         return 0, np.nan
@@ -299,6 +300,15 @@ def get_integral_and_mean(self, lower=-inf, upper=inf):
     cumulative = new_instance._cumulative()
     widths = np.diff(cumulative.keys())
     heights = cumulative.values()[:-1]
-    area = np.multiply(widths, heights).sum()
-    mean = area / (cumulative.keys()[-1] - cumulative.keys()[0])
+    if datetime:
+        area = np.multiply(np.array([w.to_pytimedelta() for w in widths]), heights).sum()
+        mean = area / (cumulative.keys()[-1] - cumulative.keys()[0]).to_pytimedelta()
+    else:    
+        try:
+            area = np.multiply(widths, heights).sum()
+            mean = area / (cumulative.keys()[-1] - cumulative.keys()[0])
+        except OverflowError as e:
+            error_msg = "Integration result is larger than pandas.Timedelta limits.  Try using datetime=True for a datetime.timedelta result."
+            raise Exception(error_msg).with_traceback(e.__traceback__)
+        
     return area, mean
