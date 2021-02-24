@@ -30,13 +30,13 @@ class Stairs:
     See the :ref:`Stairs API <api.Stairs>` for details of methods.
     """
 
-    def __init__(self, value=0):
+    def __init__(self, init_value=0, start=None, end=None, value=None):
         """
         Initialise a Stairs instance.
 
         Parameters
         ----------
-        value : float, default 0
+        init_value : float, default 0
             The value of the step function at negative infinity.
 
         Returns
@@ -44,15 +44,14 @@ class Stairs:
         :class:`Stairs`
         """
         self._sorted_dict = SortedDict()
-        if isinstance(value, dict):
-            raise AssertionError("Do not let this code execute")
-            self._sorted_dict = SortedDict(value)
-        else:
-            self.init_value = value
-            self._sorted_dict = SortedDict()
+        self.init_value = init_value
+        self._sorted_dict = SortedDict()
 
         self.cached_cumulative = None
         self._bind_sorted_dict_methods()
+        
+        if any([x is not None for x in (start, end, value)]):
+            self.layer(start, end, value)
 
     # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING
 
