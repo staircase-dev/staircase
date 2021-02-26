@@ -2,10 +2,11 @@
 Changelog
 =========
 
-v1.7.0
+v1.6.3 2020-02-26
 
 - bugfix for missing *lower_how* and *upper_how* parameters in :meth:`staircase.Stairs.resample`
-
+- renamed Stairs._values to avoid error when performing Series.groupby.sum in pandas>=1.2
+ 
 
 v1.6.2 2020-01-13
 

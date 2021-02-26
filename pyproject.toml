@@ -6,7 +6,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "staircase"
-version = "1.6.2"
+version = "1.6.3"
 description = "Facilitating the modelling, manipulation and analysis of data with (mathematical) step functions"
 readme = "README.md"
 authors = ["Riley Clement <venaturum@gmail.com>"]

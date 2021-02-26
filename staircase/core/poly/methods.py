@@ -60,7 +60,7 @@ def _sample_raw(self, x, how="right"):
             vals.extend([val for key, val in shifted_cumulative.items() if key in x])
             return vals
     elif x == float("-inf"):
-        return self._values()[0]
+        return self._sorted_dict_values()[0]
     else:
         cumulative = self._cumulative()
         if how == "right":
@@ -262,7 +262,7 @@ def _layer_multiple(self, starts=None, ends=None, values=None):
 def step_changes(self):
     if self.use_dates:
         return dict(
-            zip(_convert_float_to_date(self._keys()[1:], self.tz), self._values()[1:])
+            zip(_convert_float_to_date(self._keys()[1:], self.tz), self._sorted_dict_values()[1:])
         )
     return dict(self._items()[1:])
 

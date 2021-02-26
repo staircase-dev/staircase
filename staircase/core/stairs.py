@@ -21,8 +21,6 @@ from staircase.core.tools.datetimes import (
     origin,
     _convert_date_to_float,
     _convert_float_to_date,
-    _maybe_convert_from_timedeltas,
-    _maybe_convert_from_timestamps,
 )
 
 register_matplotlib_converters()
@@ -73,7 +71,7 @@ class Stairs:
         self._get = self._sorted_dict.get
         self._items = self._sorted_dict.items
         self._keys = self._sorted_dict.keys
-        self._values = self._sorted_dict.values
+        self._sorted_dict_values = self._sorted_dict.values
         self._pop = self._sorted_dict.pop
         self._len = self._sorted_dict.__len__
         self._popitem = self._sorted_dict.popitem
@@ -168,7 +166,7 @@ class Stairs:
     def _cumulative(self):
         if self.cached_cumulative is None:
             self.cached_cumulative = SortedDict(
-                zip(self._keys(), np.cumsum(self._values()))
+                zip(self._keys(), np.cumsum(self._sorted_dict_values()))
             )
         return self.cached_cumulative
 
@@ -420,7 +418,7 @@ class Stairs:
             assert self.use_dates, "delta is of type pandas.Timedelta, expected float"
             delta = delta.total_seconds() / 3600
         return Stairs(
-            dict(zip((key + delta for key in self._keys()), self._values())),
+            dict(zip((key + delta for key in self._keys()), self._sorted_dict_values())),
             self.use_dates,
             self.tz,
         )
