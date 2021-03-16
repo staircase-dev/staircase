@@ -417,15 +417,6 @@ def test_eq(s1_fix, s2_fix):
     assert expected.identical(calc), "EQ calculation not what it should be"
 
 
-def test_eq(s1_fix, s2_fix):
-    calc = s1_fix == s2_fix
-    expected = Stairs(1)
-    expected.layer(-4, -2, -1)
-    expected.layer(1, 10, -1)
-    assert calc.identical(expected), "EQ calculation not what it should be"
-    assert expected.identical(calc), "EQ calculation not what it should be"
-
-
 def test_ne(s1_fix, s2_fix):
     calc = s1_fix != s2_fix
     expected = Stairs(0)
@@ -925,10 +916,12 @@ def test_add_2(s1_fix):
     assert s(float("-inf")) == 3
     assert s.step_changes() == s1_fix.step_changes()
 
+
 def test_sub_1(s1_fix):
     s = s1_fix - 3
     assert s(float("-inf")) == -3
     assert s.step_changes() == s1_fix.step_changes()
+
 
 def test_divide_exception(s1_fix, s2_fix):
     with pytest.raises(ZeroDivisionError):
@@ -951,8 +944,9 @@ def test_divide(s1_fix, s2_fix):
         10: 0.08333333333333333,
     }
 
+
 def test_divide_scalar(s1_fix):
-    assert (s1_fix/0.5).step_changes() == {
+    assert (s1_fix / 0.5).step_changes() == {
         -4: -3.5,
         1: 4.0,
         3: 5.0,
@@ -961,8 +955,9 @@ def test_divide_scalar(s1_fix):
         10: 1.0,
     }
 
+
 def test_multiply(s1_fix, s2_fix):
-    assert (s1_fix*s2_fix).step_changes() == {
+    assert (s1_fix * s2_fix).step_changes() == {
         -2: 3.0625,
         1: -3.6875,
         2: 1.125,
@@ -972,12 +967,13 @@ def test_multiply(s1_fix, s2_fix):
         5: -10.5,
         6: 6.25,
         7: -1.25,
-        8: -2.5, 
+        8: -2.5,
         10: 2.5,
     }
 
+
 def test_multiply_scalar(s1_fix):
-    assert (s1_fix*3).step_changes() == {
+    assert (s1_fix * 3).step_changes() == {
         -4: -5.25,
         1: 6.0,
         3: 7.5,
@@ -985,12 +981,13 @@ def test_multiply_scalar(s1_fix):
         6: -7.5,
         10: 1.5,
     }
-    
-def test_eq():
+
+
+def test_eq2():
     assert Stairs(3) == 3
 
 
-def test_ne(s1_fix):
+def test_ne2(s1_fix):
     assert s1_fix != 3
 
 

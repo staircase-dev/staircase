@@ -418,7 +418,9 @@ class Stairs:
             assert self.use_dates, "delta is of type pandas.Timedelta, expected float"
             delta = delta.total_seconds() / 3600
         return Stairs(
-            dict(zip((key + delta for key in self._keys()), self._sorted_dict_values())),
+            dict(
+                zip((key + delta for key in self._keys()), self._sorted_dict_values())
+            ),
             self.use_dates,
             self.tz,
         )

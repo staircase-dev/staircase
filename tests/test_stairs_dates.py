@@ -477,59 +477,60 @@ def test_subtract_dates(s1_fix, s2_fix):
     assert (s1_fix - s2_fix).step_changes() == ans
 
 
-
 def test_multiply_dates(s1_fix, s2_fix):
-    ans = {        
-        pd.Timestamp('2020-01-01 00:00:00'): -5.0,
-        pd.Timestamp('2020-01-02 00:00:00'): 9.0,
-        pd.Timestamp('2020-01-02 12:00:00'): -5.0,
-        pd.Timestamp('2020-01-03 00:00:00'): -1.25,
-        pd.Timestamp('2020-01-04 00:00:00'): 11.25,
-        pd.Timestamp('2020-01-05 00:00:00'): -14.0,
-        pd.Timestamp('2020-01-06 00:00:00'): 6.25,
-        pd.Timestamp('2020-01-07 00:00:00'): -1.25,
-        pd.Timestamp('2020-01-08 00:00:00'): -2.5,
-        pd.Timestamp('2020-01-10 00:00:00'): 2.5,
+    ans = {
+        pd.Timestamp("2020-01-01 00:00:00"): -5.0,
+        pd.Timestamp("2020-01-02 00:00:00"): 9.0,
+        pd.Timestamp("2020-01-02 12:00:00"): -5.0,
+        pd.Timestamp("2020-01-03 00:00:00"): -1.25,
+        pd.Timestamp("2020-01-04 00:00:00"): 11.25,
+        pd.Timestamp("2020-01-05 00:00:00"): -14.0,
+        pd.Timestamp("2020-01-06 00:00:00"): 6.25,
+        pd.Timestamp("2020-01-07 00:00:00"): -1.25,
+        pd.Timestamp("2020-01-08 00:00:00"): -2.5,
+        pd.Timestamp("2020-01-10 00:00:00"): 2.5,
     }
-    assert (s1_fix*s2_fix).step_changes() == ans
-    
+    assert (s1_fix * s2_fix).step_changes() == ans
+
+
 def test_multiply_dates_scalar(s1_fix):
     ans = {
-        pd.Timestamp('2020-01-01 00:00:00'): 6.0,
-        pd.Timestamp('2020-01-03 00:00:00'): 7.5,
-        pd.Timestamp('2020-01-05 00:00:00'): -7.5,
-        pd.Timestamp('2020-01-06 00:00:00'): -7.5,
-        pd.Timestamp('2020-01-10 00:00:00'): 1.5
+        pd.Timestamp("2020-01-01 00:00:00"): 6.0,
+        pd.Timestamp("2020-01-03 00:00:00"): 7.5,
+        pd.Timestamp("2020-01-05 00:00:00"): -7.5,
+        pd.Timestamp("2020-01-06 00:00:00"): -7.5,
+        pd.Timestamp("2020-01-10 00:00:00"): 1.5,
     }
-    assert (s1_fix*3).step_changes() == ans
-    
+    assert (s1_fix * 3).step_changes() == ans
 
 
 def test_divide_dates(s1_fix, s2_fix):
-    ans = {        
-        pd.Timestamp('2020-01-01 00:00:00'): -1.3333333333333333,
-        pd.Timestamp('2020-01-02 00:00:00'): 2.0,
-        pd.Timestamp('2020-01-02 12:00:00'): 3.3333333333333335,
-        pd.Timestamp('2020-01-03 00:00:00'): 5.0,
-        pd.Timestamp('2020-01-04 00:00:00'): -7.5,
-        pd.Timestamp('2020-01-05 00:00:00'): -2.833333333333333,
-        pd.Timestamp('2020-01-06 00:00:00'): 1.6666666666666665,
-        pd.Timestamp('2020-01-07 00:00:00'): -0.8333333333333333,
-        pd.Timestamp('2020-01-08 00:00:00'): 0.4166666666666667,
-        pd.Timestamp('2020-01-10 00:00:00'): 0.08333333333333333,
+    ans = {
+        pd.Timestamp("2020-01-01 00:00:00"): -1.3333333333333333,
+        pd.Timestamp("2020-01-02 00:00:00"): 2.0,
+        pd.Timestamp("2020-01-02 12:00:00"): 3.3333333333333335,
+        pd.Timestamp("2020-01-03 00:00:00"): 5.0,
+        pd.Timestamp("2020-01-04 00:00:00"): -7.5,
+        pd.Timestamp("2020-01-05 00:00:00"): -2.833333333333333,
+        pd.Timestamp("2020-01-06 00:00:00"): 1.6666666666666665,
+        pd.Timestamp("2020-01-07 00:00:00"): -0.8333333333333333,
+        pd.Timestamp("2020-01-08 00:00:00"): 0.4166666666666667,
+        pd.Timestamp("2020-01-10 00:00:00"): 0.08333333333333333,
     }
-    assert (s1_fix/(s2_fix+1)).step_changes() == ans
+    assert (s1_fix / (s2_fix + 1)).step_changes() == ans
+
 
 def test_divide_dates_scalar(s1_fix):
     ans = {
-        pd.Timestamp('2020-01-01 00:00:00'): 4.0,
-        pd.Timestamp('2020-01-03 00:00:00'): 5.0,
-        pd.Timestamp('2020-01-05 00:00:00'): -5.0,
-        pd.Timestamp('2020-01-06 00:00:00'): -5.0,
-        pd.Timestamp('2020-01-10 00:00:00'): 1.0,
+        pd.Timestamp("2020-01-01 00:00:00"): 4.0,
+        pd.Timestamp("2020-01-03 00:00:00"): 5.0,
+        pd.Timestamp("2020-01-05 00:00:00"): -5.0,
+        pd.Timestamp("2020-01-06 00:00:00"): -5.0,
+        pd.Timestamp("2020-01-10 00:00:00"): 1.0,
     }
-    assert (s1_fix/0.5).step_changes() == ans
-    
+    assert (s1_fix / 0.5).step_changes() == ans
+
+
 def test_to_dataframe(s1_fix):
     s1_fix.to_dataframe()
 

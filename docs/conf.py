@@ -9,38 +9,41 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#from numpydoc.docscrape import NumpyDocString
-#from sphinx.ext.autosummary import _import_by_name
+# from numpydoc.docscrape import NumpyDocString
+# from sphinx.ext.autosummary import _import_by_name
 import guzzle_sphinx_theme
 
-#for sphinx
-import os,sys,inspect
+# for sphinx
+import os, sys, inspect
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir) 
+sys.path.insert(0, parentdir)
 
-#for nbsphinx
-os.environ['PYTHONPATH'] = os.path.abspath(parentdir)
+# for nbsphinx
+os.environ["PYTHONPATH"] = os.path.abspath(parentdir)
 
 import staircase as sc
 
 
-
 # -- Project information -----------------------------------------------------
 
-project = 'staircase'
-copyright = '2020, Riley Clement'
-author = 'Riley Clement'
+project = "staircase"
+copyright = "2020, Riley Clement"
+author = "Riley Clement"
 version = sc.__version__
-if 'untagged' in version:
-    version = 'latest'
-elif 'unknown' in version:  #for when not installed
+if "untagged" in version:
+    version = "latest"
+elif "unknown" in version:  # for when not installed
     try:
         import toml
-        version = dict(toml.load(parentdir + "/pyproject.toml"))["tool"]["poetry"]["version"]
+
+        version = dict(toml.load(parentdir + "/pyproject.toml"))["tool"]["poetry"][
+            "version"
+        ]
     except:
         pass
-version = version.split('+')[0]
+version = version.split("+")[0]
 
 # -- General configuration ---------------------------------------------------
 
@@ -48,29 +51,32 @@ version = version.split('+')[0]
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc', 
-    'sphinx.ext.autosummary', 
-    'sphinx.ext.coverage', 
-    'sphinx.ext.mathjax',
-    'sphinx.ext.napoleon',   
-    'matplotlib.sphinxext.plot_directive',    
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.coverage",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.napoleon",
+    "matplotlib.sphinxext.plot_directive",
     #'numpydoc',  # handle NumPy documentation formatted docstrings]
-    'nbsphinx',
-    'guzzle_sphinx_theme',
+    "nbsphinx",
+    "guzzle_sphinx_theme",
 ]
 
-source_suffix = ['.rst', '.ipynb']
+source_suffix = [".rst", ".ipynb"]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
-    'examples/.ipynb_checkpoints',
-    'articles/.ipynb_checkpoints',
-    'examples/Index.ipynb'
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "examples/.ipynb_checkpoints",
+    "articles/.ipynb_checkpoints",
+    "examples/Index.ipynb",
 ]
 
 suppress_warnings = [
@@ -79,7 +85,7 @@ suppress_warnings = [
 
 autosummary_generate = True
 
-master_doc = 'index'
+master_doc = "index"
 
 # matplotlib plot directive
 plot_include_source = True
@@ -109,17 +115,25 @@ html_theme_options = {
     "base_url": "https://railing.readthedocs.io/en/latest/",
 }
 
-html_logo = 'img/staircase.png'
+html_logo = "img/staircase.png"
 
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
+
 
 def setup(app):
-    app.add_css_file('custom.css')
+    app.add_css_file("custom.css")
+
 
 html_sidebars = {
-    "**":["logo.html", "globaltoc.html", "relations.html", "searchbox.html", "gumroad.html",]
+    "**": [
+        "logo.html",
+        "globaltoc.html",
+        "relations.html",
+        "searchbox.html",
+        "gumroad.html",
+    ]
 }
