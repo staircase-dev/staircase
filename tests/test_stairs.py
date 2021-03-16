@@ -920,11 +920,15 @@ def test_add_1(s1_fix, s2_fix):
     }
 
 
-def test_add_1(s1_fix):
+def test_add_2(s1_fix):
     s = s1_fix + 3
     assert s(float("-inf")) == 3
     assert s.step_changes() == s1_fix.step_changes()
 
+def test_sub_1(s1_fix):
+    s = s1_fix - 3
+    assert s(float("-inf")) == -3
+    assert s.step_changes() == s1_fix.step_changes()
 
 def test_divide_exception(s1_fix, s2_fix):
     with pytest.raises(ZeroDivisionError):
@@ -947,7 +951,41 @@ def test_divide(s1_fix, s2_fix):
         10: 0.08333333333333333,
     }
 
+def test_divide_scalar(s1_fix):
+    assert (s1_fix/0.5).step_changes() == {
+        -4: -3.5,
+        1: 4.0,
+        3: 5.0,
+        5: -1.5,
+        6: -5.0,
+        10: 1.0,
+    }
 
+def test_multiply(s1_fix, s2_fix):
+    assert (s1_fix*s2_fix).step_changes() == {
+        -2: 3.0625,
+        1: -3.6875,
+        2: 1.125,
+        2.5: -0.625,
+        3: -1.25,
+        4: 6.875,
+        5: -10.5,
+        6: 6.25,
+        7: -1.25,
+        8: -2.5, 
+        10: 2.5,
+    }
+
+def test_multiply_scalar(s1_fix):
+    assert (s1_fix*3).step_changes() == {
+        -4: -5.25,
+        1: 6.0,
+        3: 7.5,
+        5: -2.25,
+        6: -7.5,
+        10: 1.5,
+    }
+    
 def test_eq():
     assert Stairs(3) == 3
 

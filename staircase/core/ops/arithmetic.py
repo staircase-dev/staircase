@@ -40,13 +40,13 @@ def _make_mul_div_func(docstring, op):
     @Appender(docstring, join="\n", indents=1)
     def func(self, other):
         self_copy, other_copy = _sanitize_binary_operands(self, other, copy_other=True)
-        if is_divide and not bool(other.make_boolean()):
+        if is_divide and not bool(other_copy.make_boolean()):
             raise ZeroDivisionError(
                 "Divisor Stairs instance must not be zero-valued at any point"
             )
 
         self_keys = self._keys()
-        other_keys = other._keys()
+        other_keys = other_copy._keys()
         self_copy._layer_multiple(other_keys, None, [0] * len(other_keys))
         other_copy._layer_multiple(self_keys, None, [0] * len(self_keys))
 

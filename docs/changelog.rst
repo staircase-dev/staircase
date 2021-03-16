@@ -2,6 +2,11 @@
 Changelog
 =========
 
+v1.6.4 2020-03-16
+
+- bugfix for broken functionality for multiplication, or division, of staircase.Stairs with a number
+
+
 v1.6.3 2020-02-26
 
 - bugfix for missing *lower_how* and *upper_how* parameters in :meth:`staircase.Stairs.resample`
