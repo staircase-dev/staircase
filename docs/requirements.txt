@@ -7,6 +7,6 @@ pandas<1.2
 numpy
 seaborn
 pytz
-Pygments==2.6.1
+Pygments==2.7.4
 guzzle_sphinx_theme
 toml
