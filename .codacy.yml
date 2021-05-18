@@ -1,0 +1,11 @@
+---
+exclude_paths:
+  - 'staircase/_version.py'
+  - 'tests/**/*'
+  - 'tests/*'
+  - 'benchmarks/**/*'
+  - 'setup.py'
+  - 'versioneer.py'
+  - 'README.md'
+  - 'docs/*'
+  - 'docs/**/*'

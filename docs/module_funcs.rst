@@ -1,6 +1,10 @@
 .. _api.module_funcs:
 
 ======================
+Module functions
+======================
+
+
 Aggregation functions
 ======================
 .. currentmodule:: staircase
@@ -15,7 +19,7 @@ Aggregation functions
    max
 
 
-=========================
+
 Miscellaneous functions
 =========================
 .. currentmodule:: staircase
@@ -25,4 +29,6 @@ Miscellaneous functions
 
    sample
    hist_from_ecdf
+   cov
+   corr
    make_test_data

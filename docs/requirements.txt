@@ -3,10 +3,10 @@ sphinx
 nbsphinx
 sortedcontainers
 matplotlib
-pandas
+pandas<1.2
 numpy
 seaborn
-jupyter_client
-staircase
+pytz
 Pygments==2.7.4
 guzzle_sphinx_theme
+toml

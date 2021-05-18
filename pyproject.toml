@@ -1,0 +1,66 @@
+# Poetry pyproject.toml: https://python-poetry.org/docs/pyproject/
+
+[build-system]
+requires = ["poetry>=1.0"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry]
+name = "staircase"
+version = "1.6.4"
+description = "Facilitating the modelling, manipulation and analysis of data with (mathematical) step functions"
+readme = "README.md"
+authors = ["Riley Clement <venaturum@gmail.com>"]
+maintainers = ["Riley Clement <venaturum@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/venaturum/staircase"
+homepage = "https://github.com/venaturum/staircase"
+documentation = "https://stairs.readthedocs.io/en/latest/"
+
+keywords=[
+	'Staircase',
+	'Step Functions',
+	'Mathematics', 
+	'Data Analysis',
+	'Analysis',
+	'Data Structures',
+	'Time Signal',
+	'Simulation Output',
+]
+
+classifiers=[
+	'Operating System :: OS Independent',
+	'Intended Audience :: Science/Research',
+	'Programming Language :: Python :: 3.6',
+	'Programming Language :: Python :: 3.7',
+	'Programming Language :: Python :: 3.8',
+	'Programming Language :: Python :: 3.9',
+	'Topic :: Scientific/Engineering',
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+sortedcontainers = "^2"
+pandas = ">=0.24,<2"
+numpy = "^1.12"
+matplotlib = ">=2"
+pytz = "*"
+
+
+[tool.poetry.dev-dependencies]
+ipykernel = "^5"
+pytest = "^5.2"
+pytest-cov = "*"
+sphinx = "*"
+nbsphinx = "^0.5"
+sphinx-autobuild = "*"
+guzzle-sphinx-theme = "^0.7.11"
+seaborn = ">=0.8.0"
+
+[tool.poetry.extras]
+codecov = ["codecov"]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/venaturum/staircase/issues"
+
+[tool.black]
+exclude = "staircase/test_data.py"

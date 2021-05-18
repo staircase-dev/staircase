@@ -10,7 +10,7 @@ Introduction
 
 The staircase package is used to model step functions.  We discuss what a step function is below, but first let's talk application.  Step functions can be used to represent time series - think changes in state over time, queue counts over time, utilisation over time - you get the idea.  
 
-The staircase package makes converting raw, temporal data into time series easy and readable.  Furthermore there is a rich variety of :ref:`arithmetic operations <api.arithmetic_operators>`, :ref:`relational operations <api.relational_operators>`, :ref:`logical operations <api.logical_operators>`, to enable analysis, in addition to functions for :ref:`univariate analysis <api.summary_statistics>`, :ref:`aggregations <api.module_funcs>` and compatibility with `pandas.Timestamp <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html>`_.
+The staircase package makes converting raw, temporal data into time series easy and readable.  Furthermore there is a rich variety of :ref:`arithmetic operations <api.arithmetic_operators>`, :ref:`relational operations <api.relational_operators>`, :ref:`logical operations <api.logical_operators>`, :ref:`statistical operations <api.statistical_operators>`, to enable analysis, in addition to functions for :ref:`univariate analysis <api.summary_statistics>`, :ref:`aggregations <api.module_funcs>` and compatibility with `pandas.Timestamp <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html>`_.
 
 
 .. _getting_started.step_function:
@@ -154,7 +154,7 @@ We can create histogram data showing relative frequency of concurrent viewers (a
    :alt: histogram plot of concurrent views
    :align: center
    
-Plotting is based on [matplotlib](https://matplotlib.org) and it requires relatively little effort to take the previous chart and improve the aesthetics:
+Because plotting is based on `matplotlib <https://matplotlib.org>`_ and it requires relatively little effort to take the previous chart and improve the aesthetics:
 
 .. figure:: img/pageviewshistpretty.png
    :width: 80%

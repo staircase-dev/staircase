@@ -2,6 +2,74 @@
 Changelog
 =========
 
+v1.6.4 2020-03-16
+
+- bugfix for broken functionality for multiplication, or division, of staircase.Stairs with a number
+
+
+v1.6.3 2020-02-26
+
+- bugfix for missing *lower_how* and *upper_how* parameters in :meth:`staircase.Stairs.resample`
+- renamed Stairs._values to avoid error when performing Series.groupby.sum in pandas>=1.2
+ 
+
+v1.6.2 2020-01-13
+
+- efficiency improvement for :meth:`staircase.Stairs.multiply`
+
+
+v1.6.1 2020-12-30
+
+- bugfix for :meth:`staircase.Stairs.plot` when using datetimes and step function has no step changes
+
+
+v1.6.0 2020-11-10
+
+- support for :ref:`timezones<resources.articles>` added
+- bugfix for :func:`staircase.sample` when *points* == None (-inf is no longer included)
+- bugfix for :func:`staircase.aggregate` where Stairs objects have non-zero value at -inf
+
+
+v1.5.2 2020-10-20
+
+- bugfix for :meth:`staircase.Stairs.layer` when None appears in vector parameters start and end
+
+
+v1.5.1 2020-10-15
+
+- removed dependency on 'private' methods in sortedcontainers
+- increased upper limit for version dependency on sortedcontainers
+
+
+v1.5.0 2020-10-12
+
+- fixed typo in diff docstring
+- extended :meth:`staircase.Stairs.values_in_range` to allow specification of how endpoints of domain should be evaluated
+- extended :meth:`staircase.Stairs.min` to allow specification of how endpoints of domain should be evaluated
+- extended :meth:`staircase.Stairs.max` to allow specification of how endpoints of domain should be evaluated
+- extended :meth:`staircase.Stairs.sample` to allow specification of how endpoints of domain should be evaluated
+- extended :meth:`staircase.Stairs.resample` to allow specification of how endpoints of domain should be evaluated
+- added :meth:`staircase.Stairs.rolling_mean`
+- added example usage of rolling_mean to Queue Analysis tutorial
+
+
+v1.4.0 2020-10-05
+
+- extended :meth:`staircase.Stairs.corr` to facilitate cross-correlation and autocorrelation
+- extended :meth:`staircase.Stairs.cov` to facilitate cross-covariance and autocovariance
+
+
+v1.3.0 2020-10-01
+
+- added :meth:`staircase.Stairs.describe`
+- added :meth:`staircase.Stairs.var` (variance)
+- added :meth:`staircase.Stairs.std` (standard deviation)
+- added :meth:`staircase.Stairs.corr` (correlation)
+- added :meth:`staircase.Stairs.cov` (covariance)
+- added :func:`staircase.cov` (pairwise covariance matrix)
+- added :func:`staircase.corr` (pairwise correlation matrix)
+
+
 v1.2.0 2020-09-23
 
 - added :meth:`staircase.Stairs.hist`

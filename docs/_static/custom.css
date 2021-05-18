@@ -61,7 +61,9 @@ div.figure.align-default img {
   width:auto;
   border-radius:0;
   max-width:100%;
-  background:transparent
+  background:transparent;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 div.figure img {
@@ -69,5 +71,7 @@ div.figure img {
   width:auto;
   border-radius:0;
   max-width:100%;
-  background:transparent
+  background:transparent;
+  margin-left: auto;
+  margin-right: auto;
 }

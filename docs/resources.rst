@@ -4,6 +4,7 @@
 Learning resources
 ===================
 
+Below are a variety of resources to help with learning how to use the staircase package.  If you have a question please post to `Stack Overflow <https://stackoverflow.com/>`_ and use the tag **staircase**.
 
 .. _resources.pyconline_video:
 
@@ -19,12 +20,16 @@ Watch the pre-recorded presentation below (`description here <https://2020.pycon
     <div style="position: relative; padding-bottom: 35%; height: 0; overflow: hidden; max-width: 60%; height: auto; margin-left: auto; margin-right: auto;">
         <iframe src="https://www.youtube.com/embed/CS1dZ-01b-Q" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
     </div>
-	
+
 
 .. _resources.tutorials:
 
 Tutorials
 =========================
+
+The tutorials linked below were introduced in the PyConline AU talk, but have since been extended.  They are designed to showcase a variety of staircase functionality, as opposed to a variety of use cases.
+
+Live versions of these tutorials can also be accessed through `binder <https://mybinder.org/v2/gh/venaturum/staircase/CondaBuild?filepath=docs%2Fexamples/>`_.
 
 .. toctree::
    :maxdepth: 1
@@ -54,4 +59,7 @@ Ready to give **staircase** a spin?  Need some data?  The :func:`staircase.make_
 Articles
 =========================
 
-COMING SOON.
+.. toctree::
+   :maxdepth: 1
+   
+   articles/timezones
