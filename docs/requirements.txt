@@ -8,5 +8,5 @@ numpy
 seaborn
 jupyter_client
 staircase
-Pygments==2.6.1
+Pygments==2.7.4
 guzzle_sphinx_theme
