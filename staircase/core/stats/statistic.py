@@ -33,13 +33,15 @@ def median(self, lower=float("-inf"), upper=float("inf")):
 
 @Appender(docstrings.mode_docstring, join="\n", indents=1)
 def mode(self, lower=float("-inf"), upper=float("inf")):
-    df = (
+    value_count = (
         self.clip(lower, upper)
         .to_dataframe()
         .iloc[1:-1]
         .assign(duration=lambda df: df.end - df.start)
+        .groupby("value")["duration"]
+        .sum()
     )
-    return df.value.loc[df.duration.idxmax()]
+    return value_count.idxmax()
 
 
 @Appender(docstrings.var_docstring, join="\n", indents=1)
