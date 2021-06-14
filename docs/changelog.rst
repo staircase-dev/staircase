@@ -2,18 +2,23 @@
 Changelog
 =========
 
-v1.6.4 2020-03-16
+v1.6.5 2021-06-14
+
+- bugfix for :meth:`staircase.Stairs.mode`
+
+
+v1.6.4 2021-03-16
 
 - bugfix for broken functionality for multiplication, or division, of staircase.Stairs with a number
 
 
-v1.6.3 2020-02-26
+v1.6.3 2021-02-26
 
 - bugfix for missing *lower_how* and *upper_how* parameters in :meth:`staircase.Stairs.resample`
 - renamed Stairs._values to avoid error when performing Series.groupby.sum in pandas>=1.2
  
 
-v1.6.2 2020-01-13
+v1.6.2 2021-01-13
 
 - efficiency improvement for :meth:`staircase.Stairs.multiply`
 
