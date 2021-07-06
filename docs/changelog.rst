@@ -2,6 +2,12 @@
 Changelog
 =========
 
+
+v1.6.6 2021-07-06
+
+- workaround for groupby bug in pandas 1.3.0 (GH42395)
+
+
 v1.6.5 2021-06-14
 
 - bugfix for :meth:`staircase.Stairs.mode`

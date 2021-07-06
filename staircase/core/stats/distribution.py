@@ -2,11 +2,10 @@ import math
 import warnings
 
 import numpy as np
-from pandas import IntervalIndex, Series
-
-from staircase.util._decorators import Appender
-from staircase.core.stats import docstrings
 import staircase as sc
+from pandas import IntervalIndex, Series
+from staircase.core.stats import docstrings
+from staircase.util._decorators import Appender
 
 warnings.simplefilter("default")
 
@@ -44,8 +43,9 @@ def percentile_stairs(self, lower=float("-inf"), upper=float("inf")):
     temp_df = (
         temp_df.iloc[1:-1]
         .assign(duration=lambda df: df.end - df.start)
-        .groupby("value")
+        .groupby("value")["duration"]
         .sum()
+        .to_frame()
         .assign(duration=lambda df: np.cumsum(df.duration / df.duration.sum()))
         .assign(duration=lambda df: df.duration.shift())
         .fillna(0)
