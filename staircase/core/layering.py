@@ -27,7 +27,7 @@ def _layer_scalar(self, start, end, value):
         return self
 
     if self._data is None:
-        deltas = pd.Series(name="delta")
+        deltas = pd.Series(name="delta", dtype="float64")
     else:
         deltas = self._ensure_deltas()._data["delta"]
 
@@ -68,6 +68,36 @@ def _broadcast_arrays(*args):
     return [np.full(broadcast_length, maybe_convert_tz_series_to_list(x)) for x in args]
 
 
+# def layer2(self, start=None, end=None, value=None):
+#     if self._data is None and np.isnan(self.initial_value):
+#         return self
+#     if value is None:
+#         value = 1
+#     if not any(list(map(is_list_like, (start, end, value)))):
+#         return _layer_scalar(self, start, end, value)
+#     start, end, value = _broadcast_arrays(
+#         start, end, value
+#     )  # np.broadcast_arrays breaks for timestamps in numpy <1.2
+#     assert not pd.isna(value).any(), "value parameter cannot contain null values"
+#     start_series = pd.Series(value, index=start)
+#     end_series = pd.Series(-value, index=end)
+#     if self._data is not None:
+#         to_concat = [
+#             self._ensure_deltas()._data["delta"],
+#             start_series,
+#             end_series,
+#         ]
+#     else:
+#         to_concat = [start_series, end_series]
+#     self.initial_value += start_series.index.isna().sum()
+#     deltas = pd.concat(to_concat)
+#     self._data = deltas.groupby(deltas.index).sum().rename("delta").to_frame()
+#     self._valid_deltas = True
+#     self._valid_values = False
+#     self._remove_redundant_step_points()
+#     return self
+
+
 def layer(self, start=None, end=None, value=None):
     if self._data is None and np.isnan(self.initial_value):
         return self
@@ -75,22 +105,27 @@ def layer(self, start=None, end=None, value=None):
         value = 1
     if not any(list(map(is_list_like, (start, end, value)))):
         return _layer_scalar(self, start, end, value)
-    start, end, value = _broadcast_arrays(
-        start, end, value
-    )  # np.broadcast_arrays breaks for timestamps in numpy <1.2
+    value = np.array(value)
     assert not pd.isna(value).any(), "value parameter cannot contain null values"
-    start_series = pd.Series(value, index=start)
-    end_series = pd.Series(-value, index=end)
-    if self._data is not None:
+    if not isinstance(start, pd.Series):
+        start = pd.Series(start)
+    if not isinstance(end, pd.Series):
+        end = pd.Series(end)
+    df = pd.concat([start, end], axis=1, ignore_index=True)
+    self.initial_value += df.iloc[:, 0].isna().sum()
+    if self._data is None:
         to_concat = [
-            self._ensure_deltas()._data["delta"],
-            start_series,
-            end_series,
+            pd.Series(value, index=df.iloc[:, 0]),
+            pd.Series(-value, index=df.iloc[:, 1]),
         ]
     else:
-        to_concat = [start_series, end_series]
-    self.initial_value += start_series[start_series.index.isna()].sum()
+        to_concat = [
+            pd.Series(value, index=df.iloc[:, 0]),
+            pd.Series(-value, index=df.iloc[:, 1]),
+            self._ensure_deltas()._data["delta"],
+        ]
     deltas = pd.concat(to_concat)
+
     self._data = deltas.groupby(deltas.index).sum().rename("delta").to_frame()
     self._valid_deltas = True
     self._valid_values = False
