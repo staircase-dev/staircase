@@ -70,7 +70,7 @@ Examples
     >>> stair_list = [{plots}]
     >>> fig, axes = plt.subplots(nrows=1, ncols={ncols}, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ({plot_titles}), stair_list):
-    ...     stair_instance.plot(ax)
+    ...     stair_instance.plot(ax=ax)
     ...     ax.set_title(title)
 """
 
@@ -208,3 +208,33 @@ Stairs.invert
 """
 
 make_boolean_docstring = _make_boolean_docstring_body + _gen_example("make_boolean")
+
+
+clip_docstring = """
+Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper]
+
+Parameters
+----------
+lower : int, float or pandas.Timestamp
+    lower bound of the interval
+upper : int, float or pandas.Timestamp
+    upper bound of the interval
+
+Returns
+-------
+:class:`Stairs`
+    Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
+
+Examples
+--------
+
+.. plot::
+    :context: close-figs
+
+    >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5))
+    >>> s1.plot(ax=axes[0])
+    >>> s1.clip(2,4).plot(ax=axes[1])
+    >>> s1.clip(2,4).mean()
+    0.5
+
+"""

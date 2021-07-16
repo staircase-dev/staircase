@@ -6,18 +6,41 @@ Staircase is a MIT licensed library, written in pure-Python, for
 modelling step functions. See :ref:`Getting Started <getting_started>` for more information.
 """
 
-# uses https://pypi.org/project/sortedcontainers/
-from sortedcontainers import SortedDict, SortedSet
-import matplotlib.pyplot as plt
+
 import numpy as np
 import pandas as pd
 from pandas.plotting import register_matplotlib_converters
+
+from staircase import plotting
 from staircase.constants import inf
-from staircase.docstrings.decorator import add_doc, append_doc
-from staircase.docstrings import stairs_class as SC_docs
-from staircase.core import ops, poly, stats
+
+# from staircase.docstrings import stairs_class as examples
+from staircase.docstrings import examples
+from staircase.util import _replace_none_with_infs
+
+# from staircase.docstrings.decorator import @Appender
+from staircase.util._decorators import Appender
 
 register_matplotlib_converters()
+
+
+def _make_deltas_from_vals(init_val, vals):
+    if not np.isnan(vals).any():
+        result = pd.Series(np.diff((np.append([init_val], vals.values))))
+    else:
+        temp = pd.Series(np.append([init_val], vals.values))
+        result = pd.Series.add(
+            temp[pd.notnull(temp)].diff(), temp[pd.isnull(temp)], fill_value=0
+        )[1:]
+    if np.isnan(init_val):
+        result.iloc[0] = vals.iloc[0]
+    result.index = vals.index
+    return result
+
+
+def _make_vals_from_deltas(init_val, deltas):
+    base = 0 if np.isnan(init_val) else init_val
+    return deltas.cumsum() + base
 
 
 class Stairs:
@@ -30,7 +53,20 @@ class Stairs:
     See the :ref:`Stairs API <api.Stairs>` for details of methods.
     """
 
-    def __init__(self, init_value=0, start=None, end=None, value=None):
+    class_name = "Stairs"
+
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    def __init__(
+        self,
+        frame=None,
+        start=None,
+        end=None,
+        value=None,
+        initial_value=0,
+        closed="left",
+    ):
         """
         Initialise a Stairs instance.
 
@@ -43,46 +79,170 @@ class Stairs:
         -------
         :class:`Stairs`
         """
-        self._sorted_dict = SortedDict()
-        self.init_value = init_value
-        self._sorted_dict = SortedDict()
+        assert frame is None or isinstance(frame, pd.DataFrame)
+        self._data = None
+        self._valid_deltas = False
+        self._valid_values = False
+        self._masked = False
+        self._closed = closed
+        self.initial_value = initial_value
+        self._dist = None
+        self._integral_and_mean = None
 
-        self.cached_cumulative = None
-        self._bind_sorted_dict_methods()
-        
         if any([x is not None for x in (start, end, value)]):
-            self.layer(start, end, value)
+            # value = 1 if value is None else value
+            self.layer_frame(frame, start, end, value)
 
     # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING
 
-    def get_init_value(self):
-        return self.init_value
+    @classmethod
+    def new(cls, initial_value, data, closed="left"):
+        new_instance = cls(closed=closed)
+        new_instance.initial_value = initial_value
+        new_instance._data = data
+        new_instance._valid_deltas = False if data is None else "delta" in data.columns
+        new_instance._valid_values = False if data is None else "value" in data.columns
+        return new_instance
 
-    def _bind_sorted_dict_methods(self):
-        self._get = self._sorted_dict.get
-        self._items = self._sorted_dict.items
-        self._keys = self._sorted_dict.keys
-        self._values = self._sorted_dict.values
-        self._pop = self._sorted_dict.pop
-        self._len = self._sorted_dict.__len__
-        self._popitem = self._sorted_dict.popitem
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    def is_masked(self):
+        return np.isnan(self._data.values).any() or np.isnan(self.initial_value)
 
-    def _replace_sorted_dict(self, _sorted_dict):
-        self._sorted_dict = _sorted_dict
-        self._bind_sorted_dict_methods()
+    def _create_values(self):
+        assert self._valid_deltas
+        self._data.loc[:, "value"] = _make_vals_from_deltas(
+            self.initial_value, self._data["delta"]
+        )
+        self._valid_values = True
+        return self
 
-    def __getitem__(self, *args, **kwargs):
+    def _create_deltas(self):
+        assert self._valid_values
+        self._data.loc[:, "delta"] = _make_deltas_from_vals(
+            self.initial_value, self._data["value"]
+        )
+        self._valid_deltas = True
+        return self
+
+    def _ensure_values(self):
+        if not self._valid_values:
+            self._create_values()
+        return self
+
+    def _ensure_deltas(self):
+        if not self._valid_deltas:
+            self._create_deltas()
+        return self
+
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    def step_changes(self):  # TODO: alias as deltas?
         """
-        f'{dict.__getitem__.__doc__}'
-        """
-        return self._sorted_dict.__getitem__(*args, **kwargs)
+        Returns a pandas Series of key, value pairs of indicating where step changes occur in the step function, and the change in value
 
-    def __setitem__(self, key, value):
-        """
-        f'{dict.__setitem__.__doc__}'
-        """
-        self._sorted_dict.__setitem__(key, value)
+        Returns
+        -------
+        :class:`pandas.Series`
 
+        See Also
+        --------
+        Stairs.number_of_steps
+
+        Examples
+        --------
+
+        .. plot::
+            :context: close-figs
+
+            >>> s1.plot()
+            >>> s1.step_changes()
+            1    1
+            2   -1
+            3    1
+            4   -2
+            5    1
+            dtype: int64
+        """
+        if self._data is None:
+            return pd.Series()
+        self._ensure_deltas()
+        return self._data["delta"]
+
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    def step_values(self):  # TODO: new in v2.0, needs docstring
+        if self._data is None:
+            return pd.Series()
+        self._ensure_values()
+        return self._data["value"]
+
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    def step_points(self):
+        if self._data is None:
+            return np.array([])
+        return self._data.index.values
+
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    @Appender(examples.number_of_steps_example, join="\n", indents=2)
+    def number_of_steps(self):
+        """
+        Calculates the number of step changes
+
+        Returns
+        -------
+        int
+
+        See Also
+        --------
+        Stairs.step_changes
+        Stairs.step_points
+        """
+        return len(self.step_points())
+
+    def _remove_redundant_step_points(self):
+
+        # preferred over values method
+        def remove_via_deltas():
+            remove_index = (
+                self._data["delta"].isna() & self._data["delta"].isna().shift()
+            ) | (self._data["delta"] == 0)
+            self._data = self._data.loc[~remove_index]
+
+        # do we just make deltas and then run above method?
+        def remove_via_values():
+            remove_index = (
+                self._data["value"].isna() & self._data["value"].isna().shift()
+            ) | (self._data["value"] == self._data["value"].shift())
+            if (self._data["value"].iloc[0] == self.initial_value) or (
+                pd.isnull(self._data.loc[:, "value"].iloc[0])
+                and pd.isnull(self.initial_value)
+            ):
+                remove_index.iloc[0] = True
+            self._data = self._data.loc[~remove_index]
+
+        if self._data is not None:
+            if self._valid_deltas:
+                remove_via_deltas()
+            elif self._valid_values:
+                remove_via_values()
+            else:
+                assert False, "no deltas or values valid!"
+            if len(self._data) == 0:
+                self._data = None
+
+        return self
+
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
     def copy(self, deep=None):
         """
         Returns a deep copy of this Stairs instance
@@ -96,63 +256,11 @@ class Stairs:
         -------
         :class:`Stairs`
         """
-        new_instance = Stairs(value=self.init_value)
-        for key, value in self._items():
-            new_instance[key] = value
-        return new_instance
-
-    @classmethod
-    def from_cumulative(cls, init_value, cumulative):
-        new_instance = cls(init_value)
-        new_instance._sorted_dict = SortedDict(
-            zip(
-                cumulative.keys(),
-                np.diff(np.array([init_value] + list(cumulative.values()))),
-            )
+        new_instance = Stairs.new(
+            initial_value=self.initial_value,
+            data=self._data.copy() if self._data is not None else None,
         )
         return new_instance
-
-    def plot(self, ax=None, **kwargs):
-        """
-        Makes a step plot representing the finite intervals belonging to the Stairs instance.
-
-        Uses matplotlib as a backend.
-
-        Parameters
-        ----------
-        ax : :class:`matplotlib.axes.Axes`, default None
-            Allows the axes, on which to plot, to be specified
-        **kwargs
-            Options to pass to :function: `matplotlib.pyplot.step`
-
-        Returns
-        -------
-        :class:`matplotlib.axes.Axes`
-        """
-        if ax is None:
-            _, ax = plt.subplots()
-
-        cumulative = self._cumulative()
-        cumulative_keys = list(cumulative.keys())
-        cumulative_values = list(cumulative.values())
-        register_matplotlib_converters()
-        ax.step(
-            [cumulative_keys[0]] + cumulative_keys, [self.init_value] + cumulative_values, where="post", **kwargs
-        )
-        return ax
-
-    def _cumulative(self):
-        if self.cached_cumulative is None:
-            self.cached_cumulative = SortedDict(
-                zip(self._keys(), np.cumsum(self._values()) + self.init_value)
-            )
-        return self.cached_cumulative
-
-    def _reduce(self):
-        to_remove = [key for key, val in self._items() if val == 0]
-        for key in to_remove:
-            self._pop(key)
-        return self
 
     def __bool__(self):
         """
@@ -162,20 +270,15 @@ class Stairs:
         -------
         boolean
         """
-        number_of_steps = self.number_of_steps()
-        if self.init_value != 1:
-            return False
-        elif number_of_steps == 0:
+        if self.initial_value == 1 and self.number_of_steps() == 0:
             return True
-        elif number_of_steps % 2 == 1:
-            return False
-        elif not set(self._cumulative().values()).issubset({0, 1}):
-            return False
-        else:
-            return float((~self).integrate()) < 0.0000001
+        return False
 
-    @append_doc(SC_docs.describe_example)
-    def describe(self, lower=-inf, upper=inf, percentiles=(25, 50, 75)):
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    @Appender(examples.describe_example, join="\n", indents=2)
+    def describe(self, where=(-inf, inf), percentiles=(25, 50, 75)):
         """
         Generate descriptive statistics.
 
@@ -196,179 +299,25 @@ class Stairs:
         --------
         Stairs.mean, Stairs.std, Stairs.min, Stairs.percentile, Stairs.max
         """
-        percentilestairs = self.percentile_stairs(lower, upper)
+        where = _replace_none_with_infs(where)
+        percentilestairs = self.get_percentiles(where)
         return pd.Series(
             {
                 **{
                     "unique": percentilestairs.clip(0, 100).number_of_steps() - 1,
-                    "mean": self.mean(lower, upper),
-                    "std": self.std(lower, upper),
-                    "min": self.min(lower, upper),
+                    "mean": self.mean(where),
+                    "std": self.std(where),
+                    "min": self.min(where),
                 },
                 **{f"{perc}%": percentilestairs(perc) for perc in percentiles},
-                **{"max": self.max(lower, upper),},
+                **{"max": self.max(where),},
             }
         )
 
-    @append_doc(SC_docs.cov_example)
-    def cov(self, other, lower=-inf, upper=inf, lag=0, clip="pre"):
-        """
-        Calculates either covariance, autocovariance or cross-covariance.
-
-        The calculation is between two step functions described by *self* and *other*.
-        If lag is None or 0 then covariance is calculated, otherwise cross-covariance is calculated.
-        Autocovariance is a special case of cross-covariance when *other* is equal to *self*.
-
-        Parameters
-        ----------
-        other: :class:`Stairs`
-            the stairs instance with which to compute the covariance
-        lower : int, float or pandas.Timestamp
-            lower bound of the domain on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the domain on which to perform the calculation
-        lag : int, float, pandas.Timedelta
-            a pandas.Timedelta is only valid when using dates.
-            If using dates and delta is an int or float, then it is interpreted as a number of hours.
-        clip : {'pre', 'post'}, default 'pre'
-            only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
-            If 'pre' then the domain over which the calculation is performed is the overlap
-            of the original domain and the translated domain.
-
-        Returns
-        -------
-        float
-            The covariance (or cross-covariance) between *self* and *other*
-
-        See Also
-        --------
-        Stairs.corr, staircase.cov, staircase.corr
-        """
-        if lag != 0:
-            assert clip in ["pre", "post"]
-            if clip == "pre" and upper != inf:
-                upper = upper - lag
-            other = other.shift(-lag)
-        return (self * other).mean(lower, upper) - self.mean(lower, upper) * other.mean(
-            lower, upper
-        )
-
-    @append_doc(SC_docs.corr_example)
-    def corr(self, other, lower=-inf, upper=inf, lag=0, clip="pre"):
-        """
-        Calculates either correlation, autocorrelation or cross-correlation.
-
-        All calculations are based off the `Pearson correlation coefficient <https://en.wikipedia.org/wiki/Pearson_correlation_coefficient>`_.
-
-        The calculation is between two step functions described by *self* and *other*.
-        If lag is None or 0 then correlation is calculated, otherwise cross-correlation is calculated.
-        Autocorrelation is a special case of cross-correlation when *other* is equal to *self*.
-
-        Parameters
-        ----------
-        other: :class:`Stairs`
-            the stairs instance with which to compute the correlation
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
-        lag : int, float, pandas.Timedelta
-            a pandas.Timedelta is only valid when using dates.
-            If using dates and delta is an int or float, then it is interpreted as a number of hours.
-        clip : {'pre', 'post'}, default 'pre'
-            only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
-            If 'pre' then the domain over which the calculation is performed is the overlap
-            of the original domain and the translated domain.
-
-        Returns
-        -------
-        float
-            The correlation (or cross-correlation) between *self* and *other*
-
-        See Also
-        --------
-        Stairs.cov, staircase.corr, staircase.cov
-        """
-        if lag != 0:
-            assert clip in ["pre", "post"]
-            if clip == "pre" and upper != inf:
-                upper = upper - lag
-            other = other.shift(-lag)
-        return self.cov(other, lower, upper) / (
-            self.std(lower, upper) * other.std(lower, upper)
-        )
-
-    @append_doc(SC_docs.min_example)
-    def min(
-        self, lower=-inf, upper=inf, lower_how="right", upper_how="left",
-    ):
-        """
-        Calculates the minimum value of the step function
-
-        If an interval which to calculate over is specified it is interpreted
-        as a closed interval, with *lower_how* and *upper_how* indicating how the step function
-        should be evaluated at the at the endpoints of the interval.
-
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp, optional
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp, optional
-            upper bound of the interval on which to perform the calculation
-        lower_how: {'left', 'right'}, default 'right'
-            Determines how the step function should be evaluated at *lower*.
-            If 'left' then :math:`\\lim_{x \\to lower^{-}} f(x)` is included in the calculation.
-        upper_how: {'left', 'right'}, default 'left'
-            Determines how the step function should be evaluated at *upper*.
-            If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
-
-        Returns
-        -------
-        float
-            The minimum value of the step function
-
-        See Also
-        --------
-        Stairs.max, staircase.min
-        """
-        return min(self.values_in_range(lower, upper, lower_how, upper_how))
-
-    @append_doc(SC_docs.max_example)
-    def max(
-        self, lower=-inf, upper=inf, lower_how="right", upper_how="left",
-    ):
-        """
-        Calculates the maximum value of the step function
-
-        If an interval which to calculate over is specified it is interpreted
-        as a closed interval, with *lower_how* and *upper_how* indicating how the step function
-        should be evaluated at the at the endpoints of the interval.
-
-        Parameters
-        ----------
-        lower : int, float or pandas.Timestamp, optional
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp, optional
-            upper bound of the interval on which to perform the calculation
-        lower_how: {'left', 'right'}, default 'right'
-            Determines how the step function should be evaluated at *lower*.
-            If 'left' then :math:`\\lim_{x \\to lower^{-}} f(x)` is included in the calculation.
-        upper_how: {'left', 'right'}, default 'left'
-            Determines how the step function should be evaluated at *upper*.
-            If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
-
-        Returns
-        -------
-        float
-            The maximum value of the step function
-
-        See Also
-        --------
-        Stairs.min, staircase.max
-        """
-        return max(self.values_in_range(lower, upper, lower_how, upper_how))
-
-    @append_doc(SC_docs.shift_example)
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    @Appender(examples.shift_example, join="\n", indents=2)
     def shift(self, delta):
         """
         Returns a stairs instance corresponding to a horizontal translation by delta
@@ -390,13 +339,17 @@ class Stairs:
         --------
         Stairs.diff
         """
-        new_instance = Stairs(self.init_value,)
-        new_instance._replace_sorted_dict(
-            SortedDict(zip((key + delta for key in self._keys()), self._values()))
+        if self._data is None:
+            return Stairs(initial_value=self.initial_value)
+        return Stairs.new(
+            initial_value=self.initial_value,
+            data=self._data.set_index(self._data.index + delta),
         )
-        return new_instance
 
-    @append_doc(SC_docs.diff_example)
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    @Appender(examples.diff_example, join="\n", indents=2)
     def diff(self, delta):
         """
         Returns a stairs instance corresponding to the difference between the step function corresponding to *self*
@@ -418,8 +371,11 @@ class Stairs:
         """
         return self - self.shift(delta)
 
-    @append_doc(SC_docs.rolling_mean_example)
-    def rolling_mean(self, window=(0, 0), lower=-inf, upper=inf):
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    @Appender(examples.rolling_mean_example, join="\n", indents=2)
+    def rolling_mean(self, window=(0, 0), where=(-inf, inf)):
         """
         Returns coordinates defining rolling mean
 
@@ -454,26 +410,30 @@ class Stairs:
         --------
         Stairs.mean
         """
+        where = _replace_none_with_infs(where)
         assert len(window) == 2, "Window should be a listlike object of length 2."
         left_delta, right_delta = window
+        lower, upper = where
         clipped = self.clip(lower, upper)
-        change_points = list(
-            SortedSet(
-                [c - right_delta for c in clipped.step_changes().keys()]
-                + [c - left_delta for c in clipped.step_changes().keys()]
-            )
+        step_points = clipped._data.index  # TODO: what if data is none
+        sample_points = pd.Index.union(
+            step_points - left_delta, step_points - right_delta,
         )
-        s = pd.Series(
-            clipped.sample(change_points, aggfunc="mean", window=window),
-            index=change_points,
+        ii = pd.IntervalIndex.from_arrays(
+            sample_points + left_delta, sample_points + right_delta
         )
+        s = pd.Series(clipped.slice(ii).mean().values, index=sample_points,)
         if lower != -inf:
             s = s.loc[s.index >= lower - left_delta]
         if upper != inf:
             s = s.loc[s.index <= upper - right_delta]
         return s
 
-    def to_dataframe(self):
+    # TODO: docstring
+    # TODO: test
+    # TODO: what's new
+    # this name changed in v2.0
+    def to_frame(self):
         """
         Returns a pandas.DataFrame with columns 'start', 'end' and 'value'
 
@@ -484,35 +444,24 @@ class Stairs:
         -------
         :class:`pandas.DataFrame`
         """
-        starts = [-inf] + list(self._keys())
-        ends = list(self._keys()) + [inf]
-
-        values = [self.init_value] + list(self._cumulative().values())
-        df = pd.DataFrame(
-            {"start": list(starts), "end": list(ends), "value": list(values)}
-        )  # bugfix for pandas 1.1
-        return df
-
-    @append_doc(SC_docs.number_of_steps_example)
-    def number_of_steps(self):
-        """
-        Calculates the number of step changes
-
-        Returns
-        -------
-        int
-
-        See Also
-        --------
-        Stairs.step_changes
-        """
-        return len(self._keys())
+        if self._data is None:
+            starts = [-inf]
+            ends = [inf]
+            values = [self.initial_value]
+        else:
+            if not self._valid_values:
+                self._create_values()
+            step_points = self._data.index
+            starts = [-inf] + step_points.to_list()
+            ends = step_points.to_list() + [inf]
+            values = np.append(self.initial_value, self._data["value"].values)
+        return pd.DataFrame({"start": starts, "end": ends, "value": values})
 
     def __str__(self):
         """
         Return str(self)
         """
-        return f"<staircase.Stairs, id={id(self)}>"
+        return f"<staircase.{self.class_name}, id={id(self)}>"
 
     def __repr__(self):
         """
@@ -524,6 +473,13 @@ class Stairs:
         return self.sample(*args, **kwargs)
 
 
-poly.add_methods(Stairs)
-ops.add_operations(Stairs)
-stats.add_methods(Stairs)
+def _add_operations():
+    from staircase.core import layering, ops, resampling, sampling, slicing, stats
+
+    ops.add_operations(Stairs)
+    stats.add_methods(Stairs)
+    plotting.add_methods(Stairs)
+    sampling.add_methods(Stairs)
+    resampling.add_methods(Stairs)
+    layering.add_methods(Stairs)
+    slicing.add_methods(Stairs)

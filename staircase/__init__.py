@@ -1,22 +1,14 @@
-from staircase.core.stairs import Stairs
-
-from staircase.core.collections.functions import (
-    aggregate,
-    corr,
-    cov,
-    _max as max,
-    _mean as mean,
-    _median as median,
-    _min as min,
-    resample,
-    sample,
-)
-
-from staircase.core.stats import hist_from_ecdf
-
+from staircase.constants import inf
+from staircase.core.arrays.aggregation import _max as max
+from staircase.core.arrays.aggregation import _mean as mean
+from staircase.core.arrays.aggregation import _median as median
+from staircase.core.arrays.aggregation import _min as min
+from staircase.core.arrays.aggregation import _sum as sum
+from staircase.core.arrays.transform import corr, cov, limit, sample
+from staircase.core.stairs import Stairs, _add_operations
 from staircase.test_data import make_test_data
 
-from staircase.constants import inf
+_add_operations()
 
 
 def get_version():

@@ -6,15 +6,15 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "staircase"
-version = "1.6.2"
+version = "2.0.0-alpha"
 description = "Facilitating the modelling, manipulation and analysis of data with (mathematical) step functions"
 readme = "README.md"
 authors = ["Riley Clement <venaturum@gmail.com>"]
 maintainers = ["Riley Clement <venaturum@gmail.com>"]
 license = "MIT"
-repository = "https://github.com/venaturum/staircase"
-homepage = "https://github.com/venaturum/staircase"
-documentation = "https://stairs.readthedocs.io/en/latest/"
+repository = "https://github.com/staircase-dev/staircase"
+homepage = "https://github.com/staircase-dev/staircase"
+documentation = "https://github.com/staircase-dev/staircase"
 
 keywords=[
 	'Staircase',
@@ -39,7 +39,6 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.6"
-sortedcontainers = "^2"
 pandas = ">=0.24,<2"
 numpy = "^1.12"
 matplotlib = ">=2"
@@ -48,19 +47,45 @@ pytz = "*"
 
 [tool.poetry.dev-dependencies]
 ipykernel = "^5"
-pytest = "^5.2"
+pytest = "^6"
 pytest-cov = "*"
 sphinx = "*"
-nbsphinx = "^0.5"
+nbsphinx = ">=0.8.5"
 sphinx-autobuild = "*"
 guzzle-sphinx-theme = "^0.7.11"
 seaborn = ">=0.8.0"
+notebook = ">= 6.0"
+isort = ">=5.8"
+black = {version = "*", python = "^3.6.2"}
+flake8 = ">=3.9"
+pre-commit = {version = ">=2.13", python = "^3.6.1"}
+
 
 [tool.poetry.extras]
 codecov = ["codecov"]
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/venaturum/staircase/issues"
+"Bug Tracker" = "https://github.com/staircase-dev/staircase/issues"
 
 [tool.black]
-exclude = "staircase/test_data.py"
+exclude = "./staircase/test_data.py"
+
+[tool.isort]
+# make it compatible with black
+profile = "black"
+multi_line_output = 3
+src_paths = ["staircase", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+addopts = """
+    --junitxml=junit.xml
+    --ignore setup.py
+    --ignore run_test.py
+    --cov-report term-missing
+    --tb native
+    --strict-markers
+    --durations=20
+	"""
+markers = "serial: execute test serially (to avoid race conditions)"
+junit_family = "xunit1"

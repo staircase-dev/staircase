@@ -30,7 +30,7 @@ Examples
     >>> stair_list = [{plots}]
     >>> fig, axes = plt.subplots(nrows=1, ncols={ncols}, figsize=(17,5), sharey=True, sharex=True)
     >>> for ax, title, stair_instance in zip(axes, ({plot_titles}), stair_list):
-    ...     stair_instance.plot(ax)
+    ...     stair_instance.plot(ax=ax)
     ...     ax.set_title(title)
 """
 

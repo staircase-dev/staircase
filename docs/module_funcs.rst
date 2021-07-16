@@ -12,7 +12,7 @@ Aggregation functions
 .. autosummary::
    :toctree: api/
 
-   aggregate
+   sum
    mean
    median
    min
@@ -28,7 +28,6 @@ Miscellaneous functions
    :toctree: api/
 
    sample
-   hist_from_ecdf
    cov
    corr
    make_test_data

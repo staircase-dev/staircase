@@ -8,7 +8,7 @@ Examples
     >>> s1.plot()
     >>> s1.{func}()
     {result1}
-    >>> s1.{func}(lower=0, upper=6)
+    >>> s1.{func}(where=(0, 6))
     {result2}
 """
 
@@ -28,7 +28,7 @@ Examples
     :context: close-figs
 
     >>> s1.plot()
-    >>> s1.{func}(3, 4.5)
+    >>> s1.{func}(where=(3, 4.5))
     {result}
 """
 
@@ -50,7 +50,7 @@ Examples
     >>> s2.plot()
     >>> s2.mode()
     -1.0
-    >>> s2.mode(0,3)
+    >>> s2.mode(where=(0,3))
     0.5
 """
 
@@ -65,7 +65,7 @@ Examples
     >>> s1.plot()
     >>> s1.median()
     0.5
-    >>> s1.median(2,5)
+    >>> s1.median(where=(2,5))
     0.0
 """
 
@@ -81,7 +81,7 @@ Examples
     1.0
     >>> s1.percentile(25)
     -0.5
-    >>> s1.percentile(40, lower=1.5, upper=3.5)
+    >>> s1.percentile(40, where=(1.5, 3.5))
     0.0
 """
 
@@ -93,10 +93,10 @@ Examples
     :context: close-figs
 
     >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5))
-    >>> s2.plot(axes[0])
+    >>> s2.plot(ax=axes[0])
     >>> axes[0].set_title("s2")
-    >>> s2_percentiles = s2.percentile_stairs()
-    >>> s2_percentiles.plot(axes[1])
+    >>> s2_percentiles = s2.get_percentiles()
+    >>> s2_percentiles.plot(ax=axes[1])
     >>> axes[0].set_title("s2 percentiles")
     >>> s2_percentiles(55)
     0.0
@@ -128,18 +128,18 @@ Examples
     (0, 1]      0.50
     dtype: float64
 
-    >>> s1.hist(2, 4.5)
+    >>> s1.hist(where=(2, 4.5))
     [-1, 0)    0.2
     [0, 1)     0.4
     [1, 2)     0.4
     dtype: float64
 
-    >>> s1.hist(bin_edges=(-1,1,3))
+    >>> s1.hist(x=(-1,1,3))
     [-1, 1)    0.5
     [1, 3)     0.5
     dtype: float64
 
-    >>> s1.hist(bin_edges=(-1, 1))
+    >>> s1.hist(x=(-1, 1))
     [-1, 1)    0.5
     dtype: float64
 """
@@ -156,7 +156,7 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> ecdf = s2.ecdf_stairs(1,5)
+    >>> ecdf = s2.get_ecdf(1,5)
     >>> ecdf.plot()
     >>> plt.show()
 
@@ -172,33 +172,6 @@ Examples
 
     >>> print(f'{ecdf(0.2, how="left") - ecdf(-1, how="left"):.2%} of values, for s2 between 1 and 5, are in [-1, 0.2)')
     75.00% of values, for s2 between 1 and 5, are in [-1, 0.2)
-"""
-
-hist_from_ecdf_example = """
-Examples
---------
-
-.. plot::
-    :context: close-figs
-
-    >>> import staircase as sc
-    >>> s1_ecdf_stairs = s1.ecdf_stairs()
-    >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8,5), sharey=False, sharex=False)
-    >>> for ax, title, stair_instance in zip(axes, ("s1", "s1 ecdf"), (s1, s1_ecdf_stairs)):
-    ...     stair_instance.plot(ax)
-    ...     ax.set_title(title)
-    >>> plt.show()
-
-    >>> sc.hist_from_ecdf(s1_ecdf_stairs)
-    [-1, 0)    0.25
-    [0, 1)     0.25
-    [1, 2)     0.50
-    dtype: float64
-
-    >>> sc.hist_from_ecdf(s1_ecdf_stairs, bin_edges=(-1,1,3))
-    [-1, 1)    0.5
-    [1, 3)     0.5
-    dtype: float64
 """
 
 
@@ -271,7 +244,7 @@ def _gen_docstring(calculation):
         docstring = _tuple_return_docstring
     else:
         docstring = _float_return_docstring
-    
+
     if calculation in ("mean", "integrate", "integral_and_mean"):
         extra_params = "\n".join(
             [
@@ -282,8 +255,10 @@ def _gen_docstring(calculation):
         )
     else:
         extra_params = ""
-        
-    return docstring.format(calc=calc, extra_params=extra_params,see_also=see_also, example=example,)
+
+    return docstring.format(
+        calc=calc, extra_params=extra_params, see_also=see_also, example=example,
+    )
 
 
 mean_docstring = _gen_docstring("mean")
@@ -294,3 +269,35 @@ mode_docstring = _gen_docstring("mode")
 var_docstring = _gen_docstring("var")
 std_docstring = _gen_docstring("std")
 integral_and_mean_docstring = _gen_docstring("integral_and_mean")
+
+
+values_in_range_docstring = """
+Returns the range of the step function as a set of discrete values.
+
+Parameters
+----------
+lower : int, float or pandas.Timestamp, optional
+    lower bound of the interval on which to perform the calculation
+upper : int, float or pandas.Timestamp, optional
+    upper bound of the interval on which to perform the calculation
+lower_how: {'left', 'right'}, default 'right'
+    Determines how the step function should be evaluated at *lower*.
+    If 'left' then :math:`\\lim_{x \\to lower^{-}} f(x)` is included in the calculation.
+upper_how: {'left', 'right'}, default 'left'
+    Determines how the step function should be evaluated at *upper*.
+    If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
+
+Returns
+-------
+set of floats
+
+Examples
+--------
+
+.. plot::
+    :context: close-figs
+
+    >>> s2.plot()
+    >>> s2.values_in_range()
+    {-1.0, 0.0, 0.5}
+"""

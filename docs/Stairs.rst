@@ -14,9 +14,10 @@ Constructor & basic methods
    Stairs.copy
    Stairs.plot
    Stairs.sample
+   Stairs.limit
    Stairs.layer
    Stairs.step_changes
-   Stairs.to_dataframe
+   Stairs.to_frame
    
 .. _api.arithmetic_operators:
  
@@ -31,6 +32,10 @@ Arithmetic operators
    Stairs.subtract
    Stairs.multiply
    Stairs.divide
+   Stairs.radd
+   Stairs.rsubtract
+   Stairs.rmultiply
+   Stairs.rdivide
 
 .. _api.relational_operators:
    
@@ -60,6 +65,10 @@ Logical operators
    Stairs.invert
    Stairs.logical_and
    Stairs.logical_or
+   Stairs.logical_xor
+   Stairs.rlogical_and
+   Stairs.rlogical_or
+   Stairs.rlogical_xor
 
 .. _api.statistical_operators:
 
@@ -81,18 +90,21 @@ Summary statistics
    :toctree: api/
 
    Stairs.number_of_steps
-   Stairs.get_integral_and_mean
    Stairs.integrate
    Stairs.describe
+   Stairs.values_in_range
    Stairs.min
    Stairs.max
    Stairs.var
    Stairs.std
+   Stairs.mode
    Stairs.mean
    Stairs.median
    Stairs.percentile
-   Stairs.percentile_stairs
-   Stairs.ecdf_stairs
+   Stairs.fractile
+   Stairs.get_percentiles
+   Stairs.get_fractiles
+   Stairs.get_ecdf
    Stairs.hist
    
    
@@ -103,9 +115,13 @@ Miscellaneous functions
    :toctree: api/
    
    Stairs.clip
+   Stairs.mask
+   Stairs.where
+   Stairs.isna
+   Stairs.notnull
+   Stairs.fillna
    Stairs.shift
    Stairs.diff
    Stairs.rolling_mean
-   Stairs.resample
-   Stairs.clip
-   
+   Stairs.slice
+

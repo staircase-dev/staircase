@@ -1,5 +1,5 @@
-from typing import Any, Callable, Optional, TypeVar
 from textwrap import dedent
+from typing import Any, Callable, Optional, TypeVar
 
 FuncType = Callable[..., Any]
 F = TypeVar("F", bound=FuncType)

@@ -1,9 +1,8 @@
 ipykernel
 sphinx
 nbsphinx
-sortedcontainers
 matplotlib
-pandas<1.2
+pandas
 numpy
 seaborn
 pytz

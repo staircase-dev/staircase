@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 group = [
     'A','C','B','B','B','B','A','C','B','A','B','C','B','A','B','B','A','B','C','C',
