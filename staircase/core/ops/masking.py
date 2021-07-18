@@ -4,7 +4,6 @@ import operator
 
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_list_like
 
 import staircase as sc
 from staircase.constants import inf
@@ -18,8 +17,6 @@ def _get_slice_index(self, lower, upper, lower_how, upper_how):
     # returns series
     if self._data is None:
         return -1, -1
-    else:
-        self._ensure_values()
     bisect_funcs = {
         "right": bisect.bisect_right,
         "left": bisect.bisect_left,
@@ -50,8 +47,7 @@ def clip(self, lower=-inf, upper=inf):
     if right_index == -1:
         sliced_values = pd.Series()
     else:
-        self._ensure_values()
-        sliced_values = self._data["value"].iloc[max(0, left_index) : right_index]
+        sliced_values = self._get_values().iloc[max(0, left_index) : right_index]
     if upper != inf:
         sliced_values.loc[upper] = np.nan
     if lower != -inf and left_index < 0:
@@ -67,10 +63,7 @@ def clip(self, lower=-inf, upper=inf):
 
     initial_value = self.initial_value if lower == -inf else np.nan
 
-    result = sc.Stairs.new(
-        initial_value=initial_value,
-        data=data,
-    )
+    result = sc.Stairs.new(initial_value=initial_value, data=data,)
     result._remove_redundant_step_points()
     return result
 
@@ -82,14 +75,12 @@ def _maskify(self, inverse=False):
     if self._data is None:
         data = None
     else:
-        self._ensure_values()
         data = pd.DataFrame(
-            {"value": self._data["value"].where(func, np.nan).where(np.isnan, 0)}
+            {"value": self._get_values().where(func, np.nan).where(np.isnan, 0)}
         )
 
     return sc.Stairs.new(
-        initial_value=np.nan if op(self.initial_value, 0) else 0,
-        data=data,
+        initial_value=np.nan if op(self.initial_value, 0) else 0, data=data,
     )
 
 
@@ -155,9 +146,8 @@ def _make_null_comparison_func(docstring, comp_func):
         if self._data is None:
             data = None
         else:
-            self._ensure_values()
             data = pd.DataFrame(
-                comp_func(self._data["value"]) * 1, index=self._data.index
+                comp_func(self._get_values()) * 1, index=self._data.index
             )
 
         new_instance = sc.Stairs.new(initial_value=initial_value, data=data)
@@ -195,7 +185,7 @@ def fillna(self, value=None, method=None):
     if self._data is None:
         data = None
     else:
-        values = self._data["value"].copy()
+        values = self._get_values().copy()
         if method in ("pad", "ffill") and np.isnan(values.iloc[0]):
             values.iloc[0] = self.initial_value
         values = values.fillna(value, method)

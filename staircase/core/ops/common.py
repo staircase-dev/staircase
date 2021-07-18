@@ -50,10 +50,7 @@ def _combine_step_series(
     reindexed_series_1 = reindex_method(new_index, series_1, initial_value_1)
     reindexed_series_2 = reindex_method(new_index, series_2, initial_value_2)
 
-    new_series = series_op(
-        reindexed_series_1,
-        reindexed_series_2,
-    ).astype(float)
+    new_series = series_op(reindexed_series_1, reindexed_series_2,).astype(float)
 
     if series_op == pd.Series.divide:
         new_series.replace(np.inf, np.nan, inplace=True)
@@ -63,11 +60,9 @@ def _combine_step_series(
 
 def _combine_stairs_via_values(stairs1, stairs2, series_op, float_op):
     # self.values and other._values should be able to be created
-    stairs1._ensure_values()
-    stairs2._ensure_values()
     values = _combine_step_series(
-        stairs1._data["value"],
-        stairs2._data["value"],
+        stairs1._get_values(),
+        stairs2._get_values(),
         stairs1.initial_value,
         stairs2.initial_value,
         series_op,
@@ -78,8 +73,8 @@ def _combine_stairs_via_values(stairs1, stairs2, series_op, float_op):
 
     if requires_manual_masking and (stairs1.is_masked() or stairs2.is_masked()):
         mask = _combine_step_series(
-            stairs1._data["value"].isnull(),
-            stairs2._data["value"].isnull(),
+            stairs1._get_values().isnull(),
+            stairs2._get_values().isnull(),
             np.isnan(stairs1.initial_value),
             np.isnan(stairs2.initial_value),
             np.logical_or,
@@ -100,8 +95,7 @@ def _combine_stairs_via_values(stairs1, stairs2, series_op, float_op):
         values = values.replace(np.inf, np.nan).replace(-np.inf, np.nan)
 
     new_instance = sc.Stairs.new(
-        initial_value=initial_value,
-        data=pd.DataFrame({"value": values}),
+        initial_value=initial_value, data=pd.DataFrame({"value": values}),
     )
     new_instance._remove_redundant_step_points()
     return new_instance

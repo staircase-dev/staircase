@@ -126,15 +126,29 @@ class Stairs:
         self._valid_deltas = True
         return self
 
-    def _ensure_values(self):
-        if not self._valid_values:
-            self._create_values()
-        return self
+    # def _ensure_values(self):
+    #     if not self._valid_values:
+    #         self._create_values()
+    #     return self
 
-    def _ensure_deltas(self):
+    # def _ensure_deltas(self):
+    #     if not self._valid_deltas:
+    #         self._create_deltas()
+    #     return self
+
+    def _get_deltas(self):
+        if self._data is None:
+            return pd.Series(dtype="float64")
         if not self._valid_deltas:
             self._create_deltas()
-        return self
+        return self._data["delta"]
+
+    def _get_values(self):
+        if self._data is None:
+            return pd.Series(dtype="float64")
+        if not self._valid_values:
+            self._create_values()
+        return self._data["value"]
 
     # TODO: docstring
     # TODO: test
@@ -166,19 +180,13 @@ class Stairs:
             5    1
             dtype: int64
         """
-        if self._data is None:
-            return pd.Series()
-        self._ensure_deltas()
-        return self._data["delta"]
+        return self._get_deltas().copy()
 
     # TODO: docstring
     # TODO: test
     # TODO: what's new
     def step_values(self):  # TODO: new in v2.0, needs docstring
-        if self._data is None:
-            return pd.Series()
-        self._ensure_values()
-        return self._data["value"]
+        return self._get_values().copy()
 
     # TODO: docstring
     # TODO: test
@@ -474,12 +482,11 @@ class Stairs:
 
 
 def _add_operations():
-    from staircase.core import layering, ops, resampling, sampling, slicing, stats
+    from staircase.core import layering, ops, sampling, slicing, stats
 
     ops.add_operations(Stairs)
     stats.add_methods(Stairs)
     plotting.add_methods(Stairs)
     sampling.add_methods(Stairs)
-    resampling.add_methods(Stairs)
     layering.add_methods(Stairs)
     slicing.add_methods(Stairs)

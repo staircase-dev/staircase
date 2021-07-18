@@ -13,8 +13,7 @@ from staircase.util._decorators import Appender
 def _get_integral_and_mean(stairs):
     if stairs._data is None or len(stairs._data) < 2:
         return 0, np.nan  # TODO: is zero right here?  ?
-    stairs._ensure_values()
-    values = stairs._data["value"]
+    values = stairs._get_values()
 
     widths = np.diff(values.index.values)
     heights = values.values[:-1]
@@ -67,9 +66,9 @@ def median(self, where=(-inf, inf)):
 # TODO: what's new
 @Appender(docstrings.mode_docstring, join="\n", indents=1)
 def mode(self, where=(-inf, inf)):
-    s = self.clip(*where)._ensure_values()
+    s = self.clip(*where)
     value_counts = pd.Series(
-        np.diff(s._data.index.values), index=s._data["value"].iloc[:-1]
+        np.diff(s._data.index.values), index=s._get_values().iloc[:-1]
     )
     return (
         value_counts.groupby(value_counts.index.values).sum().idxmax()
@@ -82,10 +81,8 @@ def mode(self, where=(-inf, inf)):
 @Appender(docstrings.var_docstring, join="\n", indents=1)
 def var(self, where=(-inf, inf)):
     percentile_minus_mean = self.get_percentiles(where) - self.mean(where)
-    percentile_minus_mean._ensure_values()
-    squared_values = (
-        percentile_minus_mean._data["value"] * percentile_minus_mean._data["value"]
-    )
+    values = percentile_minus_mean._get_values()
+    squared_values = values * values
     return (
         sc.Stairs.new(
             initial_value=0, data=pd.DataFrame({"value": squared_values}),
@@ -114,10 +111,9 @@ def values_in_range(self, where=(-inf, inf), closed=None):
     lower, upper = where
     lower_how, upper_how = _get_lims(self, closed)
     left_index, right_index = _get_slice_index(self, lower, upper, lower_how, upper_how)
-    self._ensure_values()
     if right_index == -1:
         return np.array([self.initial_value])
-    values = self._data["value"].iloc[max(0, left_index) : right_index]
+    values = self._get_values().iloc[max(0, left_index) : right_index]
     if left_index < 0 and not np.isnan(self.initial_value):
         values = np.append([self.initial_value], values)
     unique = np.unique(values)

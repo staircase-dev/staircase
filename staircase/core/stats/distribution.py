@@ -23,12 +23,12 @@ class Xtiles(sc.core.stairs.Stairs):
 
     @classmethod
     def from_ecdf(cls, ecdf):
-        ecdf._ensure_values()
+        assert ecdf._data is not None
         return cls.new(
             initial_value=ecdf._data.index[0],
             data=pd.DataFrame(
                 {"value": np.append(ecdf._data.index, ecdf._data.index[-1])},
-                index=np.append(0, ecdf._data["value"].values * cls.scale_factor),
+                index=np.append(0, ecdf._get_values().values * cls.scale_factor),
             ),
         )
 
@@ -46,7 +46,7 @@ class Fractiles(Xtiles):
 
     def to_percentiles(self):
 
-        data = self._ensure_values()._data["value"].copy()
+        data = self._get_values().copy()
         data.index = data.index * 100
         return Percentiles.new(initial_value=self.initial_value, data=data.to_frame())
 
@@ -57,9 +57,8 @@ class ECDF(sc.core.stairs.Stairs):
 
     @staticmethod
     def from_stairs(stairs):
-        stairs._ensure_values()
         widths = np.diff(stairs._data.index.values)
-        heights = stairs._data["value"].values[:-1]
+        heights = stairs._get_values().values[:-1]
         ecdf_deltas = pd.Series(widths).groupby(heights).sum().rename("delta")
         deltas_sum = ecdf_deltas.sum()
         normalized_deltas = ecdf_deltas / deltas_sum

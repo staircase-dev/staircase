@@ -20,14 +20,10 @@ def _make_boolean_func(docstring, series_comp, float_comp):
 
         if self._data is None:
             return sc.Stairs(initial_value=initial_value)
-        self._ensure_values()
-        values = series_comp(self._data["value"], 0) * 1
-        values.loc[np.isnan(self._data["value"].values)] = np.nan
+        values = series_comp(self._get_values(), 0) * 1
+        values.loc[np.isnan(self._get_values().values)] = np.nan
         result = sc.Stairs.new(
-            initial_value=initial_value,
-            data=pd.DataFrame(
-                {"value": values},
-            ),
+            initial_value=initial_value, data=pd.DataFrame({"value": values},),
         )
         result._remove_redundant_step_points()
         return result

@@ -21,12 +21,12 @@ def negate(self):
 
 def _add_or_sub_deltas_no_mask(self, other, series_op, float_op):
     # assume self and other have ._data, and at least one has valid _deltas
-    if not other._valid_deltas:
-        other._create_deltas()
-    if not self._valid_deltas:
-        self._create_deltas()
+    # if not other._valid_deltas:
+    #     other._create_deltas()
+    # if not self._valid_deltas:
+    #     self._create_deltas()
 
-    deltas = series_op(self._data["delta"], other._data["delta"], fill_value=0)
+    deltas = series_op(self._get_deltas(), other._get_deltas(), fill_value=0)
 
     new_instance = sc.Stairs.new(
         initial_value=float_op(self.initial_value, other.initial_value),
@@ -65,8 +65,6 @@ def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
             )
         # self._data or other._data exists
         elif self.is_masked() or other.is_masked():
-            self._ensure_values()
-            other._ensure_values()
             return _combine_stairs_via_values(self, other, series_op, float_op)
         elif self._valid_deltas or other._valid_deltas:
             return _add_or_sub_deltas_no_mask(self, other, series_op, float_op)
@@ -102,9 +100,7 @@ def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
             if self._data is None:
                 data = None
             else:
-                if not self._valid_values:
-                    self._create_values()
-                data = pd.DataFrame({"value": series_op(self._data["value"], other)})
+                data = pd.DataFrame({"value": series_op(self._get_values(), other)})
                 if series_op == pd.Series.divide:
                     data = data.replace(np.inf, np.nan)
             initial_value = float_op(self.initial_value, other)

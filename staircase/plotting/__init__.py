@@ -21,7 +21,6 @@ def plot(self, backend="matplotlib", **kwargs):
     # register_matplotlib_converters()
     if self._data is None:
         return
-    self._ensure_values()
     if backend == "matplotlib":
         return plot_matplotlib(self, **kwargs)
     else:

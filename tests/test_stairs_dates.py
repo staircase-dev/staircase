@@ -48,8 +48,20 @@ def timestamp(*args, date_func, **kwargs):
     return date_func(ts)
 
 
-def _expand_interval_definition(start, end=None, value=1):
-    return start, end, value
+def assert_expected_type(stairs, date_func):
+    if stairs._data is None:
+        return
+    example_type = timestamp(2020, 1, 1, date_func=date_func)
+    example_type = pd.Timestamp(
+        example_type
+    )  # pandas natively converts datetimes to timestamps
+    assert all(
+        [type(example_type) == type(x) for x in stairs._data.index]
+    ), "Unexpected type in step points"
+    if isinstance(example_type, (pd.Timestamp, datetime)):
+        assert all(
+            [example_type.tzinfo == x.tzinfo for x in stairs._data.index]
+        ), "Unexpected timezone in step points"
 
 
 def _compare_iterables(it1, it2):
@@ -724,12 +736,14 @@ def test_add_dates(date_func):
             timestamp("2020-01-10 00:00:00", date_func=date_func): -4.5,
         }
     )
+    result = s1(date_func) + s2(date_func)
     pd.testing.assert_series_equal(
-        (s1(date_func) + s2(date_func)).step_changes(),
+        result.step_changes(),
         expected_step_changes,
         check_names=False,
         check_index_type=False,
     )
+    assert_expected_type(result, date_func)
 
 
 def test_subtract_dates(date_func):
@@ -747,12 +761,14 @@ def test_subtract_dates(date_func):
             timestamp("2020-01-10 00:00:00", date_func=date_func): 5.5,
         }
     )
+    result = s1(date_func) - s2(date_func)
     pd.testing.assert_series_equal(
-        (s1(date_func) - s2(date_func)).step_changes(),
+        result.step_changes(),
         expected_step_changes,
         check_names=False,
         check_index_type=False,
     )
+    assert_expected_type(result, date_func)
 
 
 def test_multiply_dates(date_func):
@@ -770,12 +786,14 @@ def test_multiply_dates(date_func):
             timestamp("2020-01-10 00:00:00", date_func=date_func): 2.5,
         }
     )
+    result = s1(date_func) * s2(date_func)
     pd.testing.assert_series_equal(
-        (s1(date_func) * s2(date_func)).step_changes(),
+        result.step_changes(),
         expected_step_changes,
         check_names=False,
         check_index_type=False,
     )
+    assert_expected_type(result, date_func)
 
 
 def test_multiply_dates_scalar(date_func):
@@ -788,12 +806,14 @@ def test_multiply_dates_scalar(date_func):
             timestamp("2020-01-10 00:00:00", date_func=date_func): 1.5,
         }
     )
+    result = s1(date_func) * 3
     pd.testing.assert_series_equal(
-        (s1(date_func) * 3).step_changes(),
+        result.step_changes(),
         expected_step_changes,
         check_names=False,
         check_index_type=False,
     )
+    assert_expected_type(result, date_func)
 
 
 def test_divide_dates(date_func):
@@ -811,12 +831,14 @@ def test_divide_dates(date_func):
             timestamp("2020-01-10 00:00:00", date_func=date_func): 0.08333333333333333,
         }
     )
+    result = s1(date_func) / (s2(date_func) + 1)
     pd.testing.assert_series_equal(
-        (s1(date_func) / (s2(date_func) + 1)).step_changes(),
+        result.step_changes(),
         expected_step_changes,
         check_names=False,
         check_index_type=False,
     )
+    assert_expected_type(result, date_func)
 
 
 def test_divide_dates_scalar(date_func):
@@ -829,12 +851,14 @@ def test_divide_dates_scalar(date_func):
             timestamp("2020-01-10 00:00:00", date_func=date_func): 1.0,
         }
     )
+    result = s1(date_func) / 0.5
     pd.testing.assert_series_equal(
-        (s1(date_func) / 0.5).step_changes(),
+        result.step_changes(),
         expected_step_changes,
         check_names=False,
         check_index_type=False,
     )
+    assert_expected_type(result, date_func)
 
 
 def test_to_frame(date_func):
@@ -871,10 +895,7 @@ def test_hist_default_bins_left_closed(date_func, stairs_func, bounds, cuts):
     hist = stairs_instance.hist(x=cuts, where=bounds, normalize=True)
     expected = make_expected_result(hist.index, *bounds)
     pd.testing.assert_series_equal(
-        hist,
-        expected,
-        check_names=False,
-        check_index_type=False,
+        hist, expected, check_names=False, check_index_type=False,
     )
 
 
@@ -908,10 +929,7 @@ def test_hist_default_bins_right_closed(date_func, stairs_func, bounds, cuts):
     hist = stairs_instance.hist(x=cuts, where=bounds, closed="right", normalize=True)
     expected = make_expected_result(hist.index, *bounds)
     pd.testing.assert_series_equal(
-        hist,
-        expected,
-        check_names=False,
-        check_index_type=False,
+        hist, expected, check_names=False, check_index_type=False,
     )
 
 
@@ -957,8 +975,9 @@ def test_shift(date_func):
         timestamp(2020, 1, 11, date_func=date_func),
         -2.5,
     )
-
-    assert bool(s1(date_func).shift(pd.Timedelta(24, unit="H")) == ans)
+    result = s1(date_func).shift(pd.Timedelta(24, unit="H"))
+    assert bool(result == ans)
+    assert_expected_type(result, date_func)
 
 
 # low, high = timestamp(2020,1,1, date_func=date_func), timestamp(2020,1,10, date_func=date_func)
@@ -1086,10 +1105,7 @@ def test_s1_std(date_func, bounds, expected):
     "bounds, expected",
     [
         ((), 2.840536476886844),
-        (
-            ((2019, 12, 30), (2020, 1, 8, 16)),
-            2.0697735491086395,
-        ),
+        (((2019, 12, 30), (2020, 1, 8, 16)), 2.0697735491086395,),
         (((2020, 1, 2), (2020, 1, 11, 3)), 2.6299586126728878),
     ],
 )
@@ -1160,9 +1176,7 @@ def test_s1_autocorr(date_func, kwargs, expected):
     upper = timestamp(*kwargs.pop("upper"), date_func=date_func)
     new_kwargs = {**kwargs, "where": (lower, upper)}
     assert np.isclose(
-        s1(date_func).corr(s1(date_func), **new_kwargs),
-        expected,
-        atol=0.00001,
+        s1(date_func).corr(s1(date_func), **new_kwargs), expected, atol=0.00001,
     )
 
 

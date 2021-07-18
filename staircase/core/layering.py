@@ -29,7 +29,7 @@ def _layer_scalar(self, start, end, value):
     if self._data is None:
         deltas = pd.Series(name="delta", dtype="float64")
     else:
-        deltas = self._ensure_deltas()._data["delta"]
+        deltas = self._get_deltas()
 
     if start is None:
         self.initial_value += value
@@ -122,7 +122,7 @@ def layer(self, start=None, end=None, value=None):
         to_concat = [
             pd.Series(value, index=df.iloc[:, 0]),
             pd.Series(-value, index=df.iloc[:, 1]),
-            self._ensure_deltas()._data["delta"],
+            self._get_deltas(),
         ]
     deltas = pd.concat(to_concat)
 
