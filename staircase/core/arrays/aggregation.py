@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from staircase.constants import inf
 from staircase.core.arrays import docstrings
 from staircase.core.stairs import Stairs
 from staircase.util._decorators import Appender
@@ -37,7 +36,7 @@ def _aggregate(collection, func):
     staircase.mean, staircase.median, staircase.min, staircase.max
     """
     collection = pd.Series(collection).values
-    index = pd.Index(np.unique(np.concatenate([s.step_points() for s in collection])))
+    index = pd.Index(np.unique(np.concatenate([s.step_points for s in collection])))
     return Stairs.new(
         initial_value=func([s.initial_value for s in collection]),
         data=pd.Series(

@@ -36,7 +36,7 @@ def test_sum():
     s1mask = s1().mask((2, 4))
     s2mask = s2().mask((7, 9))
     pd.testing.assert_series_equal(
-        sc.sum([s1mask, s2mask, s1mask + s2mask]).step_values(),
+        sc.sum([s1mask, s2mask, s1mask + s2mask]).step_values,
         pd.Series(
             {
                 -4.0: -3.5,
@@ -62,7 +62,7 @@ def test_max():
     s1mask = s1().mask((2, 4))
     s2mask = s2().mask((7, 9))
     pd.testing.assert_series_equal(
-        sc.max([s1mask, s2mask]).step_values(),
+        sc.max([s1mask, s2mask]).step_values,
         pd.Series(
             {
                 -2.0: -1.75,
@@ -87,7 +87,7 @@ def test_min():
     s1mask = s1().mask((2, 4))
     s2mask = s2().mask((7, 9))
     pd.testing.assert_series_equal(
-        sc.min([s1mask, s2mask]).step_values(),
+        sc.min([s1mask, s2mask]).step_values,
         pd.Series(
             {
                 -4.0: -1.75,
@@ -108,7 +108,7 @@ def test_mean_1():
     s1mask = s1().mask((2, 4))
     s2mask = s2().mask((7, 9))
     pd.testing.assert_series_equal(
-        sc.mean([s1mask, s2mask]).step_values(),
+        sc.mean([s1mask, s2mask]).step_values,
         pd.Series(
             {
                 -4.0: -0.875,
@@ -135,7 +135,7 @@ def test_mean_2():
     s2mask = s2().mask((7, 9)).mask((None, 0))
     result = sc.mean([s1mask, s2mask])
     pd.testing.assert_series_equal(
-        result.step_values(),
+        result.step_values,
         pd.Series(
             {
                 0.0: -1.75,
@@ -161,7 +161,7 @@ def test_median():
     s1mask = s1().mask((2, 4))
     s2mask = s2().mask((7, 9))
     pd.testing.assert_series_equal(
-        sc.median([s1mask, s2mask, s1mask + s2mask]).step_values(),
+        sc.median([s1mask, s2mask, s1mask + s2mask]).step_values,
         pd.Series(
             {
                 -4.0: -1.75,

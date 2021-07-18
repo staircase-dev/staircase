@@ -30,7 +30,7 @@ def IS2():
 
 def test_mean_1(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.mean({1: IS1, 2: IS2}).step_changes(),
+        sc.mean({1: IS1, 2: IS2}).step_changes,
         pd.Series(
             {
                 -4.0: -0.875,
@@ -54,7 +54,7 @@ def test_mean_1(IS1, IS2):
 
 def test_mean_2(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.mean(pd.Series([IS1, IS2])).step_changes(),
+        sc.mean(pd.Series([IS1, IS2])).step_changes,
         pd.Series(
             {
                 -4.0: -0.875,
@@ -78,7 +78,7 @@ def test_mean_2(IS1, IS2):
 
 def test_mean_3(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.mean(np.array([IS1, IS2])).step_changes(),
+        sc.mean(np.array([IS1, IS2])).step_changes,
         pd.Series(
             {
                 -4.0: -0.875,
@@ -102,7 +102,7 @@ def test_mean_3(IS1, IS2):
 
 def test_mean_4(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.mean([IS1, IS2]).step_changes(),
+        sc.mean([IS1, IS2]).step_changes,
         pd.Series(
             {
                 -4.0: -0.875,
@@ -126,7 +126,7 @@ def test_mean_4(IS1, IS2):
 
 def test_mean_5(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.mean((IS1, IS2)).step_changes(),
+        sc.mean((IS1, IS2)).step_changes,
         pd.Series(
             {
                 -4.0: -0.875,
@@ -150,7 +150,7 @@ def test_mean_5(IS1, IS2):
 
 def test_median_1(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.median({1: IS1, 2: IS2, 3: IS1 + IS2}).step_changes(),
+        sc.median({1: IS1, 2: IS2, 3: IS1 + IS2}).step_changes,
         pd.Series(
             {
                 -4.0: -1.75,
@@ -173,7 +173,7 @@ def test_median_1(IS1, IS2):
 
 def test_max_1(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.max({1: IS1, 2: IS2}).step_changes(),
+        sc.max({1: IS1, 2: IS2}).step_changes,
         pd.Series(
             {
                 -2.0: -1.75,
@@ -195,7 +195,7 @@ def test_max_1(IS1, IS2):
 
 def test_min_1(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.min({1: IS1, 2: IS2}).step_changes(),
+        sc.min({1: IS1, 2: IS2}).step_changes,
         pd.Series(
             {
                 -4.0: -1.75,
@@ -215,7 +215,7 @@ def test_min_1(IS1, IS2):
 
 def test_sum_1(IS1, IS2):
     pd.testing.assert_series_equal(
-        sc.sum([IS1, IS2, IS1 + IS2]).step_values(),
+        sc.sum([IS1, IS2, IS1 + IS2]).step_values,
         pd.Series(
             {
                 -4.0: -3.5,

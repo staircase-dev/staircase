@@ -21,7 +21,7 @@ from staircase.util import _replace_none_with_infs
 # from staircase.docstrings.decorator import @Appender
 from staircase.util._decorators import Appender
 
-register_matplotlib_converters()
+register_matplotlib_converters()  # TODO: is this necessary?
 
 
 def _make_deltas_from_vals(init_val, vals):
@@ -72,12 +72,18 @@ class Stairs:
 
         Parameters
         ----------
+        frame : :class:`pandas.DataFrame`, optional
+
         init_value : float, default 0
             The value of the step function at negative infinity.
 
         Returns
         -------
         :class:`Stairs`
+
+        See Also
+        --------
+        Stairs.layer
         """
         assert frame is None or isinstance(frame, pd.DataFrame)
         self._data = None
@@ -91,7 +97,7 @@ class Stairs:
 
         if any([x is not None for x in (start, end, value)]):
             # value = 1 if value is None else value
-            self.layer_frame(frame, start, end, value)
+            self.layer(start, end, value, frame)
 
     # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING
 
@@ -126,16 +132,6 @@ class Stairs:
         self._valid_deltas = True
         return self
 
-    # def _ensure_values(self):
-    #     if not self._valid_values:
-    #         self._create_values()
-    #     return self
-
-    # def _ensure_deltas(self):
-    #     if not self._valid_deltas:
-    #         self._create_deltas()
-    #     return self
-
     def _get_deltas(self):
         if self._data is None:
             return pd.Series(dtype="float64")
@@ -153,6 +149,7 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
+    @property
     def step_changes(self):  # TODO: alias as deltas?
         """
         Returns a pandas Series of key, value pairs of indicating where step changes occur in the step function, and the change in value
@@ -172,7 +169,7 @@ class Stairs:
             :context: close-figs
 
             >>> s1.plot()
-            >>> s1.step_changes()
+            >>> s1.step_changes
             1    1
             2   -1
             3    1
@@ -185,12 +182,14 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
+    @property
     def step_values(self):  # TODO: new in v2.0, needs docstring
         return self._get_values().copy()
 
     # TODO: docstring
     # TODO: test
     # TODO: what's new
+    @property
     def step_points(self):
         if self._data is None:
             return np.array([])
@@ -200,6 +199,7 @@ class Stairs:
     # TODO: test
     # TODO: what's new
     @Appender(examples.number_of_steps_example, join="\n", indents=2)
+    @property
     def number_of_steps(self):
         """
         Calculates the number of step changes
@@ -213,7 +213,7 @@ class Stairs:
         Stairs.step_changes
         Stairs.step_points
         """
-        return len(self.step_points())
+        return len(self.step_points)
 
     def _remove_redundant_step_points(self):
 
@@ -278,7 +278,7 @@ class Stairs:
         -------
         boolean
         """
-        if self.initial_value == 1 and self.number_of_steps() == 0:
+        if self.initial_value == 1 and self.number_of_steps == 0:
             return True
         return False
 
@@ -312,7 +312,7 @@ class Stairs:
         return pd.Series(
             {
                 **{
-                    "unique": percentilestairs.clip(0, 100).number_of_steps() - 1,
+                    "unique": percentilestairs.clip(0, 100).number_of_steps - 1,
                     "mean": self.mean(where),
                     "std": self.std(where),
                     "min": self.min(where),

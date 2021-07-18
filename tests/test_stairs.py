@@ -94,7 +94,7 @@ def test_init():
 def test_init2(init_value):
     int_seq = Stairs(initial_value=init_value)
     assert (
-        int_seq.number_of_steps() == 0
+        int_seq.number_of_steps == 0
     ), "Initialised Stairs should have exactly one interval"
 
 
@@ -102,7 +102,7 @@ def test_init2(init_value):
 def test_init3(init_value):
     int_seq = Stairs(initial_value=init_value)
     assert (
-        len(int_seq.step_points()) == 0
+        len(int_seq.step_points) == 0
     ), "Initialised Stairs should not have any finite interval endpoints"
 
 
@@ -132,11 +132,11 @@ def test_one_finite_interval(init_value, added_interval):
     int_seq = Stairs(initial_value=init_value)
     int_seq.layer(*added_interval)
     start, end, value = _expand_interval_definition(*added_interval)
-    assert int_seq.number_of_steps() == 2 - (
+    assert int_seq.number_of_steps == 2 - (
         end is None
     ), "One finite interval added to initial infinite interval should result in 3 intervals"
     assert _compare_iterables(
-        int_seq.step_points(), (start, end)
+        int_seq.step_points, (start, end)
     ), "Finite endpoints are not what is expected"
     assert (
         int_seq(float("-inf")) == init_value
@@ -166,9 +166,9 @@ def test_two_adjacent_finite_interval_same_value(init_value, endpoints, value):
     point1, point2, point3 = endpoints
     int_seq.layer(point1, point2, value)
     int_seq.layer(point2, point3, value)
-    assert int_seq.number_of_steps() == 2, "Expected result to be 3 intervals"
+    assert int_seq.number_of_steps == 2, "Expected result to be 3 intervals"
     assert _compare_iterables(
-        int_seq.step_points(), (point1, point3)
+        int_seq.step_points, (point1, point3)
     ), "Finite endpoints are not what is expected"
     assert (
         int_seq(float("-inf")) == init_value
@@ -200,9 +200,9 @@ def test_two_adjacent_finite_interval_different_value(
     point1, point2, point3 = endpoints
     int_seq.layer(point1, point2, value)
     int_seq.layer(point2, point3, value + delta)
-    assert int_seq.number_of_steps() == 3, "Expected result to be 4 intervals"
+    assert int_seq.number_of_steps == 3, "Expected result to be 4 intervals"
     assert _compare_iterables(
-        int_seq.step_points(), (point1, point2, point3)
+        int_seq.step_points, (point1, point2, point3)
     ), "Finite endpoints are not what is expected"
     assert (
         int_seq(float("-inf")) == init_value
@@ -232,9 +232,9 @@ def test_two_overlapping_finite_interval(init_value, endpoints, value, delta):
     point1, point2, point3, point4 = endpoints
     int_seq.layer(point1, point3, value)
     int_seq.layer(point2, point4, value + delta)
-    assert int_seq.number_of_steps() == 4, "Expected result to be 5 intervals"
+    assert int_seq.number_of_steps == 4, "Expected result to be 5 intervals"
     assert _compare_iterables(
-        int_seq.step_points(), (point1, point2, point3, point4)
+        int_seq.step_points, (point1, point2, point3, point4)
     ), "Finite endpoints are not what is expected"
     assert (
         int_seq(float("-inf")) == init_value
@@ -266,9 +266,9 @@ def test_two_finite_interval_one_subinterval(init_value, endpoints, value, delta
     point1, point2, point3, point4 = endpoints
     int_seq.layer(point1, point4, value)
     int_seq.layer(point2, point3, value + delta)
-    assert int_seq.number_of_steps() == 4, "Expected result to be 5 intervals"
+    assert int_seq.number_of_steps == 4, "Expected result to be 5 intervals"
     assert _compare_iterables(
-        int_seq.step_points(), (point1, point2, point3, point4)
+        int_seq.step_points, (point1, point2, point3, point4)
     ), "Finite endpoints are not what is expected"
     assert (
         int_seq.initial_value == init_value
@@ -760,26 +760,10 @@ def test_s1_rolling_mean(s1_fix, kwargs, expected_index, expected_vals):
 @pytest.mark.parametrize(
     "closed, kwargs, expected_val",
     [
-        (
-            "left",
-            {},
-            -1.75,
-        ),
-        (
-            "left",
-            {"where": (1, 6)},
-            0.25,
-        ),
-        (
-            "right",
-            {"where": (1, 6), "closed": "left"},
-            -1.75,
-        ),
-        (
-            "left",
-            {"where": (1, 6), "closed": "right"},
-            -0.5,
-        ),
+        ("left", {}, -1.75,),
+        ("left", {"where": (1, 6)}, 0.25,),
+        ("right", {"where": (1, 6), "closed": "left"}, -1.75,),
+        ("left", {"where": (1, 6), "closed": "right"}, -0.5,),
     ],
 )
 def test_s1_min(closed, kwargs, expected_val):
@@ -789,26 +773,10 @@ def test_s1_min(closed, kwargs, expected_val):
 @pytest.mark.parametrize(
     "closed, kwargs, expected_val",
     [
-        (
-            "left",
-            {},
-            2.75,
-        ),
-        (
-            "left",
-            {"where": (-4, 1)},
-            -1.75,
-        ),
-        (
-            "right",
-            {"where": (-4, 1), "closed": "left"},
-            0.0,
-        ),
-        (
-            "left",
-            {"where": (-4, 1), "closed": "right"},
-            0.25,
-        ),
+        ("left", {}, 2.75,),
+        ("left", {"where": (-4, 1)}, -1.75,),
+        ("right", {"where": (-4, 1), "closed": "left"}, 0.0,),
+        ("left", {"where": (-4, 1), "closed": "right"}, 0.25,),
     ],
 )
 def test_s1_max(closed, kwargs, expected_val):
@@ -818,21 +786,9 @@ def test_s1_max(closed, kwargs, expected_val):
 @pytest.mark.parametrize(
     "closed, kwargs, expected_val",
     [
-        (
-            "left",
-            {},
-            np.array([-1.75, -0.5, 0.0, 0.25, 2.0, 2.75]),
-        ),
-        (
-            "left",
-            {"where": (-4, 10)},
-            np.array([-1.75, -0.5, 0.25, 2.0, 2.75]),
-        ),
-        (
-            "left",
-            {"where": (1, 6)},
-            np.array([0.25, 2.0, 2.75]),
-        ),
+        ("left", {}, np.array([-1.75, -0.5, 0.0, 0.25, 2.0, 2.75]),),
+        ("left", {"where": (-4, 10)}, np.array([-1.75, -0.5, 0.25, 2.0, 2.75]),),
+        ("left", {"where": (1, 6)}, np.array([0.25, 2.0, 2.75]),),
         (
             "right",
             {"where": (1, 6), "closed": "left"},
@@ -852,21 +808,9 @@ def test_s1_values_in_range(closed, kwargs, expected_val):
 @pytest.mark.parametrize(
     "x, kwargs, expected_val",
     [
-        (
-            [-4, -2, 1, 3],
-            {"side": "right"},
-            np.array([-1.75, -1.75, 0.25, 2.75]),
-        ),
-        (
-            [-4, -2, 1, 3],
-            {"side": "right"},
-            np.array([-1.75, -1.75, 0.25, 2.75]),
-        ),
-        (
-            [-4, -2, 1, 3],
-            {"side": "left"},
-            np.array([0.0, -1.75, -1.75, 0.25]),
-        ),
+        ([-4, -2, 1, 3], {"side": "right"}, np.array([-1.75, -1.75, 0.25, 2.75]),),
+        ([-4, -2, 1, 3], {"side": "right"}, np.array([-1.75, -1.75, 0.25, 2.75]),),
+        ([-4, -2, 1, 3], {"side": "left"}, np.array([0.0, -1.75, -1.75, 0.25]),),
     ],
 )
 def test_s1_sample(s1_fix, x, kwargs, expected_val):
@@ -944,7 +888,7 @@ def test_plot(s1_fix):
 
 def test_add_1(s1_fix, s2_fix):
     assert pd.Series.equals(
-        (s1_fix + s2_fix).step_changes(),
+        (s1_fix + s2_fix).step_changes,
         pd.Series(
             {
                 -4: -1.75,
@@ -967,15 +911,12 @@ def test_add_1(s1_fix, s2_fix):
 def test_add_2(s1_fix):
     s = s1_fix + 3
     assert s(float("-inf")) == 3
-    assert pd.Series.equals(
-        s.step_changes(),
-        s1_fix.step_changes(),
-    )
+    assert pd.Series.equals(s.step_changes, s1_fix.step_changes,)
 
 
 def test_divide(s1_fix, s2_fix):
     assert pd.Series.equals(
-        (s1_fix / (s2_fix + 1)).step_changes(),
+        (s1_fix / (s2_fix + 1)).step_changes,
         pd.Series(
             {
                 -4: -1.75,
@@ -997,23 +938,14 @@ def test_divide(s1_fix, s2_fix):
 
 def test_divide_scalar(s1_fix):
     assert pd.Series.equals(
-        (s1_fix / 0.5).step_changes(),
-        pd.Series(
-            {
-                -4: -3.5,
-                1: 4.0,
-                3: 5.0,
-                5: -1.5,
-                6: -5.0,
-                10: 1.0,
-            }
-        ),
+        (s1_fix / 0.5).step_changes,
+        pd.Series({-4: -3.5, 1: 4.0, 3: 5.0, 5: -1.5, 6: -5.0, 10: 1.0,}),
     )
 
 
 def test_multiply(s1_fix, s2_fix):
     assert pd.Series.equals(
-        (s1_fix * s2_fix).step_changes(),
+        (s1_fix * s2_fix).step_changes,
         pd.Series(
             {
                 -2: 3.0625,
@@ -1034,17 +966,8 @@ def test_multiply(s1_fix, s2_fix):
 
 def test_multiply_scalar(s1_fix):
     assert pd.Series.equals(
-        (s1_fix * 3).step_changes(),
-        pd.Series(
-            {
-                -4: -5.25,
-                1: 6.0,
-                3: 7.5,
-                5: -2.25,
-                6: -7.5,
-                10: 1.5,
-            }
-        ),
+        (s1_fix * 3).step_changes,
+        pd.Series({-4: -5.25, 1: 6.0, 3: 7.5, 5: -2.25, 6: -7.5, 10: 1.5,}),
     )
 
 
@@ -1058,7 +981,7 @@ def test_ne_3(s1_fix):
 
 def test_diff(s1_fix):
     assert pd.Series.equals(
-        s1_fix.diff(1).step_changes(),
+        s1_fix.diff(1).step_changes,
         pd.Series(
             {
                 -4: -1.75,

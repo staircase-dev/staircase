@@ -71,7 +71,7 @@ class ECDF(sc.core.stairs.Stairs):
 
     def hist(self, x="unit", closed="left", normalize=False):
 
-        step_points = self.step_points()
+        step_points = self.step_points
         if isinstance(x, str) and x == "unit":
             round_func = math.floor if closed == "left" else math.ceil
             x = range(

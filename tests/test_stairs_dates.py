@@ -522,7 +522,7 @@ def test_get_percentiles_dates_1(date_func):
         [-0.5, 2.0, 4.5, 4.5], index=[0, 44.444444, 77.77777778, 100]
     )
     pd.testing.assert_series_equal(
-        s1(date_func).get_percentiles().step_values(),
+        s1(date_func).get_percentiles().step_values,
         expected_step_values,
         check_names=False,
         check_index_type=False,
@@ -534,7 +534,7 @@ def test_get_percentiles_dates_2(date_func):
     pd.testing.assert_series_equal(
         s1(date_func)
         .get_percentiles((None, timestamp(2020, 1, 6, date_func=date_func)))
-        .step_values(),
+        .step_values,
         expected_step_values,
         check_names=False,
         check_index_type=False,
@@ -548,7 +548,7 @@ def test_get_percentiles_dates_3(date_func):
     pd.testing.assert_series_equal(
         s1(date_func)
         .get_percentiles((timestamp(2020, 1, 4, date_func=date_func), None))
-        .step_values(),
+        .step_values,
         expected_step_values,
         check_names=False,
         check_index_type=False,
@@ -565,7 +565,7 @@ def test_get_percentiles_dates_4(date_func):
                 timestamp(2020, 1, 8, date_func=date_func),
             )
         )
-        .step_values(),
+        .step_values,
         expected_step_values,
         check_names=False,
         check_index_type=False,
@@ -577,19 +577,19 @@ def test_plot(date_func):
 
 
 # def test_resample_dates_1(date_func):
-#     assert s1(date_func).resample(timestamp(2020, 1, 4)).step_changes() == {
+#     assert s1(date_func).resample(timestamp(2020, 1, 4)).step_changes == {
 #         timestamp(2020, 1, 4).tz_localize(s1(date_func)._keys()[0].tz): 4.5
 #     }
 
 
 # def test_resample_dates_2(date_func):
-#     assert s1(date_func).resample(timestamp(2020, 1, 6), how="right").step_changes() == {
+#     assert s1(date_func).resample(timestamp(2020, 1, 6), how="right").step_changes == {
 #         timestamp(2020, 1, 6).tz_localize(s1(date_func)._keys()[0].tz): -0.5
 #     }
 
 
 # def test_resample_dates_3(date_func):
-#     assert s1(date_func).resample(timestamp(2020, 1, 6), how="left").step_changes() == {
+#     assert s1(date_func).resample(timestamp(2020, 1, 6), how="left").step_changes == {
 #         timestamp(2020, 1, 6).tz_localize(s1(date_func)._keys()[0].tz): 2
 #     }
 
@@ -597,7 +597,7 @@ def test_plot(date_func):
 # def test_resample_dates_4(date_func):
 #     assert s1(date_func).resample(
 #         [timestamp(2020, 1, 4), timestamp(2020, 1, 6)]
-#     ).step_changes() == {
+#     ).step_changes == {
 #         timestamp(2020, 1, 4).tz_localize(s1(date_func)._keys()[0].tz): 4.5,
 #         timestamp(2020, 1, 6).tz_localize(s1(date_func)._keys()[0].tz): -5.0,
 #     }
@@ -606,7 +606,7 @@ def test_plot(date_func):
 # def test_resample_dates_5(date_func):
 #     assert s1(date_func).resample(
 #         [timestamp(2020, 1, 4), timestamp(2020, 1, 6)], how="right"
-#     ).step_changes() == {
+#     ).step_changes == {
 #         timestamp(2020, 1, 4).tz_localize(s1(date_func)._keys()[0].tz): 4.5,
 #         timestamp(2020, 1, 6).tz_localize(s1(date_func)._keys()[0].tz): -5.0,
 #     }
@@ -615,7 +615,7 @@ def test_plot(date_func):
 # def test_resample_dates_6(date_func):
 #     assert s1(date_func).resample(
 #         [timestamp(2020, 1, 4), timestamp(2020, 1, 6)], how="left"
-#     ).step_changes() == {
+#     ).step_changes == {
 #         timestamp(2020, 1, 4).tz_localize(s1(date_func)._keys()[0].tz): 4.5,
 #         timestamp(2020, 1, 6).tz_localize(s1(date_func)._keys()[0].tz): -2.5,
 #     }
@@ -689,7 +689,7 @@ def test_step_changes_dates(date_func):
         ],
     )
     pd.testing.assert_series_equal(
-        s1(date_func).step_changes(),
+        s1(date_func).step_changes,
         expected_step_changes,
         check_names=False,
         check_index_type=False,
@@ -738,7 +738,7 @@ def test_add_dates(date_func):
     )
     result = s1(date_func) + s2(date_func)
     pd.testing.assert_series_equal(
-        result.step_changes(),
+        result.step_changes,
         expected_step_changes,
         check_names=False,
         check_index_type=False,
@@ -763,7 +763,7 @@ def test_subtract_dates(date_func):
     )
     result = s1(date_func) - s2(date_func)
     pd.testing.assert_series_equal(
-        result.step_changes(),
+        result.step_changes,
         expected_step_changes,
         check_names=False,
         check_index_type=False,
@@ -788,7 +788,7 @@ def test_multiply_dates(date_func):
     )
     result = s1(date_func) * s2(date_func)
     pd.testing.assert_series_equal(
-        result.step_changes(),
+        result.step_changes,
         expected_step_changes,
         check_names=False,
         check_index_type=False,
@@ -808,7 +808,7 @@ def test_multiply_dates_scalar(date_func):
     )
     result = s1(date_func) * 3
     pd.testing.assert_series_equal(
-        result.step_changes(),
+        result.step_changes,
         expected_step_changes,
         check_names=False,
         check_index_type=False,
@@ -833,7 +833,7 @@ def test_divide_dates(date_func):
     )
     result = s1(date_func) / (s2(date_func) + 1)
     pd.testing.assert_series_equal(
-        result.step_changes(),
+        result.step_changes,
         expected_step_changes,
         check_names=False,
         check_index_type=False,
@@ -853,7 +853,7 @@ def test_divide_dates_scalar(date_func):
     )
     result = s1(date_func) / 0.5
     pd.testing.assert_series_equal(
-        result.step_changes(),
+        result.step_changes,
         expected_step_changes,
         check_names=False,
         check_index_type=False,

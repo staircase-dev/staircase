@@ -102,7 +102,7 @@ def test_sum(date_func):
         )
     )
     pd.testing.assert_series_equal(
-        sc.sum([s1mask, s2mask, s1mask + s2mask]).step_values(),
+        sc.sum([s1mask, s2mask, s1mask + s2mask]).step_values,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -3.5,
@@ -138,7 +138,7 @@ def test_max(date_func):
         )
     )
     pd.testing.assert_series_equal(
-        sc.max([s1mask, s2mask]).step_values(),
+        sc.max([s1mask, s2mask]).step_values,
         pd.Series(
             {
                 timestamp(2019, 12, 29, date_func=date_func): -1.75,
@@ -173,7 +173,7 @@ def test_min(date_func):
         )
     )
     pd.testing.assert_series_equal(
-        sc.min([s1mask, s2mask]).step_values(),
+        sc.min([s1mask, s2mask]).step_values,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -1.75,
@@ -204,7 +204,7 @@ def test_mean_1(date_func):
         )
     )
     pd.testing.assert_series_equal(
-        sc.mean([s1mask, s2mask]).step_values(),
+        sc.mean([s1mask, s2mask]).step_values,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -0.875,
@@ -245,7 +245,7 @@ def test_mean_2(date_func):
     )
     result = sc.mean([s1mask, s2mask])
     pd.testing.assert_series_equal(
-        result.step_values(),
+        result.step_values,
         pd.Series(
             {
                 timestamp(2019, 12, 31, date_func=date_func): -1.75,
@@ -281,7 +281,7 @@ def test_median(date_func):
         )
     )
     pd.testing.assert_series_equal(
-        sc.median([s1mask, s2mask, s1mask + s2mask]).step_values(),
+        sc.median([s1mask, s2mask, s1mask + s2mask]).step_values,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -1.75,

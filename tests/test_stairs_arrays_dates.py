@@ -112,7 +112,7 @@ def s2(date_func):
 
 def test_mean_1(date_func):
     pd.testing.assert_series_equal(
-        sc.mean({1: s1(date_func), 2: s2(date_func)}).step_changes(),
+        sc.mean({1: s1(date_func), 2: s2(date_func)}).step_changes,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -0.875,
@@ -136,7 +136,7 @@ def test_mean_1(date_func):
 
 def test_mean_2(date_func):
     pd.testing.assert_series_equal(
-        sc.mean(pd.Series([s1(date_func), s2(date_func)])).step_changes(),
+        sc.mean(pd.Series([s1(date_func), s2(date_func)])).step_changes,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -0.875,
@@ -160,7 +160,7 @@ def test_mean_2(date_func):
 
 def test_mean_3(date_func):
     pd.testing.assert_series_equal(
-        sc.mean(np.array([s1(date_func), s2(date_func)])).step_changes(),
+        sc.mean(np.array([s1(date_func), s2(date_func)])).step_changes,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -0.875,
@@ -184,7 +184,7 @@ def test_mean_3(date_func):
 
 def test_mean_4(date_func):
     pd.testing.assert_series_equal(
-        sc.mean([s1(date_func), s2(date_func)]).step_changes(),
+        sc.mean([s1(date_func), s2(date_func)]).step_changes,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -0.875,
@@ -208,7 +208,7 @@ def test_mean_4(date_func):
 
 def test_mean_5(date_func):
     pd.testing.assert_series_equal(
-        sc.mean((s1(date_func), s2(date_func))).step_changes(),
+        sc.mean((s1(date_func), s2(date_func))).step_changes,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -0.875,
@@ -234,7 +234,7 @@ def test_median_1(date_func):
     pd.testing.assert_series_equal(
         sc.median(
             [s1(date_func), s2(date_func), s1(date_func) + s2(date_func)]
-        ).step_changes(),
+        ).step_changes,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -1.75,
@@ -257,7 +257,7 @@ def test_median_1(date_func):
 
 def test_max_1(date_func):
     pd.testing.assert_series_equal(
-        sc.max([s1(date_func), s2(date_func)]).step_changes(),
+        sc.max([s1(date_func), s2(date_func)]).step_changes,
         pd.Series(
             {
                 timestamp(2019, 12, 29, date_func=date_func): -1.75,
@@ -279,7 +279,7 @@ def test_max_1(date_func):
 
 def test_min_1(date_func):
     pd.testing.assert_series_equal(
-        sc.min([s1(date_func), s2(date_func)]).step_changes(),
+        sc.min([s1(date_func), s2(date_func)]).step_changes,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -1.75,
@@ -301,7 +301,7 @@ def test_sum_1(date_func):
     pd.testing.assert_series_equal(
         sc.sum(
             [s1(date_func), s2(date_func), s1(date_func) + s2(date_func)]
-        ).step_values(),
+        ).step_values,
         pd.Series(
             {
                 timestamp(2019, 12, 27, date_func=date_func): -3.5,
@@ -329,10 +329,7 @@ def test_sample_1(date_func):
     )
     expected = pd.DataFrame({timestamp(2020, 1, 3, date_func=date_func): [2.75, -0.5]})
     pd.testing.assert_frame_equal(
-        sample,
-        expected,
-        check_names=False,
-        check_index_type=False,
+        sample, expected, check_names=False, check_index_type=False,
     )
 
 
@@ -341,18 +338,9 @@ def test_sample_2(date_func):
     ts6 = timestamp(2020, 1, 6, date_func=date_func)
     ts8 = timestamp(2020, 1, 8, date_func=date_func)
     sample = sc.sample([s1(date_func), s2(date_func)], [ts3, ts6, ts8])
-    expected = pd.DataFrame(
-        {
-            ts3: [2.75, -0.5],
-            ts6: [-0.5, -2.5],
-            ts8: [-0.5, 5.0],
-        }
-    )
+    expected = pd.DataFrame({ts3: [2.75, -0.5], ts6: [-0.5, -2.5], ts8: [-0.5, 5.0],})
     pd.testing.assert_frame_equal(
-        sample,
-        expected,
-        check_names=False,
-        check_index_type=False,
+        sample, expected, check_names=False, check_index_type=False,
     )
 
 
@@ -363,10 +351,7 @@ def test_limit_1(date_func):
     limits = sc.limit([s1(date_func), s2(date_func)], [ts3, ts6, ts8], side="left")
     expected = pd.DataFrame({ts3: [0.25, -0.5], ts6: [2.0, -2.5], ts8: [-0.5, 0.0]})
     pd.testing.assert_frame_equal(
-        limits,
-        expected,
-        check_names=False,
-        check_index_type=False,
+        limits, expected, check_names=False, check_index_type=False,
     )
 
 
@@ -377,10 +362,7 @@ def test_limit_2(date_func):
     limits = sc.limit([s1(date_func), s2(date_func)], [ts3, ts6, ts8], side="right")
     expected = pd.DataFrame({ts3: [2.75, -0.5], ts6: [-0.5, -2.5], ts8: [-0.5, 5.0]})
     pd.testing.assert_frame_equal(
-        limits,
-        expected,
-        check_names=False,
-        check_index_type=False,
+        limits, expected, check_names=False, check_index_type=False,
     )
 
 
