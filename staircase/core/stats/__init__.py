@@ -1,6 +1,6 @@
 def add_methods(cls):
     from staircase.core.stats.distribution import (  # hist_from_ecdf,
-        dist,
+        _get_dist,
         ecdf,
         fractile,
         get_ecdf,
@@ -37,7 +37,7 @@ def add_methods(cls):
     cls.cov = cov
     cls.corr = corr
 
-    cls.dist = dist
+    cls._get_dist = _get_dist
     cls.ecdf = ecdf
     cls.fractile = fractile
     cls.get_ecdf = get_ecdf

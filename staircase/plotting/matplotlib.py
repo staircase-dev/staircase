@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from pandas.plotting import register_matplotlib_converters
 
 
 def _draw_arrows(frame, ax, color, linewidth, **kwargs):
@@ -69,6 +70,7 @@ def plot(
     **kwargs
 ):
     assert style in ("step", "hlines")
+    register_matplotlib_converters()
     # TODO warn if style is hlines and arrow is None
     if ax is None:
         _, ax = plt.subplots()

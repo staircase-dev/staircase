@@ -9,19 +9,12 @@ modelling step functions. See :ref:`Getting Started <getting_started>` for more 
 
 import numpy as np
 import pandas as pd
-from pandas.plotting import register_matplotlib_converters
 
 from staircase import plotting
 from staircase.constants import inf
-
-# from staircase.docstrings import stairs_class as examples
 from staircase.docstrings import examples
 from staircase.util import _replace_none_with_infs
-
-# from staircase.docstrings.decorator import @Appender
 from staircase.util._decorators import Appender
-
-register_matplotlib_converters()  # TODO: is this necessary?
 
 
 def _make_deltas_from_vals(init_val, vals):
@@ -73,7 +66,7 @@ class Stairs:
         Parameters
         ----------
         frame : :class:`pandas.DataFrame`, optional
-
+            A long-form collection of vectors that can be assigned to named variables
         init_value : float, default 0
             The value of the step function at negative infinity.
 
@@ -92,14 +85,16 @@ class Stairs:
         self._masked = False
         self._closed = closed
         self.initial_value = initial_value
-        self._dist = None
-        self._integral_and_mean = None
+        self._clear_cache()
 
         if any([x is not None for x in (start, end, value)]):
             # value = 1 if value is None else value
             self.layer(start, end, value, frame)
 
-    # DO NOT IMPLEMENT __len__ or __iter__, IT WILL CAUSE ISSUES WITH PANDAS SERIES PRETTY PRINTING
+    def _clear_cache(self):
+        self._dist = None
+        self._plot = None
+        self._integral_and_mean = None
 
     @classmethod
     def new(cls, initial_value, data, closed="left"):
@@ -145,6 +140,14 @@ class Stairs:
         if not self._valid_values:
             self._create_values()
         return self._data["value"]
+
+    @property
+    def dist(self):
+        return self._get_dist()
+
+    @property
+    def plot(self):
+        return self._get_plot()
 
     # TODO: docstring
     # TODO: test

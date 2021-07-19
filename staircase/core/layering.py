@@ -55,6 +55,7 @@ def _layer_scalar(self, start, end, value):
 def layer(self, start=None, end=None, value=None, data=None):
     if self._data is None and np.isnan(self.initial_value):
         return self
+    self._clear_cache()
     if data is not None:
         start, end, value = _extract_from_frame(data, start, end, value)
     if value is None:

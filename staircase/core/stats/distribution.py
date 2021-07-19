@@ -136,7 +136,7 @@ class Dist:
         return self.fractile(np.divide(x, 100))
 
 
-# def dist(self, where=(-inf, inf)):
+# def _get_dist(self, where=(-inf, inf)):
 #     if self._data is None:  # assert here instead?
 #         return None
 #     if where != (-inf, inf):
@@ -145,10 +145,10 @@ class Dist:
 #     else:
 #         clipped_stairs = self
 
-#     return Dist(clipped_stairs)
+#     return _get_dist(clipped_stairs)
 
 
-def dist(self):
+def _get_dist(self):
     if self._dist is None:
         self._dist = Dist(self)
     return self._dist
@@ -156,43 +156,43 @@ def dist(self):
 
 def get_percentiles(self, where=(-inf, inf)):
     where = _replace_none_with_infs(where)
-    _dist = dist(self) if where == (-inf, inf) else Dist(self.clip(*where))
+    _dist = _get_dist(self) if where == (-inf, inf) else _get_dist(self.clip(*where))
     return _dist.get_percentiles()
 
 
 def get_fractiles(self, where=(-inf, inf)):
     where = _replace_none_with_infs(where)
-    _dist = dist(self) if where == (-inf, inf) else Dist(self.clip(*where))
+    _dist = _get_dist(self) if where == (-inf, inf) else _get_dist(self.clip(*where))
     return _dist.get_fractiles()
 
 
 def percentile(self, x, where=(-inf, inf)):
     where = _replace_none_with_infs(where)
-    _dist = dist(self) if where == (-inf, inf) else Dist(self.clip(*where))
+    _dist = _get_dist(self) if where == (-inf, inf) else _get_dist(self.clip(*where))
     return _dist.percentile(x)
 
 
 def fractile(self, x, where=(-inf, inf)):
     where = _replace_none_with_infs(where)
-    _dist = dist(self) if where == (-inf, inf) else Dist(self.clip(*where))
+    _dist = _get_dist(self) if where == (-inf, inf) else _get_dist(self.clip(*where))
     return _dist.fractile(x)
 
 
 def hist(self, where=(-inf, inf), x="unit", closed="left", normalize=False):
     where = _replace_none_with_infs(where)
-    _dist = dist(self) if where == (-inf, inf) else Dist(self.clip(*where))
+    _dist = _get_dist(self) if where == (-inf, inf) else _get_dist(self.clip(*where))
     return _dist.hist(x=x, closed=closed, normalize=normalize)
 
 
 def get_ecdf(self, where=(-inf, inf)):
     where = _replace_none_with_infs(where)
-    _dist = dist(self) if where == (-inf, inf) else Dist(self.clip(*where))
+    _dist = _get_dist(self) if where == (-inf, inf) else _get_dist(self.clip(*where))
     return _dist.get_ecdf()
 
 
 def ecdf(self, x, where=(-inf, inf)):
     where = _replace_none_with_infs(where)
-    _dist = dist(self) if where == (-inf, inf) else Dist(self.clip(*where))
+    _dist = _get_dist(self) if where == (-inf, inf) else _get_dist(self.clip(*where))
     return _dist.get_ecdf(x)
 
 
@@ -234,7 +234,7 @@ def ecdf(self, x, where=(-inf, inf)):
 #     #         index=np.append(0, ecdf._data["value"].values * 100),
 #     #     ),
 #     # )
-#     return dist(self, where).get_percentiles()
+#     return _get_dist(self, where).get_percentiles()
 
 
 # # TODO: docstring
@@ -242,7 +242,7 @@ def ecdf(self, x, where=(-inf, inf)):
 # # TODO: what's new
 # @Appender(docstrings.percentile_stairs_example, join="\n", indents=1)
 # def get_fractiles(self, where=(-inf, inf)):
-#     return dist(self, where).get_fractiles()
+#     return _get_dist(self, where).get_fractiles()
 
 
 # # TODO: docstring
@@ -271,7 +271,7 @@ def ecdf(self, x, where=(-inf, inf)):
 #     staircase.hist_from_ecdf
 #     Stairs.hist
 #     """
-#     return dist(self, where).get_ecdf()
+#     return _get_dist(self, where).get_ecdf()
 
 
 # # TODO: docstring
@@ -304,16 +304,16 @@ def ecdf(self, x, where=(-inf, inf)):
 #     staircase.hist_from_ecdf
 #     Stairs.ecdf_stairs
 #     """
-#     return dist(self, where).hist(x, closed, normalize)
+#     return _get_dist(self, where).hist(x, closed, normalize)
 
 # # TODO: docstring
 # # TODO: test
 # # TODO: what's new
 # def percentile(self, x, where=(-inf, inf)):
-#     dist(self, where=(-inf, inf)).percentile(x)
+#     _get_dist(self, where=(-inf, inf)).percentile(x)
 
 # # TODO: docstring
 # # TODO: test
 # # TODO: what's new
 # def fractile(self, x, where=(-inf, inf)):
-#     dist(self, where=(-inf, inf)).fractile(x)
+#     _get_dist(self, where=(-inf, inf)).fractile(x)
