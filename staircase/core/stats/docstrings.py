@@ -20,7 +20,7 @@ std_example = _std_var_example.format(
     func="std", result1="0.82915619758885", result2="0.6871842709362769",
 )
 
-integrate_mean_example = """
+integral_mean_example = """
 Examples
 --------
 
@@ -32,13 +32,13 @@ Examples
     {result}
 """
 
-integral_and_mean_example = integrate_mean_example.format(
+integral_and_mean_example = integral_mean_example.format(
     func="get_integral_and_mean", result="(0.5, 0.3333333333333333)",
 )
 
-integrate_example = integrate_mean_example.format(func="integrate", result="0.5",)
+integral_example = integral_mean_example.format(func="integral", result="0.5",)
 
-mean_example = integrate_mean_example.format(func="mean", result="0.3333333333333333",)
+mean_example = integral_mean_example.format(func="mean", result="0.3333333333333333",)
 
 mode_example = """
 Examples
@@ -179,7 +179,7 @@ def _get_example(calculation):
 
     return {
         "mean": mean_example,
-        "integrate": integrate_example,
+        "integral": integral_example,
         "integral_and_mean": integral_and_mean_example,
         "percentile": percentile_stairs_example,
         "median": median_example,
@@ -190,7 +190,7 @@ def _get_example(calculation):
 
 
 _calc_map = {
-    "integrate": "integral",
+    "integral": "integral",
     "integral_and_mean": "integral, and the mean",
     "percentile": "x-th percentile",
     "var": "variance",
@@ -199,8 +199,8 @@ _calc_map = {
 
 _see_also_map = {
     "mean": "Stairs.rolling_mean, Stairs.get_integral_and_mean, Stairs.median, Stairs.mode",
-    "integrate": "Stairs.get_integral_and_mean",
-    "integral_and_mean": "Stairs.integrate, Stairs.mean",
+    "integral": "Stairs.get_integral_and_mean",
+    "integral_and_mean": "Stairs.integral, Stairs.mean",
     "percentile": "Stairs.median, Stairs.percentile_stairs",
     "median": "Stairs.mean, Stairs.mode, Stairs.percentile, Stairs.percentile_stairs",
     "mode": "Stairs.mean, Stairs.median",
@@ -245,7 +245,7 @@ def _gen_docstring(calculation):
     else:
         docstring = _float_return_docstring
 
-    if calculation in ("mean", "integrate", "integral_and_mean"):
+    if calculation in ("mean", "integral", "integral_and_mean"):
         extra_params = "\n".join(
             [
                 "datetime : bool, default False",
@@ -262,7 +262,7 @@ def _gen_docstring(calculation):
 
 
 mean_docstring = _gen_docstring("mean")
-integrate_docstring = _gen_docstring("integrate")
+integral_docstring = _gen_docstring("integral")
 percentile_docstring = _gen_docstring("percentile")
 median_docstring = _gen_docstring("median")
 mode_docstring = _gen_docstring("mode")

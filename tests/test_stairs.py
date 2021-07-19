@@ -440,55 +440,55 @@ def test_ne(s1_fix, s2_fix):
 
 
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])
-def test_base_integrate_0_2(init_value):
+def test_base_integral_0_2(init_value):
     int_seq = Stairs(initial_value=init_value)
-    assert int_seq.integrate((0, 2)) == 2 * init_value
+    assert int_seq.agg("integral", (0, 2)) == 2 * init_value
 
 
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])
-def test_base_integrate_neg1_1(init_value):
+def test_base_integral_neg1_1(init_value):
     int_seq = Stairs(initial_value=init_value)
-    assert int_seq.integrate((-1, 1)) == 2 * init_value
+    assert int_seq.agg("integral", (-1, 1)) == 2 * init_value
 
 
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])
-def test_base_integrate_neg2_0(init_value):
+def test_base_integral_neg2_0(init_value):
     int_seq = Stairs(initial_value=init_value)
-    assert int_seq.integrate((-2, 0)) == 2 * init_value
+    assert int_seq.agg("integral", (-2, 0)) == 2 * init_value
 
 
 @pytest.mark.parametrize("init_value", [0, 1.25, -1.25, 2, -2])
-def test_base_integrate_point5_1(init_value):
+def test_base_integral_point5_1(init_value):
     int_seq = Stairs(initial_value=init_value)
-    assert int_seq.integrate((0.5, 1)) == 0.5 * init_value
+    assert int_seq.agg("integral", (0.5, 1)) == 0.5 * init_value
 
 
-def test_integrate1(s1_fix, s2_fix):
-    assert s1_fix.integrate() == -2.75
-    assert s2_fix.integrate() == -0.5
+def test_integral1(s1_fix, s2_fix):
+    assert s1_fix.integral == -2.75
+    assert s2_fix.integral == -0.5
 
 
-def test_integrate2(s1_fix, s2_fix):
-    assert s1_fix.integrate((-1, 5.5)) == 3.5
-    assert s2_fix.integrate((-1, 5.5)) == -5
+def test_integral2(s1_fix, s2_fix):
+    assert s1_fix.agg("integral", (-1, 5.5)) == 3.5
+    assert s2_fix.agg("integral", (-1, 5.5)) == -5
 
 
 def test_mean1(s1_fix, s2_fix):
-    assert abs(s1_fix.mean() - -0.19642857) < 0.000001
-    assert abs(s2_fix.mean() - -0.04166666) < 0.000001
+    assert abs(s1_fix.mean - -0.19642857) < 0.000001
+    assert abs(s2_fix.mean - -0.04166666) < 0.000001
 
 
 def test_mean2(s1_fix, s2_fix):
-    assert abs(s1_fix.mean((2, 8)) - 1.125) < 0.000001
-    assert abs(s2_fix.mean((2, 8)) - -0.45833333) < 0.000001
+    assert abs(s1_fix.agg("mean", (2, 8)) - 1.125) < 0.000001
+    assert abs(s2_fix.agg("mean", (2, 8)) - -0.45833333) < 0.000001
 
 
-def test_integrate_0():
-    assert Stairs(initial_value=0).layer(None, 0).integrate() == 0
+def test_integral_0():
+    assert Stairs(initial_value=0).layer(None, 0).integral == 0
 
 
 def test_mean_nan():
-    assert Stairs(initial_value=0).layer(None, 0).mean() is np.nan
+    assert Stairs(initial_value=0).layer(None, 0).mean is np.nan
 
 
 def test_to_dataframe(s1_fix):
@@ -507,8 +507,8 @@ def test_hist_left_closed(stairs_instance, bounds, cuts):
     def make_expected_result(interval_index, lower, upper):
         return pd.Series(
             [
-                ((stairs_instance >= i.left) * (stairs_instance < i.right)).mean(
-                    (lower, upper)
+                ((stairs_instance >= i.left) * (stairs_instance < i.right)).agg(
+                    "mean", (lower, upper)
                 )
                 for i in interval_index
             ],
@@ -516,7 +516,7 @@ def test_hist_left_closed(stairs_instance, bounds, cuts):
             dtype="float64",
         )
 
-    hist = stairs_instance.hist(x=cuts, where=bounds, normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(x=cuts, normalize=True)
     expected = make_expected_result(hist.index, *bounds)
     assert (hist.apply(round, 5) == expected.apply(round, 5)).all(), f"{bounds}, {cuts}"
 
@@ -533,8 +533,8 @@ def test_hist_right_closed(stairs_instance, bounds, cuts):
     def make_expected_result(interval_index, lower, upper):
         return pd.Series(
             [
-                ((stairs_instance > i.left) * (stairs_instance <= i.right)).mean(
-                    (lower, upper)
+                ((stairs_instance > i.left) * (stairs_instance <= i.right)).agg(
+                    "mean", (lower, upper)
                 )
                 for i in interval_index
             ],
@@ -542,7 +542,7 @@ def test_hist_right_closed(stairs_instance, bounds, cuts):
             dtype="float64",
         )
 
-    hist = stairs_instance.hist(x=cuts, where=bounds, closed="right", normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(x=cuts, closed="right", normalize=True)
     expected = make_expected_result(hist.index, *bounds)
     assert (hist.apply(round, 5) == expected.apply(round, 5)).all(), f"{bounds}, {cuts}"
 
@@ -557,7 +557,7 @@ def test_hist_right_closed(stairs_instance, bounds, cuts):
 )
 def test_hist_default_bins(stairs_instance, bounds, closed):
     # really testing the default binning process here
-    hist = stairs_instance.hist(where=bounds, closed=closed, normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(closed=closed, normalize=True)
     assert abs(hist.sum() - 1) < 0.000001
 
 
@@ -575,7 +575,7 @@ def test_hist_default_bins(stairs_instance, bounds, closed):
     ],
 )
 def test_s1_var(bounds, expected):
-    assert np.isclose(s1().var(*bounds), expected, atol=0.0001)
+    assert np.isclose(s1().agg("var", *bounds), expected, atol=0.0001)
 
 
 # np.var(st2(np.linspace(-2, 10, 10000000))) = 7.024303861110942
@@ -592,7 +592,7 @@ def test_s1_var(bounds, expected):
     ],
 )
 def test_s2_var(bounds, expected):
-    assert np.isclose(s2().var(*bounds), expected, atol=0.0001)
+    assert np.isclose(s2().agg("var", *bounds), expected, atol=0.0001)
 
 
 # np.std(st1(np.linspace(-4,10, 10000000))) = 1.5816428940780978
@@ -609,7 +609,7 @@ def test_s2_var(bounds, expected):
     ],
 )
 def test_s1_std(bounds, expected):
-    assert np.isclose(s1().std(*bounds), expected, atol=0.0001)
+    assert np.isclose(s1().agg("std", *bounds), expected, atol=0.0001)
 
 
 # np.std(st2(np.linspace(-2, 10, 10000000))) = 2.650340329299417
@@ -626,7 +626,7 @@ def test_s1_std(bounds, expected):
     ],
 )
 def test_s2_std(bounds, expected):
-    assert np.isclose(s2().std(*bounds), expected, atol=0.0001)
+    assert np.isclose(s2().agg("std", *bounds), expected, atol=0.0001)
 
 
 # # np.cov(st1(pts[:-100000]), st1(pts[100000:]))[0,1] = 1.9386094481108465
@@ -767,7 +767,9 @@ def test_s1_rolling_mean(s1_fix, kwargs, expected_index, expected_vals):
     ],
 )
 def test_s1_min(closed, kwargs, expected_val):
-    assert s1(closed=closed).min(**kwargs) == expected_val
+    from staircase.core import stats
+
+    assert stats.min(s1(closed=closed), **kwargs) == expected_val
 
 
 @pytest.mark.parametrize(
@@ -780,7 +782,9 @@ def test_s1_min(closed, kwargs, expected_val):
     ],
 )
 def test_s1_max(closed, kwargs, expected_val):
-    assert s1(closed=closed).max(**kwargs) == expected_val
+    from staircase.core import stats
+
+    assert stats.max(s1(closed=closed), **kwargs) == expected_val
 
 
 @pytest.mark.parametrize(

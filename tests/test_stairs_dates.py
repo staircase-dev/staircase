@@ -214,211 +214,233 @@ def s4_fix():
 
 
 def test_max_dates_1(date_func):
-    assert s1(date_func).max() == 4.5, "Expected maximum to be 4.5"
+    assert s1(date_func).max == 4.5, "Expected maximum to be 4.5"
 
 
 def test_max_dates_2(date_func):
     assert (
-        s1(date_func).max((None, timestamp(2020, 1, 2, date_func=date_func))) == 2
+        s1(date_func).agg("max", (None, timestamp(2020, 1, 2, date_func=date_func)))
+        == 2
     ), "Expected maximum to be 2"
 
 
 def test_max_dates_3(date_func):
     assert (
-        s1(date_func).max((timestamp(2020, 1, 5, 12, date_func=date_func), None)) == 2
+        s1(date_func).agg("max", (timestamp(2020, 1, 5, 12, date_func=date_func), None))
+        == 2
     ), "Expected maximum to be 2"
 
 
 def test_max_dates_4(date_func):
     assert (
-        s1(date_func).max(
+        s1(date_func).agg(
+            "max",
             (
                 timestamp(2020, 1, 8, date_func=date_func),
                 timestamp(2020, 1, 9, date_func=date_func),
-            )
+            ),
         )
         == -0.5
     ), "Expected maximum to be -0.5"
 
 
 def test_min_dates_1(date_func):
-    assert s1(date_func).min() == -0.5, "Expected minimum to be -0.5"
+    assert s1(date_func).min == -0.5, "Expected minimum to be -0.5"
 
 
 def test_min_dates_2(date_func):
     assert (
-        s1(date_func).min((None, timestamp(2020, 1, 4, date_func=date_func))) == 0
+        s1(date_func).agg("min", (None, timestamp(2020, 1, 4, date_func=date_func)))
+        == 0
     ), "Expected minimum to be 0"
 
 
 def test_min_dates_3(date_func):
     assert (
-        s1(date_func).min((timestamp(2020, 1, 10, 12, date_func=date_func), None)) == 0
+        s1(date_func).agg(
+            "min", (timestamp(2020, 1, 10, 12, date_func=date_func), None)
+        )
+        == 0
     ), "Expected minimum to be 0"
 
 
 def test_min_dates_4(date_func):
     assert (
-        s1(date_func).min(
+        s1(date_func).agg(
+            "min",
             (
                 timestamp(2020, 1, 4, date_func=date_func),
                 timestamp(2020, 1, 4, 12, date_func=date_func),
-            )
+            ),
         )
         == 4.5
     ), "Expected minimum to be 4.5"
 
 
 def test_mode_dates_1(date_func):
-    assert s1(date_func).mode() == -0.5, "Expected mode to be -0.5"
+    assert s1(date_func).mode == -0.5, "Expected mode to be -0.5"
 
 
 def test_mode_dates_2(date_func):
     assert (
-        s1(date_func).mode((None, timestamp(2020, 1, 4, date_func=date_func))) == 2
+        s1(date_func).agg("mode", (None, timestamp(2020, 1, 4, date_func=date_func)))
+        == 2
     ), "Expected mode to be 2"
 
 
 def test_mode_dates_3(date_func):
     assert (
-        s1(date_func).mode((timestamp(2019, 12, 27, date_func=date_func), None)) == 0
+        s1(date_func).agg("mode", (timestamp(2019, 12, 27, date_func=date_func), None))
+        == 0
     ), "Expected mode to be 0"
 
 
 def test_mode_dates_4(date_func):
     assert (
-        s1(date_func).mode(
+        s1(date_func).agg(
+            "mode",
             (
                 timestamp(2020, 1, 4, 12, date_func=date_func),
                 timestamp(2020, 1, 6, 12, date_func=date_func),
-            )
+            ),
         )
         == 2
     ), "Expected mode to be 2"
 
 
 def test_median_dates_1(date_func):
-    assert s1(date_func).median() == 2, "Expected median to be 2"
+    assert s1(date_func).median == 2, "Expected median to be 2"
 
 
 def test_median_dates_2(date_func):
     assert (
-        s1(date_func).median((None, timestamp(2020, 1, 17, date_func=date_func))) == 0
+        s1(date_func).agg("median", (None, timestamp(2020, 1, 17, date_func=date_func)))
+        == 0
     ), "Expected median to be 0"
 
 
 def test_median_dates_3(date_func):
     assert (
-        s1(date_func).median((timestamp(2020, 1, 3, date_func=date_func), None)) == -0.5
+        s1(date_func).agg("median", (timestamp(2020, 1, 3, date_func=date_func), None))
+        == -0.5
     ), "Expected median to be -0.5"
 
 
 def test_median_dates_4(date_func):
     assert (
-        s1(date_func).median(
+        s1(date_func).agg(
+            "median",
             (
                 timestamp(2020, 1, 4, 12, date_func=date_func),
                 timestamp(2020, 1, 6, 12, date_func=date_func),
-            )
+            ),
         )
         == 2
     ), "Expected median to be 2"
 
 
 def test_mean_dates_1(date_func):
-    assert abs(s1(date_func).mean() - 13 / 9) <= 0.00001, "Expected mean to be 13/9"
+    assert abs(s1(date_func).mean - 13 / 9) <= 0.00001, "Expected mean to be 13/9"
 
 
 def test_mean_dates_2(date_func):
     assert (
-        s1(date_func).mean((None, timestamp(2020, 1, 6, date_func=date_func))) == 3
+        s1(date_func).agg("mean", (None, timestamp(2020, 1, 6, date_func=date_func)))
+        == 3
     ), "Expected mean to be 3"
 
 
 def test_mean_dates_3(date_func):
     assert (
-        s1(date_func).mean((timestamp(2020, 1, 4, date_func=date_func), None)) == 0.75
+        s1(date_func).agg("mean", (timestamp(2020, 1, 4, date_func=date_func), None))
+        == 0.75
     ), "Expected mean to be 0.75"
 
 
 def test_mean_dates_4(date_func):
     assert (
-        s1(date_func).mean(
+        s1(date_func).agg(
+            "mean",
             (
                 timestamp(2020, 1, 4, date_func=date_func),
                 timestamp(2020, 1, 8, date_func=date_func),
-            )
+            ),
         )
         == 1.375
     ), "Expected mean to be 1.375"
 
 
-def test_integrate_dates_1(date_func):
+def test_integral_dates_1(date_func):
     assert (
-        s1(date_func).integrate() / pd.Timedelta("1 D") == 13
+        s1(date_func).integral / pd.Timedelta("1 D") == 13
     ), "Expected integral to be 13 days"
 
 
-def test_integrate_dates_2(date_func):
+def test_integral_dates_2(date_func):
     assert (
-        s1(date_func).integrate((None, timestamp(2020, 1, 6, date_func=date_func)))
+        s1(date_func).agg(
+            "integral", (None, timestamp(2020, 1, 6, date_func=date_func))
+        )
         / pd.Timedelta("1 D")
         == 15
     ), "Expected integral to be 15 days"
 
 
-def test_integrate_dates_3(date_func):
+def test_integral_dates_3(date_func):
     assert (
-        s1(date_func).integrate((timestamp(2020, 1, 4, date_func=date_func), None))
+        s1(date_func).agg(
+            "integral", (timestamp(2020, 1, 4, date_func=date_func), None)
+        )
         / pd.Timedelta("1 H")
         == 108
     ), "Expected integral to be 108 hours"
 
 
-def test_integrate_dates_4(date_func):
+def test_integral_dates_4(date_func):
     assert (
-        s1(date_func).integrate(
+        s1(date_func).agg(
+            "integral",
             (
                 timestamp(2020, 1, 4, date_func=date_func),
                 timestamp(2020, 1, 8, date_func=date_func),
-            )
+            ),
         )
         / pd.Timedelta("1 H")
         == 132
     ), "Expected integral to be 132 hours"
 
 
-def test_integral_and_mean_dates_1(date_func):
-    integral, mean = s1(date_func).get_integral_and_mean()
-    assert abs(mean - 13 / 9) <= 0.00001, "Expected mean to be 13/9"
-    assert integral / pd.Timedelta("1 H") == 312, "Expected integral to be 312 hours"
+# def test_integral_and_mean_dates_1(date_func):
+#     integral, mean = s1(date_func)._get_integral_and_mean()
+#     assert abs(mean - 13 / 9) <= 0.00001, "Expected mean to be 13/9"
+#     assert integral / pd.Timedelta("1 H") == 312, "Expected integral to be 312 hours"
 
 
-def test_integral_and_mean_dates_2(date_func):
-    integral, mean = s1(date_func).get_integral_and_mean(
-        (None, timestamp(2020, 1, 6, date_func=date_func))
-    )
-    assert mean == 3, "Expected mean to be 3"
-    assert integral / pd.Timedelta("1 D") == 15, "Expected integral to be 15"
+# def test_integral_and_mean_dates_2(date_func):
+#     integral, mean = s1(date_func)._get_integral_and_mean(
+#         (None, timestamp(2020, 1, 6, date_func=date_func))
+#     )
+#     assert mean == 3, "Expected mean to be 3"
+#     assert integral / pd.Timedelta("1 D") == 15, "Expected integral to be 15"
 
 
-def test_integral_and_mean_3(date_func):
-    integral, mean = s1(date_func).get_integral_and_mean(
-        (timestamp(2020, 1, 4, date_func=date_func), None)
-    )
-    assert mean == 0.75, "Expected mean to be 0.75"
-    assert integral / pd.Timedelta("1 H") == 108, "Expected integral to be 108 hours"
+# def test_integral_and_mean_3(date_func):
+#     integral, mean = s1(date_func)._get_integral_and_mean(
+#         (timestamp(2020, 1, 4, date_func=date_func), None)
+#     )
+#     assert mean == 0.75, "Expected mean to be 0.75"
+#     assert integral / pd.Timedelta("1 H") == 108, "Expected integral to be 108 hours"
 
 
-def test_integral_and_mean_dates_4(date_func):
-    integral, mean = s1(date_func).get_integral_and_mean(
-        (
-            timestamp(2020, 1, 4, date_func=date_func),
-            timestamp(2020, 1, 8, date_func=date_func),
-        )
-    )
-    assert mean == 1.375, "Expected mean to be 1.375"
-    assert integral / pd.Timedelta("1 H") == 132, "Expected integral to be 132 hours"
+# def test_integral_and_mean_dates_4(date_func):
+#     integral, mean = s1(date_func)._get_integral_and_mean(
+#         (
+#             timestamp(2020, 1, 4, date_func=date_func),
+#             timestamp(2020, 1, 8, date_func=date_func),
+#         )
+#     )
+#     assert mean == 1.375, "Expected mean to be 1.375"
+#     assert integral / pd.Timedelta("1 H") == 132, "Expected integral to be 132 hours"
 
 
 def test_percentile_dates_1(date_func):
@@ -430,89 +452,93 @@ def test_percentile_dates_1(date_func):
 
 def test_percentile_dates_2(date_func):
     assert (
-        s1(date_func).percentile(
-            20, where=(None, timestamp(2020, 1, 6, date_func=date_func))
-        )
+        s1(date_func)
+        .clip(None, timestamp(2020, 1, 6, date_func=date_func))
+        .percentile(20)
         == 2
     ), "Expected 20th percentile to be 2"
     assert (
-        s1(date_func).percentile(
-            40, where=(None, timestamp(2020, 1, 6, date_func=date_func))
-        )
+        s1(date_func)
+        .clip(None, timestamp(2020, 1, 6, date_func=date_func))
+        .percentile(40)
         == 2
     ), "Expected 40th percentile to be 2"
     assert (
-        s1(date_func).percentile(
-            60, where=(None, timestamp(2020, 1, 6, date_func=date_func))
-        )
+        s1(date_func)
+        .clip(None, timestamp(2020, 1, 6, date_func=date_func))
+        .percentile(60)
         == 3.25
     ), "Expected 60th percentile to be 3.25"
     assert (
-        s1(date_func).percentile(
-            80, where=(None, timestamp(2020, 1, 6, date_func=date_func))
-        )
+        s1(date_func)
+        .clip(None, timestamp(2020, 1, 6, date_func=date_func))
+        .percentile(80)
         == 4.5
     ), "Expected 80th percentile to be 4.5"
 
 
 def test_percentile_dates_3(date_func):
     assert (
-        s1(date_func).percentile(20, (timestamp(2020, 1, 4, date_func=date_func), None))
+        s1(date_func)
+        .clip(timestamp(2020, 1, 4, date_func=date_func), None)
+        .percentile(20)
         == -0.5
     ), "Expected 20th percentile to be -0.5"
     assert (
-        s1(date_func).percentile(40, (timestamp(2020, 1, 4, date_func=date_func), None))
+        s1(date_func)
+        .clip(timestamp(2020, 1, 4, date_func=date_func), None)
+        .percentile(40)
         == -0.5
     ), "Expected 40th percentile to be -0.5"
     assert (
-        s1(date_func).percentile(60, (timestamp(2020, 1, 4, date_func=date_func), None))
+        s1(date_func)
+        .clip(timestamp(2020, 1, 4, date_func=date_func), None)
+        .percentile(60)
         == -0.5
     ), "Expected 60th percentile to be -0.5"
     assert (
-        s1(date_func).percentile(80, (timestamp(2020, 1, 4, date_func=date_func), None))
+        s1(date_func)
+        .clip(timestamp(2020, 1, 4, date_func=date_func), None)
+        .percentile(80)
         == 2
     ), "Expected 80th percentile to be 2"
 
 
 def test_percentile_dates_4(date_func):
     assert (
-        s1(date_func).percentile(
-            20,
-            (
-                timestamp(2020, 1, 4, date_func=date_func),
-                timestamp(2020, 1, 8, date_func=date_func),
-            ),
+        s1(date_func)
+        .clip(
+            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 8, date_func=date_func),
         )
+        .percentile(20)
         == -0.5
     ), "Expected 20th percentile to be -0.5"
     assert (
-        s1(date_func).percentile(
-            40,
-            (
-                timestamp(2020, 1, 4, date_func=date_func),
-                timestamp(2020, 1, 8, date_func=date_func),
-            ),
+        s1(date_func)
+        .clip(
+            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 8, date_func=date_func),
         )
+        .percentile(40)
         == -0.5
     ), "Expected 40th percentile to be -0.5"
     assert (
-        s1(date_func).percentile(
-            60,
-            (
-                timestamp(2020, 1, 4, date_func=date_func),
-                timestamp(2020, 1, 8, date_func=date_func),
-            ),
+        s1(date_func)
+        .clip(
+            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 8, date_func=date_func),
         )
+        .percentile(60)
         == 2
     ), "Expected 60th percentile to be 2"
     assert (
-        s1(date_func).percentile(
-            80,
-            (
-                timestamp(2020, 1, 4, date_func=date_func),
-                timestamp(2020, 1, 8, date_func=date_func),
-            ),
+        s1(date_func)
+        .clip(
+            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 8, date_func=date_func),
         )
+        .percentile(80)
         == 4.5
     ), "Expected 80th percentile to be 4.5"
 
@@ -522,7 +548,7 @@ def test_get_percentiles_dates_1(date_func):
         [-0.5, 2.0, 4.5, 4.5], index=[0, 44.444444, 77.77777778, 100]
     )
     pd.testing.assert_series_equal(
-        s1(date_func).get_percentiles().step_values,
+        s1(date_func).percentile.step_values,
         expected_step_values,
         check_names=False,
         check_index_type=False,
@@ -533,8 +559,8 @@ def test_get_percentiles_dates_2(date_func):
     expected_step_values = pd.Series([2, 4.5, 4.5], index=[0, 60, 100])
     pd.testing.assert_series_equal(
         s1(date_func)
-        .get_percentiles((None, timestamp(2020, 1, 6, date_func=date_func)))
-        .step_values,
+        .clip(None, timestamp(2020, 1, 6, date_func=date_func))
+        .percentile.step_values,
         expected_step_values,
         check_names=False,
         check_index_type=False,
@@ -547,8 +573,8 @@ def test_get_percentiles_dates_3(date_func):
     )
     pd.testing.assert_series_equal(
         s1(date_func)
-        .get_percentiles((timestamp(2020, 1, 4, date_func=date_func), None))
-        .step_values,
+        .clip(timestamp(2020, 1, 4, date_func=date_func), None)
+        .percentile.step_values,
         expected_step_values,
         check_names=False,
         check_index_type=False,
@@ -559,13 +585,11 @@ def test_get_percentiles_dates_4(date_func):
     expected_step_values = pd.Series([-0.5, 2.0, 4.5, 4.5], index=[0, 50, 75, 100])
     pd.testing.assert_series_equal(
         s1(date_func)
-        .get_percentiles(
-            (
-                timestamp(2020, 1, 4, date_func=date_func),
-                timestamp(2020, 1, 8, date_func=date_func),
-            )
+        .clip(
+            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 8, date_func=date_func),
         )
-        .step_values,
+        .percentile.step_values,
         expected_step_values,
         check_names=False,
         check_index_type=False,
@@ -884,15 +908,15 @@ def test_hist_default_bins_left_closed(date_func, stairs_func, bounds, cuts):
     def make_expected_result(interval_index, lower, upper):
         return pd.Series(
             [
-                ((stairs_instance >= i.left) * (stairs_instance < i.right)).mean(
-                    (lower, upper)
+                ((stairs_instance >= i.left) * (stairs_instance < i.right)).agg(
+                    "mean", (lower, upper)
                 )
                 for i in interval_index
             ],
             index=interval_index,
         )
 
-    hist = stairs_instance.hist(x=cuts, where=bounds, normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(x=cuts, normalize=True)
     expected = make_expected_result(hist.index, *bounds)
     pd.testing.assert_series_equal(
         hist, expected, check_names=False, check_index_type=False,
@@ -918,15 +942,15 @@ def test_hist_default_bins_right_closed(date_func, stairs_func, bounds, cuts):
     def make_expected_result(interval_index, lower, upper):
         return pd.Series(
             [
-                ((stairs_instance > i.left) * (stairs_instance <= i.right)).mean(
-                    (lower, upper)
+                ((stairs_instance > i.left) * (stairs_instance <= i.right)).agg(
+                    "mean", (lower, upper)
                 )
                 for i in interval_index
             ],
             index=interval_index,
         )
 
-    hist = stairs_instance.hist(x=cuts, where=bounds, closed="right", normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(x=cuts, closed="right", normalize=True)
     expected = make_expected_result(hist.index, *bounds)
     pd.testing.assert_series_equal(
         hist, expected, check_names=False, check_index_type=False,
@@ -949,7 +973,7 @@ def test_hist_default_bins(date_func, stairs_func, bounds, closed):
     # really testing the default binning process here
     stairs_instance = stairs_func(date_func)
     bounds = [timestamp(*args, date_func=date_func) for args in bounds]
-    hist = stairs_instance.hist(where=bounds, closed=closed, normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(closed=closed, normalize=True)
     assert abs(hist.sum() - 1) < 0.000001
 
 
@@ -1008,10 +1032,10 @@ def test_shift(date_func):
     ],
 )
 def test_s1_var(date_func, bounds, expected):
-    bounds = [timestamp(*args, date_func=date_func) for args in bounds]
-    if len(bounds) > 0:
-        bounds = [bounds]
-    assert np.isclose(s1(date_func).var(*bounds), expected, atol=0.00001)
+    bounds2 = [timestamp(*args, date_func=date_func) for args in bounds]
+    if len(bounds2) > 0:
+        bounds2 = [bounds2]
+    assert np.isclose(s1(date_func).agg("var", *bounds2), expected, atol=0.00001)
 
 
 # low, high = timestamp(2020,1,1, date_func=date_func), timestamp(2020,1,10, date_func=date_func)
@@ -1045,7 +1069,7 @@ def test_s2_var(date_func, bounds, expected):
     bounds = [timestamp(*args, date_func=date_func) for args in bounds]
     if len(bounds) > 0:
         bounds = [bounds]
-    assert np.isclose(s2(date_func).var(*bounds), expected, atol=0.00001)
+    assert np.isclose(s2(date_func).agg("var", *bounds), expected, atol=0.00001)
 
 
 # low, high = timestamp(2020,1,1, date_func=date_func), timestamp(2020,1,10, date_func=date_func)
@@ -1079,7 +1103,7 @@ def test_s1_std(date_func, bounds, expected):
     bounds = [timestamp(*args, date_func=date_func) for args in bounds]
     if len(bounds) > 0:
         bounds = [bounds]
-    assert np.isclose(s1(date_func).std(*bounds), expected, atol=0.00001)
+    assert np.isclose(s1(date_func).agg("std", *bounds), expected, atol=0.00001)
 
 
 # low, high = (2020,1,1), timestamp(2020,1,10, date_func=date_func)
@@ -1113,7 +1137,7 @@ def test_s2_std(date_func, bounds, expected):
     bounds = [timestamp(*args, date_func=date_func) for args in bounds]
     if len(bounds) > 0:
         bounds = [bounds]
-    assert np.isclose(s2(date_func).std(*bounds), expected, atol=0.00001)
+    assert np.isclose(s2(date_func).agg("std", *bounds), expected, atol=0.00001)
 
 
 # low, high = timestamp(2020,1,1, date_func=date_func), timestamp(2020,1,10, date_func=date_func)
@@ -1571,3 +1595,18 @@ def test_ne(date_func):
 
 def test_make_test_data():
     assert isinstance(test_data.make_test_data(dates=True), pd.DataFrame)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"lower": (2020, 1, 1),},
+        {"lower": (2020, 1, 1), "upper": (2020, 1, 8),},
+        {"upper": (2020, 1, 8),},
+    ],
+)
+def test_clip_expected_type(date_func, kwargs):
+    kwargs = kwargs.copy()
+    kwargs = {key: timestamp(*val, date_func=date_func) for key, val in kwargs.items()}
+    result = s1(date_func).clip(**kwargs)
+    assert_expected_type(result, date_func)

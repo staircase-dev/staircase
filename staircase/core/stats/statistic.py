@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_list_like
 
 import staircase as sc
 from staircase.constants import inf
@@ -10,37 +11,36 @@ from staircase.util import _get_lims, _replace_none_with_infs
 from staircase.util._decorators import Appender
 
 
-def _get_integral_and_mean(stairs):
+def _get_integral_and_mean_uncached(stairs):
     if stairs._data is None or len(stairs._data) < 2:
         return 0, np.nan  # TODO: is zero right here?  ?
-    values = stairs._get_values()
 
-    widths = np.diff(values.index.values)
-    heights = values.values[:-1]
-    area = np.nansum(np.multiply(widths, heights))
-    mean = area / widths.sum(where=~np.isnan(heights))
-    return area, mean
+    value_sums = stairs.value_sums(group=False)
+    value_sums = value_sums[value_sums.index.notnull()]
+    integral = (value_sums * value_sums.index).sum()
+    mean = integral / value_sums.sum()
+    return integral, mean
 
 
 # TODO: docstring
 # TODO: test
 # TODO: what's new
 @Appender(docstrings.integral_and_mean_docstring, join="\n", indents=1)
-def get_integral_and_mean(self, where=(-inf, inf)):
+def _get_integral_and_mean(self, where=(-inf, inf)):
     where = _replace_none_with_infs(where)
     if where == (-inf, inf):
         if self._integral_and_mean is None:
-            self._integral_and_mean = _get_integral_and_mean(self)
+            self._integral_and_mean = _get_integral_and_mean_uncached(self)
         return self._integral_and_mean
-    return _get_integral_and_mean(self.clip(*where))
+    return _get_integral_and_mean_uncached(self.clip(*where))
 
 
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-@Appender(docstrings.integrate_docstring, join="\n", indents=1)
-def integrate(self, where=(-inf, inf)):
-    area, _ = self.get_integral_and_mean(where)
+@Appender(docstrings.integral_docstring, join="\n", indents=1)
+def integral(self, where=(-inf, inf)):
+    area, _ = _get_integral_and_mean(self, where)
     return area
 
 
@@ -49,7 +49,7 @@ def integrate(self, where=(-inf, inf)):
 # TODO: what's new
 @Appender(docstrings.mean_docstring, join="\n", indents=1)
 def mean(self, where=(-inf, inf)):
-    _, mean = self.get_integral_and_mean(where)
+    _, mean = _get_integral_and_mean(self, where)
     return mean
 
 
@@ -58,7 +58,37 @@ def mean(self, where=(-inf, inf)):
 # TODO: what's new
 @Appender(docstrings.median_docstring, join="\n", indents=1)
 def median(self, where=(-inf, inf)):
-    return self.fractile(0.5, where)
+    where = _replace_none_with_infs(where)
+    if where == (-inf, inf):
+        percentiles = self.dist.percentile
+    else:
+        percentiles = self.clip(*where).dist.percentile
+    return percentiles(50)
+
+
+def value_sums(self, where=(-inf, inf), dropna=True, group=True):
+    if self._data is None:
+        return None
+    where = _replace_none_with_infs(where)
+    if where == (-inf, inf):
+        stairs = self
+    else:
+        stairs = self.clip(*where)
+
+    value_sums = pd.Series(
+        np.diff(stairs._data.index.values), index=stairs._get_values().iloc[:-1]
+    )
+    # .values used to avoid a strange numpy Future Warning
+    if group:
+        result = value_sums.groupby(value_sums.index.values).sum()
+    else:
+        return value_sums
+    if not dropna:
+        isna = value_sums.index.isna()
+        if isna.any():
+            na_val = value_sums.where(isna).first_valid_index()
+            result[na_val] = value_sums[isna].sum()
+    return result
 
 
 # TODO: docstring
@@ -66,13 +96,7 @@ def median(self, where=(-inf, inf)):
 # TODO: what's new
 @Appender(docstrings.mode_docstring, join="\n", indents=1)
 def mode(self, where=(-inf, inf)):
-    s = self.clip(*where)
-    value_counts = pd.Series(
-        np.diff(s._data.index.values), index=s._get_values().iloc[:-1]
-    )
-    return (
-        value_counts.groupby(value_counts.index.values).sum().idxmax()
-    )  # .values used to avoid a strange numpy Future Warning
+    return value_sums(self, where).idxmax()
 
 
 # TODO: docstring
@@ -80,13 +104,18 @@ def mode(self, where=(-inf, inf)):
 # TODO: what's new
 @Appender(docstrings.var_docstring, join="\n", indents=1)
 def var(self, where=(-inf, inf)):
-    percentile_minus_mean = self.get_percentiles(where) - self.mean(where)
+    where = _replace_none_with_infs(where)
+    if where == (-inf, inf):
+        percentiles = self.dist.percentile
+    else:
+        percentiles = self.clip(*where).dist.percentile
+    percentile_minus_mean = percentiles - mean(self, where)
     values = percentile_minus_mean._get_values()
     squared_values = values * values
     return (
         sc.Stairs.new(
             initial_value=0, data=pd.DataFrame({"value": squared_values}),
-        ).integrate((0, 100))
+        ).agg("integral", (0, 100))
         / 100
     )
 
@@ -96,7 +125,7 @@ def var(self, where=(-inf, inf)):
 # TODO: what's new
 @Appender(docstrings.std_docstring, join="\n", indents=1)
 def std(self, where=(-inf, inf)):
-    return np.sqrt(self.var(where))
+    return np.sqrt(var(self, where))
 
 
 # TODO: docstring
@@ -204,6 +233,27 @@ def _max(
     return max(self.values_in_range(where, closed))
 
 
+def agg(self, func, where=(-inf, inf), closed=None):
+
+    where = _replace_none_with_infs(where)
+    stairs = self if where == (-inf, inf) else self.clip(*where)
+
+    def apply(_func):
+        if isinstance(_func, str):
+            name = _func
+            _func = _get_stairs_method(_func)
+        else:
+            name = _func.__name__
+        if name in ("min", "max"):
+            return name, _func(self, where=where, closed=closed)
+        else:
+            return name, _func(stairs)
+
+    if is_list_like(func):
+        return pd.Series({name: calc for name, calc in map(apply, func)})
+    return apply(func)[1]
+
+
 # TODO: docstring
 # TODO: test
 # TODO: what's new
@@ -250,7 +300,7 @@ def cov(self, other, where=(-inf, inf), lag=0, clip="pre"):
     mask = self.isna() | other.isna()
     self = self.mask(mask)
     other = other.mask(mask)
-    return (self * other).mean(where) - self.mean(where) * other.mean(where)
+    return mean(self * other, where) - mean(self, where) * mean(other, where)
 
 
 # TODO: docstring
@@ -301,12 +351,12 @@ def corr(self, other, where=(-inf, inf), lag=0, clip="pre"):
     mask = self.isna() | other.isna()
     self = self.mask(mask)
     other = other.mask(mask)
-    return self.cov(other, where) / (self.std(where) * other.std(where))
+    return self.cov(other, where) / (std(self, where) * std(other, where))
 
 
 def _get_stairs_method(name):
     return {
-        "integrate": integrate,
+        "integral": integral,
         "mean": mean,
         "median": median,
         "mode": mode,
@@ -314,4 +364,6 @@ def _get_stairs_method(name):
         "min": _min,
         "_max": _max,
         "_min": _min,
+        "std": std,
+        "var": var,
     }[name]

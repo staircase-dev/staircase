@@ -53,7 +53,7 @@ We can visualise the function with the plot function:
 
 We can find the total time in minutes the page was viewed:
 ```python
->>> views.integrate(0,1440)
+>>> views.integral(0,1440)
 9297.94622521079
 ```
 

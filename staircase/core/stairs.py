@@ -12,6 +12,7 @@ import pandas as pd
 
 from staircase import plotting
 from staircase.constants import inf
+from staircase.core import stats
 from staircase.docstrings import examples
 from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
@@ -146,6 +147,60 @@ class Stairs:
         return self._get_dist()
 
     @property
+    def ecdf(self):
+        return self.dist.ecdf
+
+    @property
+    def fractile(self):
+        return self.dist.fractile
+
+    @property
+    def percentile(self):
+        return self.dist.percentile
+
+    def hist(self, x="unit", closed="left", normalize=False):
+        return self.dist.hist(x=x, closed=closed, normalize=normalize)
+
+    def quantiles(self, n):
+        return self.dist.quantiles(n)
+
+    @property
+    def integral(self):
+        return stats.integral(self)
+
+    @property
+    def mean(self):
+        return stats.mean(self)
+
+    @property
+    def median(self):
+        return stats.median(self)
+
+    @property
+    def value_sums(self):
+        return stats.value_sums(self)
+
+    @property
+    def mode(self):
+        return stats.mode(self)
+
+    @property
+    def std(self):
+        return stats.std(self)
+
+    @property
+    def var(self):
+        return stats.var(self)
+
+    @property
+    def max(self):
+        return stats.max(self)
+
+    @property
+    def min(self):
+        return stats.min(self)
+
+    @property
     def plot(self):
         return self._get_plot()
 
@@ -254,7 +309,7 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
-    def copy(self, deep=None):
+    def copy(self):  # , deep=None):
         """
         Returns a deep copy of this Stairs instance
 

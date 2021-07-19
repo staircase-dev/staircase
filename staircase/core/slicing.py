@@ -97,7 +97,7 @@ def make_slice_method(func):
     return method
 
 
-for method_name in ["_max", "_min", "mean", "median", "integrate", "mode"]:
+for method_name in ["_max", "_min", "mean", "median", "integral", "mode"]:
     method = make_slice_method(_get_stairs_method(method_name))
     setattr(StairsSlicer, method_name, method)
 

@@ -45,7 +45,7 @@ def clip(self, lower=-inf, upper=inf):
     )
 
     if right_index == -1:
-        sliced_values = pd.Series()
+        sliced_values = pd.Series(dtype="float64")
     else:
         sliced_values = self._get_values().iloc[max(0, left_index) : right_index]
     if upper != inf:
@@ -55,8 +55,8 @@ def clip(self, lower=-inf, upper=inf):
             [pd.Series([self.initial_value], index=[lower]), sliced_values]
         )
     elif sliced_values.index[0] < lower:
-        index = sliced_values.index.values
-        index[0] = lower
+        index = pd.Series(sliced_values.index)
+        index.iloc[0] = lower
         sliced_values.index = index
 
     data = pd.DataFrame({"value": sliced_values})
