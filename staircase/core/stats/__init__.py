@@ -26,3 +26,11 @@ def add_methods(cls):
     cls.corr = corr
     cls.agg = agg
     cls._get_dist = _get_dist
+
+    cls.integral = integral
+    cls.mean = mean
+    cls.median = median
+    cls.mode = mode
+    cls.std = std
+    cls.var = var
+

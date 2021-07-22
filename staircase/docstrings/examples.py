@@ -5,11 +5,16 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s1.plot()
-    >>> s1(3.5)
+    >>> s3.plot()
+
+    >>> s3(1.5)
     1
-    >>> s1([1, 2, 4.5, 6])
-    [1, 0, -1, 0]
+
+    >>> s3(3)
+    nan
+
+    >>> s3([1, 3, 4])
+    array([ 1., nan, -1.])
 """
 
 limit_example = """
@@ -19,30 +24,18 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s1.plot()
-    >>> s1(3.5)
-    1
-    >>> s1([1, 2, 4.5, 6])
-    [1, 0, -1, 0]
-    >>> s1.limit([1, 2, 4.5, 6], side="left")
-    [0, 1, -1, 0]
+    >>> s3.plot()
+
+    >>> s3.limit(2, side="left")
+    1.0
+
+    >>> s3.limit(2, side="right")
+    0.0
+
+    >>> s3.limit([2, 2.5, 3.5], side="right")
+    array([ 0., nan,  1.])
 """
 
-cut_example = """
-Examples
---------
-
-.. plot::
-    :context: close-figs
-
-    >>> s1.plot()
-    >>> s1(3.5)
-    1
-    >>> s1([1, 2, 4.5, 6])
-    [1, 0, -1, 0]
-    >>> s1.limit([1, 2, 4.5, 6], side="left")
-    [0, 1, -1, 0]
-"""
 
 layer_example = """
 Examples
@@ -75,6 +68,24 @@ Examples
     ...     .layer(data["starts"], data["ends"], data["values"])
     ...     .plot()
     ... )
+
+.. plot::
+    :context: close-figs
+
+    >>> import pandas as pd
+    >>> import staircase as sc
+    >>> data = pd.DataFrame({"starts":[1,4,5.5],
+    ...                      "ends":[3,5,7],
+    ...                      "values":[-1,2,-3]})
+    >>> data
+    starts  ends  values
+    0     1.0     3      -1
+    1     4.0     5       2
+    2     5.5     7      -3
+    >>> (sc.Stairs(1.5)
+    ...     .layer("starts", "ends", "values", data=data)
+    ...     .plot()
+    ... )
 """
 
 number_of_steps_example = """
@@ -85,35 +96,14 @@ Examples
     :context: close-figs
 
     >>> s1.plot()
-    >>> s1.number_of_steps()
+    >>> s1.number_of_steps
     5
+
+    >>> s3.plot()
+    >>> s3.number_of_steps
+    6
 """
 
-min_example = """
-Examples
---------
-
-.. plot::
-    :context: close-figs
-
-    >>> s2.plot()
-    >>> s2.min((0, 3))
-    0
-"""
-
-max_example = """
-Examples
---------
-
-.. plot::
-    :context: close-figs
-
-    >>> s1.plot()
-    >>> s1.max()
-    1.0
-    >>> s1.max((4, 5))
-    -1
-"""
 
 shift_example = """
 Examples
@@ -128,7 +118,7 @@ Examples
     ...     stair_instance.plot(ax=ax, label=title)
     ...     ax.set_title(title)
 
-Note that the definition of shift is designed to be consistent with pandas.Series.shift
+Note that the definition of shift is designed to be consistent with :func:`pandas.Series.shift`
 
 .. plot::
     :context: close-figs
@@ -179,7 +169,7 @@ Examples
     ... s2.plot(ax=axes[1], label="s2", linestyle="--")
     ... axes[1].legend()
 
-Note that the definition of diff is designed to be consistent with pandas.Series.diff
+Note that the definition of diff is designed to be consistent with :func:`pandas.Series.diff`
 
 .. plot::
     :context: close-figs
@@ -238,7 +228,7 @@ Examples
     max       0.500000
     dtype: float64
 
-    >>> s2.describe(where=(0,6), percentiles=range(0,101,20))
+    >>> s2.describe(where=(0,6), percentiles=np.linspace(0,100,6))
     unique    3.000000
     mean     -0.250000
     std       0.661438
@@ -336,12 +326,12 @@ Examples
 
     >>> s2.rolling_mean(window=[-0.5, 0.5])
     -0.5    0.0
-        0.5    0.5
-        1.5    0.5
-        2.5    0.0
-        3.5   -1.0
-        5.0   -1.0
-        6.0    0.0
+     0.5    0.5
+     1.5    0.5
+     2.5    0.0
+     3.5   -1.0
+     5.0   -1.0
+     6.0    0.0
     dtype: float64
 
 .. plot::

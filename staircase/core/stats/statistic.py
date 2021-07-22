@@ -11,36 +11,26 @@ from staircase.util import _get_lims, _replace_none_with_infs
 from staircase.util._decorators import Appender
 
 
-def _get_integral_and_mean_uncached(stairs):
-    if stairs._data is None or len(stairs._data) < 2:
-        return 0, np.nan  # TODO: is zero right here?  ?
-
-    value_sums = stairs.value_sums(group=False)
-    value_sums = value_sums[value_sums.index.notnull()]
-    integral = (value_sums * value_sums.index).sum()
-    mean = integral / value_sums.sum()
-    return integral, mean
-
-
-# TODO: docstring
-# TODO: test
 # TODO: what's new
-@Appender(docstrings.integral_and_mean_docstring, join="\n", indents=1)
-def _get_integral_and_mean(self, where=(-inf, inf)):
-    where = _replace_none_with_infs(where)
-    if where == (-inf, inf):
-        if self._integral_and_mean is None:
-            self._integral_and_mean = _get_integral_and_mean_uncached(self)
-        return self._integral_and_mean
-    return _get_integral_and_mean_uncached(self.clip(*where))
+def _get_integral_and_mean(self):
+    if self._integral_and_mean is None:
+        if self._data is None or len(self._data) < 2:
+            return 0, np.nan  # TODO: is zero right here?  ?
+
+        value_sums = self.value_sums(group=False)
+        value_sums = value_sums[value_sums.index.notnull()]
+        integral = (value_sums * value_sums.index).sum()
+        mean = integral / value_sums.sum()
+        self._integral_and_mean = integral, mean
+    return self._integral_and_mean
 
 
 # TODO: docstring
 # TODO: test
 # TODO: what's new
 @Appender(docstrings.integral_docstring, join="\n", indents=1)
-def integral(self, where=(-inf, inf)):
-    area, _ = _get_integral_and_mean(self, where)
+def integral(self):
+    area, _ = _get_integral_and_mean(self)
     return area
 
 
@@ -48,8 +38,8 @@ def integral(self, where=(-inf, inf)):
 # TODO: test
 # TODO: what's new
 @Appender(docstrings.mean_docstring, join="\n", indents=1)
-def mean(self, where=(-inf, inf)):
-    _, mean = _get_integral_and_mean(self, where)
+def mean(self):
+    _, mean = _get_integral_and_mean(self)
     return mean
 
 
@@ -57,26 +47,18 @@ def mean(self, where=(-inf, inf)):
 # TODO: test
 # TODO: what's new
 @Appender(docstrings.median_docstring, join="\n", indents=1)
-def median(self, where=(-inf, inf)):
-    where = _replace_none_with_infs(where)
-    if where == (-inf, inf):
-        percentiles = self.dist.percentile
-    else:
-        percentiles = self.clip(*where).dist.percentile
-    return percentiles(50)
+def median(self):
+    return self.dist.percentile(50)
 
 
-def value_sums(self, where=(-inf, inf), dropna=True, group=True):
+@Appender(docstrings.value_sums_docstring, join="\n", indents=1)
+def value_sums(self, dropna=True, group=True):
+
     if self._data is None:
         return None
-    where = _replace_none_with_infs(where)
-    if where == (-inf, inf):
-        stairs = self
-    else:
-        stairs = self.clip(*where)
 
     value_sums = pd.Series(
-        np.diff(stairs._data.index.values), index=stairs._get_values().iloc[:-1]
+        np.diff(self._data.index.values), index=self._get_values().iloc[:-1]
     )
     # .values used to avoid a strange numpy Future Warning
     if group:
@@ -95,21 +77,16 @@ def value_sums(self, where=(-inf, inf), dropna=True, group=True):
 # TODO: test
 # TODO: what's new
 @Appender(docstrings.mode_docstring, join="\n", indents=1)
-def mode(self, where=(-inf, inf)):
-    return value_sums(self, where).idxmax()
+def mode(self):
+    return value_sums(self).idxmax()
 
 
 # TODO: docstring
 # TODO: test
 # TODO: what's new
 @Appender(docstrings.var_docstring, join="\n", indents=1)
-def var(self, where=(-inf, inf)):
-    where = _replace_none_with_infs(where)
-    if where == (-inf, inf):
-        percentiles = self.dist.percentile
-    else:
-        percentiles = self.clip(*where).dist.percentile
-    percentile_minus_mean = percentiles - mean(self, where)
+def var(self):
+    percentile_minus_mean = self.dist.percentile - mean(self)
     values = percentile_minus_mean._get_values()
     squared_values = values * values
     return (
@@ -124,8 +101,8 @@ def var(self, where=(-inf, inf)):
 # TODO: test
 # TODO: what's new
 @Appender(docstrings.std_docstring, join="\n", indents=1)
-def std(self, where=(-inf, inf)):
-    return np.sqrt(var(self, where))
+def std(self):
+    return np.sqrt(var(self))
 
 
 # TODO: docstring
@@ -152,39 +129,9 @@ def values_in_range(self, where=(-inf, inf), closed=None):
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-@Appender(examples.min_example, join="\n", indents=1)
 def _min(
     self, where=(-inf, inf), closed=None,
 ):
-    """
-    Calculates the minimum value of the step function
-
-    If an interval which to calculate over is specified it is interpreted
-    as a closed interval, with *lower_how* and *upper_how* indicating how the step function
-    should be evaluated at the at the endpoints of the interval.
-
-    Parameters
-    ----------
-    lower : int, float or pandas.Timestamp, optional
-        lower bound of the interval on which to perform the calculation
-    upper : int, float or pandas.Timestamp, optional
-        upper bound of the interval on which to perform the calculation
-    lower_how: {'left', 'right'}, default 'right'
-        Determines how the step function should be evaluated at *lower*.
-        If 'left' then :math:`\\lim_{x \\to lower^{-}} f(x)` is included in the calculation.
-    upper_how: {'left', 'right'}, default 'left'
-        Determines how the step function should be evaluated at *upper*.
-        If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
-
-    Returns
-    -------
-    float
-        The minimum value of the step function
-
-    See Also
-    --------
-    Stairs.max, staircase.min
-    """
     where = _replace_none_with_infs(where)
     if closed is None:
         closed = self._closed
@@ -194,64 +141,38 @@ def _min(
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-@Appender(examples.max_example, join="\n", indents=1)
 def _max(
     self, where=(-inf, inf), closed=None,
 ):
-    """
-    Calculates the maximum value of the step function
-
-    If an interval which to calculate over is specified it is interpreted
-    as a closed interval, with *lower_how* and *upper_how* indicating how the step function
-    should be evaluated at the at the endpoints of the interval.
-
-    Parameters
-    ----------
-    lower : int, float or pandas.Timestamp, optional
-        lower bound of the interval on which to perform the calculation
-    upper : int, float or pandas.Timestamp, optional
-        upper bound of the interval on which to perform the calculation
-    lower_how: {'left', 'right'}, default 'right'
-        Determines how the step function should be evaluated at *lower*.
-        If 'left' then :math:`\\lim_{x \\to lower^{-}} f(x)` is included in the calculation.
-    upper_how: {'left', 'right'}, default 'left'
-        Determines how the step function should be evaluated at *upper*.
-        If 'right' then :math:`\\lim_{x \\to upper^{+}} f(x)` is included in the calculation.
-
-    Returns
-    -------
-    float
-        The maximum value of the step function
-
-    See Also
-    --------
-    Stairs.min, staircase.max
-    """
     where = _replace_none_with_infs(where)
     if closed is None:
         closed = self._closed
     return max(self.values_in_range(where, closed))
 
 
-def agg(self, func, where=(-inf, inf), closed=None):
+# TODO: docstring
+# TODO: test
+# TODO: what's new
+@Appender(docstrings.agg_docstring, join="\n", indents=1)
+def agg(self, name, where=(-inf, inf), closed=None):
 
     where = _replace_none_with_infs(where)
     stairs = self if where == (-inf, inf) else self.clip(*where)
 
-    def apply(_func):
-        if isinstance(_func, str):
-            name = _func
-            _func = _get_stairs_method(_func)
+    def apply(func):
+        if isinstance(func, str):
+            name = func
+            func = _get_stairs_method(name)
         else:
-            name = _func.__name__
+            name = func.__name__
         if name in ("min", "max"):
-            return name, _func(self, where=where, closed=closed)
+            return name, func(self, where=where, closed=closed)
         else:
-            return name, _func(stairs)
+            return name, func(stairs)
 
-    if is_list_like(func):
-        return pd.Series({name: calc for name, calc in map(apply, func)})
-    return apply(func)[1]
+    if is_list_like(name):
+        return pd.Series({func: calc for func, calc in map(apply, name)})
+    return apply(name)[1]
 
 
 # TODO: docstring
@@ -270,17 +191,15 @@ def cov(self, other, where=(-inf, inf), lag=0, clip="pre"):
     ----------
     other: :class:`Stairs`
         the stairs instance with which to compute the covariance
-    lower : int, float or pandas.Timestamp
-        lower bound of the domain on which to perform the calculation
-    upper : int, float or pandas.Timestamp
-        upper bound of the domain on which to perform the calculation
+    where : tuple or list of length two, optional
+    Indicates the domain interval over which to perform the calculation.
+        Default is (-sc.inf, sc.inf) or equivalently (None, None).
     lag : int, float, pandas.Timedelta
-        a pandas.Timedelta is only valid when using dates.
-        If using dates and delta is an int or float, then it is interpreted as a number of hours.
+        A pandas.Timedelta is only valid when domain is date-like.
     clip : {'pre', 'post'}, default 'pre'
-        only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
-        If 'pre' then the domain over which the calculation is performed is the overlap
-        of the original domain and the translated domain.
+        Only relevant when lag is non-zero.  Determines if the domain is applied before or 
+        after *other* is translated.  If 'pre' then the domain over which the calculation
+        is performed is the overlap of the original domain and the translated domain.
 
     Returns
     -------
@@ -300,7 +219,9 @@ def cov(self, other, where=(-inf, inf), lag=0, clip="pre"):
     mask = self.isna() | other.isna()
     self = self.mask(mask)
     other = other.mask(mask)
-    return mean(self * other, where) - mean(self, where) * mean(other, where)
+    return (self * other).clip(*where).mean() - self.clip(*where).mean() * other.clip(
+        *where
+    ).mean()
 
 
 # TODO: docstring
@@ -321,17 +242,15 @@ def corr(self, other, where=(-inf, inf), lag=0, clip="pre"):
     ----------
     other: :class:`Stairs`
         the stairs instance with which to compute the correlation
-    lower : int, float or pandas.Timestamp
-        lower bound of the interval on which to perform the calculation
-    upper : int, float or pandas.Timestamp
-        upper bound of the interval on which to perform the calculation
+    where : tuple or list of length two, optional
+    Indicates the domain interval over which to perform the calculation.
+        Default is (-sc.inf, sc.inf) or equivalently (None, None).
     lag : int, float, pandas.Timedelta
-        a pandas.Timedelta is only valid when using dates.
-        If using dates and delta is an int or float, then it is interpreted as a number of hours.
+        A pandas.Timedelta is only valid when domain is date-like.
     clip : {'pre', 'post'}, default 'pre'
-        only relevant when lag is non-zero.  Determines if the domain is applied before or after *other* is translated.
-        If 'pre' then the domain over which the calculation is performed is the overlap
-        of the original domain and the translated domain.
+        Only relevant when lag is non-zero.  Determines if the domain is applied before or 
+        after *other* is translated.  If 'pre' then the domain over which the calculation
+        is performed is the overlap of the original domain and the translated domain.
 
     Returns
     -------

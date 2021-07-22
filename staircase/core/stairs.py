@@ -89,7 +89,6 @@ class Stairs:
         self._clear_cache()
 
         if any([x is not None for x in (start, end, value)]):
-            # value = 1 if value is None else value
             self.layer(start, end, value, frame)
 
     def _clear_cache(self):
@@ -164,40 +163,39 @@ class Stairs:
     def quantiles(self, n):
         return self.dist.quantiles(n)
 
-    @property
-    def integral(self):
-        return stats.integral(self)
-
-    @property
-    def mean(self):
-        return stats.mean(self)
-
-    @property
-    def median(self):
-        return stats.median(self)
-
-    @property
     def value_sums(self):
         return stats.value_sums(self)
 
-    @property
-    def mode(self):
-        return stats.mode(self)
-
-    @property
-    def std(self):
-        return stats.std(self)
-
-    @property
-    def var(self):
-        return stats.var(self)
-
-    @property
+    @Appender(stats.docstrings.max_example, join="\n", indents=1)
     def max(self):
+        """
+        The maximum of the step function.
+
+        Returns
+        -------
+        float
+            The maximum of the step function
+
+        See Also
+        --------
+        Stairs.min, Stairs.values_in_range
+        """
         return stats.max(self)
 
-    @property
+    @Appender(stats.docstrings.min_example, join="\n", indents=1)
     def min(self):
+        """
+        The minimum of the step function.
+
+        Returns
+        -------
+        float
+            The minimum of the step function
+
+        See Also
+        --------
+        Stairs.max, Stairs.values_in_range
+        """
         return stats.min(self)
 
     @property
@@ -346,14 +344,13 @@ class Stairs:
     @Appender(examples.describe_example, join="\n", indents=2)
     def describe(self, where=(-inf, inf), percentiles=(25, 50, 75)):
         """
-        Generate descriptive statistics.
+        Generate descriptive statistics for the step function values over a specified domain.
 
         Parameters
         ----------
-        lower : int, float or pandas.Timestamp
-            lower bound of the interval on which to perform the calculation
-        upper : int, float or pandas.Timestamp
-            upper bound of the interval on which to perform the calculation
+        where : tuple or list of length two, optional
+            Indicates the domain interval over which to evaluate the step function.
+            Default is (-sc.inf, sc.inf) or equivalently (None, None).
         percentiles: array-like of float, default [25, 50, 70]
             The percentiles to include in output.  Numbers should be in the range 0 to 100.
 
@@ -366,17 +363,18 @@ class Stairs:
         Stairs.mean, Stairs.std, Stairs.min, Stairs.percentile, Stairs.max
         """
         where = _replace_none_with_infs(where)
-        percentilestairs = self.get_percentiles(where)
+        stairs = self if where == (-inf, inf) else self.clip(*where)
+
         return pd.Series(
             {
                 **{
-                    "unique": percentilestairs.clip(0, 100).number_of_steps - 1,
-                    "mean": self.mean(where),
-                    "std": self.std(where),
-                    "min": self.min(where),
+                    "unique": stairs.percentile.clip(0, 100).number_of_steps - 1,
+                    "mean": stairs.mean,
+                    "std": stairs.std,
+                    "min": stairs.min,
                 },
-                **{f"{perc}%": percentilestairs(perc) for perc in percentiles},
-                **{"max": self.max(where),},
+                **{f"{perc}%": stairs.percentile(perc) for perc in percentiles},
+                **{"max": stairs.max},
             }
         )
 
@@ -463,10 +461,9 @@ class Stairs:
         ----------
         window : array-like of int, float or pandas.Timedelta
             should be length of 2. Defines distances from focal point to window boundaries.
-        lower : int, float, pandas.Timestamp, or None, default None
-            used to indicate the lower bound of the domain of the calculation
-        upper : int, float, pandas.Timestamp, or None, default None
-            used to indicate the upper bound of the domain of the calculation
+        where : tuple or list of length two, optional
+            Indicates the domain interval over which to evaluate the step function.
+            Default is (-sc.inf, sc.inf) or equivalently (None, None).
 
         Returns
         -------
