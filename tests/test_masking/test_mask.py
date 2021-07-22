@@ -216,4 +216,3 @@ def test_mask_single_step_initial_nan(start, end, expected_step_values, tuple_ma
         s.step_values, expected_step_values, check_names=False, check_index_type=False,
     )
     assert np.isnan(s.initial_value)
-

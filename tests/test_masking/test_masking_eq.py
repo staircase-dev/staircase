@@ -194,3 +194,12 @@ def test_unique_overlapping_nan_initial_mask_eq(stairs1, stairs2):
         result.step_values, expected, check_names=False, check_index_type=False,
     )
     assert np.isnan(result.initial_value)
+
+
+def test_clipped_endpoint():
+    result = sc.Stairs().clip(0, 1)
+    expected = pd.Series([0.0, np.nan])
+    pd.testing.assert_series_equal(
+        result.step_values, expected, check_names=False, check_index_type=False,
+    )
+    assert np.isnan(result.initial_value)

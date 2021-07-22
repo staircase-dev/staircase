@@ -29,10 +29,14 @@ def _make_relational_func(
             return sc.Stairs.new(initial_value=initial_value, data=None,)
         elif self._data is None or other._data is None:
             if other._data is None:  # self._data exists
-                new_values = numpy_relational(self._get_values(), other.initial_value)
+                values = self._get_values()
+                new_values = numpy_relational(values, other.initial_value)
+                new_values[values.isna()] = np.nan
                 new_index = self._data.index
             else:  # other._data exists
-                new_values = numpy_relational(self.initial_value, other._get_values())
+                values = other._get_values()
+                new_values = numpy_relational(self.initial_value, values)
+                new_values[values.isna()] = np.nan
                 new_index = other._data.index
 
             new_instance = sc.Stairs.new(
