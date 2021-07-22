@@ -90,7 +90,7 @@ Summary statistics
    :toctree: api/
 
    Stairs.number_of_steps
-   Stairs.integrate
+   Stairs.integral
    Stairs.describe
    Stairs.values_in_range
    Stairs.min
@@ -100,11 +100,10 @@ Summary statistics
    Stairs.mode
    Stairs.mean
    Stairs.median
+   Stairs.value_sums
    Stairs.percentile
    Stairs.fractile
-   Stairs.get_percentiles
-   Stairs.get_fractiles
-   Stairs.get_ecdf
+   Stairs.ecdf
    Stairs.hist
    
    

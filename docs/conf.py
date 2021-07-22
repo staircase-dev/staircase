@@ -93,6 +93,8 @@ import staircase as sc
 import matplotlib.pyplot as plt
 s1 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1)
 s2 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1)
+s3 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1).mask((2.5, 3.5))
+s4 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1).mask((4,5))
 """
 
 # -- Options for HTML output -------------------------------------------------
