@@ -69,15 +69,16 @@ def layer(self, start=None, end=None, value=None, data=None):
     if not isinstance(end, pd.Series):
         end = pd.Series(end)
     df = pd.concat([start, end], axis=1, ignore_index=True)
-    self.initial_value += df.iloc[:, 0].isna().sum()
+    start_series = pd.Series(value, index=df.iloc[:, 0])
+    self.initial_value += start_series[start_series.index.isna()].sum()
     if self._data is None:
         to_concat = [
-            pd.Series(value, index=df.iloc[:, 0]),
+            start_series,
             pd.Series(-value, index=df.iloc[:, 1]),
         ]
     else:
         to_concat = [
-            pd.Series(value, index=df.iloc[:, 0]),
+            start_series,
             pd.Series(-value, index=df.iloc[:, 1]),
             self._get_deltas(),
         ]
