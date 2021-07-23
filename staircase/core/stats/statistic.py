@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_list_like
@@ -12,17 +14,23 @@ from staircase.util._decorators import Appender
 
 
 # TODO: what's new
-def _get_integral_and_mean(self):
-    if self._integral_and_mean is None:
-        if self._data is None or len(self._data) < 2:
-            return 0, np.nan  # TODO: is zero right here?  ?
-
+def _cache_integral_and_mean(self):
+    if self._data is None or len(self._data) < 2:
+        self._integral_and_mean = 0, np.nan  # TODO: is zero right here?  ?
+    else:
         value_sums = self.value_sums(group=False)
         value_sums = value_sums[value_sums.index.notnull()]
-        integral = (value_sums * value_sums.index).sum()
-        mean = integral / value_sums.sum()
-        self._integral_and_mean = integral, mean
-    return self._integral_and_mean
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                integral = (value_sums * value_sums.index).sum()
+                mean = integral / value_sums.sum()
+                self._integral_and_mean = (integral, mean)
+        except ValueError as exc:
+            integral = None
+            mean = ((value_sums / value_sums.sum()) * value_sums.index).sum()
+            self._integral_and_mean = (integral, mean)
+            raise exc
 
 
 # TODO: docstring
@@ -30,8 +38,14 @@ def _get_integral_and_mean(self):
 # TODO: what's new
 @Appender(docstrings.integral_docstring, join="\n", indents=1)
 def integral(self):
-    area, _ = _get_integral_and_mean(self)
-    return area
+    if self._integral_and_mean is None:
+        try:
+            _cache_integral_and_mean(self)
+        except ValueError:
+            raise ValueError(
+                "Integral calculation results in overflow error.  Consider scaling down step function values to accommodate."
+            )
+    return self._integral_and_mean[0]
 
 
 # TODO: docstring
@@ -39,8 +53,12 @@ def integral(self):
 # TODO: what's new
 @Appender(docstrings.mean_docstring, join="\n", indents=1)
 def mean(self):
-    _, mean = _get_integral_and_mean(self)
-    return mean
+    if self._integral_and_mean is None:
+        try:
+            _cache_integral_and_mean(self)
+        except ValueError:
+            pass
+    return self._integral_and_mean[1]
 
 
 # TODO: docstring
@@ -270,7 +288,7 @@ def corr(self, other, where=(-inf, inf), lag=0, clip="pre"):
     mask = self.isna() | other.isna()
     self = self.mask(mask)
     other = other.mask(mask)
-    return self.cov(other, where) / (std(self, where) * std(other, where))
+    return self.cov(other, where) / (self.clip(*where).std() * other.clip(*where).std())
 
 
 def _get_stairs_method(name):

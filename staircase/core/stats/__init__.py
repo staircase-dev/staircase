@@ -1,4 +1,3 @@
-from staircase.core.stats.statistic import _get_integral_and_mean
 from staircase.core.stats.statistic import _max as max
 from staircase.core.stats.statistic import _min as min
 from staircase.core.stats.statistic import (
