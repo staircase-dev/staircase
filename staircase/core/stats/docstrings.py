@@ -31,10 +31,10 @@ Examples
     {result2}
 """
 
-min_example = _stat_example.format(
+simple_min_example = _stat_example.format(
     func="min", stairs1="s1", result1="-1", stairs2="s3.clip(2,4)", result2="0.0",
 )
-max_example = _stat_example.format(
+simple_max_example = _stat_example.format(
     func="max", stairs1="s1", result1="1", stairs2="s3.clip(2,4)", result2="1.0",
 )
 integral_example = _stat_example.format(

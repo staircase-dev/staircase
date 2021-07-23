@@ -166,7 +166,7 @@ class Stairs:
     def value_sums(self):
         return stats.value_sums(self)
 
-    @Appender(stats.docstrings.max_example, join="\n", indents=1)
+    @Appender(stats.docstrings.simple_max_example, join="\n", indents=2)
     def max(self):
         """
         The maximum of the step function.
@@ -182,7 +182,7 @@ class Stairs:
         """
         return stats.max(self)
 
-    @Appender(stats.docstrings.min_example, join="\n", indents=1)
+    @Appender(stats.docstrings.simple_min_example, join="\n", indents=2)
     def min(self):
         """
         The minimum of the step function.

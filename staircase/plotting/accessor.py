@@ -35,7 +35,7 @@ class PlotAccessor:
 
     def ecdf(self, backend="matplotlib", **kwargs):
         if backend == "matplotlib":
-            return plot_matplotlib(self._dist().get_ecdf(), **kwargs)
+            return plot_matplotlib(self._dist().ecdf, **kwargs)
         else:
             raise ValueError(f"Plotting backend {backend} not defined for ecdf")
 
