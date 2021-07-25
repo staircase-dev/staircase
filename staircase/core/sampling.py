@@ -16,28 +16,23 @@ def sample(self, x, include_index=False):
     """
     Evaluates the value of the step function at one, or more, points.
 
-    The results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
-    or :math:`\\lim_{x \\to z^{+}} f(x)`, when side = 'left' or how = 'right' respectively. See
-    :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
-
     The function can be called using parentheses.  See example below.
 
     Parameters
     ----------
     x : int, float or vector data
         Values at which to evaluate the function
-    side : {'left', 'right'}, default 'right'
-        If points where step changes occur do not coincide with x then this parameter
-        has no effect.  Where a step change occurs at a point given by x, this parameter
-        determines if the step function is evaluated at the interval to the left, or the right.
+    include_index : bool, default False
+        Indicates if the values returned should be a :class:`numpy.ndarray`, or in a :class:`pandas.Series`
+        indexed by the values in *x*
 
     Returns
     -------
-    float, or numpy array of floats
+    float, :class:`numpy.ndarray`, :class:`pandas.Series`
 
     See Also
     --------
-    Stairs.cut
+    Stairs.limit
     staircase.sample
     """
     side = "right" if self._closed == "left" else "left"
@@ -55,13 +50,11 @@ def sample(self, x, include_index=False):
 @Appender(examples.limit_example, join="\n", indents=1)
 def limit(self, x, side, include_index=False):
     """
-    Evaluates the value of the step function at one, or more, points.
+    Evaluates the limit of the step function as it approaches one, or more, points.
 
     The results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
     or :math:`\\lim_{x \\to z^{+}} f(x)`, when side = 'left' or how = 'right' respectively. See
     :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
-
-    The function can be called using parentheses.  See example below.
 
     Parameters
     ----------
@@ -71,14 +64,17 @@ def limit(self, x, side, include_index=False):
         If points where step changes occur do not coincide with x then this parameter
         has no effect.  Where a step change occurs at a point given by x, this parameter
         determines if the step function is evaluated at the interval to the left, or the right.
+    include_index : bool, default False
+        Indicates if the values returned should be a :class:`numpy.ndarray`, or in a :class:`pandas.Series`
+        indexed by the values in *x*
 
     Returns
     -------
-    float, or numpy array of floats
+    float, :class:`numpy.ndarray`, :class:`pandas.Series`
 
     See Also
     --------
-    Stairs.cut
+    Stairs.sample
     staircase.sample
     """
     assert side in ("left", "right")
@@ -99,9 +95,6 @@ def limit(self, x, side, include_index=False):
     if include_index:
         values = pd.Series(values, index=passed_x)
     return values
-
-
-# TODO: remove cut and agg and resample docstrings
 
 
 def add_methods(cls):

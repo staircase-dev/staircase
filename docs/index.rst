@@ -1,4 +1,4 @@
-.. image:: img/staircasewide.png
+.. image:: img/staircase.png
    :width: 80%
    :alt: staircase logo
    :align: center
@@ -24,13 +24,11 @@ Contents
 .. toctree::
    :maxdepth: 2
    
-   install.rst
-   getting_started.rst
-   resources.rst
-   api.rst 
-   contributing.rst
-
-   changelog
+   getting_started/index.rst
+   resources/index.rst
+   reference/index.rst
+   development/index.rst
+   release_notes/index.rst
 
 
 Indices and tables

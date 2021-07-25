@@ -52,7 +52,28 @@ def _layer_scalar(self, start, end, value):
     return self
 
 
+@Appender(examples.layer_example, join="\n", indents=1)
 def layer(self, start=None, end=None, value=None, data=None):
+    """
+    Changes the values of the step function, in place, by 'layering' intervals.
+
+    #TODO : needs more
+
+    Parameters
+    ----------
+    start : int, float, array-like or string, optional
+        Start time(s) of the interval(s)
+    end : int, float, array-like or string, optional
+        End time(s) of the interval(s)
+    value : int, float, array-like or string, optional
+        Value(s) of the interval(s)
+    data : :class:`pandas.DataFrame`, optional
+
+    Returns
+    -------
+    :class:`Stairs`
+        The current instance is returned to facilitate method chaining
+    """
     if self._data is None and np.isnan(self.initial_value):
         return self
     self._clear_cache()

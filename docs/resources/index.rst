@@ -31,16 +31,6 @@ The tutorials linked below were introduced in the PyConline AU talk, but have si
 
 Live versions of these tutorials can also be accessed through `binder <https://mybinder.org/v2/gh/venaturum/staircase/CondaBuild?filepath=docs%2Fexamples/>`_.
 
-.. toctree::
-   :maxdepth: 1
-
-   examples/Staircase Basics
-   examples/Case Study Maintenance Schedule
-   examples/Case Study Queue Analysis
-   examples/Case Study Asset Utilisation
-   examples/Case Study State Machine
-   examples/Case Study Hotel Stays
-
 
 Test data
 =========================
@@ -54,12 +44,11 @@ Ready to give **staircase** a spin?  Need some data?  The :func:`staircase.make_
    >>> dataframe_dates = sc.make_test_data(dates=True)
 	   
 	   
-.. _resources.articles:
-
-Articles
-=========================
-
 .. toctree::
-   :maxdepth: 1
-   
-   articles/timezones
+    :maxdepth: 1
+    :hidden:
+
+    videos
+    tutorials
+    articles
+    test_data

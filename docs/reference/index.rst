@@ -8,4 +8,4 @@ API reference
    :maxdepth: 2
 
    Stairs
-   module_funcs
+   arrays

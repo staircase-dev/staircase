@@ -1,11 +1,12 @@
 ipykernel
 sphinx
 nbsphinx
+sphinx-panels
 matplotlib
 pandas
 numpy
 seaborn
 pytz
-Pygments==2.6.1
-guzzle_sphinx_theme
+Pygments
+pydata-sphinx-theme
 toml

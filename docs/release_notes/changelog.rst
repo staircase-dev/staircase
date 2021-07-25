@@ -1,11 +1,31 @@
+.. _release_notes.changelog:
+
+
 =========
 Changelog
 =========
 
-v1.7.0
+
+v1.6.6 2021-07-06
+
+- workaround for groupby bug in pandas 1.3.0 (GH42395)
+
+
+v1.6.5 2021-06-14
+
+- bugfix for :meth:`staircase_one.Stairs.mode`
+
+
+v1.6.4 2021-03-16
+
+- bugfix for broken functionality for multiplication, or division, of staircase.Stairs with a number
+
+
+v1.6.3 2021-02-26
 
 - bugfix for missing *lower_how* and *upper_how* parameters in :meth:`staircase.Stairs.resample`
-
+- renamed Stairs._values to avoid error when performing Series.groupby.sum in pandas>=1.2
+ 
 
 v1.6.2 2020-01-13
 

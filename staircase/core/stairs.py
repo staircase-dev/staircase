@@ -142,6 +142,10 @@ class Stairs:
         return self._data["value"]
 
     @property
+    def closed(self):
+        return self._closed
+
+    @property
     def dist(self):
         return self._get_dist()
 
@@ -162,9 +166,6 @@ class Stairs:
 
     def quantiles(self, n):
         return self.dist.quantiles(n)
-
-    def value_sums(self):
-        return stats.value_sums(self)
 
     @Appender(stats.docstrings.simple_max_example, join="\n", indents=2)
     def max(self):

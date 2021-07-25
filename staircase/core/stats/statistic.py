@@ -13,7 +13,6 @@ from staircase.util import _get_lims, _replace_none_with_infs
 from staircase.util._decorators import Appender
 
 
-# TODO: what's new
 def _cache_integral_and_mean(self):
     if self._data is None or len(self._data) < 2:
         self._integral_and_mean = 0, np.nan  # TODO: is zero right here?  ?
