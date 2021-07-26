@@ -32,4 +32,3 @@ def add_methods(cls):
     cls.mode = mode
     cls.std = std
     cls.var = var
-

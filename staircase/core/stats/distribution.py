@@ -62,34 +62,46 @@ class ECDF(sc.core.stairs.Stairs):
         # ecdf_deltas = pd.Series(widths).groupby(heights).sum().rename("delta")
         ecdf_deltas = stairs.value_sums(dropna=True).rename("delta")
         deltas_sum = ecdf_deltas.sum()
-        normalized_deltas = ecdf_deltas / deltas_sum
+        normalized_probability_deltas = ecdf_deltas / deltas_sum
 
         ecdf = ECDF.new(
-            initial_value=0, data=normalized_deltas.to_frame(), closed="left"
+            initial_value=0,
+            data=normalized_probability_deltas.to_frame(),
+            closed="left",
         )
-        ecdf._denormalize_factor = deltas_sum
+        ecdf._denormalize_probability_factor = deltas_sum
         return ecdf
 
-    def hist(self, x="unit", closed="left", normalize=False):
+    def hist(self, bins="unit", closed="left", stat="sum"):
 
         step_points = self.step_points
-        if isinstance(x, str) and x == "unit":
+        if isinstance(bins, str) and bins == "unit":
             round_func = math.floor if closed == "left" else math.ceil
-            x = range(
+            bins = range(
                 round_func(min(step_points)) - (closed == "right"),
                 round_func(max(step_points)) + (closed == "left") + 1,
             )
 
-        if not isinstance(x, pd.IntervalIndex):
-            x = pd.IntervalIndex.from_breaks(x, closed=closed)
+        if not isinstance(bins, pd.IntervalIndex):
+            bins = pd.IntervalIndex.from_breaks(bins, closed=closed)
 
-        values = self.limit(x.right, side=closed) - self.limit(x.left, side=closed)
-        if not normalize:
-            values = values * self._denormalize_factor
+        values = self.limit(bins.right, side=bins.closed) - self.limit(
+            bins.left, side=bins.closed
+        )
+
+        # inspired by seaborn.histplot
+        if stat != "probability":
+            values = values * self._denormalize_probability_factor
+            if stat in ("frequency", "density"):
+                widths = bins.map(lambda i: i.right - i.left)
+                if stat == "frequency":
+                    values = values / widths
+                elif stat == "density":
+                    values = values / np.dot(values, widths)
 
         return pd.Series(
             data=values,
-            index=x,
+            index=bins,
             # dtype="float64",
         )
 
@@ -108,8 +120,8 @@ class Dist:
         self._stairs = stairs
         self._ecdf = ECDF.from_stairs(stairs)
 
-    def hist(self, x="unit", closed="left", normalize=False):
-        return self._ecdf.hist(x, closed, normalize)
+    def hist(self, bins="unit", closed="left", stat="sum"):
+        return self._ecdf.hist(bins, closed, stat)
 
     def _create_fractiles(self):
         self._fractiles = Fractiles.from_ecdf(self._ecdf)

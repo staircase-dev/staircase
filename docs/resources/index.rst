@@ -6,8 +6,6 @@ Learning resources
 
 Below are a variety of resources to help with learning how to use the staircase package.  If you have a question please post to `Stack Overflow <https://stackoverflow.com/>`_ and use the tag **staircase**.
 
-.. _resources.pyconline_video:
-
 PyConline AU talk
 =========================
 
@@ -21,8 +19,6 @@ Watch the pre-recorded presentation below (`description here <https://2020.pycon
         <iframe src="https://www.youtube.com/embed/CS1dZ-01b-Q" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
     </div>
 
-
-.. _resources.tutorials:
 
 Tutorials
 =========================

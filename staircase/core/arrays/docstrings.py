@@ -28,7 +28,7 @@ Examples
     :context: close-figs
 
     >>> stair_list = [{plots}]
-    >>> fig, axes = plt.subplots(nrows=1, ncols={ncols}, figsize=(17,5), sharey=True, sharex=True)
+    >>> fig, axes = plt.subplots(nrows=1, ncols={ncols}, figsize=(8,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
     >>> for ax, title, stair_instance in zip(axes, ({plot_titles}), stair_list):
     ...     stair_instance.plot(ax=ax)
     ...     ax.set_title(title)

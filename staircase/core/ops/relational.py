@@ -57,17 +57,50 @@ def _make_relational_func(
 # TODO: test
 # TODO: what's new
 def identical(self, other):
+    """
+    A boolean comparison for Stairs instances.
+
+    Returns True if and only if *self* and *other* represent identical step functions.
+
+    Parameters
+    ----------
+    other :  int, float, or :class:`Stairs`
+
+    Returns
+    -------
+    boolean
+
+    Examples
+    --------
+
+    >>> s1.identical(s1)
+    True
+
+    >>> s1.identical(s1.copy())
+    True
+
+    >>> s1.identical(s1.copy().layer(1,2))
+    False
+
+    >>> sc.Stairs(initial_value = 3).identical(3)
+    True
+
+    >>> sc.Stairs(initial_value = np.nan).identical(np.nan)
+    True
+    """
     self, other = _sanitize_binary_operands(self, other)
-    if self.initial_value != other.initial_value:
+    if (self.initial_value != other.initial_value) and not (
+        np.isnan(self.initial_value) and np.isnan(other.initial_value)
+    ):
         return False
     elif self._data is None and other._data is None:
         return True
     elif self._data is None or other._data is None:
         return False
     elif self._valid_values and other._valid_values:
-        return pd.Series.eq(self._data["value"], other._data["value"]).all()
+        return pd.Series.equals(self._data["value"], other._data["value"]).all()
     else:
-        return pd.Series.eq(self._get_deltas(), other._get_deltas()).all()
+        return pd.Series.equals(self._get_deltas(), other._get_deltas()).all()
 
 
 # TODO: docstring

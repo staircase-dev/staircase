@@ -26,6 +26,9 @@ Examples
     >>> {stairs1}.{func}()
     {result1}
 
+.. plot::
+    :context: close-figs
+
     >>> {stairs2}.plot()
     >>> {stairs2}.{func}()
     {result2}
@@ -181,19 +184,22 @@ Examples
 
     >>> s1.plot()
 
-    >>> s1.value_sums()
-    -1    1
-    0    1
-    1    2
-    dtype: int64
+>>> s1.value_sums()
+-1    1
+ 0    1
+ 1    2
+dtype: int64
+
+.. plot::
+    :context: close-figs
 
     >>> s3.plot()
 
     >>> s3.value_sums(dropna=False)
     -1.0    1.0
-    0.0    0.5
-    1.0    1.5
-    NaN    1.0
+     0.0    0.5
+     1.0    1.5
+     NaN    1.0
     dtype: float64
 """
 
@@ -211,7 +217,7 @@ where : tuple or list of length two, optional
 closed: {{'both', 'left', 'right', 'neither'}}, optional
     Indicates whether the interval defined by *where* is closed on both sides, left-closed,
     right-closed, or neither.  Default value is taken from the *closed* attribute of the step function.
-    The default values will be used if *closed=None* is used. 
+    The default values will be used if *closed=None* is used.
 
 Returns
 -------
@@ -232,14 +238,14 @@ Examples
 
     >>> s1.plot()
 
-    >>> s1.values_in_range()
-    array([-1,  0,  1], dtype=int64)
+>>> s1.values_in_range()
+array([-1,  0,  1], dtype=int64)
 
-    >>> s1.values_in_range((1,4))
-    array([0,  1], dtype=int64)
+>>> s1.values_in_range((1,4))
+array([0,  1], dtype=int64)
 
-    >>> s1.values_in_range((1,4), closed='both')
-    array([-1,  0,  1], dtype=int64)
+>>> s1.values_in_range((1,4), closed='both')
+array([-1,  0,  1], dtype=int64)
 """
 
 min_example = """
@@ -251,14 +257,14 @@ Examples
     >>> from staircase.api import min
     >>> s1.plot()
 
-    >>> min(s1)
-    -1
+>>> min(s1)
+-1
 
-    >>> min(s1, (1,4))
-    0
+>>> min(s1, (1,4))
+0
 
-    >>> min(s1, where=(1,4), closed='both')
-    -1
+>>> min(s1, where=(1,4), closed='both')
+-1
 """
 
 max_example = """
@@ -270,14 +276,14 @@ Examples
     >>> from staircase.stairs import max
     >>> s1.plot()
 
-    >>> max(s1)
-    -1
+>>> max(s1)
+-1
 
-    >>> max(s1, (4,5))
-    0
+>>> max(s1, (4,5))
+0
 
-    >>> max(s1, where=(4,5), closed='both')
-    0
+>>> max(s1, where=(4,5), closed='both')
+0
 """
 
 
@@ -314,38 +320,40 @@ Examples
 
     >>> s1.plot()
 
-.. plot::
-    :context: close-figs
+>>> s1.hist()
+[-1, 0)    1.0
+[0, 1)     1.0
+[1, 2)     2.0
+dtype: float64
 
-    >>> s1.hist()
-    [-1, 0)    0.25
-    [0, 1)     0.25
-    [1, 2)     0.50
-    dtype: float64
+>>> s1.hist(closed="right")
+(-2, -1]    1.0
+(-1, 0]     1.0
+(0, 1]      2.0
+dtype: float64
 
-    >>> s1.hist(closed='right')
-    (-2, -1]    0.25
-    (-1, 0]     0.25
-    (0, 1]      0.50
-    dtype: float64
+>>> s1.hist(bins=[-1,1,2])
+[-1, 1)    2.0
+[1, 2)     2.0
+dtype: float64
 
-    >>> s1.hist(where=(2, 4.5))
-    [-1, 0)    0.2
-    [0, 1)     0.4
-    [1, 2)     0.4
-    dtype: float64
+>>> s1.hist(bins=[-1,1,2], stat="frequency")
+[-1, 1)    1.0
+[1, 2)     2.0
+dtype: float64
 
-    >>> s1.hist(x=(-1,1,3))
-    [-1, 1)    0.5
-    [1, 3)     0.5
-    dtype: float64
+>>> s1.hist(bins=[-1,1,2], stat="density")
+[-1, 1)    0.333333
+[1, 2)     0.333333
+dtype: float64
 
-    >>> s1.hist(x=(-1, 1))
-    [-1, 1)    0.5
-    dtype: float64
+>>> s1.hist(bins=[-1,1,2], stat="probability")
+[-1, 1)    0.5
+[1, 2)     0.5
+dtype: float64
 """
 
-ecdf_stairs_example = """
+ecdf_example = """
 Examples
 --------
 
@@ -363,18 +371,17 @@ Examples
     >>> s2.ecdf.plot()
     >>> plt.show()
 
+>>> print(f'{ecdf(0):.2%} of values for s2 are less than or equal to 0')
+75.00% of values, for s2 between 1 and 5, are less than or equal to 0
 
-    >>> print(f'{ecdf(0):.2%} of values for s2 are less than or equal to 0')
-    75.00% of values, for s2 between 1 and 5, are less than or equal to 0
+>>> print(f'{ecdf(0, how="left"):.2%} of values for s2 are strictly less than 0')
+50.00% of values, for s2 between 1 and 5, are strictly less than 0
 
-    >>> print(f'{ecdf(0, how="left"):.2%} of values for s2 are strictly less than 0')
-    50.00% of values, for s2 between 1 and 5, are strictly less than 0
+>>> print(f'{ecdf(0.2) - ecdf(-1):.2%} of values for s2 are in (-1, 0.2]')
+25.00% of values, for s2 between 1 and 5, are in (-1, 0.2]
 
-    >>> print(f'{ecdf(0.2) - ecdf(-1):.2%} of values for s2 are in (-1, 0.2]')
-    25.00% of values, for s2 between 1 and 5, are in (-1, 0.2]
-
-    >>> print(f'{ecdf(0.2, how="left") - ecdf(-1, how="left"):.2%} of values for s2 are in [-1, 0.2)')
-    75.00% of values, for s2 between 1 and 5, are in [-1, 0.2)
+>>> print(f'{ecdf(0.2, how="left") - ecdf(-1, how="left"):.2%} of values for s2 are in [-1, 0.2)')
+75.00% of values, for s2 between 1 and 5, are in [-1, 0.2)
 """
 
 # ecdf_stairs_example = """

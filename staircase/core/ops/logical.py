@@ -135,5 +135,5 @@ logical_or = _make_logical_func(
 # TODO: test
 # TODO: what's new
 logical_xor = _make_logical_func(
-    docstrings.logical_or_docstring, np.logical_xor, scalar_xor
+    docstrings.logical_xor_docstring, np.logical_xor, scalar_xor
 )

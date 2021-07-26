@@ -55,19 +55,29 @@ def _layer_scalar(self, start, end, value):
 @Appender(examples.layer_example, join="\n", indents=1)
 def layer(self, start=None, end=None, value=None, data=None):
     """
-    Changes the values of the step function, in place, by 'layering' intervals.
+    Changes the values of the step function, in place, by 'layering' one or more intervals.
 
-    #TODO : needs more
+    The values of *start*, *end* and *value* parameters can be one of several types.
+    If any of these is a string, then it is expected that *data* is a :class:`pandas.DataFrame`
+    and the string is the name of a column in the dataframe.
+
+    If either *start*, or *end* evaluate to an array-like parameter then all of
+    *start*, *end*, and *value* will be broadcast to the same length as the longest of these arrays.
 
     Parameters
     ----------
-    start : int, float, array-like or string, optional
-        Start time(s) of the interval(s)
-    end : int, float, array-like or string, optional
-        End time(s) of the interval(s)
-    value : int, float, array-like or string, optional
-        Value(s) of the interval(s)
+    start : scalar, array-like or string, default None
+        Start point(s) of the interval(s).
+        A value of None is interpreted as negative infinity.
+    end : scalar, array-like or string, default None
+        End points(s) of the interval(s).
+        A value of None is interpreted as positive infinity.
+    value : float, array-like or string, default None
+        Value(s) of the interval(s).
+        A value of None is equivalent to a value of 1.
     data : :class:`pandas.DataFrame`, optional
+        A dataframe containing named columns, whose names may appear as values
+        for the other parameters.
 
     Returns
     -------

@@ -214,7 +214,7 @@ def cov(self, other, where=(-inf, inf), lag=0, clip="pre"):
     lag : int, float, pandas.Timedelta
         A pandas.Timedelta is only valid when domain is date-like.
     clip : {'pre', 'post'}, default 'pre'
-        Only relevant when lag is non-zero.  Determines if the domain is applied before or 
+        Only relevant when lag is non-zero.  Determines if the domain is applied before or
         after *other* is translated.  If 'pre' then the domain over which the calculation
         is performed is the overlap of the original domain and the translated domain.
 
@@ -265,7 +265,7 @@ def corr(self, other, where=(-inf, inf), lag=0, clip="pre"):
     lag : int, float, pandas.Timedelta
         A pandas.Timedelta is only valid when domain is date-like.
     clip : {'pre', 'post'}, default 'pre'
-        Only relevant when lag is non-zero.  Determines if the domain is applied before or 
+        Only relevant when lag is non-zero.  Determines if the domain is applied before or
         after *other* is translated.  If 'pre' then the domain over which the calculation
         is performed is the overlap of the original domain and the translated domain.
 

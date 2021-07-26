@@ -10,10 +10,10 @@ modelling step functions. See :ref:`Getting Started <getting_started>` for more 
 import numpy as np
 import pandas as pd
 
-from staircase import plotting
+from staircase import docstrings, plotting
 from staircase.constants import inf
 from staircase.core import stats
-from staircase.docstrings import examples
+from staircase.plotting import docstrings as plot_docstrings
 from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
 
@@ -37,21 +37,15 @@ def _make_vals_from_deltas(init_val, deltas):
     return deltas.cumsum() + base
 
 
+# @Appender(docstrings.Stairs_docstring, join="\n", indents=1)
 class Stairs:
-    """
-    An instance of a Stairs class is used to represent a :ref:`step function <getting_started.step_function>`.
-
-    The Stairs class encapsulates a `SortedDict <http://www.grantjenks.com/docs/sortedcontainers/sorteddict.html>`_
-    which is used to hold the points at which the step function changes, and by how much.
-
-    See the :ref:`Stairs API <api.Stairs>` for details of methods.
-    """
 
     class_name = "Stairs"
 
     # TODO: docstring
     # TODO: test
     # TODO: what's new
+    @Appender(docstrings.Stairs_docstring, join="\n", indents=2)
     def __init__(
         self,
         frame=None,
@@ -61,24 +55,6 @@ class Stairs:
         initial_value=0,
         closed="left",
     ):
-        """
-        Initialise a Stairs instance.
-
-        Parameters
-        ----------
-        frame : :class:`pandas.DataFrame`, optional
-            A long-form collection of vectors that can be assigned to named variables
-        init_value : float, default 0
-            The value of the step function at negative infinity.
-
-        Returns
-        -------
-        :class:`Stairs`
-
-        See Also
-        --------
-        Stairs.layer
-        """
         assert frame is None or isinstance(frame, pd.DataFrame)
         self._data = None
         self._valid_deltas = False
@@ -150,7 +126,22 @@ class Stairs:
         return self._get_dist()
 
     @property
+    @Appender(stats.docstrings.ecdf_example, join="\n", indents=2)
     def ecdf(self):
+        """
+        Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_
+        for the corresponding step function values.
+
+        Returns
+        -------
+        :class:`ECDF`
+
+        See Also
+        --------
+        Stairs.hist
+        Stairs.percentile
+        Stairs.fractile
+        """
         return self.dist.ecdf
 
     @property
@@ -161,8 +152,33 @@ class Stairs:
     def percentile(self):
         return self.dist.percentile
 
-    def hist(self, x="unit", closed="left", normalize=False):
-        return self.dist.hist(x=x, closed=closed, normalize=normalize)
+    @Appender(stats.docstrings.hist_example, join="\n", indents=2)
+    def hist(self, bins="unit", closed="left", stat="sum"):
+        """
+        Calculates histogram data for the corresponding step function values
+
+        Parameters
+        ----------
+        bins : "unit", sequence or :class:`pandas.IntervalIndex`
+            If *bins* is "unit" then the histogram bins will have unit length and cover the range
+            of step function values.  If *bins* is a sequence, it defines a monotonically
+            increasing array of bin edges.  If *bins* are defined by :class:`pandas.IntervalIndex`
+            they should be non-overlapping and monotonic increasing.
+        closed : {"left", "right"}, default "left"
+            Indicates whether the histogram bins are left-closed right-open
+            or right-closed left-open. Only relevant when *bins* is not a :class:`pandas.IntervalIndex`
+        stat : {"sum", "frequency", "density", "probability"}, default "sum"
+            The aggregate statistic to compute in each bin.  Inspired by :meth:`seaborn.histplot` stat parameter.
+            - ``sum`` the magnitude of observations
+            - ``frequency`` values of the histogram are divided by the corresponding bin width
+            - ``density`` normalises values of the histogram so that the area is 1
+            - ``probability`` normalises values so that the histogram values sum to 1
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+        """
+        return self.dist.hist(bins=bins, closed=closed, stat=stat)
 
     def quantiles(self, n):
         return self.dist.quantiles(n)
@@ -200,6 +216,7 @@ class Stairs:
         return stats.min(self)
 
     @property
+    @Appender(plot_docstrings.matplotlib_docstring, join="\n", indents=2)
     def plot(self):
         return self._get_plot()
 
@@ -209,7 +226,7 @@ class Stairs:
     @property
     def step_changes(self):  # TODO: alias as deltas?
         """
-        Returns a pandas Series of key, value pairs of indicating where step changes occur in the step function, and the change in value
+        A pandas Series of key, value pairs of indicating where step changes occur in the step function, and the change in value
 
         Returns
         -------
@@ -240,13 +257,6 @@ class Stairs:
     # TODO: test
     # TODO: what's new
     @property
-    def step_values(self):  # TODO: new in v2.0, needs docstring
-        return self._get_values().copy()
-
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
-    @property
     def step_points(self):
         if self._data is None:
             return np.array([])
@@ -255,7 +265,7 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
-    @Appender(examples.number_of_steps_example, join="\n", indents=2)
+    @Appender(docstrings.examples.number_of_steps_example, join="\n", indents=2)
     @property
     def number_of_steps(self):
         """
@@ -308,14 +318,9 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
-    def copy(self):  # , deep=None):
+    def copy(self):
         """
         Returns a deep copy of this Stairs instance
-
-        Parameters
-        ----------
-        deep : None
-            Dummy parameter to keep pandas satisfied.
 
         Returns
         -------
@@ -342,7 +347,7 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
-    @Appender(examples.describe_example, join="\n", indents=2)
+    @Appender(docstrings.examples.describe_example, join="\n", indents=2)
     def describe(self, where=(-inf, inf), percentiles=(25, 50, 75)):
         """
         Generate descriptive statistics for the step function values over a specified domain.
@@ -382,7 +387,7 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
-    @Appender(examples.shift_example, join="\n", indents=2)
+    @Appender(docstrings.examples.shift_example, join="\n", indents=2)
     def shift(self, delta):
         """
         Returns a stairs instance corresponding to a horizontal translation by delta
@@ -414,7 +419,7 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
-    @Appender(examples.diff_example, join="\n", indents=2)
+    @Appender(docstrings.examples.diff_example, join="\n", indents=2)
     def diff(self, delta):
         """
         Returns a stairs instance corresponding to the difference between the step function corresponding to *self*
@@ -439,7 +444,7 @@ class Stairs:
     # TODO: docstring
     # TODO: test
     # TODO: what's new
-    @Appender(examples.rolling_mean_example, join="\n", indents=2)
+    @Appender(docstrings.examples.rolling_mean_example, join="\n", indents=2)
     def rolling_mean(self, window=(0, 0), where=(-inf, inf)):
         """
         Returns coordinates defining rolling mean
@@ -454,9 +459,6 @@ class Stairs:
         These two numbers are the distance from the focal point to the left boundary of the window, and the right boundary
         of the window respectively.  This allows for trailing windows, leading windows and everything between
         (including a centred window).
-
-        If *lower* or *upper* is specified then only coordinates corresponding to windows contained within
-        [lower, upper] are included.
 
         Parameters
         ----------
@@ -507,6 +509,22 @@ class Stairs:
         Returns
         -------
         :class:`pandas.DataFrame`
+
+        Examples
+        --------
+
+        .. plot::
+            :context: close-figs
+
+            >>> s1.plot()
+
+        >>> s1.to_frame()
+        0  -inf    1      0
+        1     1    2      1
+        2     2    3      0
+        3     3    4      1
+        4     4    5     -1
+        5     5  inf      0
         """
         if self._data is None:
             starts = [-inf]

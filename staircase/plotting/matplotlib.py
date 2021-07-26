@@ -2,6 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pandas.plotting import register_matplotlib_converters
 
+from staircase.util._decorators import Appender
+
+from . import docstrings
+
 
 def _draw_arrows(frame, ax, color, linewidth, **kwargs):
 
@@ -46,28 +50,20 @@ def _draw_arrows(frame, ax, color, linewidth, **kwargs):
 def _plot_matplotlib_steps(frame, ax, **kwargs):
     frame.loc[0, "start"] = frame.loc[0, "end"]
 
-    ax.step(
-        frame["start"], frame["value"], where="post", **kwargs,
-    )
+    return ax.step(frame["start"], frame["value"], where="post", **kwargs,)
 
 
 def _plot_matplotlib_hlines(frame, ax, **kwargs):
     plot_data = frame.iloc[1:-1].query("value.notnull()")
 
-    ax.hlines(
+    return ax.hlines(
         plot_data["value"], plot_data["start"], plot_data["end"], **kwargs,
     )
 
 
+@Appender(docstrings.matplotlib_docstring, join="\n", indents=1)
 def plot(
-    self,
-    ax=None,
-    style="step",
-    arrows=False,
-    # color="blue",
-    linewidth=1,
-    arrow_kwargs={},
-    **kwargs
+    self, ax=None, style="step", arrows=False, linewidth=1, arrow_kwargs=None, **kwargs
 ):
     assert style in ("step", "hlines")
     register_matplotlib_converters()
@@ -76,9 +72,13 @@ def plot(
         _, ax = plt.subplots()
     frame = self.to_frame()
     if style == "step":
-        _plot_matplotlib_steps(frame, ax=ax, linewidth=linewidth, **kwargs)
+        lines = _plot_matplotlib_steps(frame, ax=ax, linewidth=linewidth, **kwargs)
+        color = lines[0].get_color()
     else:
-        _plot_matplotlib_hlines(frame, ax=ax, linewidth=linewidth, **kwargs)
+        lines = _plot_matplotlib_hlines(frame, ax=ax, linewidth=linewidth, **kwargs)
+        color = lines.get_color()
     if arrows or style == "hlines":
-        _draw_arrows(frame, ax, linewidth, **arrow_kwargs)
+        if arrow_kwargs is None:
+            arrow_kwargs = {}
+        _draw_arrows(frame, ax, color, linewidth, **arrow_kwargs)
     return ax

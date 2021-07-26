@@ -10,7 +10,7 @@ Constructor & basic methods
 .. autosummary::
    :toctree: api/
 
-   Stairs
+   Stairs.__init__
    Stairs.copy
    Stairs.plot
    Stairs.sample
@@ -66,9 +66,9 @@ Logical operators
    Stairs.logical_and
    Stairs.logical_or
    Stairs.logical_xor
-   Stairs.rlogical_and
-   Stairs.rlogical_or
-   Stairs.rlogical_xor
+   Stairs.logical_rand
+   Stairs.logical_ror
+   Stairs.logical_rxor
 
 .. _api.statistical_operators:
 

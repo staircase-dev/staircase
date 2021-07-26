@@ -53,7 +53,7 @@ def limit(self, x, side, include_index=False):
     Evaluates the limit of the step function as it approaches one, or more, points.
 
     The results of this function should be considered as :math:`\\lim_{x \\to z^{-}} f(x)`
-    or :math:`\\lim_{x \\to z^{+}} f(x)`, when side = 'left' or how = 'right' respectively. See
+    or :math:`\\lim_{x \\to z^{+}} f(x)`, when side = 'left' or side = 'right' respectively. See
     :ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
 
     Parameters

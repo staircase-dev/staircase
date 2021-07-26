@@ -52,11 +52,11 @@ extensions = [
     'sphinx.ext.autosummary', 
     'sphinx.ext.coverage', 
     'sphinx.ext.mathjax',
-    'sphinx.ext.napoleon',   
+    #'sphinx.ext.napoleon',   
     'matplotlib.sphinxext.plot_directive',  
     'sphinx.ext.extlinks',    
     #"sphinx.ext.linkcode",
-    #'numpydoc',  # handle NumPy documentation formatted docstrings]
+    'numpydoc',  # handle NumPy documentation formatted docstrings]
     'nbsphinx',
     "sphinx_panels",
 ]
@@ -174,7 +174,7 @@ html_theme_options = {
 }
 
 
-html_logo = 'img/staircasewide.png'
+html_logo = "img/staircase-wide-transparent.svg"
 html_favicon = "img/favicon.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,

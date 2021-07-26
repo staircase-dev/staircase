@@ -8,7 +8,7 @@ class PlotAccessor:
     def _dist(self):
         return self._stairs.dist
 
-    def __call__(self, backend="matplotlib", **kwargs):
+    def __call__(self, *args, backend="matplotlib", **kwargs):
         """
         Makes a step plot representing the finite intervals belonging to the Stairs instance.
 
@@ -29,7 +29,7 @@ class PlotAccessor:
         if self._stairs._data is None:
             return
         if backend == "matplotlib":
-            return plot_matplotlib(self._stairs, **kwargs)
+            return plot_matplotlib(self._stairs, *args, **kwargs)
         else:
             raise Exception
 
@@ -40,7 +40,7 @@ class PlotAccessor:
             raise ValueError(f"Plotting backend {backend} not defined for ecdf")
 
 
-def _get_plot(self):
+def _get_plot(self, **kwargs):
     if self._plot is None:
-        self._plot = PlotAccessor(self)
+        self._plot = PlotAccessor(self, **kwargs)
     return self._plot

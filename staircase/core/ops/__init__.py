@@ -9,11 +9,11 @@ from staircase.core.ops.logical import (
 from staircase.core.ops.masking import clip, fillna, isna, mask, notnull, where
 from staircase.core.ops.relational import eq, ge, gt, identical, le, lt, ne
 from staircase.core.ops.rops import (
+    logical_rand,
+    logical_ror,
+    logical_rxor,
     radd,
     rdivide,
-    rlogical_and,
-    rlogical_or,
-    rlogical_xor,
     rmultiply,
     rsubtract,
 )
@@ -69,14 +69,15 @@ def add_operations(cls):
     cls.rdivide = rdivide
     cls.rmultiply = rmultiply
     cls.rsubtract = rsubtract
-    cls.rlogical_and = rlogical_and
-    cls.rlogical_or = rlogical_or
-    cls.rlogical_xor = rlogical_xor
+    cls.logical_rand = logical_rand
+    cls.logical_ror = logical_ror
+    cls.logical_rxor = logical_rxor
 
     cls.__radd__ = radd
-    cls.__rdiv__ = rdivide
+    # cls.__rdiv__ = rdivide
+    cls.__rtruediv__ = rdivide
     cls.__rmul__ = rmultiply
     cls.__rsub__ = rsubtract
-    cls.__rand__ = rlogical_and
-    cls.__ror__ = rlogical_or
-    cls.__rxor__ = rlogical_xor
+    cls.__rand__ = logical_rand
+    cls.__ror__ = logical_ror
+    cls.__rxor__ = logical_rxor
