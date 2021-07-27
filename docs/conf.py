@@ -52,6 +52,9 @@ extensions = [
     'sphinx.ext.autosummary', 
     'sphinx.ext.coverage', 
     'sphinx.ext.mathjax',
+    'sphinx.ext.intersphinx',
+    "IPython.sphinxext.ipython_directive",
+    "IPython.sphinxext.ipython_console_highlighting",
     #'sphinx.ext.napoleon',   
     'matplotlib.sphinxext.plot_directive',  
     'sphinx.ext.extlinks',    
@@ -80,6 +83,14 @@ suppress_warnings = [
 ]
 
 autosummary_generate = True
+
+# sphinx-panels shouldn't add bootstrap css since the pydata-sphinx-theme
+# already loads it
+panels_add_bootstrap_css = False
+
+# The name of the Pygments (syntax highlighting) style to use.
+pygments_style = "sphinx"
+
 
 master_doc = 'index'
 
@@ -150,11 +161,13 @@ def linkcode_resolve(domain, info):
 
 
 intersphinx_mapping = {
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "matplotlib": ("https://matplotlib.org/stable/", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
     "python": ("https://docs.python.org/3/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
     "statsmodels": ("https://www.statsmodels.org/devel/", None),
+    
 }
 
     

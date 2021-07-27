@@ -5,7 +5,7 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s3.plot()
+    >>> s3.plot(arrows=True)
 
 >>> s3(1.5)
 1
@@ -24,7 +24,7 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s3.plot()
+    >>> s3.plot(arrows=True)
 
 >>> s3.limit(2, side="left")
 1.0
@@ -49,7 +49,7 @@ Examples
     ...     sc.Stairs()
     ...     .layer(1,3)
     ...     .layer(4,5,-2)
-    ...     .plot()
+    ...     .plot(arrows=True)
     ... )
 
 .. plot::
@@ -70,7 +70,7 @@ Examples
     >>> (
     ...     sc.Stairs(initial_value=1.5)
     ...     .layer(data["starts"], data["ends"], data["values"])
-    ...     .plot()
+    ...     .plot(arrows=True)
     ... )
 
 .. plot::
@@ -85,13 +85,13 @@ Examples
     >>> data
     starts  ends  values
     0     1.0     3      -1
-    1     4.0     5       2
-    2     5.5     7      -3
+    1     4.0     5        2
+    2     5.5     7     -3
 
     >>> (
     ...     sc.Stairs(initial_value=1.5)
     ...     .layer("starts", "ends", "values", data=data)
-    ...     .plot()
+    ...     .plot(arrows=True)
     ... )
 """
 
@@ -102,14 +102,14 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s1.plot()
+    >>> s1.plot(arrows=True)
     >>> s1.number_of_steps
     5
 
 .. plot::
     :context: close-figs
 
-    >>> s3.plot()
+    >>> s3.plot(arrows=True)
     >>> s3.number_of_steps
     6
 """
@@ -121,14 +121,15 @@ Examples
 
 .. plot::
     :context: close-figs
+    :include-source: False
 
     >>> stair_list = [s2, s2.shift(1), s2.shift(-1)]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(8,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
     >>> for ax, title, stair_instance in zip(axes, ("s2", "s2.shift(1)", "s2.shift(-1)"), stair_list):
-    ...     stair_instance.plot(ax=ax, label=title)
+    ...     stair_instance.plot(ax=ax, label=title, arrows=True)
     ...     ax.set_title(title)
 
-Note that the definition of shift is designed to be consistent with :func:`pandas.Series.shift`
+Note that the definition of shift is designed to be consistent with :meth:`pandas.Series.shift`
 
 >>> pd.Series(s2(range(7)))
 0    0.5
@@ -167,16 +168,17 @@ Examples
 
 .. plot::
     :context: close-figs
+    :include-source: False
 
     >>> stair_list = [s2, s2.shift(1), s2.diff(1)]
     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(8,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
     >>> for ax, title, stair_instance in zip(axes, ("s2", "s2.shift(1)", "s2.diff(1)"), stair_list):
-    ...     stair_instance.plot(ax=ax, label=title)
+    ...     stair_instance.plot(ax=ax, label=title, arrows=True)
     ...     ax.set_title(title)
-    ... s2.plot(ax=axes[1], label="s2", linestyle="--")
+    ... s2.plot(ax=axes[1], label="s2", linestyle="--", arrows=True)
     ... axes[1].legend()
 
-Note that the definition of diff is designed to be consistent with :func:`pandas.Series.diff`
+Note that the definition of diff is designed to be consistent with :meth:`pandas.Series.diff`
 
 >>> pd.Series(s2(range(7)))
 0    0.5
@@ -216,7 +218,7 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s2.plot()
+    >>> s2.plot(arrows=True)
 
 >>> s2.describe()
 unique    3.000000
@@ -250,10 +252,11 @@ Examples
 
 .. plot::
     :context: close-figs
+    :include-source: False
 
     >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(7,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2"), (s1, s2)):
-    ...     stair_instance.plot(ax=ax, label=title)
+    ...     stair_instance.plot(ax=ax, label=title, arrows=True)
     ...     ax.set_title(title)
 
 >>> s1.cov(s2)
@@ -284,10 +287,11 @@ Examples
 
 .. plot::
     :context: close-figs
+    :include-source: False
 
     >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(7,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
     >>> for ax, title, stair_instance in zip(axes, ("s1", "s2"), (s1, s2)):
-    ...     stair_instance.plot(ax=ax, label=title)
+    ...     stair_instance.plot(ax=ax, label=title, arrows=True)
     ...     ax.set_title(title)
 
 >>> s1.corr(s2)

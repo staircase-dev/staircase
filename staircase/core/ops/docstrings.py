@@ -85,25 +85,26 @@ _plot_titles_map = {
 }
 
 _example = """
-Examples
---------
-
 .. plot::
     :context: close-figs
+    :include-source: False
 
+    {setup}
     >>> stair_list = [{plots}]
-    >>> fig, axes = plt.subplots(nrows=1, ncols={ncols},  figsize=(8,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
-    >>> for ax, title, stair_instance in zip(axes, ({plot_titles}), stair_list):
-    ...     stair_instance.plot(ax=ax)
+    >>> fig, axes = plt.subplots(nrows=1, ncols={ncols},  figsize=({width},3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+    >>> for ax, title, stair_instance in zip(axes, {plot_titles}, stair_list):
+    ...     stair_instance.plot(ax=ax, arrows=True)
     ...     ax.set_title(title)
 """
 
 
-def _gen_example(operation):
-    plot_titles = _plot_titles_map[operation]
+def _gen_example(plot_titles, setup=""):
+    # plot_titles is a list of strings
     ncols = len(plot_titles)
     plots = ", ".join(plot_titles)
-    return _example.format(plots=plots, ncols=ncols, plot_titles=plot_titles)
+    return _example.format(
+        plots=plots, ncols=ncols, plot_titles=plot_titles, setup=setup, width=ncols + 5,
+    )
 
 
 _arithmetic_binop_docstring_header = """
@@ -138,6 +139,8 @@ See Also
 --------
 {{see_also}}
 
+Examples
+--------
 {{example}}
 """
 
@@ -186,7 +189,7 @@ def _get_header(operation):
 def _gen_op_docstring(operation):
     symbol = _symbol_map[operation]
     see_also = _see_also_map[operation]
-    example = _gen_example(operation)
+    example = _gen_example(_plot_titles_map[operation])
 
     header = _get_header(operation)
     if operation in ("negate", "invert"):
@@ -264,9 +267,14 @@ Returns
 See Also
 --------
 Stairs.invert
+
+Examples
+--------
 """
 
-make_boolean_docstring = _make_boolean_docstring_body + _gen_example("make_boolean")
+make_boolean_docstring = _make_boolean_docstring_body + _gen_example(
+    ["s2", "s2.make_boolean()"]
+)
 
 
 clip_docstring = """
@@ -287,13 +295,183 @@ Returns
 Examples
 --------
 
-.. plot::
-    :context: close-figs
+{plot}
+>>> s1.clip(2,4).mean()
+0.5
+""".format(
+    plot=_gen_example(["s1", "s1.clip(2,4)"])
+)
 
-    >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12,5))
-    >>> s1.plot(ax=axes[0])
-    >>> s1.clip(2,4).plot(ax=axes[1])
-    >>> s1.clip(2,4).mean()
-    0.5
+# _mask_where_2_col_example = """
+# .. plot::
+#     :context: close-figs
 
+#     >>> masker = {masker}
+#     >>> stairs_list = [s2, s2.{func}(masker)]
+#     >>> fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(6,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+#     >>> for ax, title, stair_instance in zip(axes, ("s2", "s2.{func}(masker)"), stairs_list):
+#     ...     stair_instance.plot(ax=ax)
+#     ...     ax.set_title(title)
+# """
+
+# _mask_where_3_col_example = """
+# .. plot::
+#     :context: close-figs
+
+#     >>> masker = {masker}
+#     >>> stairs_list = [s2, masker, s2.{func}(masker)]
+#     >>> fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(8,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+#     >>> for ax, title, stair_instance in zip(axes, ("s2", "masker", "s2.{func}(masker)"), stairs_list):
+#     ...     stair_instance.plot(ax=ax)
+#     ...     ax.set_title(title)
+# """
+
+# mask_examples = f"""
+
+# {_mask_where_2_col_example.format(masker="(2,4)", func="mask")}
+
+# {_mask_where_3_col_example.format(masker="sc.Stairs(initial_value=2).layer(1,2,-1).layer(4,5,-2)", func="where")}
+# """
+
+# where_examples = f"""
+
+# {_mask_where_2_col_example.format(masker="(1,4)", func="where")}
+
+# {_mask_where_3_col_example.format(masker="sc.Stairs().layer(1,2).layer(4,5,-2)", func="where")}
+# """
+
+mask_examples = "\n".join(
+    [
+        _gen_example(["s2", "s2.mask(masker)"], ">>> masker = (2,4)"),
+        _gen_example(
+            ["s2", "masker", "s2.mask(masker)"],
+            ">>> masker = sc.Stairs(initial_value=2).layer(1,2,-1).layer(4,5,-2)",
+        ),
+    ]
+)
+
+where_examples = "\n".join(
+    [
+        _gen_example(["s2", "s2.where(masker)"], ">>> masker = (1,4)"),
+        _gen_example(
+            ["s2", "masker", "s2.where(masker)"],
+            ">>> masker = sc.Stairs().layer(1,2).layer(4,5,-2)",
+        ),
+    ]
+)
+
+_mask_where_docstring = """
+Returns a new step function where *self* has been {operation} by *other*.
+
+Note when *other* is as Stairs instance, is is considered equivalent to its
+boolean value, that is, the result of :meth:`Stairs.make_boolean`.  As a result any part
+of the domain where *other* is {value}, or not defined, will be undefined in the resulting
+step function.
+
+Also note that ``.{func}((a,b))`` is equivalent to ``.{func}(sc.Stairs().layer(a,b))`` but defers
+to a faster implementation.
+
+Parameters
+----------
+other : :class:`Stairs`, or tuple
+    If *other* is a tuple *(a,b)* then it is assumed that a < b and that
+    *a* and *b* both belong to the domain of the step function represented by *self*
+
+Returns
+-------
+:class:`Stairs`
+
+See Also
+--------
+{see_also}
+
+Examples
+--------
+{examples}
 """
+
+mask_docstring = _mask_where_docstring.format(
+    operation="masked",
+    value="zero-valued",
+    func="mask",
+    examples=mask_examples,
+    see_also="Stairs.where",
+)
+
+where_docstring = _mask_where_docstring.format(
+    operation="'inversely masked'",
+    value="not zero-valued",
+    func="where",
+    examples=where_examples,
+    see_also="Stairs.mask, Stairs.clip",
+)
+
+
+_isna_notnull_docstring = """
+Returns a new 'boolean valued' step function indicating where the
+domain of *self* is not defined.
+
+The value of the step function is {def_value} where *self* is defined, and {not_def_value} where
+*self* is not defined.
+
+Returns
+-------
+:class:`Stairs`
+
+See Also
+--------
+{see_also}
+
+Examples
+--------
+{examples}
+"""
+
+isna_docstring = _isna_notnull_docstring.format(
+    def_value=0,
+    not_def_value=1,
+    see_also="Stairs.notnull",
+    examples=_gen_example(["s3", "s3.isna()"]),
+)
+notnull_docstring = _isna_notnull_docstring.format(
+    def_value=1,
+    not_def_value=0,
+    see_also="Stairs.isna",
+    examples=_gen_example(["s3", "s3.notnull()"]),
+)
+
+fillna_examples = "\n".join(
+    [
+        _gen_example(["s3", "s3.fillna(0.5)"]),
+        _gen_example(["s3", 's3.fillna("ffill")']),
+        _gen_example(["s3", 's3.fillna("bfill")']),
+    ]
+)
+
+fillna_docstring = """
+Define values for (a copy of) *self* where it is undefined.
+
+Parameters
+----------
+value : {{int, float, "backfill", "bfill", "pad", "ffill"}}
+    If *value* is and int or float, then it is used to provide values
+    where *self* is undefined.  If *value* is a string then it indicates
+    a method for propagating values of the step function across undefined
+    intervals:
+        - ``pad / ffill`` propagate last defined value forward
+        - ``backfill / bfill`` propagate next defined value backward
+
+Returns
+-------
+:class:`Stairs`
+
+See Also
+--------
+Stairs.isna
+
+Examples
+--------
+{examples}
+""".format(
+    examples=fillna_examples
+)

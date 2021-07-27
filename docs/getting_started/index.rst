@@ -27,6 +27,7 @@ It assumes that you have an understanding of the key concepts.
     :hidden:
 
     install
+    intro_tutorials/index
     stepfunction
     endpoints
     small_example

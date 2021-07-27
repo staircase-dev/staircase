@@ -22,14 +22,14 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> {stairs1}.plot()
+    >>> {stairs1}.plot(arrows=True)
     >>> {stairs1}.{func}()
     {result1}
 
 .. plot::
     :context: close-figs
 
-    >>> {stairs2}.plot()
+    >>> {stairs2}.plot(arrows=True)
     >>> {stairs2}.{func}()
     {result2}
 """
@@ -142,16 +142,16 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s1.plot()
+    >>> s1.plot(arrows=True)
 
-    >>> s1.agg(where=(1,4), name="min")
-    0
+>>> s1.agg(where=(1,4), name="min")
+0
 
-    >>> s1.agg(where=(1,4), name="min", closed="both")
-    -1
+>>> s1.agg(where=(1,4), name="min", closed="both")
+-1
 
-    >>> s1.agg(where=(1,4), name="integral")
-    2.0
+>>> s1.agg(where=(1,4), name="integral")
+2.0
 """
 
 
@@ -236,7 +236,7 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s1.plot()
+    >>> s1.plot(arrows=True)
 
 >>> s1.values_in_range()
 array([-1,  0,  1], dtype=int64)
@@ -255,7 +255,7 @@ Examples
     :context: close-figs
 
     >>> from staircase.api import min
-    >>> s1.plot()
+    >>> s1.plot(arrows=True)
 
 >>> min(s1)
 -1
@@ -274,7 +274,7 @@ Examples
     :context: close-figs
 
     >>> from staircase.stairs import max
-    >>> s1.plot()
+    >>> s1.plot(arrows=True)
 
 >>> max(s1)
 -1
@@ -318,7 +318,7 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s1.plot()
+    >>> s1.plot(arrows=True)
 
 >>> s1.hist()
 [-1, 0)    1.0
@@ -360,7 +360,7 @@ Examples
 .. plot::
     :context: close-figs
 
-    >>> s2.plot()
+    >>> s2.plot(arrows=True)
 
 .. plot::
     :context: close-figs

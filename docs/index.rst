@@ -1,7 +1,9 @@
-.. image:: img/staircase.png
+.. image:: img/staircase.svg
    :width: 80%
    :alt: staircase logo
    :align: center
+
+|
 
 .. rst-class:: center
 

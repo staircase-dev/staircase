@@ -169,10 +169,10 @@ class Stairs:
             or right-closed left-open. Only relevant when *bins* is not a :class:`pandas.IntervalIndex`
         stat : {"sum", "frequency", "density", "probability"}, default "sum"
             The aggregate statistic to compute in each bin.  Inspired by :meth:`seaborn.histplot` stat parameter.
-            - ``sum`` the magnitude of observations
-            - ``frequency`` values of the histogram are divided by the corresponding bin width
-            - ``density`` normalises values of the histogram so that the area is 1
-            - ``probability`` normalises values so that the histogram values sum to 1
+                - ``sum`` the magnitude of observations
+                - ``frequency`` values of the histogram are divided by the corresponding bin width
+                - ``density`` normalises values of the histogram so that the area is 1
+                - ``probability`` normalises values so that the histogram values sum to 1
 
         Returns
         -------
