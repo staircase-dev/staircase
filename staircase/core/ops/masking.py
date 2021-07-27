@@ -113,6 +113,7 @@ def _make_mask_or_where_func(docstring, which):
     handle_tuple_func = {"mask": handle_tuple_mask, "where": handle_tuple_where}[which]
     inverse = which == "where"
 
+    @Appender(docstring, join="\n", indents=1)
     def func(self, other):
         assert isinstance(other, tuple) or isinstance(
             other, sc.Stairs
@@ -131,12 +132,12 @@ def _make_mask_or_where_func(docstring, which):
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-mask = _make_mask_or_where_func("", "mask")
+mask = _make_mask_or_where_func(docstrings.mask_docstring, "mask")
 
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-where = _make_mask_or_where_func("", "where")
+where = _make_mask_or_where_func(docstrings.where_docstring, "where")
 
 
 def _make_null_comparison_func(docstring, comp_func):
@@ -160,24 +161,53 @@ def _make_null_comparison_func(docstring, comp_func):
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-isna = _make_null_comparison_func("", np.isnan)
+isna = _make_null_comparison_func(docstrings.isna_docstring, np.isnan)
 
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-notnull = _make_null_comparison_func("", lambda x: ~np.isnan(x))
+notnull = _make_null_comparison_func(
+    docstrings.notnull_docstring, lambda x: ~np.isnan(x)
+)
+
+
+# # TODO: docstring
+# # TODO: test
+# # TODO: what's new
+# def fillna(self, value=None, method=None):
+#     if value is not None and method is not None:
+#         raise ValueError("Cannot specify both 'value' and 'method'.")
+#     elif value is None and method is None:
+#         raise ValueError("Must specify a fill 'value' or 'method'.")
+
+#     if value is not None and np.isnan(self.initial_value):
+#         initial_value = value
+#     else:
+#         initial_value = self.initial_value
+
+#     if self._data is None:
+#         data = None
+#     else:
+#         values = self._get_values().copy()
+#         if method in ("pad", "ffill") and np.isnan(values.iloc[0]):
+#             values.iloc[0] = self.initial_value
+#         values = values.fillna(value, method)
+#         if method in ("backfill", "bfill") and np.isnan(self.initial_value):
+#             initial_value = values.iloc[0]
+#         data = pd.DataFrame({"value": values})
+
+#     new_instance = sc.Stairs.new(initial_value=initial_value, data=data)
+#     new_instance._remove_redundant_step_points()
+#     return new_instance
 
 
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-def fillna(self, value=None, method=None):
-    if value is not None and method is not None:
-        raise ValueError("Cannot specify both 'value' and 'method'.")
-    elif value is None and method is None:
-        raise ValueError("Must specify a fill 'value' or 'method'.")
+@Appender(docstrings.fillna_docstring, join="\n", indents=1)
+def fillna(self, value):
 
-    if value is not None and np.isnan(self.initial_value):
+    if not isinstance(value, str) and np.isnan(self.initial_value):
         initial_value = value
     else:
         initial_value = self.initial_value
@@ -186,10 +216,13 @@ def fillna(self, value=None, method=None):
         data = None
     else:
         values = self._get_values().copy()
-        if method in ("pad", "ffill") and np.isnan(values.iloc[0]):
+        if value in ("pad", "ffill") and np.isnan(values.iloc[0]):
             values.iloc[0] = self.initial_value
-        values = values.fillna(value, method)
-        if method in ("backfill", "bfill") and np.isnan(self.initial_value):
+        if isinstance(value, str):
+            values = values.fillna(method=value)
+        else:
+            values = values.fillna(value=value)
+        if value in ("backfill", "bfill") and np.isnan(self.initial_value):
             initial_value = values.iloc[0]
         data = pd.DataFrame({"value": values})
 
