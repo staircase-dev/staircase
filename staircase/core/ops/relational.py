@@ -53,6 +53,22 @@ def _make_relational_func(
     return func
 
 
+def _is_series_equal(s1, s2):
+    if not pd.api.types.is_float_dtype(s1):
+        s1 = s1.astype("float64")
+    if not pd.api.types.is_float_dtype(s2):
+        s2 = s2.astype("float64")
+    if pd.api.types.is_numeric_dtype(s1.index) and not pd.api.types.is_float_dtype(
+        s1.index
+    ):
+        s1.index = s1.index.astype("float64")
+    if pd.api.types.is_numeric_dtype(s2.index) and not pd.api.types.is_float_dtype(
+        s2.index
+    ):
+        s2.index = s2.index.astype("float64")
+    return pd.Series.equals(s1, s2)
+
+
 # TODO: docstring
 # TODO: test
 # TODO: what's new
@@ -98,9 +114,9 @@ def identical(self, other):
     elif self._data is None or other._data is None:
         return False
     elif self._valid_values and other._valid_values:
-        return pd.Series.equals(self._data["value"], other._data["value"]).all()
+        return _is_series_equal(self._data["value"], other._data["value"])
     else:
-        return pd.Series.equals(self._get_deltas(), other._get_deltas()).all()
+        return _is_series_equal(self._get_deltas(), other._get_deltas())
 
 
 # TODO: docstring
