@@ -214,7 +214,7 @@ def s4_fix():
 
 
 def test_max_dates_1(date_func):
-    assert s1(date_func).max == 4.5, "Expected maximum to be 4.5"
+    assert s1(date_func).max() == 4.5, "Expected maximum to be 4.5"
 
 
 def test_max_dates_2(date_func):
@@ -245,7 +245,7 @@ def test_max_dates_4(date_func):
 
 
 def test_min_dates_1(date_func):
-    assert s1(date_func).min == -0.5, "Expected minimum to be -0.5"
+    assert s1(date_func).min() == -0.5, "Expected minimum to be -0.5"
 
 
 def test_min_dates_2(date_func):
@@ -278,7 +278,7 @@ def test_min_dates_4(date_func):
 
 
 def test_mode_dates_1(date_func):
-    assert s1(date_func).mode == -0.5, "Expected mode to be -0.5"
+    assert s1(date_func).mode() == -0.5, "Expected mode to be -0.5"
 
 
 def test_mode_dates_2(date_func):
@@ -309,7 +309,7 @@ def test_mode_dates_4(date_func):
 
 
 def test_median_dates_1(date_func):
-    assert s1(date_func).median == 2, "Expected median to be 2"
+    assert s1(date_func).median() == 2, "Expected median to be 2"
 
 
 def test_median_dates_2(date_func):
@@ -340,7 +340,7 @@ def test_median_dates_4(date_func):
 
 
 def test_mean_dates_1(date_func):
-    assert abs(s1(date_func).mean - 13 / 9) <= 0.00001, "Expected mean to be 13/9"
+    assert abs(s1(date_func).mean() - 13 / 9) <= 0.00001, "Expected mean to be 13/9"
 
 
 def test_mean_dates_2(date_func):
@@ -372,7 +372,7 @@ def test_mean_dates_4(date_func):
 
 def test_integral_dates_1(date_func):
     assert (
-        s1(date_func).integral / pd.Timedelta("1 D") == 13
+        s1(date_func).integral() / pd.Timedelta("1 D") == 13
     ), "Expected integral to be 13 days"
 
 
@@ -413,7 +413,7 @@ def test_integral_dates_4(date_func):
 # def test_integral_and_mean_dates_1(date_func):
 #     integral, mean = s1(date_func)._get_integral_and_mean()
 #     assert abs(mean - 13 / 9) <= 0.00001, "Expected mean to be 13/9"
-#     assert integral / pd.Timedelta("1 H") == 312, "Expected integral to be 312 hours"
+#     assert integral() / pd.Timedelta("1 H") == 312, "Expected integral to be 312 hours"
 
 
 # def test_integral_and_mean_dates_2(date_func):
@@ -421,7 +421,7 @@ def test_integral_dates_4(date_func):
 #         (None, timestamp(2020, 1, 6, date_func=date_func))
 #     )
 #     assert mean == 3, "Expected mean to be 3"
-#     assert integral / pd.Timedelta("1 D") == 15, "Expected integral to be 15"
+#     assert integral() / pd.Timedelta("1 D") == 15, "Expected integral to be 15"
 
 
 # def test_integral_and_mean_3(date_func):
@@ -429,7 +429,7 @@ def test_integral_dates_4(date_func):
 #         (timestamp(2020, 1, 4, date_func=date_func), None)
 #     )
 #     assert mean == 0.75, "Expected mean to be 0.75"
-#     assert integral / pd.Timedelta("1 H") == 108, "Expected integral to be 108 hours"
+#     assert integral() / pd.Timedelta("1 H") == 108, "Expected integral to be 108 hours"
 
 
 # def test_integral_and_mean_dates_4(date_func):
@@ -440,7 +440,7 @@ def test_integral_dates_4(date_func):
 #         )
 #     )
 #     assert mean == 1.375, "Expected mean to be 1.375"
-#     assert integral / pd.Timedelta("1 H") == 132, "Expected integral to be 132 hours"
+#     assert integral() / pd.Timedelta("1 H") == 132, "Expected integral to be 132 hours"
 
 
 def test_percentile_dates_1(date_func):
@@ -916,7 +916,7 @@ def test_hist_default_bins_left_closed(date_func, stairs_func, bounds, cuts):
             index=interval_index,
         )
 
-    hist = stairs_instance.clip(*bounds).hist(x=cuts, normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(bins=cuts, stat="probability")
     expected = make_expected_result(hist.index, *bounds)
     pd.testing.assert_series_equal(
         hist, expected, check_names=False, check_index_type=False,
@@ -950,7 +950,9 @@ def test_hist_default_bins_right_closed(date_func, stairs_func, bounds, cuts):
             index=interval_index,
         )
 
-    hist = stairs_instance.clip(*bounds).hist(x=cuts, closed="right", normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(
+        bins=cuts, closed="right", stat="probability"
+    )
     expected = make_expected_result(hist.index, *bounds)
     pd.testing.assert_series_equal(
         hist, expected, check_names=False, check_index_type=False,
@@ -973,7 +975,7 @@ def test_hist_default_bins(date_func, stairs_func, bounds, closed):
     # really testing the default binning process here
     stairs_instance = stairs_func(date_func)
     bounds = [timestamp(*args, date_func=date_func) for args in bounds]
-    hist = stairs_instance.clip(*bounds).hist(closed=closed, normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(closed=closed, stat="probability")
     assert abs(hist.sum() - 1) < 0.000001
 
 

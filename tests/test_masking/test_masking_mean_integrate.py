@@ -46,8 +46,8 @@ def s2_fix():
 
 
 def test_integral1(s1_fix, s2_fix):
-    assert s1_fix.integral == -2.75
-    assert s2_fix.integral == -0.5
+    assert s1_fix.integral() == -2.75
+    assert s2_fix.integral() == -0.5
 
 
 def test_integral2(s1_fix, s2_fix):
@@ -56,8 +56,8 @@ def test_integral2(s1_fix, s2_fix):
 
 
 def test_mean1(s1_fix, s2_fix):
-    assert math.isclose(s1_fix.mean, -0.19642857, abs_tol=1e-6)
-    assert math.isclose(s2_fix.mean, -0.04166666, abs_tol=1e-6)
+    assert math.isclose(s1_fix.mean(), -0.19642857, abs_tol=1e-6)
+    assert math.isclose(s2_fix.mean(), -0.04166666, abs_tol=1e-6)
 
 
 def test_mean2(s1_fix, s2_fix):

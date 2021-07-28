@@ -464,8 +464,8 @@ def test_base_integral_point5_1(init_value):
 
 
 def test_integral1(s1_fix, s2_fix):
-    assert s1_fix.integral == -2.75
-    assert s2_fix.integral == -0.5
+    assert s1_fix.integral() == -2.75
+    assert s2_fix.integral() == -0.5
 
 
 def test_integral2(s1_fix, s2_fix):
@@ -474,8 +474,8 @@ def test_integral2(s1_fix, s2_fix):
 
 
 def test_mean1(s1_fix, s2_fix):
-    assert abs(s1_fix.mean - -0.19642857) < 0.000001
-    assert abs(s2_fix.mean - -0.04166666) < 0.000001
+    assert abs(s1_fix.mean() - -0.19642857) < 0.000001
+    assert abs(s2_fix.mean() - -0.04166666) < 0.000001
 
 
 def test_mean2(s1_fix, s2_fix):
@@ -484,11 +484,11 @@ def test_mean2(s1_fix, s2_fix):
 
 
 def test_integral_0():
-    assert Stairs(initial_value=0).layer(None, 0).integral == 0
+    assert Stairs(initial_value=0).layer(None, 0).integral() == 0
 
 
 def test_mean_nan():
-    assert Stairs(initial_value=0).layer(None, 0).mean is np.nan
+    assert Stairs(initial_value=0).layer(None, 0).mean() is np.nan
 
 
 def test_to_dataframe(s1_fix):
@@ -516,7 +516,7 @@ def test_hist_left_closed(stairs_instance, bounds, cuts):
             dtype="float64",
         )
 
-    hist = stairs_instance.clip(*bounds).hist(x=cuts, normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(bins=cuts, stat="probability")
     expected = make_expected_result(hist.index, *bounds)
     assert (hist.apply(round, 5) == expected.apply(round, 5)).all(), f"{bounds}, {cuts}"
 
@@ -542,7 +542,9 @@ def test_hist_right_closed(stairs_instance, bounds, cuts):
             dtype="float64",
         )
 
-    hist = stairs_instance.clip(*bounds).hist(x=cuts, closed="right", normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(
+        bins=cuts, closed="right", stat="probability"
+    )
     expected = make_expected_result(hist.index, *bounds)
     assert (hist.apply(round, 5) == expected.apply(round, 5)).all(), f"{bounds}, {cuts}"
 
@@ -557,7 +559,7 @@ def test_hist_right_closed(stairs_instance, bounds, cuts):
 )
 def test_hist_default_bins(stairs_instance, bounds, closed):
     # really testing the default binning process here
-    hist = stairs_instance.clip(*bounds).hist(closed=closed, normalize=True)
+    hist = stairs_instance.clip(*bounds).hist(closed=closed, stat="probability")
     assert abs(hist.sum() - 1) < 0.000001
 
 
