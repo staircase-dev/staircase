@@ -253,6 +253,10 @@ class Stairs:
         """
         return self._get_deltas().copy()
 
+    @property
+    def step_values(self):  # TODO: alias as deltas?
+        return self._get_values().copy()
+
     # TODO: docstring
     # TODO: test
     # TODO: what's new
@@ -538,6 +542,27 @@ class Stairs:
             ends = step_points.to_list() + [inf]
             values = np.append(self.initial_value, self._data["value"].values)
         return pd.DataFrame({"start": starts, "end": ends, "value": values})
+
+    def pipe(self, func, *args, **kwargs):
+        """
+        Applies func(self, *args, **kwargs) and returns the result.
+
+        Primarily intended to facilitate method chaining.
+
+        Parameters
+        ----------
+        func : callable
+            Function to apply to *self*.
+        args : iterable, optional
+            Positional arguments passed into *func*.
+        kwargs : mapping, optional
+            A dictionary of keyword arguments passed into *func*.
+
+        Returns
+        -------
+        object : return type of *func*
+        """
+        return func(self, *args, **kwargs)
 
     def __str__(self):
         """
