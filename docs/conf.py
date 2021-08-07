@@ -24,7 +24,8 @@ os.environ['PYTHONPATH'] = os.path.abspath(parentdir)
 
 import staircase as sc
 from datetime import datetime
-
+from numpydoc.docscrape import NumpyDocString
+from sphinx.ext.autosummary import _import_by_name
 
 # -- Project information -----------------------------------------------------
 
@@ -111,7 +112,6 @@ s3 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1).mask((2.5, 3.5))
 s4 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1).mask((4,5))
 """
 
-
 def linkcode_resolve(domain, info):
     """
     Determine the URL corresponding to Python object
@@ -171,6 +171,153 @@ intersphinx_mapping = {
     
 }
 
+
+import sphinx  # isort:skip
+from sphinx.util import rpartition  # isort:skip
+from sphinx.ext.autodoc import (  # isort:skip
+    AttributeDocumenter,
+    Documenter,
+    MethodDocumenter,
+)
+from sphinx.ext.autosummary import Autosummary  # isort:skip
+
+
+class AccessorDocumenter(MethodDocumenter):
+    """
+    Specialized Documenter subclass for accessors.
+    """
+
+    objtype = "accessor"
+    directivetype = "method"
+
+    # lower than MethodDocumenter so this is not chosen for normal methods
+    priority = 0.6
+
+    def format_signature(self):
+        # this method gives an error/warning for the accessors, therefore
+        # overriding it (accessor has no arguments)
+        return ""
+
+
+class AccessorLevelDocumenter(Documenter):
+    """
+    Specialized Documenter subclass for objects on accessor level (methods,
+    attributes).
+    """
+
+    # This is the simple straightforward version
+    # modname is None, base the last elements (eg 'hour')
+    # and path the part before (eg 'Series.dt')
+    # def resolve_name(self, modname, parents, path, base):
+    #     modname = 'pandas'
+    #     mod_cls = path.rstrip('.')
+    #     mod_cls = mod_cls.split('.')
+    #
+    #     return modname, mod_cls + [base]
+    def resolve_name(self, modname, parents, path, base):
+        if modname is None:
+            if path:
+                mod_cls = path.rstrip(".")
+            else:
+                mod_cls = None
+                # if documenting a class-level object without path,
+                # there must be a current class, either from a parent
+                # auto directive ...
+                mod_cls = self.env.temp_data.get("autodoc:class")
+                # ... or from a class directive
+                if mod_cls is None:
+                    mod_cls = self.env.temp_data.get("py:class")
+                # ... if still None, there's no way to know
+                if mod_cls is None:
+                    return None, []
+            # HACK: this is added in comparison to ClassLevelDocumenter
+            # mod_cls still exists of class.accessor, so an extra
+            # rpartition is needed
+            modname, accessor = rpartition(mod_cls, ".")
+            modname, cls = rpartition(modname, ".")
+            parents = [cls, accessor]
+            # if the module name is still missing, get it like above
+            if not modname:
+                modname = self.env.temp_data.get("autodoc:module")
+            if not modname:
+                if sphinx.__version__ > "1.3":
+                    modname = self.env.ref_context.get("py:module")
+                else:
+                    modname = self.env.temp_data.get("py:module")
+            # ... else, it stays None, which means invalid
+        return modname, parents + [base]
+
+
+class AccessorAttributeDocumenter(AccessorLevelDocumenter, AttributeDocumenter):
+    objtype = "accessorattribute"
+    directivetype = "attribute"
+
+    # lower than AttributeDocumenter so this is not chosen for normal
+    # attributes
+    priority = 0.6
+
+
+class AccessorMethodDocumenter(AccessorLevelDocumenter, MethodDocumenter):
+    objtype = "accessormethod"
+    directivetype = "method"
+
+    # lower than MethodDocumenter so this is not chosen for normal methods
+    priority = 0.6
+
+
+class AccessorCallableDocumenter(AccessorLevelDocumenter, MethodDocumenter):
+    """
+    This documenter lets us removes .__call__ from the method signature for
+    callable accessors like Series.plot
+    """
+
+    objtype = "accessorcallable"
+    directivetype = "method"
+
+    # lower than MethodDocumenter; otherwise the doc build prints warnings
+    priority = 0.5
+
+    def format_name(self):
+        return MethodDocumenter.format_name(self).rstrip(".__call__")
+
+
+class StaircaseAutosummary(Autosummary):
+    """
+    This alternative autosummary class lets us override the table summary for
+    Stairs.plot in the API docs.
+    """
+
+    def _replace_staircase_items(self, display_name, sig, summary, real_name):
+        # this a hack: ideally we should extract the signature from the
+        # .__call__ method instead of hard coding this
+        if display_name == "Stairs.plot":
+            sig = "([x, y, kind, ax, ....])"
+            summary = "Stairs plotting accessor and method"
+        return (display_name, sig, summary, real_name)
+
+    @staticmethod
+    def _is_deprecated(real_name):
+        try:
+            obj, parent, modname = _import_by_name(real_name)
+        except ImportError:
+            return False
+        doc = NumpyDocString(obj.__doc__ or "")
+        summary = "".join(doc["Summary"] + doc["Extended Summary"])
+        return ".. deprecated::" in summary
+
+    def _add_deprecation_prefixes(self, items):
+        for item in items:
+            display_name, sig, summary, real_name = item
+            if self._is_deprecated(real_name):
+                summary = f"(DEPRECATED) {summary}"
+            yield display_name, sig, summary, real_name
+
+    def get_items(self, names):
+        items = Autosummary.get_items(self, names)
+        items = [self._replace_staircase_items(*item) for item in items]
+        items = list(self._add_deprecation_prefixes(items))
+        return items
+        
     
 # -- Options for HTML output -------------------------------------------------
 
@@ -198,6 +345,11 @@ html_static_path = ['_static']
 
 def setup(app):
     app.add_css_file('custom.css')
+    app.add_autodocumenter(AccessorDocumenter)
+    app.add_autodocumenter(AccessorAttributeDocumenter)
+    app.add_autodocumenter(AccessorMethodDocumenter)
+    app.add_autodocumenter(AccessorCallableDocumenter)
+    app.add_directive("autosummary", StaircaseAutosummary)
 
 # html_sidebars = {
     # #"**":["logo.html", "globaltoc.html", "relations.html", "searchbox.html", "gumroad.html",]

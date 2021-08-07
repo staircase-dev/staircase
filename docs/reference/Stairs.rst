@@ -12,7 +12,6 @@ Constructor & basic methods
 
    Stairs.__init__
    Stairs.copy
-   Stairs.plot
    Stairs.sample
    Stairs.limit
    Stairs.layer
@@ -105,6 +104,15 @@ Summary statistics
    Stairs.fractile
    Stairs.ecdf
    Stairs.hist
+   
+Plotting
+~~~~~~~~~~~~~~~~~~ 
+
+.. autosummary::
+   :toctree: api/
+   :template: autosummary/accessor_callable.rst
+
+   Stairs.plot
    
    
 Miscellaneous functions
