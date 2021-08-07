@@ -8,4 +8,6 @@ API reference
    :maxdepth: 1
 
    Stairs
+   StairsSlicer
    arrays
+   misc

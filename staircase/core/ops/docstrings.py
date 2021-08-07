@@ -342,17 +342,17 @@ Examples
 
 mask_examples = "\n".join(
     [
-        _gen_example(["s2", "s2.mask(masker)"], ">>> masker = (2,4)"),
+        _gen_example(["s2", "s2.mask((2,4))"], ">>> masker = (2,4)"),
         _gen_example(
             ["s2", "masker", "s2.mask(masker)"],
-            ">>> masker = sc.Stairs(initial_value=2).layer(1,2,-1).layer(4,5,-2)",
+            ">>> masker = sc.Stairs(initial_value=2).layer(1,2,-2).layer(4,5,-2)",
         ),
     ]
 )
 
 where_examples = "\n".join(
     [
-        _gen_example(["s2", "s2.where(masker)"], ">>> masker = (1,4)"),
+        _gen_example(["s2", "s2.where((1,4))"], ">>> masker = (1,4)"),
         _gen_example(
             ["s2", "masker", "s2.where(masker)"],
             ">>> masker = sc.Stairs().layer(1,2).layer(4,5,-2)",
@@ -407,7 +407,7 @@ where_docstring = _mask_where_docstring.format(
 )
 
 
-_isna_notnull_docstring = """
+_isna_notna_docstring = """
 Returns a new 'boolean valued' step function indicating where the
 domain of *self* is not defined.
 
@@ -427,17 +427,17 @@ Examples
 {examples}
 """
 
-isna_docstring = _isna_notnull_docstring.format(
+isna_docstring = _isna_notna_docstring.format(
     def_value=0,
     not_def_value=1,
-    see_also="Stairs.notnull",
+    see_also="Stairs.notna",
     examples=_gen_example(["s3", "s3.isna()"]),
 )
-notnull_docstring = _isna_notnull_docstring.format(
+notna_docstring = _isna_notna_docstring.format(
     def_value=1,
     not_def_value=0,
     see_also="Stairs.isna",
-    examples=_gen_example(["s3", "s3.notnull()"]),
+    examples=_gen_example(["s3", "s3.notna()"]),
 )
 
 fillna_examples = "\n".join(
@@ -458,8 +458,9 @@ value : {{int, float, "backfill", "bfill", "pad", "ffill"}}
     where *self* is undefined.  If *value* is a string then it indicates
     a method for propagating values of the step function across undefined
     intervals:
-        - ``pad / ffill`` propagate last defined value forward
-        - ``backfill / bfill`` propagate next defined value backward
+
+    - ``pad / ffill`` propagate last defined value forward
+    - ``backfill / bfill`` propagate next defined value backward
 
 Returns
 -------

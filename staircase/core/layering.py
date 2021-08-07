@@ -53,12 +53,12 @@ def _layer_scalar(self, start, end, value):
 
 
 @Appender(examples.layer_example, join="\n", indents=1)
-def layer(self, start=None, end=None, value=None, data=None):
+def layer(self, start=None, end=None, value=None, frame=None):
     """
     Changes the values of the step function, in place, by 'layering' one or more intervals.
 
     The values of *start*, *end* and *value* parameters can be one of several types.
-    If any of these is a string, then it is expected that *data* is a :class:`pandas.DataFrame`
+    If any of these is a string, then it is expected that *frame* is a :class:`pandas.DataFrame`
     and the string is the name of a column in the dataframe.
 
     If either *start*, or *end* evaluate to an array-like parameter then all of
@@ -75,7 +75,7 @@ def layer(self, start=None, end=None, value=None, data=None):
     value : float, array-like or string, default None
         Value(s) of the interval(s).
         A value of None is equivalent to a value of 1.
-    data : :class:`pandas.DataFrame`, optional
+    frame : :class:`pandas.DataFrame`, optional
         A dataframe containing named columns, whose names may appear as values
         for the other parameters.
 
@@ -87,8 +87,8 @@ def layer(self, start=None, end=None, value=None, data=None):
     if self._data is None and np.isnan(self.initial_value):
         return self
     self._clear_cache()
-    if data is not None:
-        start, end, value = _extract_from_frame(data, start, end, value)
+    if frame is not None:
+        start, end, value = _extract_from_frame(frame, start, end, value)
     if value is None:
         value = 1
     if not any(list(map(is_list_like, (start, end, value)))):
@@ -98,7 +98,7 @@ def layer(self, start=None, end=None, value=None, data=None):
     if not isinstance(start, pd.Series):
         start = pd.Series(start)
     if not isinstance(end, pd.Series):
-        end = pd.Series(end)
+        end = pd.Series(end, dtype="float64")
     df = pd.concat([start, end], axis=1, ignore_index=True)
     start_series = pd.Series(value, index=df.iloc[:, 0])
     self.initial_value += start_series[start_series.index.isna()].sum()

@@ -27,7 +27,7 @@ Contents
    :maxdepth: 2
    
    getting_started/index.rst
-   resources/index.rst
+   user_guide/index.rst
    reference/index.rst
    development/index.rst
    release_notes/index.rst

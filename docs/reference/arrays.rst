@@ -1,11 +1,11 @@
-.. _api.module_funcs:
+.. _api.array_funcs:
 
 ======================
-Module functions
+Array functions
 ======================
 
 
-Aggregation functions
+Aggregation
 ======================
 .. currentmodule:: staircase
 
@@ -17,10 +17,11 @@ Aggregation functions
    median
    min
    max
+   agg
 
 
 
-Miscellaneous functions
+Transform functions
 =========================
 .. currentmodule:: staircase
 
@@ -28,6 +29,6 @@ Miscellaneous functions
    :toctree: api/
 
    sample
+   limit
    cov
    corr
-   make_test_data

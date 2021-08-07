@@ -6,7 +6,7 @@ from staircase.core.ops.logical import (
     logical_xor,
     make_boolean,
 )
-from staircase.core.ops.masking import clip, fillna, isna, mask, notnull, where
+from staircase.core.ops.masking import clip, fillna, isna, mask, notna, where
 from staircase.core.ops.relational import eq, ge, gt, identical, le, lt, ne
 from staircase.core.ops.rops import (
     logical_rand,
@@ -29,7 +29,7 @@ def add_operations(cls):
     cls.mask = mask
     cls.where = where
     cls.isna = isna
-    cls.notnull = notnull
+    cls.notna = notna
     cls.fillna = fillna
     cls.multiply = multiply
     cls.divide = divide

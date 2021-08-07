@@ -166,9 +166,7 @@ isna = _make_null_comparison_func(docstrings.isna_docstring, np.isnan)
 # TODO: docstring
 # TODO: test
 # TODO: what's new
-notnull = _make_null_comparison_func(
-    docstrings.notnull_docstring, lambda x: ~np.isnan(x)
-)
+notna = _make_null_comparison_func(docstrings.notna_docstring, lambda x: ~np.isnan(x))
 
 
 # # TODO: docstring

@@ -27,10 +27,6 @@ def _aggregate(collection, func):
     ----------
     :class:`Stairs`
 
-    Notes
-    -----
-    The points at which to aggregate will include -infinity whether explicitly included or not.
-
     See Also
     --------
     staircase.mean, staircase.median, staircase.min, staircase.max

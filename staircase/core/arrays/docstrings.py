@@ -13,55 +13,65 @@ sample_footer = """
 
 _plot_titles_map = {
     "sample": ["s1", "s2"],
+    "sum": ["s1", "s2", "sc.sum([s1,s2])"],
     "min": ["s1", "s2", "sc.min([s1,s2])"],
     "max": ["s1", "s2", "sc.max([s1,s2])"],
     "mean": ["s1", "s2", "sc.mean([s1,s2])"],
     "median": ["s1", "s2", "sc.median([s1,s2])"],
-    "aggregate": ["s1", "s2", "sc.aggregate([s1,s2], np.std)"],
+    "aggregate": ["s1", "s2", "sc.agg([s1,s2], np.std)"],
 }
 
 _example = """
-Examples
---------
-
 .. plot::
     :context: close-figs
+    :include-source: False
 
+    {setup}
     >>> stair_list = [{plots}]
-    >>> fig, axes = plt.subplots(nrows=1, ncols={ncols}, figsize=(8,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
-    >>> for ax, title, stair_instance in zip(axes, ({plot_titles}), stair_list):
-    ...     stair_instance.plot(ax=ax)
+    >>> fig, axes = plt.subplots(nrows=1, ncols={ncols},  figsize=({width},3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+    >>> for ax, title, stair_instance in zip(axes, {plot_titles}, stair_list):
+    ...     stair_instance.plot(ax=ax, arrows=True)
     ...     ax.set_title(title)
 """
 
 
-def _gen_example(operation):
-    plot_titles = _plot_titles_map[operation]
+def _gen_example(plot_titles, setup=""):
+    # plot_titles is a list of strings
     ncols = len(plot_titles)
     plots = ", ".join(plot_titles)
-    return _example.format(plots=plots, ncols=ncols, plot_titles=plot_titles)
+    return _example.format(
+        plots=plots, ncols=ncols, plot_titles=plot_titles, setup=setup, width=ncols + 5,
+    )
 
 
-sample_example = _gen_example("sample") + sample_footer
-min_example = _gen_example("min")
-max_example = _gen_example("max")
-mean_example = _gen_example("mean")
-median_example = _gen_example("median")
-aggregate_example = _gen_example("aggregate")
-
-_corr_cov_header = """
+_example_section = """
 Examples
 --------
+{example}
+"""
 
-.. plot::
-    :context: close-figs
+sample_example = (
+    _example_section.format(example=_gen_example(_plot_titles_map["sample"]))
+    + sample_footer
+)
 
-    >>> import staircase as sc
-    >>> pd.Series([s1, s2, s1+s2])
-    0    <staircase.Stairs, id=2452772382088, dates=False>
-    1    <staircase.Stairs, id=2452772381320, dates=False>
-    2    <staircase.Stairs, id=2452772893512, dates=False>
-    dtype: object
+min_example = _example_section.format(example=_gen_example(_plot_titles_map["min"]))
+max_example = _example_section.format(example=_gen_example(_plot_titles_map["max"]))
+mean_example = _example_section.format(example=_gen_example(_plot_titles_map["mean"]))
+median_example = _example_section.format(
+    example=_gen_example(_plot_titles_map["median"])
+)
+aggregate_example = _example_section.format(
+    example=_gen_example(_plot_titles_map["aggregate"])
+)
+
+_corr_cov_header = """
+>>> import staircase as sc
+>>> pd.Series([s1, s2, s1+s2])
+0    <staircase.Stairs, id=2452772382088, dates=False>
+1    <staircase.Stairs, id=2452772381320, dates=False>
+2    <staircase.Stairs, id=2452772893512, dates=False>
+dtype: object
 """
 
 cov_example = (
@@ -144,6 +154,8 @@ See Also
 --------
 {see_also}
 
+Examples
+--------
 {example}
 """
 
@@ -168,6 +180,8 @@ See Also
 --------
 {see_also}
 
+Examples
+--------
 {example}
 """
 

@@ -90,7 +90,7 @@ Examples
 
     >>> (
     ...     sc.Stairs(initial_value=1.5)
-    ...     .layer("starts", "ends", "values", data=data)
+    ...     .layer("starts", "ends", "values", frame=data)
     ...     .plot(arrows=True)
     ... )
 """

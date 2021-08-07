@@ -1,7 +1,7 @@
 .. _api.Stairs:
 
 ==============
-Stairs methods
+Stairs
 ==============
 .. currentmodule:: staircase
 
@@ -117,10 +117,11 @@ Miscellaneous functions
    Stairs.mask
    Stairs.where
    Stairs.isna
-   Stairs.notnull
+   Stairs.notna
    Stairs.fillna
    Stairs.shift
    Stairs.diff
    Stairs.rolling_mean
    Stairs.slice
+   Stairs.pipe
 

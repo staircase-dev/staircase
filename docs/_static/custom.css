@@ -1,77 +1,36 @@
-div.bodywrapper {
-    border-left: solid #ddd;
+
+:root {
+  /* Use softer blue from bootstrap's default info color */
+  --pst-color-primary: 0, 108, 133;
+  --pst-color-active-navigation: 0, 108, 133;
+  --pst-color-navbar-link: 255, 255, 255;
+  --pst-color-navbar-link-hover: 200, 255, 255;
+  --pst-color-navbar-link-active: 255, 255, 255;
 }
 
-div.related {
-    background-color: #006c85;
-}
-
-div.related a {
-    color: #7CB9B3    
-}
-
-div.document {
-    background-color: #fff;
-}
-
-div.sphinxsidebar p {
-    color: #006c85;
-}
-
-div.body h1 {
-    background-color: #C7E3E2;
-	font-size: 120%;
-	padding: 2px 0 2px 5px;
-}
-    
-div.body h2 {
-    background-color: #C7E3E2;
-	font-size: 100%;
-	padding: 2px 2px 2px 5px;
-}
-
-div.admonition {
-	padding: 2px 2px 2px 5px;        
-}
-
-div.seealso {
-    background-color: #eafaff;
-    border: 1px solid #eafaff;
+.navbar-light .navbar-nav>.active>.nav-link {
+    font-weight: 800;
+    color: rgba(var(--pst-color-navbar-link-active),1);
 }
 
 dt:target, span.highlighted {
-  background-color: #e9fce6;
+    background-color: rgba(var(--pst-color-primary),1);
 }
 
-.center {text-align: center;}
+.sig {
+	color: #ffffff;
+	padding-left: 10px;
+	background-color: rgba(var(--pst-color-primary),1);
+}
 
-img.logo {
-  display:block;
-  margin:0 auto;
-  height:auto;
-  width:auto;
-  border-radius:0;
-  max-width:100%;
-  background:transparent
+nav.bg-light {
+	background-color: rgba(var(--pst-color-primary),1) !important;
 }
 
 
-div.figure.align-default img {
-  display: block;
-  width:auto;
-  border-radius:0;
-  max-width:100%;
-  background:transparent;
-  margin-left: auto;
-  margin-right: auto;
-}
+.container-xl{max-width: 1400px !important;}
 
-div.figure img {
-  display: block;
-  width:auto;
-  border-radius:0;
-  max-width:100%;
-  background:transparent;
-  margin-left: auto;
-  margin-right: auto;
+.btn-outline-primary {
+    color: rgba(var(--pst-color-primary),1);
+    border-color: rgba(var(--pst-color-primary),1);
 }

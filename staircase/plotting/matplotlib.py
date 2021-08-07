@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from pandas.plotting import register_matplotlib_converters
 
 from staircase.util._decorators import Appender
@@ -17,7 +18,7 @@ def _draw_arrows(frame, ax, color, linewidth, **kwargs):
     arrow_length = (axes_lims[1, 0] - axes_lims[0, 0]) * 0.1
 
     # head_width, head_length = inv.transform((1,1), (0,0))
-    if not np.isnan(frame.iloc[-1]["start"]):
+    if not pd.isnull(frame.iloc[-1]["start"]):
         x = frame.iloc[-1]["start"]
         y = frame.iloc[-1]["value"]
         ax.arrow(
@@ -31,7 +32,7 @@ def _draw_arrows(frame, ax, color, linewidth, **kwargs):
             linewidth=linewidth,
             **kwargs,
         )
-    if not np.isnan(frame.iloc[0]["value"]):
+    if not pd.isnull(frame.iloc[0]["value"]):
         x = frame.iloc[0]["end"]
         y = frame.iloc[0]["value"]
         ax.arrow(

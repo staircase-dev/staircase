@@ -56,7 +56,7 @@ extensions = [
     "IPython.sphinxext.ipython_directive",
     "IPython.sphinxext.ipython_console_highlighting",
     #'sphinx.ext.napoleon',   
-    'matplotlib.sphinxext.plot_directive',  
+    'matplotlib.sphinxext.plot_directive',
     'sphinx.ext.extlinks',    
     #"sphinx.ext.linkcode",
     'numpydoc',  # handle NumPy documentation formatted docstrings]
@@ -104,6 +104,7 @@ import numpy as np
 import pandas as pd
 import staircase as sc
 import matplotlib.pyplot as plt
+plt.rcParams['figure.autolayout'] = True
 s1 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1)
 s2 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1)
 s3 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1).mask((2.5, 3.5))
@@ -187,7 +188,7 @@ html_theme_options = {
 }
 
 
-html_logo = "img/staircase-wide-transparent.svg"
+html_logo = "img/staircase-wide-inverse.svg"
 html_favicon = "img/favicon.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -196,7 +197,7 @@ html_favicon = "img/favicon.ico"
 html_static_path = ['_static']
 
 def setup(app):
-    app.add_css_file('custom2.css')
+    app.add_css_file('custom.css')
 
 # html_sidebars = {
     # #"**":["logo.html", "globaltoc.html", "relations.html", "searchbox.html", "gumroad.html",]

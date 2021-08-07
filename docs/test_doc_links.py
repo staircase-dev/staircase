@@ -41,6 +41,9 @@ urls = [
     #Case Study Hotel Stays
     'https://www.kaggle.com/jessemostipak/hotel-booking-demand',
     'https://vita.had.co.nz/papers/tidy-data.pdf',
+    
+    #FAQ
+    'https://pandas.pydata.org/pandas-docs/stable/user_guide/timedeltas.html#timedelta-limitations'
 ]
  
 @pytest.mark.parametrize("url", urls) 

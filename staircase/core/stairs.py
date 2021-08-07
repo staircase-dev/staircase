@@ -545,7 +545,7 @@ class Stairs:
 
     def pipe(self, func, *args, **kwargs):
         """
-        Applies func(self, *args, **kwargs) and returns the result.
+        Applies func and returns the result.
 
         Primarily intended to facilitate method chaining.
 
@@ -553,14 +553,15 @@ class Stairs:
         ----------
         func : callable
             Function to apply to *self*.
-        args : iterable, optional
+        args : , optional
             Positional arguments passed into *func*.
         kwargs : mapping, optional
             A dictionary of keyword arguments passed into *func*.
 
         Returns
         -------
-        object : return type of *func*
+        object
+            return type of *func*
         """
         return func(self, *args, **kwargs)
 
