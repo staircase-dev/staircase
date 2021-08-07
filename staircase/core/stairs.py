@@ -13,7 +13,9 @@ import pandas as pd
 from staircase import docstrings, plotting
 from staircase.constants import inf
 from staircase.core import stats
+from staircase.core.accessor import CachedAccessor
 from staircase.plotting import docstrings as plot_docstrings
+from staircase.plotting.accessor import PlotAccessor
 from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
 
@@ -121,9 +123,9 @@ class Stairs:
     def closed(self):
         return self._closed
 
-    @property
-    def dist(self):
-        return self._get_dist()
+    # @property
+    # def dist(self):
+    #    return self._get_dist()
 
     @property
     @Appender(stats.docstrings.ecdf_example, join="\n", indents=2)
@@ -215,10 +217,11 @@ class Stairs:
         """
         return stats.min(self)
 
-    @property
-    @Appender(plot_docstrings.matplotlib_docstring, join="\n", indents=2)
-    def plot(self):
-        return self._get_plot()
+    # @property
+    #  #@Appender(plot_docstrings.matplotlib_docstring, join="\n", indents=2)
+    # def plot(self):
+    #    return self._get_plot()
+    plot = CachedAccessor("plot", PlotAccessor)
 
     # TODO: docstring
     # TODO: test

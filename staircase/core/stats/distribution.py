@@ -150,7 +150,7 @@ class Dist:
         return self.fractile(np.linspace(0, 1, n + 1)[1:-1])
 
 
-def _get_dist(self):
-    if self._dist is None:
-        self._dist = Dist(self)
-    return self._dist
+# def _get_dist(self):
+#     if self._dist is None:
+#         self._dist = Dist(self)
+#     return self._dist

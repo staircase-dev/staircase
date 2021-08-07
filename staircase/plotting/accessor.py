@@ -1,6 +1,9 @@
+from staircase.plotting import docstrings
 from staircase.plotting.matplotlib import plot as plot_matplotlib
+from staircase.util._decorators import Appender
 
 
+@Appender(docstrings.matplotlib_docstring, join="\n", indents=1)
 class PlotAccessor:
     def __init__(self, stairs):
         self._stairs = stairs

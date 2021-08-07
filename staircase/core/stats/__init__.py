@@ -16,7 +16,8 @@ from staircase.core.stats.statistic import (
 
 
 def add_methods(cls):
-    from staircase.core.stats.distribution import _get_dist
+    from staircase.core.accessor import CachedAccessor
+    from staircase.core.stats.distribution import Dist
 
     # cls._get_integral_and_mean = _get_integral_and_mean
     cls.value_sums = value_sums
@@ -24,7 +25,7 @@ def add_methods(cls):
     cls.cov = cov
     cls.corr = corr
     cls.agg = agg
-    cls._get_dist = _get_dist
+    # cls._get_dist = _get_dist
 
     cls.integral = integral
     cls.mean = mean
@@ -32,3 +33,5 @@ def add_methods(cls):
     cls.mode = mode
     cls.std = std
     cls.var = var
+
+    cls.dist = CachedAccessor("dist", Dist)

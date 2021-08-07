@@ -1,5 +1,5 @@
 Stairs_docstring = """
-Objects of class Stairs are used to represent a :ref:`step function <getting_started.step_function>`.
+Objects of class Stairs are used to represent a :ref:`step function <intro_tutorials.stepfunction>`.
 
 See the :ref:`Stairs API <api.Stairs>` for details of attributes and methods.
 
