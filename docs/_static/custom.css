@@ -34,3 +34,7 @@ nav.bg-light {
     color: rgba(var(--pst-color-primary),1);
     border-color: rgba(var(--pst-color-primary),1);
 }
+
+code {
+	font-size: 100% !important;
+}

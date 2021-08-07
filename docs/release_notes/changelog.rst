@@ -13,7 +13,7 @@ v1.6.6 2021-07-06
 
 v1.6.5 2021-06-14
 
-- bugfix for :meth:`staircase_one.Stairs.mode`
+- bugfix for :meth:`staircase.Stairs.mode`
 
 
 v1.6.4 2021-03-16
@@ -39,7 +39,7 @@ v1.6.1 2020-12-30
 
 v1.6.0 2020-11-10
 
-- support for :ref:`timezones<resources.articles>` added
+- support for `timezones` added
 - bugfix for :func:`staircase.sample` when *points* == None (-inf is no longer included)
 - bugfix for :func:`staircase.aggregate` where Stairs objects have non-zero value at -inf
 
