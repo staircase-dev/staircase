@@ -3,7 +3,6 @@ from staircase.plotting.matplotlib import plot as plot_matplotlib
 from staircase.util._decorators import Appender
 
 
-@Appender(docstrings.matplotlib_docstring, join="\n", indents=1)
 class PlotAccessor:
     def __init__(self, stairs):
         self._stairs = stairs
@@ -11,23 +10,8 @@ class PlotAccessor:
     def _dist(self):
         return self._stairs.dist
 
+    @Appender(docstrings.matplotlib_docstring, join="\n", indents=1)
     def __call__(self, *args, backend="matplotlib", **kwargs):
-        """
-        Makes a step plot representing the finite intervals belonging to the Stairs instance.
-
-        Uses matplotlib as a backend.
-
-        Parameters
-        ----------
-        ax : :class:`matplotlib.axes.Axes`, default None
-            Allows the axes, on which to plot, to be specified
-        **kwargs
-            Options to pass to :function: `matplotlib.pyplot.step`
-
-        Returns
-        -------
-        :class:`matplotlib.axes.Axes`
-        """
         # register_matplotlib_converters()
         if self._stairs._data is None:
             return

@@ -59,5 +59,4 @@ Ready to give **staircase** a spin?  Need some data?  The :func:`staircase.make_
     masking
     slicing
     distributions
-    test_data
     faq
