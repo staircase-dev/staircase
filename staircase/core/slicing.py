@@ -85,7 +85,7 @@ class StairsSlicer:
         result = getattr(self, func)()
         return sc.Stairs.new(
             initial_value=self._stairs.initial_value,
-            data=pd.DataFrame({"value": result}, index=index),
+            data=pd.DataFrame({"value": result.values}, index=index),
         )
 
 
