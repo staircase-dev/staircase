@@ -84,8 +84,12 @@ def _make_test_data(dates=True, positive_only=True, seed=None):
     end = start + interval_lengths
 
     if dates:
-        start = pd.Timestamp("2021") + start * 365 / 100 * pd.Timedelta(1, "day")
-        end = pd.Timestamp("2021") + end * 365 / 100 * pd.Timedelta(1, "day")
+        start = pd.Timestamp("2021") + pd.TimedeltaIndex(
+            start * 365 / 100 * pd.Timedelta(1, "day")
+        )
+        end = pd.Timestamp("2021") + pd.TimedeltaIndex(
+            end * 365 / 100 * pd.Timedelta(1, "day")
+        )
 
     value = rng.choice(range(-5, 6), n_intervals)
     if positive_only:
