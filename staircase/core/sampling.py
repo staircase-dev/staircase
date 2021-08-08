@@ -87,7 +87,7 @@ def limit(self, x, side, include_index=False):
     amended_values = np.append(
         self._get_values().values, [self.initial_value]
     )  # hack for -1 index value
-    if pd.api.types.is_list_like(x) and _is_datetime_like(x[0]):
+    if pd.api.types.is_list_like(x) and _is_datetime_like(next(iter(x))):
         x = pd.Series(x).values  # faster, but also bug free in numpy
     elif _is_datetime_like(x):
         x = pd.Series([x]).values[0]
