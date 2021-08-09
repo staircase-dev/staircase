@@ -1,5 +1,5 @@
 ipykernel
-sphinx
+sphinx == 4.0.2
 nbsphinx
 sphinx-panels
 matplotlib
