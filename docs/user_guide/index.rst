@@ -53,6 +53,7 @@ Ready to give **staircase** a spin?  Need some data?  The :func:`staircase.make_
     :maxdepth: 1
     :hidden:
 
+    stepfunctionthinking
     endpoints
     layering
     dates

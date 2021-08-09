@@ -1,0 +1,69 @@
+.. plot::
+    :context: close-figs
+    :include-source: False
+
+    def stepfunctionexample(ax, basecolor, lpointcolor, rpointcolor):
+        (
+            sc.Stairs()
+            .layer(None, -5, 2)
+            .layer(-5, -2, 4)
+            .layer(-2, 3, 1)
+            .layer(3, 4, -2)
+            .layer(8, None)
+            .mask((4,8))
+            .plot(style="hlines", arrows=True, linewidth=3, color=basecolor, ax=ax)
+        )
+        lpoints = [(-5, 4), (-2, 1), (3, -2), (8,1)]
+        rpoints = [(-5, 2), (-2, 4), (3, 1), (4,-2)]
+        ax.scatter(
+            [x for x,_ in lpoints],
+            [y for _,y in lpoints],
+            s=64,
+            c=lpointcolor,
+            edgecolor=basecolor,
+            zorder=10
+        )
+        ax.scatter(
+            [x for x,_ in rpoints],
+            [y for _,y in rpoints],
+            s=64,
+            c = rpointcolor,
+            edgecolor=basecolor,
+            zorder=10,
+        )
+        ax.vlines([-5,-2,3,4,8], ymin=-4, ymax=6, color='grey', zorder=-10, linestyles="dotted")
+        ax.set_ylim(-3, 5)
+		
+    _, axes = plt.subplots(nrows=1, ncols=2,  figsize=(8,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+    ax=axes[0]
+    (
+        sc.Stairs()
+        .layer(None, -5, 2)
+        .layer(-5, -2, 4)
+        .layer(3, 4, -2)
+        .layer(8, None)
+        .mask((4,8))
+        .mask((-2,3))
+        .plot(style="hlines", arrows=True, linewidth=3, color="orange", ax=ax)
+    )
+    lpoints = [(-5, 4), (-2, 0), (3, -2), (8,1)]
+    rpoints = [(-5, 2), (-2, 4), (3, 2), (4,-2)]
+    ax.scatter(
+        [x for x,_ in lpoints],
+        [y for _,y in lpoints],
+        s=64,
+        c="orange",
+        edgecolor="orange",
+        zorder=10
+    )
+    ax.scatter(
+        [x for x,_ in rpoints],
+        [y for _,y in rpoints],
+        s=64,
+        c = "white",
+        edgecolor="orange",
+        zorder=10,
+    )
+    ax.plot([-2,3], [0,2], linewidth=3, color="orange")
+    ax.vlines([-5,-2,3,4,8], ymin=-4, ymax=6, color='grey', zorder=-10, linestyles="dotted")
+    stepfunctionexample(axes[1], "orange", "orange", "orange")

@@ -1,4 +1,4 @@
-.. _getting_started.faq:
+.. _user_guide.faq:
 
 
 Frequently Asked Questions
