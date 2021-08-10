@@ -57,7 +57,10 @@ def test_non_unique_mask_and(stairs1, stairs2):
         {-2.0: 1.0, 1.0: np.nan, 3.0: 1.0, 7.0: 0.0, 8.0: 1.0, 10.0: 0.0}
     )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert result.initial_value == 0
 
@@ -77,7 +80,10 @@ def test_non_unique_nan_initial_mask_and(stairs1, stairs2):
     result = stairs1.logical_and(stairs2)
     expected = pd.Series({3.0: 1.0, 7.0: 0.0, 8.0: 1.0, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -105,7 +111,10 @@ def test_unique_non_overlapping_mask_and(stairs1, stairs2):
         {-2.0: 1.0, 1.0: np.nan, 3.0: 1.0, 5.0: np.nan, 9.0: 1.0, 10.0: 0.0}
     )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert result.initial_value == 0
 
@@ -131,7 +140,10 @@ def test_unique_non_overlapping_nan_initial_mask_and(stairs1, stairs2):
     result = stairs1.logical_and(stairs2)
     expected = pd.Series({3.0: 1.0, 5.0: np.nan, 9.0: 1.0, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -157,7 +169,10 @@ def test_unique_adjacent_mask_and(stairs1, stairs2):
     result = stairs1.logical_and(stairs2)
     expected = pd.Series({-2.0: 1.0, 1.0: np.nan, 9.0: 1.0, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert result.initial_value == 0
 
@@ -183,7 +198,10 @@ def test_unique_adjacent_nan_initial_mask_and(stairs1, stairs2):
     result = stairs1.logical_and(stairs2)
     expected = pd.Series({9.0: 1.0, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -209,7 +227,10 @@ def test_unique_overlapping_mask_and(stairs1, stairs2):
     result = stairs1.logical_and(stairs2)
     expected = pd.Series({-2.0: 1.0, 1.0: np.nan, 9.0: 1.0, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert result.initial_value == 0
 
@@ -235,7 +256,9 @@ def test_unique_overlapping_nan_initial_mask_and(stairs1, stairs2):
     result = stairs1.logical_and(stairs2)
     expected = pd.Series({9.0: 1.0, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
-

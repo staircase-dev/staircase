@@ -108,7 +108,8 @@ def var(self):
     squared_values = values * values
     return (
         sc.Stairs.new(
-            initial_value=0, data=pd.DataFrame({"value": squared_values}),
+            initial_value=0,
+            data=pd.DataFrame({"value": squared_values}),
         ).agg("integral", (0, 100))
         / 100
     )
@@ -147,7 +148,9 @@ def values_in_range(self, where=(-inf, inf), closed=None):
 # TODO: test
 # TODO: what's new
 def _min(
-    self, where=(-inf, inf), closed=None,
+    self,
+    where=(-inf, inf),
+    closed=None,
 ):
     where = _replace_none_with_infs(where)
     if closed is None:
@@ -159,7 +162,9 @@ def _min(
 # TODO: test
 # TODO: what's new
 def _max(
-    self, where=(-inf, inf), closed=None,
+    self,
+    where=(-inf, inf),
+    closed=None,
 ):
     where = _replace_none_with_infs(where)
     if closed is None:

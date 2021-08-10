@@ -50,7 +50,10 @@ def _combine_step_series(
     reindexed_series_1 = reindex_method(new_index, series_1, initial_value_1)
     reindexed_series_2 = reindex_method(new_index, series_2, initial_value_2)
 
-    new_series = series_op(reindexed_series_1, reindexed_series_2,).astype(float)
+    new_series = series_op(
+        reindexed_series_1,
+        reindexed_series_2,
+    ).astype(float)
 
     if series_op == pd.Series.divide:
         new_series.replace(np.inf, np.nan, inplace=True)
@@ -95,7 +98,8 @@ def _combine_stairs_via_values(stairs1, stairs2, series_op, float_op):
         values = values.replace(np.inf, np.nan).replace(-np.inf, np.nan)
 
     new_instance = sc.Stairs.new(
-        initial_value=initial_value, data=pd.DataFrame({"value": values}),
+        initial_value=initial_value,
+        data=pd.DataFrame({"value": values}),
     )
     new_instance._remove_redundant_step_points()
     return new_instance

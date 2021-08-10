@@ -329,7 +329,10 @@ def test_sample_1(date_func):
     )
     expected = pd.DataFrame({timestamp(2020, 1, 3, date_func=date_func): [2.75, -0.5]})
     pd.testing.assert_frame_equal(
-        sample, expected, check_names=False, check_index_type=False,
+        sample,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
 
 
@@ -338,9 +341,18 @@ def test_sample_2(date_func):
     ts6 = timestamp(2020, 1, 6, date_func=date_func)
     ts8 = timestamp(2020, 1, 8, date_func=date_func)
     sample = sc.sample([s1(date_func), s2(date_func)], [ts3, ts6, ts8])
-    expected = pd.DataFrame({ts3: [2.75, -0.5], ts6: [-0.5, -2.5], ts8: [-0.5, 5.0],})
+    expected = pd.DataFrame(
+        {
+            ts3: [2.75, -0.5],
+            ts6: [-0.5, -2.5],
+            ts8: [-0.5, 5.0],
+        }
+    )
     pd.testing.assert_frame_equal(
-        sample, expected, check_names=False, check_index_type=False,
+        sample,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
 
 
@@ -351,7 +363,10 @@ def test_limit_1(date_func):
     limits = sc.limit([s1(date_func), s2(date_func)], [ts3, ts6, ts8], side="left")
     expected = pd.DataFrame({ts3: [0.25, -0.5], ts6: [2.0, -2.5], ts8: [-0.5, 0.0]})
     pd.testing.assert_frame_equal(
-        limits, expected, check_names=False, check_index_type=False,
+        limits,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
 
 
@@ -362,7 +377,10 @@ def test_limit_2(date_func):
     limits = sc.limit([s1(date_func), s2(date_func)], [ts3, ts6, ts8], side="right")
     expected = pd.DataFrame({ts3: [2.75, -0.5], ts6: [-0.5, -2.5], ts8: [-0.5, 5.0]})
     pd.testing.assert_frame_equal(
-        limits, expected, check_names=False, check_index_type=False,
+        limits,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
 
 

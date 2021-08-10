@@ -490,12 +490,16 @@ class Stairs:
         clipped = self.clip(lower, upper)
         step_points = clipped._data.index  # TODO: what if data is none
         sample_points = pd.Index.union(
-            step_points - left_delta, step_points - right_delta,
+            step_points - left_delta,
+            step_points - right_delta,
         )
         ii = pd.IntervalIndex.from_arrays(
             sample_points + left_delta, sample_points + right_delta
         )
-        s = pd.Series(clipped.slice(ii).mean().values, index=sample_points,)
+        s = pd.Series(
+            clipped.slice(ii).mean().values,
+            index=sample_points,
+        )
         if lower != -inf:
             s = s.loc[s.index >= lower - left_delta]
         if upper != inf:

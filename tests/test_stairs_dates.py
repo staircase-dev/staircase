@@ -919,7 +919,10 @@ def test_hist_default_bins_left_closed(date_func, stairs_func, bounds, cuts):
     hist = stairs_instance.clip(*bounds).hist(bins=cuts, stat="probability")
     expected = make_expected_result(hist.index, *bounds)
     pd.testing.assert_series_equal(
-        hist, expected, check_names=False, check_index_type=False,
+        hist,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
 
 
@@ -955,7 +958,10 @@ def test_hist_default_bins_right_closed(date_func, stairs_func, bounds, cuts):
     )
     expected = make_expected_result(hist.index, *bounds)
     pd.testing.assert_series_equal(
-        hist, expected, check_names=False, check_index_type=False,
+        hist,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
 
 
@@ -1131,7 +1137,10 @@ def test_s1_std(date_func, bounds, expected):
     "bounds, expected",
     [
         ((), 2.840536476886844),
-        (((2019, 12, 30), (2020, 1, 8, 16)), 2.0697735491086395,),
+        (
+            ((2019, 12, 30), (2020, 1, 8, 16)),
+            2.0697735491086395,
+        ),
         (((2020, 1, 2), (2020, 1, 11, 3)), 2.6299586126728878),
     ],
 )
@@ -1202,7 +1211,9 @@ def test_s1_autocorr(date_func, kwargs, expected):
     upper = timestamp(*kwargs.pop("upper"), date_func=date_func)
     new_kwargs = {**kwargs, "where": (lower, upper)}
     assert np.isclose(
-        s1(date_func).corr(s1(date_func), **new_kwargs), expected, atol=0.00001,
+        s1(date_func).corr(s1(date_func), **new_kwargs),
+        expected,
+        atol=0.00001,
     )
 
 
@@ -1602,9 +1613,16 @@ def test_make_test_data():
 @pytest.mark.parametrize(
     "kwargs",
     [
-        {"lower": (2020, 1, 1),},
-        {"lower": (2020, 1, 1), "upper": (2020, 1, 8),},
-        {"upper": (2020, 1, 8),},
+        {
+            "lower": (2020, 1, 1),
+        },
+        {
+            "lower": (2020, 1, 1),
+            "upper": (2020, 1, 8),
+        },
+        {
+            "upper": (2020, 1, 8),
+        },
     ],
 )
 def test_clip_expected_type(date_func, kwargs):

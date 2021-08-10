@@ -51,14 +51,22 @@ def _draw_arrows(frame, ax, color, linewidth, **kwargs):
 def _plot_matplotlib_steps(frame, ax, **kwargs):
     frame.loc[0, "start"] = frame.loc[0, "end"]
 
-    return ax.step(frame["start"], frame["value"], where="post", **kwargs,)
+    return ax.step(
+        frame["start"],
+        frame["value"],
+        where="post",
+        **kwargs,
+    )
 
 
 def _plot_matplotlib_hlines(frame, ax, **kwargs):
     plot_data = frame.iloc[1:-1].query("value.notnull()")
 
     return ax.hlines(
-        plot_data["value"], plot_data["start"], plot_data["end"], **kwargs,
+        plot_data["value"],
+        plot_data["start"],
+        plot_data["end"],
+        **kwargs,
     )
 
 

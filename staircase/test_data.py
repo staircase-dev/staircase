@@ -10,7 +10,7 @@ def make_test_data(dates=True, positive_only=True, groups=(), seed=None):
 
     Parameters
     ----------
-    dates : bool, default True        
+    dates : bool, default True
         Indicates whether to return data associated with a datetime domain or numerical.
         If dates is true the data will be confined to the year 2021.
         If dates is false the data will be confined to the interval [0, 100]
@@ -39,7 +39,7 @@ def make_test_data(dates=True, positive_only=True, groups=(), seed=None):
         :context: close-figs
 
         >>> df = sc.make_test_data(dates=False, positive_only=False, seed=42)
-        >>> sc.Stairs(df, "start", "end", "value").plot()    
+        >>> sc.Stairs(df, "start", "end", "value").plot()
 
     .. plot::
         :context: close-figs

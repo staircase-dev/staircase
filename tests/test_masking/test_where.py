@@ -45,7 +45,8 @@ def s1_fix():
 
 
 @pytest.mark.parametrize(
-    "initial_value", [np.nan, 0],
+    "initial_value",
+    [np.nan, 0],
 )
 def test_where_neginf_to_posinf(initial_value):
     s = s1().where(sc.Stairs(initial_value=initial_value))
@@ -68,7 +69,10 @@ def test_where_neginf_to_posinf(initial_value):
 def test_where_neginf(end, expected_step_values):
     s = s1().where(sc.Stairs(end=end))
     pd.testing.assert_series_equal(
-        s.step_values, expected_step_values, check_names=False, check_index_type=False,
+        s.step_values,
+        expected_step_values,
+        check_names=False,
+        check_index_type=False,
     )
     assert s.initial_value == 0
 
@@ -88,13 +92,17 @@ def test_where_neginf(end, expected_step_values):
 def test_where_posinf(start, expected_step_values):
     s = s1().where(sc.Stairs(start=start))
     pd.testing.assert_series_equal(
-        s.step_values, expected_step_values, check_names=False, check_index_type=False,
+        s.step_values,
+        expected_step_values,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(s.initial_value)
 
 
 @pytest.mark.parametrize(
-    "initial_value", [np.nan, 0],
+    "initial_value",
+    [np.nan, 0],
 )
 def test_where_neginf_to_posinf_with_nan_initial(initial_value):
     mask_ = sc.Stairs(end=-4)
@@ -124,7 +132,10 @@ def test_where_neginf_with_nan_initial(end, expected_step_values, tuple_mask):
     mask_ = (None, end) if tuple_mask else sc.Stairs(end=end)
     s = nan_initial.where(mask_)
     pd.testing.assert_series_equal(
-        s.step_values, expected_step_values, check_names=False, check_index_type=False,
+        s.step_values,
+        expected_step_values,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(s.initial_value)
 
@@ -149,7 +160,10 @@ def test_where_posinf_with_nan_initial(start, expected_step_values, tuple_mask):
     mask_ = (start, None) if tuple_mask else sc.Stairs(start=start)
     s = nan_initial.where(mask_)
     pd.testing.assert_series_equal(
-        s.step_values, expected_step_values, check_names=False, check_index_type=False,
+        s.step_values,
+        expected_step_values,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(s.initial_value)
 
@@ -174,7 +188,10 @@ def test_where_single_step(start, end, expected_step_values, tuple_mask):
     mask_ = (start, end) if tuple_mask else sc.Stairs(start=start, end=end)
     s = s1().where(mask_)
     pd.testing.assert_series_equal(
-        s.step_values, expected_step_values, check_names=False, check_index_type=False,
+        s.step_values,
+        expected_step_values,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(s.initial_value)
 
@@ -201,6 +218,9 @@ def test_where_single_step_initial_nan(start, end, expected_step_values, tuple_m
     mask_ = (start, end) if tuple_mask else sc.Stairs(start=start, end=end)
     s = nan_initial.where(mask_)
     pd.testing.assert_series_equal(
-        s.step_values, expected_step_values, check_names=False, check_index_type=False,
+        s.step_values,
+        expected_step_values,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(s.initial_value)

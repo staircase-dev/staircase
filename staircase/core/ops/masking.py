@@ -63,7 +63,10 @@ def clip(self, lower=-inf, upper=inf):
 
     initial_value = self.initial_value if lower == -inf else np.nan
 
-    result = sc.Stairs.new(initial_value=initial_value, data=data,)
+    result = sc.Stairs.new(
+        initial_value=initial_value,
+        data=data,
+    )
     result._remove_redundant_step_points()
     return result
 
@@ -80,7 +83,8 @@ def _maskify(self, inverse=False):
         )
 
     return sc.Stairs.new(
-        initial_value=np.nan if op(self.initial_value, 0) else 0, data=data,
+        initial_value=np.nan if op(self.initial_value, 0) else 0,
+        data=data,
     )
 
 

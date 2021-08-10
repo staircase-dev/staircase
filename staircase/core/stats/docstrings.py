@@ -35,28 +35,56 @@ Examples
 """
 
 simple_min_example = _stat_example.format(
-    func="min", stairs1="s1", result1="-1", stairs2="s3.clip(2,4)", result2="0.0",
+    func="min",
+    stairs1="s1",
+    result1="-1",
+    stairs2="s3.clip(2,4)",
+    result2="0.0",
 )
 simple_max_example = _stat_example.format(
-    func="max", stairs1="s1", result1="1", stairs2="s3.clip(2,4)", result2="1.0",
+    func="max",
+    stairs1="s1",
+    result1="1",
+    stairs2="s3.clip(2,4)",
+    result2="1.0",
 )
 integral_example = _stat_example.format(
-    func="integral", stairs1="s1", result1="1", stairs2="s3", result2="0.5",
+    func="integral",
+    stairs1="s1",
+    result1="1",
+    stairs2="s3",
+    result2="0.5",
 )
 mean_example = _stat_example.format(
-    func="mean", stairs1="s1", result1="0.25", stairs2="s3", result2="0.166666",
+    func="mean",
+    stairs1="s1",
+    result1="0.25",
+    stairs2="s3",
+    result2="0.166666",
 )
 mode_example = _stat_example.format(
     func="mode", stairs1="s1", result1="1", stairs2="s4", result2="0.5"
 )
 median_example = _stat_example.format(
-    func="median", stairs1="s1", result1="0.5", stairs2="s4", result2="0.0",
+    func="median",
+    stairs1="s1",
+    result1="0.5",
+    stairs2="s4",
+    result2="0.0",
 )
 std_example = _stat_example.format(
-    func="std", stairs1="s1", result1="0.829156", stairs2="s3", result2="0.897527",
+    func="std",
+    stairs1="s1",
+    result1="0.829156",
+    stairs2="s3",
+    result2="0.897527",
 )
 var_example = _stat_example.format(
-    func="var", stairs1="s1", result1="0.6875", stairs2="s3", result2="0.805555",
+    func="var",
+    stairs1="s1",
+    result1="0.6875",
+    stairs2="s3",
+    result2="0.805555",
 )
 
 
@@ -100,7 +128,11 @@ def _gen_docstring(calculation):
     if property:
         docstring = _stat_docstring
 
-    return docstring.format(calc=calc, see_also=see_also, example=example,)
+    return docstring.format(
+        calc=calc,
+        see_also=see_also,
+        example=example,
+    )
 
 
 mean_docstring = _gen_docstring("mean")

@@ -68,7 +68,10 @@ def test_non_unique_mask_addition(stairs1, stairs2):
         }
     )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert result.initial_value == 0
 
@@ -87,10 +90,21 @@ def test_non_unique_mask_addition(stairs1, stairs2):
 def test_non_unique_nan_initial_mask_addition(stairs1, stairs2):
     result = stairs1 + stairs2
     expected = pd.Series(
-        {3.0: 2.25, 4.0: 4.75, 5.0: -0.5, 6.0: -3.0, 7.0: -0.5, 8.0: 4.5, 10.0: 0.0,}
+        {
+            3.0: 2.25,
+            4.0: 4.75,
+            5.0: -0.5,
+            6.0: -3.0,
+            7.0: -0.5,
+            8.0: 4.5,
+            10.0: 0.0,
+        }
     )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -127,7 +141,10 @@ def test_unique_non_overlapping_mask_addition(stairs1, stairs2):
         }
     )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert result.initial_value == 0
 
@@ -151,9 +168,20 @@ def test_unique_non_overlapping_mask_addition(stairs1, stairs2):
 )
 def test_unique_non_overlapping_nan_initial_mask_addition(stairs1, stairs2):
     result = stairs1 + stairs2
-    expected = pd.Series({3.0: 2.25, 4.0: 4.75, 5.0: np.nan, 9.0: 4.5, 10.0: 0.0,})
+    expected = pd.Series(
+        {
+            3.0: 2.25,
+            4.0: 4.75,
+            5.0: np.nan,
+            9.0: 4.5,
+            10.0: 0.0,
+        }
+    )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -179,7 +207,10 @@ def test_unique_adjacent_mask_addition(stairs1, stairs2):
     result = stairs1 + stairs2
     expected = pd.Series({-4.0: -1.75, -2.0: -3.5, 1.0: np.nan, 9.0: 4.5, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert result.initial_value == 0
 
@@ -205,7 +236,10 @@ def test_unique_adjacent_nan_initial_mask_addition(stairs1, stairs2):
     result = stairs1 + stairs2
     expected = pd.Series({9.0: 4.5, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -231,7 +265,10 @@ def test_unique_overlapping_mask_addition(stairs1, stairs2):
     result = stairs1 + stairs2
     expected = pd.Series({-4.0: -1.75, -2.0: -3.5, 1.0: np.nan, 9.0: 4.5, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert result.initial_value == 0
 
@@ -257,7 +294,9 @@ def test_unique_overlapping_nan_initial_mask_addition(stairs1, stairs2):
     result = stairs1 + stairs2
     expected = pd.Series({9.0: 4.5, 10.0: 0.0})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
-

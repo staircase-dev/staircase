@@ -40,7 +40,11 @@ def _gen_example(plot_titles, setup=""):
     ncols = len(plot_titles)
     plots = ", ".join(plot_titles)
     return _example.format(
-        plots=plots, ncols=ncols, plot_titles=plot_titles, setup=setup, width=ncols + 5,
+        plots=plots,
+        ncols=ncols,
+        plot_titles=plot_titles,
+        setup=setup,
+        width=ncols + 5,
     )
 
 
@@ -196,7 +200,11 @@ def _gen_docstring(calculation):
         docstring = _corr_cov_docstring
     else:
         docstring = _return_stairs_docstring
-    return docstring.format(calc=calc, see_also=see_also, example=example,)
+    return docstring.format(
+        calc=calc,
+        see_also=see_also,
+        example=example,
+    )
 
 
 min_docstring = _gen_docstring("min")

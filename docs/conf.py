@@ -9,39 +9,48 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#from numpydoc.docscrape import NumpyDocString
-#from sphinx.ext.autosummary import _import_by_name
+# from numpydoc.docscrape import NumpyDocString
+# from sphinx.ext.autosummary import _import_by_name
 
 
-#for sphinx
-import os,sys,inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir) 
+import inspect
 
-#for nbsphinx
-os.environ['PYTHONPATH'] = os.path.abspath(parentdir)
-
-import staircase as sc
+# for sphinx
+import os
+import sys
 from datetime import datetime
+
 from numpydoc.docscrape import NumpyDocString
 from sphinx.ext.autosummary import _import_by_name
 
+import staircase as sc
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
+# for nbsphinx
+os.environ["PYTHONPATH"] = os.path.abspath(parentdir)
+
+
 # -- Project information -----------------------------------------------------
 
-project = 'staircase'
-copyright = f'2020-{datetime.now().year}, Riley Clement'
-author = 'Riley Clement'
+project = "staircase"
+copyright = f"2020-{datetime.now().year}, Riley Clement"
+author = "Riley Clement"
 version = sc.__version__
-if 'untagged' in version:
-    version = 'latest'
-elif 'unknown' in version:  #for when not installed
+if "untagged" in version:
+    version = "latest"
+elif "unknown" in version:  # for when not installed
     try:
         import toml
-        version = dict(toml.load(parentdir + "/pyproject.toml"))["tool"]["poetry"]["version"]
-    except:
+
+        version = dict(toml.load(parentdir + "/pyproject.toml"))["tool"]["poetry"][
+            "version"
+        ]
+    except:  # noqa E722
         pass
-version = version.split('+')[0]
+version = version.split("+")[0]
 
 # -- General configuration ---------------------------------------------------
 
@@ -49,34 +58,37 @@ version = version.split('+')[0]
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc', 
-    'sphinx.ext.autosummary', 
-    'sphinx.ext.coverage', 
-    'sphinx.ext.mathjax',
-    'sphinx.ext.intersphinx',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.coverage",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.intersphinx",
     "IPython.sphinxext.ipython_directive",
     "IPython.sphinxext.ipython_console_highlighting",
-    #'sphinx.ext.napoleon',   
-    'matplotlib.sphinxext.plot_directive',
-    'sphinx.ext.extlinks',    
-    #"sphinx.ext.linkcode",
-    'numpydoc',  # handle NumPy documentation formatted docstrings]
-    'nbsphinx',
+    "matplotlib.sphinxext.plot_directive",
+    "sphinx.ext.extlinks",
+    # "sphinx.ext.linkcode",
+    "numpydoc",  # handle NumPy documentation formatted docstrings]
+    "nbsphinx",
     "sphinx_panels",
 ]
 
-source_suffix = ['.rst', '.ipynb']
+source_suffix = [".rst", ".ipynb"]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.venv',
-    'examples/.ipynb_checkpoints',
-    'articles/.ipynb_checkpoints',
-    'examples/Index.ipynb',
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    ".venv",
+    "examples/.ipynb_checkpoints",
+    "articles/.ipynb_checkpoints",
+    "examples/Index.ipynb",
 ]
 
 suppress_warnings = [
@@ -93,7 +105,7 @@ panels_add_bootstrap_css = False
 pygments_style = "sphinx"
 
 
-master_doc = 'index'
+master_doc = "index"
 
 # matplotlib plot directive
 plot_include_source = True
@@ -111,6 +123,7 @@ s2 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1)
 s3 = sc.Stairs().layer(1,2).layer(3,4).layer(4,5,-1).mask((2.5, 3.5))
 s4 = sc.Stairs().layer(0, 2, 0.5).layer(3,4,-1).layer(4,5.5,-1).mask((4,5))
 """
+
 
 def linkcode_resolve(domain, info):
     """
@@ -150,14 +163,14 @@ def linkcode_resolve(domain, info):
     else:
         linespec = ""
 
-    fn = os.path.relpath(fn, start=os.path.dirname(staircase.__file__))
+    fn = os.path.relpath(fn, start=os.path.dirname(sc.__file__))
 
-    if "+" in staircase.__version__:
+    if "+" in sc.__version__:
         return f"https://github.com/staircase-dev/staircase/blob/master/staircase/{fn}{linespec}"
     else:
         return (
             f"https://github.com/staircase-dev/staircase/blob/"
-            f"v{staircase.__version__}/staircase/{fn}{linespec}"
+            f"v{sc.__version__}/staircase/{fn}{linespec}"
         )
 
 
@@ -168,7 +181,6 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
     "statsmodels": ("https://www.statsmodels.org/devel/", None),
-    
 }
 
 
@@ -316,8 +328,8 @@ class StaircaseAutosummary(Autosummary):
         items = [self._replace_staircase_items(*item) for item in items]
         items = list(self._add_deprecation_prefixes(items))
         return items
-        
-    
+
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -325,8 +337,8 @@ class StaircaseAutosummary(Autosummary):
 
 html_theme = "pydata_sphinx_theme"
 
-#html_theme = "guzzle_sphinx_theme"
-#html_theme_path = guzzle_sphinx_theme.html_theme_path()
+# html_theme = "guzzle_sphinx_theme"
+# html_theme_path = guzzle_sphinx_theme.html_theme_path()
 
 html_theme_options = {
     "google_analytics_id": "UA-27880019-2",
@@ -340,17 +352,19 @@ html_favicon = "img/favicon.ico"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
+
 
 def setup(app):
-    app.add_css_file('custom.css')
+    app.add_css_file("custom.css")
     app.add_autodocumenter(AccessorDocumenter)
     app.add_autodocumenter(AccessorAttributeDocumenter)
     app.add_autodocumenter(AccessorMethodDocumenter)
     app.add_autodocumenter(AccessorCallableDocumenter)
     app.add_directive("autosummary", StaircaseAutosummary)
 
+
 # html_sidebars = {
-    # #"**":["logo.html", "globaltoc.html", "relations.html", "searchbox.html", "gumroad.html",]
-    # "**":["globaltoc.html", "relations.html", "searchbox.html",]
+# #"**":["logo.html", "globaltoc.html", "relations.html", "searchbox.html", "gumroad.html",]
+# "**":["globaltoc.html", "relations.html", "searchbox.html",]
 # }

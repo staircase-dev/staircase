@@ -64,7 +64,10 @@ def test_non_unique_mask_division(stairs1, stairs2):
         }
     )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -91,7 +94,10 @@ def test_non_unique_nan_initial_mask_division(stairs1, stairs2):
         }
     )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -121,7 +127,10 @@ def test_unique_non_overlapping_mask_division(stairs1, stairs2):
         }
     )
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -141,7 +150,10 @@ def test_unique_non_overlapping_nan_initial_mask_division(stairs1, stairs2):
     result = stairs1 / stairs2
     expected = pd.Series({3.0: -5.5, 4.0: 1.375, 5.0: np.nan, 9.0: -0.1, 10.0: np.nan})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -161,7 +173,10 @@ def test_unique_adjacent_mask_division(stairs1, stairs2):
     result = stairs1 / stairs2
     expected = pd.Series({-2.0: 1.0, 1.0: np.nan, 9.0: -0.1, 10.0: np.nan})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -181,7 +196,10 @@ def test_unique_adjacent_nan_initial_mask_division(stairs1, stairs2):
     result = stairs1 / stairs2
     expected = pd.Series({9.0: -0.1, 10.0: np.nan})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -201,7 +219,10 @@ def test_unique_overlapping_mask_division(stairs1, stairs2):
     result = stairs1 / stairs2
     expected = pd.Series({-2.0: 1.0, 1.0: np.nan, 9.0: -0.1, 10.0: np.nan})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
 
@@ -221,7 +242,9 @@ def test_unique_overlapping_nan_initial_mask_division(stairs1, stairs2):
     result = stairs1 / stairs2
     expected = pd.Series({9.0: -0.1, 10.0: np.nan})
     pd.testing.assert_series_equal(
-        result.step_values, expected, check_names=False, check_index_type=False,
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
     )
     assert np.isnan(result.initial_value)
-

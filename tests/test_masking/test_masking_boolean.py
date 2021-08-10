@@ -54,7 +54,10 @@ def s1_fix():
 def test_mask_make_boolean_s1(kwargs, expected_values, expected_initial):
     result = s1().mask(sc.Stairs(**kwargs)).make_boolean()
     pd.testing.assert_series_equal(
-        result.step_values, expected_values, check_names=False, check_index_type=False,
+        result.step_values,
+        expected_values,
+        check_names=False,
+        check_index_type=False,
     )
     if np.isnan(expected_initial):
         assert np.isnan(result.initial_value)
@@ -76,7 +79,10 @@ def test_mask_make_boolean_s1(kwargs, expected_values, expected_initial):
 def test_mask_invert_s1(kwargs, expected_values, expected_initial):
     result = s1().mask(sc.Stairs(**kwargs)).invert()
     pd.testing.assert_series_equal(
-        result.step_values, expected_values, check_names=False, check_index_type=False,
+        result.step_values,
+        expected_values,
+        check_names=False,
+        check_index_type=False,
     )
     if np.isnan(expected_initial):
         assert np.isnan(result.initial_value)

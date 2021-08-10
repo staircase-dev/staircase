@@ -16,7 +16,10 @@ from staircase.util._decorators import Appender
 @Appender(docstrings.negate_docstring, join="\n", indents=1)
 def negate(self):
     data = -self._data if self._data is not None else None
-    return sc.Stairs.new(initial_value=-self.initial_value, data=data,)
+    return sc.Stairs.new(
+        initial_value=-self.initial_value,
+        data=data,
+    )
 
 
 def _add_or_sub_deltas_no_mask(self, other, series_op, float_op):
@@ -80,14 +83,20 @@ def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
 # TODO: test
 # TODO: what's new
 add = _make_add_or_sub_func(
-    docstrings.add_docstring, pd.Series.add, operator.add, pd.Series.radd,
+    docstrings.add_docstring,
+    pd.Series.add,
+    operator.add,
+    pd.Series.radd,
 )
 
 # TODO: docstring
 # TODO: test
 # TODO: what's new
 subtract = _make_add_or_sub_func(
-    docstrings.subtract_docstring, pd.Series.sub, operator.sub, pd.Series.rsub,
+    docstrings.subtract_docstring,
+    pd.Series.sub,
+    operator.sub,
+    pd.Series.rsub,
 )
 
 
@@ -105,7 +114,10 @@ def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
                     data = data.replace(np.inf, np.nan)
             initial_value = float_op(self.initial_value, other)
             initial_value = initial_value if np.isfinite(initial_value) else np.nan
-            return sc.Stairs.new(initial_value=initial_value, data=data,)
+            return sc.Stairs.new(
+                initial_value=initial_value,
+                data=data,
+            )
 
         self, other = _sanitize_binary_operands(self, other)
         if other._data is None:

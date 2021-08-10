@@ -762,10 +762,26 @@ def test_s1_rolling_mean(s1_fix, kwargs, expected_index, expected_vals):
 @pytest.mark.parametrize(
     "closed, kwargs, expected_val",
     [
-        ("left", {}, -1.75,),
-        ("left", {"where": (1, 6)}, 0.25,),
-        ("right", {"where": (1, 6), "closed": "left"}, -1.75,),
-        ("left", {"where": (1, 6), "closed": "right"}, -0.5,),
+        (
+            "left",
+            {},
+            -1.75,
+        ),
+        (
+            "left",
+            {"where": (1, 6)},
+            0.25,
+        ),
+        (
+            "right",
+            {"where": (1, 6), "closed": "left"},
+            -1.75,
+        ),
+        (
+            "left",
+            {"where": (1, 6), "closed": "right"},
+            -0.5,
+        ),
     ],
 )
 def test_s1_min(closed, kwargs, expected_val):
@@ -777,10 +793,26 @@ def test_s1_min(closed, kwargs, expected_val):
 @pytest.mark.parametrize(
     "closed, kwargs, expected_val",
     [
-        ("left", {}, 2.75,),
-        ("left", {"where": (-4, 1)}, -1.75,),
-        ("right", {"where": (-4, 1), "closed": "left"}, 0.0,),
-        ("left", {"where": (-4, 1), "closed": "right"}, 0.25,),
+        (
+            "left",
+            {},
+            2.75,
+        ),
+        (
+            "left",
+            {"where": (-4, 1)},
+            -1.75,
+        ),
+        (
+            "right",
+            {"where": (-4, 1), "closed": "left"},
+            0.0,
+        ),
+        (
+            "left",
+            {"where": (-4, 1), "closed": "right"},
+            0.25,
+        ),
     ],
 )
 def test_s1_max(closed, kwargs, expected_val):
@@ -792,9 +824,21 @@ def test_s1_max(closed, kwargs, expected_val):
 @pytest.mark.parametrize(
     "closed, kwargs, expected_val",
     [
-        ("left", {}, np.array([-1.75, -0.5, 0.0, 0.25, 2.0, 2.75]),),
-        ("left", {"where": (-4, 10)}, np.array([-1.75, -0.5, 0.25, 2.0, 2.75]),),
-        ("left", {"where": (1, 6)}, np.array([0.25, 2.0, 2.75]),),
+        (
+            "left",
+            {},
+            np.array([-1.75, -0.5, 0.0, 0.25, 2.0, 2.75]),
+        ),
+        (
+            "left",
+            {"where": (-4, 10)},
+            np.array([-1.75, -0.5, 0.25, 2.0, 2.75]),
+        ),
+        (
+            "left",
+            {"where": (1, 6)},
+            np.array([0.25, 2.0, 2.75]),
+        ),
         (
             "right",
             {"where": (1, 6), "closed": "left"},
@@ -814,9 +858,21 @@ def test_s1_values_in_range(closed, kwargs, expected_val):
 @pytest.mark.parametrize(
     "x, kwargs, expected_val",
     [
-        ([-4, -2, 1, 3], {"side": "right"}, np.array([-1.75, -1.75, 0.25, 2.75]),),
-        ([-4, -2, 1, 3], {"side": "right"}, np.array([-1.75, -1.75, 0.25, 2.75]),),
-        ([-4, -2, 1, 3], {"side": "left"}, np.array([0.0, -1.75, -1.75, 0.25]),),
+        (
+            [-4, -2, 1, 3],
+            {"side": "right"},
+            np.array([-1.75, -1.75, 0.25, 2.75]),
+        ),
+        (
+            [-4, -2, 1, 3],
+            {"side": "right"},
+            np.array([-1.75, -1.75, 0.25, 2.75]),
+        ),
+        (
+            [-4, -2, 1, 3],
+            {"side": "left"},
+            np.array([0.0, -1.75, -1.75, 0.25]),
+        ),
     ],
 )
 def test_s1_sample(s1_fix, x, kwargs, expected_val):
@@ -917,7 +973,10 @@ def test_add_1(s1_fix, s2_fix):
 def test_add_2(s1_fix):
     s = s1_fix + 3
     assert s(float("-inf")) == 3
-    assert pd.Series.equals(s.step_changes, s1_fix.step_changes,)
+    assert pd.Series.equals(
+        s.step_changes,
+        s1_fix.step_changes,
+    )
 
 
 def test_divide(s1_fix, s2_fix):
@@ -945,7 +1004,16 @@ def test_divide(s1_fix, s2_fix):
 def test_divide_scalar(s1_fix):
     assert pd.Series.equals(
         (s1_fix / 0.5).step_changes,
-        pd.Series({-4: -3.5, 1: 4.0, 3: 5.0, 5: -1.5, 6: -5.0, 10: 1.0,}),
+        pd.Series(
+            {
+                -4: -3.5,
+                1: 4.0,
+                3: 5.0,
+                5: -1.5,
+                6: -5.0,
+                10: 1.0,
+            }
+        ),
     )
 
 
@@ -973,7 +1041,16 @@ def test_multiply(s1_fix, s2_fix):
 def test_multiply_scalar(s1_fix):
     assert pd.Series.equals(
         (s1_fix * 3).step_changes,
-        pd.Series({-4: -5.25, 1: 6.0, 3: 7.5, 5: -2.25, 6: -7.5, 10: 1.5,}),
+        pd.Series(
+            {
+                -4: -5.25,
+                1: 6.0,
+                3: 7.5,
+                5: -2.25,
+                6: -7.5,
+                10: 1.5,
+            }
+        ),
     )
 
 
