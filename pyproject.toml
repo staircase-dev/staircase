@@ -70,9 +70,6 @@ codecov = ["codecov"]
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/staircase-dev/staircase/issues"
 
-[tool.black]
-exclude = "./staircase/test_data.py"
-
 [tool.isort]
 # make it compatible with black
 profile = "black"
