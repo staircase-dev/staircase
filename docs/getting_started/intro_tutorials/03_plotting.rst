@@ -12,7 +12,7 @@ What does my step function look like?
 To plot our step function *sf* from the previous tutorial is straightforward:
 
 .. ipython:: python
-
+    
     @savefig intro_tutes_plot.png
     sf.plot();
 
@@ -25,7 +25,7 @@ Compare this to the result of :meth:`staircase.Stairs.to_frame`.
 We can see that the first, and last, intervals in our step function have infinite length.  Such intervals cannot be plotted, of course, however we can use the *arrows* parameter to indicate they exist.
 
 .. ipython:: python
-
+    
     @savefig intro_tutes_plot_arrows.png
     sf.plot(arrows=True);
 
@@ -46,3 +46,8 @@ Any additional parameters are passed through through to Matplotlib:
     ax = sf.plot(arrows=True, style="hlines", linewidth=3, color="green", label="sf")
     @savefig intro_tutes_plot_params.png
     ax.legend();
+
+.. ipython:: python
+    :suppress:
+ 
+    plt.close("all")

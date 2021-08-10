@@ -68,3 +68,8 @@ Datetime data can be timezone-naíve or timezone-aware.  For many datetime appli
 If you are computing some daily metric and do not take this into account then the calculations on those days will be incorrect, however the consequences, and indeed the calculated result, maybe small enough to ignore. However, for some applications the use of timezone-aware timestamps may be critical.
 
 Given the sheer number of packages available for Python it may be of no surprise that there are several for dealing with timezones.  There is one which is clearly the de facto standard: :mod:`pytz`, however staircase supports any timezone package that pandas supports.
+
+.. ipython:: python
+    :suppress:
+ 
+    plt.close("all")

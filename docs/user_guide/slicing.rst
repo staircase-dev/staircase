@@ -10,7 +10,7 @@ The method :meth:`staircase.Stairs.slice` is designed to slice a step function i
 Examples:
 
 .. ipython:: python
-
+    
     import staircase as sc
     import pandas as pd
 
@@ -78,3 +78,8 @@ The concept of resampling a step function was introduced in `staircase` v1.  In 
     sf.slice(ii).resample("mean", points="mid").plot(axes[1]);
     @savefig slicing_resample.png
     axes[1].set_title("sf - resampled");
+
+.. ipython:: python
+    :suppress:
+ 
+    plt.close("all")

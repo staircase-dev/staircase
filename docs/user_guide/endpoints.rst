@@ -40,3 +40,8 @@ It should be clear that whether a step function in staircase is left-closed, or 
 
 
 Note that the *closed* parameter has a default value of "left".  This is motivated by the fact that time based intervals, such as hours, days and years, are left-closed.  Once a :class:`staircase.Stairs` object has been created it cannot change from left-closed to right-closed, and vice versa.
+
+.. ipython:: python
+   :suppress:
+
+   plt.close("all")

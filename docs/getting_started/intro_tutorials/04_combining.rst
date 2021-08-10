@@ -25,5 +25,10 @@ To promote readability, these methods are ideally invoked using their operator s
     @savefig intro_tutes_combining.png
     ((sf*sf + 2)/(4 - sf)).plot(ax=axes[1], arrows=True);
 
+.. ipython:: python
+    :suppress:
+ 
+    plt.close("all")
+
 .. rubric:: Footnotes
 .. [*] and their "reverse" operator counterparts

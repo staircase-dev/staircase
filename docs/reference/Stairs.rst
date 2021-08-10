@@ -102,6 +102,7 @@ Summary statistics
    Stairs.value_sums
    Stairs.percentile
    Stairs.fractile
+   Stairs.quantile
    Stairs.ecdf
    Stairs.hist
    

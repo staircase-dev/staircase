@@ -185,6 +185,10 @@ Finally, continuing on the theme of counterpart methods in pandas, we have :meth
     >>> sf.where(masker).notna().plot(ax=axes[1], arrows=True);
     >>> axes[1].set_title('sf.where(masker).notna()')
 
+.. ipython:: python
+    :suppress:
+ 
+    plt.close("all")
 
 .. rubric:: Footnotes
 .. [*] Note that :meth:`pandas.Series.mask` and :meth:`pandas.Series.where` are more general purpose than what is described here.

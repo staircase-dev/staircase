@@ -23,11 +23,10 @@ from datetime import datetime
 from numpydoc.docscrape import NumpyDocString
 from sphinx.ext.autosummary import _import_by_name
 
-import staircase as sc
-
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
+import staircase as sc  # isort:skip
 
 # for nbsphinx
 os.environ["PYTHONPATH"] = os.path.abspath(parentdir)

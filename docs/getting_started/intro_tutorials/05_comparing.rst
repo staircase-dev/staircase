@@ -77,3 +77,8 @@ Let's see some examples:
     (sf ^ 1).plot(ax=axes[1], arrows=True);
     @savefig intro_tutes_logical2.png
     axes[1].set_title("sf ^ 1");
+
+.. ipython:: python
+    :suppress:
+ 
+    plt.close("all")
