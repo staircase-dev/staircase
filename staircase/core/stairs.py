@@ -74,7 +74,7 @@ class Stairs:
         self._integral_and_mean = None
 
     @classmethod
-    def new(cls, initial_value, data, closed="left"):
+    def _new(cls, initial_value, data, closed="left"):
         new_instance = cls(closed=closed)
         new_instance.initial_value = initial_value
         new_instance._data = data
@@ -82,10 +82,7 @@ class Stairs:
         new_instance._valid_values = False if data is None else "value" in data.columns
         return new_instance
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
-    def is_masked(self):
+    def _has_na(self):
         return np.isnan(self._data.values).any() or np.isnan(self.initial_value)
 
     def _create_values(self):
@@ -121,10 +118,6 @@ class Stairs:
     @property
     def closed(self):
         return self._closed
-
-    # @property
-    # def dist(self):
-    #    return self._get_dist()
 
     @property
     @Appender(stats.docstrings.ecdf_example, join="\n", indents=2)
@@ -216,10 +209,6 @@ class Stairs:
         """
         return stats.min(self)
 
-    # @property
-    #  #@Appender(plot_docstrings.matplotlib_docstring, join="\n", indents=2)
-    # def plot(self):
-    #    return self._get_plot()
     plot = CachedAccessor("plot", PlotAccessor)
 
     # TODO: docstring
@@ -332,7 +321,7 @@ class Stairs:
         -------
         :class:`Stairs`
         """
-        new_instance = Stairs.new(
+        new_instance = Stairs._new(
             initial_value=self.initial_value,
             data=self._data.copy() if self._data is not None else None,
         )
@@ -417,7 +406,7 @@ class Stairs:
         """
         if self._data is None:
             return Stairs(initial_value=self.initial_value)
-        return Stairs.new(
+        return Stairs._new(
             initial_value=self.initial_value,
             data=self._data.set_index(self._data.index + delta),
         )

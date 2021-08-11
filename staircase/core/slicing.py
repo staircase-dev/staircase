@@ -83,7 +83,7 @@ class StairsSlicer:
             assert len(points) == len(self._slices.index)
             index = points
         result = getattr(self, func)()
-        return sc.Stairs.new(
+        return sc.Stairs._new(
             initial_value=self._stairs.initial_value,
             data=pd.DataFrame({"value": result.values}, index=index),
         )

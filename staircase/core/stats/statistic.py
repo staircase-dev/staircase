@@ -107,7 +107,7 @@ def var(self):
     values = percentile_minus_mean._get_values()
     squared_values = values * values
     return (
-        sc.Stairs.new(
+        sc.Stairs._new(
             initial_value=0,
             data=pd.DataFrame({"value": squared_values}),
         ).agg("integral", (0, 100))

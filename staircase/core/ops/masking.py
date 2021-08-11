@@ -63,7 +63,7 @@ def clip(self, lower=-inf, upper=inf):
 
     initial_value = self.initial_value if lower == -inf else np.nan
 
-    result = sc.Stairs.new(
+    result = sc.Stairs._new(
         initial_value=initial_value,
         data=data,
     )
@@ -82,7 +82,7 @@ def _maskify(self, inverse=False):
             {"value": self._get_values().where(func, np.nan).where(np.isnan, 0)}
         )
 
-    return sc.Stairs.new(
+    return sc.Stairs._new(
         initial_value=np.nan if op(self.initial_value, 0) else 0,
         data=data,
     )
@@ -155,7 +155,7 @@ def _make_null_comparison_func(docstring, comp_func):
                 comp_func(self._get_values()) * 1, index=self._data.index
             )
 
-        new_instance = sc.Stairs.new(initial_value=initial_value, data=data)
+        new_instance = sc.Stairs._new(initial_value=initial_value, data=data)
         new_instance._remove_redundant_step_points()
         return new_instance
 
@@ -198,7 +198,7 @@ notna = _make_null_comparison_func(docstrings.notna_docstring, lambda x: ~np.isn
 #             initial_value = values.iloc[0]
 #         data = pd.DataFrame({"value": values})
 
-#     new_instance = sc.Stairs.new(initial_value=initial_value, data=data)
+#     new_instance = sc.Stairs._new(initial_value=initial_value, data=data)
 #     new_instance._remove_redundant_step_points()
 #     return new_instance
 
@@ -228,6 +228,6 @@ def fillna(self, value):
             initial_value = values.iloc[0]
         data = pd.DataFrame({"value": values})
 
-    new_instance = sc.Stairs.new(initial_value=initial_value, data=data)
+    new_instance = sc.Stairs._new(initial_value=initial_value, data=data)
     new_instance._remove_redundant_step_points()
     return new_instance

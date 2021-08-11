@@ -24,7 +24,7 @@ class Xtiles(sc.core.stairs.Stairs):
     @classmethod
     def from_ecdf(cls, ecdf):
         assert ecdf._data is not None
-        return cls.new(
+        return cls._new(
             initial_value=ecdf._data.index[0],
             data=pd.DataFrame(
                 {"value": np.append(ecdf._data.index, ecdf._data.index[-1])},
@@ -48,7 +48,7 @@ class Fractiles(Xtiles):
 
         data = self._get_values().copy()
         data.index = data.index * 100
-        return Percentiles.new(initial_value=self.initial_value, data=data.to_frame())
+        return Percentiles._new(initial_value=self.initial_value, data=data.to_frame())
 
 
 class ECDF(sc.core.stairs.Stairs):
@@ -64,7 +64,7 @@ class ECDF(sc.core.stairs.Stairs):
         deltas_sum = ecdf_deltas.sum()
         normalized_probability_deltas = ecdf_deltas / deltas_sum
 
-        ecdf = ECDF.new(
+        ecdf = ECDF._new(
             initial_value=0,
             data=normalized_probability_deltas.to_frame(),
             closed="left",

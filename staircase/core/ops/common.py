@@ -74,7 +74,7 @@ def _combine_stairs_via_values(stairs1, stairs2, series_op, float_op):
 
     requires_manual_masking = _not_arithmetic_op(series_op)
 
-    if requires_manual_masking and (stairs1.is_masked() or stairs2.is_masked()):
+    if requires_manual_masking and (stairs1._has_na() or stairs2._has_na()):
         mask = _combine_step_series(
             stairs1._get_values().isnull(),
             stairs2._get_values().isnull(),
@@ -97,7 +97,7 @@ def _combine_stairs_via_values(stairs1, stairs2, series_op, float_op):
     if series_op == pd.Series.divide:
         values = values.replace(np.inf, np.nan).replace(-np.inf, np.nan)
 
-    new_instance = sc.Stairs.new(
+    new_instance = sc.Stairs._new(
         initial_value=initial_value,
         data=pd.DataFrame({"value": values}),
     )

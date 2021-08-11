@@ -22,7 +22,7 @@ def _make_boolean_func(docstring, series_comp, float_comp):
             return sc.Stairs(initial_value=initial_value)
         values = series_comp(self._get_values(), 0) * 1
         values.loc[np.isnan(self._get_values().values)] = np.nan
-        result = sc.Stairs.new(
+        result = sc.Stairs._new(
             initial_value=initial_value,
             data=pd.DataFrame(
                 {"value": values},
@@ -50,23 +50,23 @@ invert = _make_boolean_func(docstrings.invert_docstring, pd.Series.eq, operator.
 def _make_logical_func(docstring, array_op, float_op):
     def _op_with_scalar_and(self, other):
         if np.isnan(other):
-            return sc.Stairs.new(np.nan, None)
+            return sc.Stairs._new(np.nan, None)
         elif other == 0:
-            return sc.Stairs.new(0, None)
+            return sc.Stairs._new(0, None)
         else:
             return self.make_boolean()
 
     def _op_with_scalar_or(self, other):
         if np.isnan(other):
-            return sc.Stairs.new(np.nan, None)
+            return sc.Stairs._new(np.nan, None)
         elif other == 0:
             return self.make_boolean()
         else:
-            return sc.Stairs.new(1, None)
+            return sc.Stairs._new(1, None)
 
     def _op_with_scalar_xor(self, other):
         if np.isnan(other):
-            return sc.Stairs.new(np.nan, None)
+            return sc.Stairs._new(np.nan, None)
         elif other == 0:
             return self.make_boolean()
         else:

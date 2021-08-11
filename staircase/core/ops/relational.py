@@ -26,7 +26,7 @@ def _make_relational_func(
             )
 
         if self._data is None and other._data is None:
-            return sc.Stairs.new(
+            return sc.Stairs._new(
                 initial_value=initial_value,
                 data=None,
             )
@@ -42,7 +42,7 @@ def _make_relational_func(
                 new_values[values.isna()] = np.nan
                 new_index = other._data.index
 
-            new_instance = sc.Stairs.new(
+            new_instance = sc.Stairs._new(
                 initial_value=initial_value,
                 data=pd.DataFrame(
                     {"value": new_values * 1},
