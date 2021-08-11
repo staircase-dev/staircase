@@ -5,6 +5,9 @@
 Changelog
 =========
 
+v2.0.0rc1 2021-08-11
+- see :ref:`What's new in Version 2 <release_notes.versiontwo>`
+
 
 v1.6.6 2021-07-06
 

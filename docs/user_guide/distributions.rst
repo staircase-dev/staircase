@@ -90,6 +90,7 @@ In addition to defining bins, the method also permits the statistic to be define
 
 Histograms bar charts are one way of visualising a distribution, however they do have their drawbacks.  Histograms can suffer from *binning bias* where the shape of the plot, and the story it tells, changes depending on the bin definition.  An arguably better choice for visualising distributions is with the cumulative distribution function.
 
+
 Cumulative distribution functions
 ----------------------------------
 

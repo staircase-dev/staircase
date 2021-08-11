@@ -21,6 +21,7 @@ This feature is where masking finds is primary motivation.  It allows us to perf
 
 There are three methods belonging to :class:`staircase.Stairs` which allow us to perform masking: :meth:`staircase.Stairs.clip`, :meth:`staircase.Stairs.mask`, :meth:`staircase.Stairs.where`.
 
+.. _user_guide.clipping:
 
 clip
 *****

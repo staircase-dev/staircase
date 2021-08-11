@@ -4,7 +4,8 @@
 What's new in version 2?
 ========================
 
-General description here, reference to masking, speed comparisons
+
+
 
 major changes
 ##############

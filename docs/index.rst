@@ -12,14 +12,18 @@
 .. rst-class:: center
 
 **Useful links**:
-`Source Repository <https://github.com/venaturum/staircase>`__ |
-`Issues & Ideas <https://github.com/venaturum/staircase/issues>`__ 
+`Source Repository <https://github.com/staircase-dev/staircase>`__ |
+`Issues & Ideas <https://github.com/staircase-dev/staircase/issues>`__ 
 
 .. rst-class:: center
 
-An open source library for modelling step functions
+An open source package for performing data analysis with (mathematical) step functions.  Strongly aligned to :ref:`pandas`.
   
+.. warning::
 
+   This documentation is for *staircase version 2* which is still in pre-release.  Visit `version 1 documentation here <https://www.staircase.dev/en/v1.6.6/>`__.
+
+   
 Contents
 ==================
 

@@ -51,6 +51,11 @@ Sections
     :text: Distribution of values
     :classes: btn-outline-primary btn-block
 
+.. link-button:: arraymethods
+    :type: ref
+    :text: Array methods
+    :classes: btn-outline-primary btn-block
+
 .. link-button:: faq
     :type: ref
     :text: Frequently asked questions
@@ -73,5 +78,6 @@ Sections
     masking
     slicing
     distributions
+    arraymethods
     faq
     cookbook

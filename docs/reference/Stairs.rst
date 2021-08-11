@@ -91,6 +91,7 @@ Summary statistics
    Stairs.number_of_steps
    Stairs.integral
    Stairs.describe
+   Stairs.agg
    Stairs.values_in_range
    Stairs.min
    Stairs.max
