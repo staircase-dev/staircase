@@ -28,11 +28,19 @@ nav.bg-light {
 }
 
 
-.container-xl{max-width: 1400px !important;}
+.container-xl{max-width: 1400px }
 
-.btn-outline-primary {
+.btn-block {
+	text-align: left;
+	font-weight: 600;
     color: rgba(var(--pst-color-primary),1);
     border-color: rgba(var(--pst-color-primary),1);
+}
+
+.btn-block:hover {
+	color:#ffffff;
+	background-color:rgba(var(--pst-color-primary),1);
+	border-color: rgba(var(--pst-color-primary),1);
 }
 
 code {

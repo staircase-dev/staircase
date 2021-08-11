@@ -3,10 +3,6 @@
 A note on interval endpoints
 =============================
 
-.. figure:: ../img/warning.jpg
-   :width: 20%
-   :align: center
-   
 In general, it is possible for the disjoint intervals comprising a step function to be `closed, half-closed or open <https://mathworld.wolfram.com/Interval.html>`_.  However the internals of :mod:`staircase` package do not explicitly model which interval endpoints are open and which are closed - and do not explicitly model the value of the step function at the interval endpoints.  Does this mean we cannot use staircase to evaluate a step function *f* at interval endpoints?  Not quite.  The internals of staircase permit :math:`\lim_{x \to z} f(x)` to be calculated, so under certain assumptions the value at interval endpoints can be inferred:
 
 * if *f* is comprised of only left-closed intervals then :math:`f(z) = \lim_{x \to z^{+}} f(x)` for all *z* (including interval endpoints)

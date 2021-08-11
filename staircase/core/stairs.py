@@ -174,8 +174,44 @@ class Stairs:
         """
         return self.dist.hist(bins=bins, closed=closed, stat=stat)
 
-    def quantiles(self, n):
-        return self.dist.quantiles(n)
+    def quantiles(self, q):
+        """
+        Returns an array of q-quantiles.
+
+        Quantiles are cut points which divide a distribution into continuous intervals with equal probabilities.
+        The 2-quantile is more commonly known as the median.
+        The 4-quantiles are more commonly known as quartiles.
+        The 100-quantiles are more commonly known as percentiles.
+
+        Parameters
+        ----------
+        q : int
+
+        Returns
+        -------
+        :class:`numpy.ndarray` of floats
+
+        See Also
+        --------
+        Stairs.percentile, Stairs.fractile
+
+        Examples
+        --------
+
+        .. plot::
+            :context: close-figs
+
+            >>> sf = sc.Stairs().layer([0,1,2,3,4], [6,7,8,9,10])
+            >>> fig, axes = plt.subplots(ncols=2, figsize=(7,3), sharex=True)
+            >>> sf.plot(axes[0])
+            >>> axes[0].set_title("sf")
+            >>> sf.ecdf.plot(axes[1])
+            >>> axes[1].set_title("sf")
+
+        >>> sf.quantiles(4)
+        array([2., 3., 4.])
+        """
+        return self.dist.quantiles(q)
 
     @Appender(stats.docstrings.simple_max_example, join="\n", indents=2)
     def max(self):

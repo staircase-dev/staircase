@@ -90,7 +90,7 @@ In addition to defining bins, the method also permits the statistic to be define
 
 Histograms bar charts are one way of visualising a distribution, however they do have their drawbacks.  Histograms can suffer from *binning bias* where the shape of the plot, and the story it tells, changes depending on the bin definition.  An arguably better choice for visualising distributions is with the cumulative distribution function.
 
-Cumulative Distribution Functions
+Cumulative distribution functions
 ----------------------------------
 
 This cumulative distribution function - perhaps better known as the ECDF, where the "E" standing for *Empirical*, signifying that the result is derived from observed data - describes the fraction of the distribution below each unique value in the dataset.  It has several advantages over histogram plots for visualisation.  This style of plot has been implemented in seaborn (:meth:`seaborn.ecdfplot`) but can also be plotted with :mod:`staircase` too.  In fact, the ECDF itself is a step function and its implementation in staircase is a derivation of the :class:`staircase.Stairs` class, and is such inherits many useful methods such as :meth:`staircase.Stairs.plot` and :meth:`staircase.Stairs.sample`.
@@ -121,17 +121,42 @@ One of the strongest arguments for ECDFs over histogram plots is when several di
     for i, stairs in series.items():
         stairs.ecdf.plot(axes[1], label=i)
     axes[1].legend();
-    @savefig distribution_multipl_ecdf.png
+    @savefig distribution_multiple_ecdf.png
     axes[1].set_title("ECDFs");
 
-* mention caching
+Note that the ECDF is cached on each Stairs object so assigning it to a local variable will not improve efficiencies.
 
 
-Percentiles, Fractiles, Quantiles
+Fractiles, percentiles, quantiles
 ----------------------------------
 
-quantiles needs docstring
+The ECDF is closely related to a couple of other functions, namely the fractile function and percentile function.  The fractile function is the inverse of the ECDF:
 
+.. ipython:: python
+
+    fig, axes = plt.subplots(ncols=2, figsize=(7,3))
+    sf.ecdf.plot(axes[0]);
+    axes[0].set_title("ECDF");
+    sf.fractile.plot(axes[1]);
+    @savefig distribution_ecdf_fractile.png
+    axes[1].set_title("fractile function");
+
+The percentile function is identical in shape to the fractile function when plotting.  This is because the two functions `f(x) = p(x/100)` where `f` and `p` are fractile and percentile functions respectively.  Like the ECDF, the fractile and percentile functions are step functions and the corresponding implementations in staircase are classed derived from the :class:`staircase.Stairs` class.
+
+.. ipython:: python
+
+    print(f"The median value of the step function is {sf.fractile(0.5)}")
+    print(f"The 80th percentile of the step function values is {sf.percentile(80)}")
+
+Choosing between fractiles and percentiles for a calculation is a matter of taste, but it is recommended to choose one, to avoid unnecessary calculation.
+
+Closely related to the concept of fractiles, are *quantiles*, which are a set of cut points which divide a distribution into continuous intervals with equal probabilities.  The cut points themselves are referred to as *q-quantiles* where *q*, an integer, is the number of resulting intervals.  As a result there are *q-1* of the q-quantiles, some of which may be already familiar:
+
+- The 2-quantile is more commonly known as the median.
+- The 4-quantiles (there are 3) are more commonly known as quartiles .
+- The 100-quantiles (there are 99) are more commonly known as percentiles.
+
+Note, this definition of quantile differs from that used by :mod:`pandas` and :mod:`numpy`, whose implementation is equivalent to :meth:`staircase.Stairs.fractile`.
 
 .. ipython:: python
     :suppress:
