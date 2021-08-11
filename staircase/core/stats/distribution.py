@@ -114,36 +114,34 @@ class ECDF(sc.core.stairs.Stairs):
 
 class Dist:
     def __init__(self, stairs):
+        self._reset()
+        self._stairs = stairs
+
+    def _reset(self):
         self._ecdf = None
         self._fractiles = None
         self._percentiles = None
-        self._stairs = stairs
-        self._ecdf = ECDF.from_stairs(stairs)
+
+    @property
+    def ecdf(self):
+        if self._ecdf is None:
+            self._ecdf = ECDF.from_stairs(self._stairs)
+        return self._ecdf
 
     def hist(self, bins="unit", closed="left", stat="sum"):
-        return self._ecdf.hist(bins, closed, stat)
-
-    def _create_fractiles(self):
-        self._fractiles = Fractiles.from_ecdf(self._ecdf)
-
-    def _create_percentiles(self):
-        self._percentiles = Percentiles.from_ecdf(self._ecdf)
+        return self.ecdf.hist(bins, closed, stat)
 
     @property
     def fractile(self):
         if self._fractiles is None:
-            self._create_fractiles()
+            self._fractiles = Fractiles.from_ecdf(self.ecdf)
         return self._fractiles
 
     @property
     def percentile(self):
         if self._percentiles is None:
-            self._create_percentiles()
+            self._percentiles = Percentiles.from_ecdf(self.ecdf)
         return self._percentiles
-
-    @property
-    def ecdf(self):
-        return self._ecdf
 
     def quantiles(self, n):
         assert n > 0 and isinstance(n, int)

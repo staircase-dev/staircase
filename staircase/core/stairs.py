@@ -70,8 +70,7 @@ class Stairs:
             self.layer(start, end, value, frame)
 
     def _clear_cache(self):
-        self._dist = None
-        self._plot = None
+        self.dist._reset()
         self._integral_and_mean = None
 
     @classmethod

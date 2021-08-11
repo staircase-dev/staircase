@@ -1,3 +1,4 @@
+from staircase.core.accessor import CachedAccessor
 from staircase.core.stats.statistic import _max as max
 from staircase.core.stats.statistic import _min as min
 from staircase.core.stats.statistic import (
@@ -16,7 +17,6 @@ from staircase.core.stats.statistic import (
 
 
 def add_methods(cls):
-    from staircase.core.accessor import CachedAccessor
     from staircase.core.stats.distribution import Dist
 
     # cls._get_integral_and_mean = _get_integral_and_mean
