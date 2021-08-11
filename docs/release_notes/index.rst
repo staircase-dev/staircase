@@ -4,8 +4,6 @@
 Release notes
 ========================
 
-Release notes here
-
 .. toctree::
    :maxdepth: 2
 

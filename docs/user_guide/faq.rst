@@ -13,7 +13,7 @@ Frequently asked questions
 .. dropdown:: What happens if I call :meth:`staircase.Stairs.layer` with default arguments?
     :container: + shadow
 
-    The default arguments for *start*, *end* and *value* in :meth:`staircase.Stairs.layer` are all None, as per the method signature.  However the internals of staircase will treat them as -infinity, infinity and 1 respectively.  The result of this will be increasing the value of a step function by 1 everywhere.  For a discussion around this choice please see...
+    The default arguments for *start*, *end* and *value* in :meth:`staircase.Stairs.layer` are all None, as per the method signature.  However the internals of staircase will treat them as -infinity, infinity and 1 respectively.  The result of this will be increasing the value of a step function by 1 everywhere.  For a discussion around this choice please see the section on :ref:`layering <user_guide.layering>`.
 
 .. dropdown:: Why can't I calculate the integral of my step function?
     :container: + shadow

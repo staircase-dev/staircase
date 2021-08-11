@@ -13,8 +13,8 @@ The code examples in the user guide assume the following setup:
    >>> import numpy as numpy
    >>> import matplotlib.pyplot as plt
 
-Sections
----------
+|
+|
 
 .. link-button:: stepfunctionthinking
     :type: ref
@@ -66,18 +66,22 @@ Sections
     :text: Cookbook
     :classes: btn-outline-primary btn-block
     
-    
-.. toctree::
-    :maxdepth: 1
-    :hidden:
+|
+|
 
-    stepfunctionthinking
-    endpoints
-    layering
-    dates
-    masking
-    slicing
-    distributions
-    arraymethods
-    faq
-    cookbook
+.. dropdown::
+    :title: bg-white text-white
+
+    .. toctree::
+        :maxdepth: 1
+
+        stepfunctionthinking
+        endpoints
+        layering
+        dates
+        masking
+        slicing
+        distributions
+        arraymethods
+        faq
+        cookbook
