@@ -1,6 +1,6 @@
 ipykernel
 sphinx == 4.0.2
-nbsphinx
+nbsphinx == 0.8.6
 sphinx-panels
 matplotlib
 pandas
