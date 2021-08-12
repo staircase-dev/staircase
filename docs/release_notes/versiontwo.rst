@@ -9,8 +9,8 @@ Version 2 of :mod:`staircase` was released in September 2021.  Whereas version 1
 .. toctree::
     :maxdepth: 1
  
-    v1_v2_floats
-    v1_v2_dates
+    Speed comparison v1 versus v2 (floats) <v1_v2_floats>
+    Speed comparison v1 versus v2 (dates) <v1_v2_dates>
 
 In addition new functionality was added, namely :ref:`masking <user_guide.masking>` and :ref:`slicing <user_guide.slicing>`.
 
