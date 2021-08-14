@@ -5,6 +5,8 @@ from pandas.api.types import is_list_like
 import staircase as sc
 from staircase.core.ops.masking import clip
 from staircase.core.stats.statistic import _get_stairs_method
+from staircase.docstrings import slicing as docstrings
+from staircase.util._decorators import Appender
 
 
 class StairsSlicer:
@@ -22,6 +24,7 @@ class StairsSlicer:
             self._create_slices()
         return self
 
+    @Appender(docstrings.agg_docstring, join="\n", indents=1)
     def agg(self, funcs):
         if isinstance(funcs, str):
             funcs = [funcs]
@@ -31,10 +34,12 @@ class StairsSlicer:
             df[func] = getattr(self, func)()
         return df
 
+    @Appender(docstrings.apply_docstring, join="\n", indents=1)
     def apply(self, func, *args, **kwargs):
         self._ensure_slices()
-        return self._slices.apply(func, *args, **kwargs)
+        return self._slices.apply(func, args=args, **kwargs)
 
+    @Appender(docstrings._docstrings["max"], join="\n", indents=1)
     def max(self):
         result = self._max()
         if self._stairs._closed == "left" and self._interval_index.closed in (
@@ -49,6 +54,7 @@ class StairsSlicer:
             result = np.maximum(result, self._stairs(self._interval_index.left))
         return result
 
+    @Appender(docstrings._docstrings["min"], join="\n", indents=1)
     def min(self):
         result = self._min()
         if self._stairs._closed == "left" and self._interval_index.closed in (
@@ -63,10 +69,15 @@ class StairsSlicer:
             result = np.minimum(result, self._stairs(self._interval_index.left))
         return result
 
+    @Appender(docstrings.hist_docstring, join="\n", indents=1)
     def hist(self, *args, **kwargs):
         self._ensure_slices()
-        return self._slices.apply(sc.Stairs.hist, *args, **kwargs).fillna(0)
+        zero = (  # hack to get 0 or pd.Timedelta(0)
+            self._stairs._data.index[0] - self._stairs._data.index[0]
+        )
+        return self._slices.apply(sc.Stairs.hist, *args, **kwargs).fillna(zero)
 
+    @Appender(docstrings.resample_docstring, join="\n", indents=1)
     def resample(self, func, points="left"):
         # TODO: assert func in name list
         self._ensure_slices()
@@ -89,7 +100,12 @@ class StairsSlicer:
         )
 
 
-def make_slice_method(func):
+def make_slice_method(method_name):
+
+    func = _get_stairs_method(method_name)
+    docstring = docstrings._docstrings.get(method_name, "")
+
+    @Appender(docstring, join="\n", indents=1)
     def method(self):
         self._ensure_slices()
         return self._slices.map(func)
@@ -98,7 +114,7 @@ def make_slice_method(func):
 
 
 for method_name in ["_max", "_min", "mean", "median", "integral", "mode"]:
-    method = make_slice_method(_get_stairs_method(method_name))
+    method = make_slice_method(method_name)
     setattr(StairsSlicer, method_name, method)
 
 

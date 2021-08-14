@@ -1,18 +1,55 @@
 sample_footer = """
-    >>> sc.sample({"s1":s1, "s2":s2}, [1, 1.5, 2.5, 4])
-       points   key   value
-    0     1.0    s1     1.0
-    1     1.5    s1     1.0
-    2     2.5    s1     0.0
-    3     4.0    s1    -1.0
-    4     1.0    s2     0.5
-    5     1.5    s2     0.5
-    6     2.5    s2     0.0
-    7     4.0    s2    -1.0
+>>> stairs = [s2, s3]
+>>> sc.sample(stairs, [2,3,4])
+     2    3    4
+0  0.0 -1.0 -1.0
+1  0.0  NaN -1.0
+
+>>> stairs = {"s2":s2, "s3":s3}
+>>> sc.sample(stairs, [2,3,4])
+      2    3    4
+s1  0.0 -1.0 -1.0
+s2  0.0  NaN -1.0
+
+>>> index=pd.MultiIndex.from_tuples([("a", "s2"), ("b", "s3")])
+>>> stairs = pd.Series([s2,s3], index=index)
+>>> sc.sample(stairs, [2,3,4])
+        2    3    4
+a s1  0.0 -1.0 -1.0
+b s2  0.0  NaN -1.0
 """
 
+limit_footer = """
+>>> stairs = [s2, s3]
+>>> sc.limit(stairs, [2,3,4], side="left"))
+     2    3    4
+0  0.5  0.0 -1.0
+1  1.0  NaN  1.0
+
+>>> stairs = [s2, s3]
+>>> sc.limit(stairs, [2,3,4], side="right"))
+     2    3    4
+0  0.0 -1.0 -1.0
+1  0.0  NaN -1.0
+
+>>> stairs = {"s2":s2, "s3":s3}
+>>> sc.limit(stairs, [2,3,4], side="left"))
+      2    3    4
+s1  0.5  0.0 -1.0
+s2  1.0  NaN  1.0
+
+>>> index=pd.MultiIndex.from_tuples([("a", "s2"), ("b", "s3")])
+>>> stairs = pd.Series([s2,s3], index=index)
+>>> sc.limit(stairs, [2,3,4], side="left"))
+        2    3    4
+a s1  0.5  0.0 -1.0
+b s2  1.0  NaN  1.0
+"""
+
+
 _plot_titles_map = {
-    "sample": ["s1", "s2"],
+    "sample": ["s2", "s3"],
+    "limit": ["s2", "s3"],
     "sum": ["s1", "s2", "sc.sum([s1,s2])"],
     "min": ["s1", "s2", "sc.min([s1,s2])"],
     "max": ["s1", "s2", "sc.max([s1,s2])"],
@@ -57,6 +94,11 @@ Examples
 sample_example = (
     _example_section.format(example=_gen_example(_plot_titles_map["sample"]))
     + sample_footer
+)
+
+limit_example = (
+    _example_section.format(example=_gen_example(_plot_titles_map["limit"]))
+    + limit_footer
 )
 
 min_example = _example_section.format(example=_gen_example(_plot_titles_map["min"]))

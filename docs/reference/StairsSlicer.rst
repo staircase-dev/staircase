@@ -8,7 +8,6 @@ Slicing
 .. autosummary::
    :toctree: api/
 
-   StairsSlicer.__init__
    StairsSlicer.integral
    StairsSlicer.mean
    StairsSlicer.median

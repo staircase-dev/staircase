@@ -24,16 +24,18 @@ def sample(collection, x):
 
     Parameters
     ----------
-    collection : dictionary or pandas.Series
+    collection : array-like, dictionary or pandas.Series
         The Stairs instances at which to evaluate
-    points : int, float or vector data
-        The points at which to sample the Stairs instances
+    x : scalar or vector data
+        The points at which to sample the Stairs instances.  Must belong to the step function domain.
 
     Returns
     -------
     :class:`pandas.DataFrame`
-        A dataframe, in tidy format, with three columns: points, key, value.  The column key contains
-        the identifiers used in the dict-like object specified by 'collection'.
+        A dataframe, where rows correspond to the Stairs instances in *collection*,
+        and column correspond to the points in *x*.  If *collection* is a dictionary then the
+        resulting dataframe will be indexed by the dictionary keys.  If *collection* is a
+        :class:`pandas.Series` then the dataframe will have the same index as the series.
 
     See Also
     --------
@@ -46,6 +48,7 @@ def sample(collection, x):
 # TODO: docstring
 # TODO: test
 # TODO: what's new
+@Appender(docstrings.limit_example, join="\n", indents=1)
 def limit(collection, x, side="right"):
     """
     Takes a dict-like collection of Stairs instances and evaluates their values across a common set of points.
@@ -57,23 +60,22 @@ def limit(collection, x, side="right"):
 
     Parameters
     ----------
-    collection : dictionary or pandas.Series
+    collection : array-like, dictionary or pandas.Series
         The Stairs instances at which to evaluate
-    points : int, float or vector data
-        The points at which to sample the Stairs instances
-    how : {'left', 'right'}, default 'right'
+    x : scalar or vector data
+        The points at which to sample the Stairs instances.  Must belong to the step function domain.
+    side : {'left', 'right'}, default 'right'
         if points where step changes occur do not coincide with x then this parameter
         has no effect.  Where a step changes occurs at a point given by x, this parameter
         determines if the step function is evaluated at the interval to the left, or the right.
-    expand_key: boolean, default True
-        used when collection is a multi-index pandas.Series.  Indicates if index should be expanded from
-        tuple to columns in a dataframe.
 
     Returns
     -------
     :class:`pandas.DataFrame`
-        A dataframe, in tidy format, with three columns: points, key, value.  The column key contains
-        the identifiers used in the dict-like object specified by 'collection'.
+        A dataframe, where rows correspond to the Stairs instances in *collection*,
+        and column correspond to the points in *x*.  If *collection* is a dictionary then the
+        resulting dataframe will be indexed by the dictionary keys.  If *collection* is a
+        :class:`pandas.Series` then the dataframe will have the same index as the series.
 
     See Also
     --------
