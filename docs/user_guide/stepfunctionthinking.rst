@@ -30,8 +30,8 @@ Currently, you are looking at a computer, or mobile device.  This device can be 
 .. raw:: html
 
     <h4>Do I need step functions in my life?</h4>
-|
-    "If your only tool is a hammer, every problem looks like a nail"
+
+*"If your only tool is a hammer, every problem looks like a nail"*
 
 The *law of the instrument*, quoted above, pertains to a cognitive bias involving over reliance on a particular tool [*]_.  Its significance here is to draw attention to both opportunities to use "step function thinking" may have been missed in the past, but to also acknowledge that there are instances where :mod:`staircase` could be applied, but yield no advantage.
 
@@ -46,4 +46,4 @@ Using *step function thinking* an arbitrary choice can be avoided.  The size of 
 In a similar vein, suppose we have jobs which can start at any time, and incur some period of time (in the order of days).  We want to obtain some measure of jobs per day.  The two simplest strategies are either to tally up the number of jobs started per day, or alternatively, tally up the jobs finished per day.  But again, this is introducing an arbitrary choice which can be avoided with *step function thinking*.   If the value of each component step function, corresponding to a job, is 1 then the step function resulting from adding these components gives us the number of jobs underway at any point in time.  Perhaps at this point the requirement that the measure is a daily time series is not required?  But let's assume it is.  If the value of each component step function is 1/duration, instead of 1, then integrating under the resulting step function, for each day, indicates the equivalent number of jobs that were completed on that day.  That is to say, if 10 jobs, each of duration 48 hours were all underway for an entire 24hr day, then this is equivalent to 240 hours, or 5 jobs.  Again, the step function facilitates a metric, and visualisation, which avoids arbitrary choice.
 
 .. rubric:: Footnotes
-    .. [*] This *law of the instrument* has been attributed to several people, so it is stated here without authorship.
+.. [*] This *law of the instrument* has been attributed to several people, so it is stated here without authorship.

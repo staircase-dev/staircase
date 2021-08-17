@@ -29,7 +29,7 @@ We can see that the first, and last, intervals in our step function have infinit
     @savefig intro_tutes_plot_arrows.png
     sf.plot(arrows=True);
 
-Another stylistic choice is whether to connect adjacent intervals with vertical lines or not.  This can be achieved with the *style* parameter.  :mod:`Matplotlib` provides the backend for plotting and we can make use of the *ax* parameter to pass in a :class:`matplotlib.axes.Axes` argument.
+Another stylistic choice is whether to connect adjacent intervals with vertical lines or not.  This can be achieved with the *style* parameter.  :mod:`matplotlib` provides the backend for plotting and we can make use of the *ax* parameter to pass in a :class:`matplotlib.axes.Axes` argument.
 
 .. ipython:: python
 
