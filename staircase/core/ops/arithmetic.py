@@ -110,7 +110,7 @@ def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
                 data = None
             else:
                 data = pd.DataFrame({"value": series_op(self._get_values(), other)})
-                if series_op == pd.Series.divide:
+                if series_op in (pd.Series.divide, pd.Series.rdiv):
                     data = data.replace(np.inf, np.nan)
             initial_value = float_op(self.initial_value, other)
             initial_value = initial_value if np.isfinite(initial_value) else np.nan
