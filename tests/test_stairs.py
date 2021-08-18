@@ -972,10 +972,59 @@ def test_add_1(s1_fix, s2_fix):
 
 def test_add_2(s1_fix):
     s = s1_fix + 3
-    assert s(float("-inf")) == 3
+    assert s.initial_value == 3
     assert pd.Series.equals(
         s.step_changes,
         s1_fix.step_changes,
+    )
+
+
+def test_add_3(s1_fix):
+    s = 3 + s1_fix
+    assert s.initial_value == 3
+    assert pd.Series.equals(
+        s.step_changes,
+        s1_fix.step_changes,
+    )
+
+
+def test_sub_1(s1_fix, s2_fix):
+    assert pd.Series.equals(
+        (s1_fix - s2_fix).step_values,
+        pd.Series(
+            {
+                -4.0: -1.75,
+                -2.0: 0.0,
+                1.0: 2.75,
+                2.0: -1.75,
+                2.5: 0.75,
+                3.0: 3.25,
+                4.0: 0.75,
+                5.0: 4.5,
+                6.0: 2.0,
+                7.0: -0.5,
+                8.0: -5.5,
+                10.0: 0.0,
+            }
+        ),
+    )
+
+
+def test_sub_2(s1_fix):
+    s = s1_fix - 3
+    assert s.initial_value == -3
+    assert pd.Series.equals(
+        s.step_changes,
+        s1_fix.step_changes,
+    )
+
+
+def test_sub_3(s1_fix):
+    s = 3 - s1_fix
+    assert s.initial_value == 3
+    assert pd.Series.equals(
+        s.step_changes,
+        -(s1_fix.step_changes),
     )
 
 
@@ -1017,6 +1066,23 @@ def test_divide_scalar(s1_fix):
     )
 
 
+def test_scalar_divide():
+    s = Stairs().layer([1, 2, 5], [3, 4, 7], [1, -1, 2])
+    assert pd.Series.equals(
+        (2 / s).step_values,
+        pd.Series(
+            {
+                1: 2.0,
+                2: np.nan,
+                3: -2.0,
+                4: np.nan,
+                5: 1.0,
+                7: np.nan,
+            }
+        ),
+    )
+
+
 def test_multiply(s1_fix, s2_fix):
     assert pd.Series.equals(
         (s1_fix * s2_fix).step_changes,
@@ -1041,6 +1107,22 @@ def test_multiply(s1_fix, s2_fix):
 def test_multiply_scalar(s1_fix):
     assert pd.Series.equals(
         (s1_fix * 3).step_changes,
+        pd.Series(
+            {
+                -4: -5.25,
+                1: 6.0,
+                3: 7.5,
+                5: -2.25,
+                6: -7.5,
+                10: 1.5,
+            }
+        ),
+    )
+
+
+def test_multiply_scalar_2(s1_fix):
+    assert pd.Series.equals(
+        (3 * s1_fix).step_changes,
         pd.Series(
             {
                 -4: -5.25,
