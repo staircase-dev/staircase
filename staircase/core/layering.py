@@ -98,7 +98,7 @@ def layer(self, start=None, end=None, value=None, frame=None):
     if not isinstance(start, pd.Series):
         start = pd.Series(start)
     if not isinstance(end, pd.Series):
-        end = pd.Series(end, dtype="float64")
+        end = pd.Series(end)
     df = pd.concat([start, end], axis=1, ignore_index=True)
     start_series = pd.Series(value, index=df.iloc[:, 0])
     self.initial_value += start_series[start_series.index.isna()].sum()
