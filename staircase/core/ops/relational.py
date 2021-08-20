@@ -75,9 +75,6 @@ def _is_series_equal(s1, s2):
     return pd.Series.equals(s1, s2)
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 def identical(self, other):
     """
     A boolean comparison for Stairs instances.
@@ -125,9 +122,6 @@ def identical(self, other):
         return _is_series_equal(self._get_deltas(), other._get_deltas())
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 lt = _make_relational_func(
     docstrings.lt_docstring,
     np.less,
@@ -135,9 +129,7 @@ lt = _make_relational_func(
     operator.lt,
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
+
 gt = _make_relational_func(
     docstrings.gt_docstring,
     np.greater,
@@ -145,9 +137,7 @@ gt = _make_relational_func(
     operator.gt,
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
+
 le = _make_relational_func(
     docstrings.le_docstring,
     np.less_equal,
@@ -155,9 +145,7 @@ le = _make_relational_func(
     operator.le,
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
+
 ge = _make_relational_func(
     docstrings.ge_docstring,
     np.greater_equal,
@@ -165,9 +153,7 @@ ge = _make_relational_func(
     operator.ge,
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
+
 eq = _make_relational_func(
     docstrings.eq_docstring,
     np.equal,
@@ -175,9 +161,7 @@ eq = _make_relational_func(
     operator.eq,
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
+
 ne = _make_relational_func(
     docstrings.ne_docstring,
     np.not_equal,

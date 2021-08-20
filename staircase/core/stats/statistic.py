@@ -32,9 +32,6 @@ def _cache_integral_and_mean(self):
             raise exc
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.integral_docstring, join="\n", indents=1)
 def integral(self):
     if self._integral_and_mean is None:
@@ -47,9 +44,6 @@ def integral(self):
     return self._integral_and_mean[0]
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.mean_docstring, join="\n", indents=1)
 def mean(self):
     if self._integral_and_mean is None:
@@ -60,9 +54,6 @@ def mean(self):
     return self._integral_and_mean[1]
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.median_docstring, join="\n", indents=1)
 def median(self):
     return self.dist.percentile(50)
@@ -90,17 +81,11 @@ def value_sums(self, dropna=True, group=True):
     return result
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.mode_docstring, join="\n", indents=1)
 def mode(self):
     return value_sums(self).idxmax()
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.var_docstring, join="\n", indents=1)
 def var(self):
     percentile_minus_mean = self.dist.percentile - mean(self)
@@ -115,17 +100,11 @@ def var(self):
     )
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.std_docstring, join="\n", indents=1)
 def std(self):
     return np.sqrt(var(self))
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.values_in_range_docstring, join="\n", indents=1)
 def values_in_range(self, where=(-inf, inf), closed=None):
     where = _replace_none_with_infs(where)
@@ -144,9 +123,6 @@ def values_in_range(self, where=(-inf, inf), closed=None):
     return unique[~np.isnan(unique)]
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 def _min(
     self,
     where=(-inf, inf),
@@ -158,9 +134,6 @@ def _min(
     return min(self.values_in_range(where, closed))
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 def _max(
     self,
     where=(-inf, inf),
@@ -172,9 +145,6 @@ def _max(
     return max(self.values_in_range(where, closed))
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.agg_docstring, join="\n", indents=1)
 def agg(self, name, where=(-inf, inf), closed=None):
 
@@ -197,9 +167,6 @@ def agg(self, name, where=(-inf, inf), closed=None):
     return apply(name)[1]
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(examples.cov_example, join="\n", indents=1)
 def cov(self, other, where=(-inf, inf), lag=0, clip="pre"):
     """
@@ -246,9 +213,6 @@ def cov(self, other, where=(-inf, inf), lag=0, clip="pre"):
     ).mean()
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(examples.corr_example, join="\n", indents=1)
 def corr(self, other, where=(-inf, inf), lag=0, clip="pre"):
     """

@@ -133,14 +133,8 @@ def _make_mask_or_where_func(docstring, which):
     return func
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 mask = _make_mask_or_where_func(docstrings.mask_docstring, "mask")
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 where = _make_mask_or_where_func(docstrings.where_docstring, "where")
 
 
@@ -162,50 +156,14 @@ def _make_null_comparison_func(docstring, comp_func):
     return func
 
 
-# TODO: docstring
 # TODO: test
-# TODO: what's new
 isna = _make_null_comparison_func(docstrings.isna_docstring, np.isnan)
 
-# TODO: docstring
 # TODO: test
-# TODO: what's new
 notna = _make_null_comparison_func(docstrings.notna_docstring, lambda x: ~np.isnan(x))
 
 
-# # TODO: docstring
-# # TODO: test
-# # TODO: what's new
-# def fillna(self, value=None, method=None):
-#     if value is not None and method is not None:
-#         raise ValueError("Cannot specify both 'value' and 'method'.")
-#     elif value is None and method is None:
-#         raise ValueError("Must specify a fill 'value' or 'method'.")
-
-#     if value is not None and np.isnan(self.initial_value):
-#         initial_value = value
-#     else:
-#         initial_value = self.initial_value
-
-#     if self._data is None:
-#         data = None
-#     else:
-#         values = self._get_values().copy()
-#         if method in ("pad", "ffill") and np.isnan(values.iloc[0]):
-#             values.iloc[0] = self.initial_value
-#         values = values.fillna(value, method)
-#         if method in ("backfill", "bfill") and np.isnan(self.initial_value):
-#             initial_value = values.iloc[0]
-#         data = pd.DataFrame({"value": values})
-
-#     new_instance = sc.Stairs._new(initial_value=initial_value, data=data)
-#     new_instance._remove_redundant_step_points()
-#     return new_instance
-
-
-# TODO: docstring
 # TODO: test
-# TODO: what's new
 @Appender(docstrings.fillna_docstring, join="\n", indents=1)
 def fillna(self, value):
 

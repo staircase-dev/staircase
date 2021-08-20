@@ -39,14 +39,10 @@ def _make_vals_from_deltas(init_val, deltas):
     return deltas.cumsum() + base
 
 
-# @Appender(docstrings.Stairs_docstring, join="\n", indents=1)
 class Stairs:
 
     class_name = "Stairs"
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
     @Appender(docstrings.Stairs_docstring, join="\n", indents=2)
     def __init__(
         self,
@@ -247,9 +243,6 @@ class Stairs:
 
     plot = CachedAccessor("plot", PlotAccessor)
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
     @property
     def step_changes(self):  # TODO: alias as deltas?
         """
@@ -293,9 +286,6 @@ class Stairs:
             return np.array([])
         return self._data.index.values
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
     @Appender(docstrings.examples.number_of_steps_example, join="\n", indents=2)
     @property
     def number_of_steps(self):
@@ -346,9 +336,6 @@ class Stairs:
 
         return self
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
     def copy(self):
         """
         Returns a deep copy of this Stairs instance
@@ -375,9 +362,6 @@ class Stairs:
             return True
         return False
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
     @Appender(docstrings.examples.describe_example, join="\n", indents=2)
     def describe(self, where=(-inf, inf), percentiles=(25, 50, 75)):
         """
@@ -415,9 +399,6 @@ class Stairs:
             }
         )
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
     @Appender(docstrings.examples.shift_example, join="\n", indents=2)
     def shift(self, delta):
         """
@@ -447,9 +428,6 @@ class Stairs:
             data=self._data.set_index(self._data.index + delta),
         )
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
     @Appender(docstrings.examples.diff_example, join="\n", indents=2)
     def diff(self, delta):
         """
@@ -472,9 +450,6 @@ class Stairs:
         """
         return self - self.shift(delta)
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
     @Appender(docstrings.examples.rolling_mean_example, join="\n", indents=2)
     def rolling_mean(self, window=(0, 0), where=(-inf, inf)):
         """
@@ -530,10 +505,6 @@ class Stairs:
             s = s.loc[s.index <= upper - right_delta]
         return s
 
-    # TODO: docstring
-    # TODO: test
-    # TODO: what's new
-    # this name changed in v2.0
     def to_frame(self):
         """
         Returns a pandas.DataFrame with columns 'start', 'end' and 'value'

@@ -7,9 +7,6 @@ from staircase.util import _is_datetime_like, _verify_window
 from staircase.util._decorators import Appender
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 # capable of single or vector
 @Appender(examples.sample_example, join="\n", indents=1)
 def sample(self, x, include_index=False):
@@ -44,9 +41,6 @@ def sample(self, x, include_index=False):
     return values
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(examples.limit_example, join="\n", indents=1)
 def limit(self, x, side, include_index=False):
     """

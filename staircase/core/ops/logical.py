@@ -34,16 +34,11 @@ def _make_boolean_func(docstring, series_comp, float_comp):
     return func
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 make_boolean = _make_boolean_func(
     docstrings.make_boolean_docstring, pd.Series.ne, operator.ne
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
+
 invert = _make_boolean_func(docstrings.invert_docstring, pd.Series.eq, operator.eq)
 
 
@@ -120,23 +115,14 @@ def scalar_xor(x, y):
         return 0
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 logical_and = _make_logical_func(
     docstrings.logical_and_docstring, np.logical_and, scalar_and
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 logical_or = _make_logical_func(
     docstrings.logical_or_docstring, np.logical_or, scalar_or
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 logical_xor = _make_logical_func(
     docstrings.logical_xor_docstring, np.logical_xor, scalar_xor
 )

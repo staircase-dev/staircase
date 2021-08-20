@@ -1,7 +1,5 @@
 """
 Taken from pandas.core.accessor.py, with minor adjustments.
-
-
 """
 
 
@@ -16,12 +14,6 @@ class CachedAccessor:
         Namespace that will be accessed under, e.g. ``sc.plot``.
     accessor : cls
         Class with the extension methods.
-
-    Notes
-    -----
-    For accessor, The class's __init__ method assumes that one of
-    ``Series``, ``DataFrame`` or ``Index`` as the
-    single argument ``data``.
     """
 
     def __init__(self, name: str, accessor) -> None:

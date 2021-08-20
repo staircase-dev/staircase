@@ -10,9 +10,6 @@ from staircase.util import _sanitize_binary_operands
 from staircase.util._decorators import Appender
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.negate_docstring, join="\n", indents=1)
 def negate(self):
     data = -self._data if self._data is not None else None
@@ -79,9 +76,6 @@ def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
     return func
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 add = _make_add_or_sub_func(
     docstrings.add_docstring,
     pd.Series.add,
@@ -89,9 +83,6 @@ add = _make_add_or_sub_func(
     pd.Series.radd,
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 subtract = _make_add_or_sub_func(
     docstrings.subtract_docstring,
     pd.Series.sub,
@@ -134,9 +125,6 @@ def float_rdiv(a, b):
     return np.divide(b, a)
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 multiply = _make_mul_div_func(
     docstrings.multiply_docstring,
     pd.Series.multiply,
@@ -145,9 +133,6 @@ multiply = _make_mul_div_func(
     operator.mul,
 )
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 divide = _make_mul_div_func(
     docstrings.divide_docstring,
     pd.Series.divide,

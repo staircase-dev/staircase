@@ -19,13 +19,11 @@ from staircase.core.stats.statistic import (
 def add_methods(cls):
     from staircase.core.stats.distribution import Dist
 
-    # cls._get_integral_and_mean = _get_integral_and_mean
     cls.value_sums = value_sums
     cls.values_in_range = values_in_range
     cls.cov = cov
     cls.corr = corr
     cls.agg = agg
-    # cls._get_dist = _get_dist
 
     cls.integral = integral
     cls.mean = mean
