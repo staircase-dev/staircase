@@ -76,7 +76,7 @@ An error will result otherwise.
 Test your knowledge
 ********************
 
-What do you think the result of .layer() might be?
+What do you think the result of `sc.Stairs().layer()` might be?  See discussion and answer in :ref:`user_guide.gotchas`.
 
 
 Axioms

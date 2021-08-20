@@ -27,8 +27,8 @@ Frequently asked questions
 
     Yes, and :class:`numpy.datetime` too.  However, pandas converts these types to its own :class:`pandas.Timestamp` type, and consequently staircase does too.  If you need to convert a result back to your desired class then you can do so with 
     
-    - :meth:`pandas.Timestamp.to_pytimedelta`,
-    - :meth:`pandas.Timestamp.to_timedelta64`,
+    - :meth:`pandas.Timestamp.to_pydatetime`,
+    - :meth:`pandas.Timestamp.to_datetime64`,
     - :meth:`pandas.Timedelta.to_pytimedelta` and
     - :meth:`pandas.Timedelta.to_timedelta64`.
 

@@ -56,6 +56,11 @@ The code examples in the user guide assume the following setup:
     :text: Array methods
     :classes: btn-outline-primary btn-block
 
+.. link-button:: gotchas
+    :type: ref
+    :text: Gotchas
+    :classes: btn-outline-primary btn-block
+
 .. link-button:: faq
     :type: ref
     :text: Frequently asked questions
@@ -83,5 +88,6 @@ The code examples in the user guide assume the following setup:
         slicing
         distributions
         arraymethods
+        gotchas
         faq
         cookbook

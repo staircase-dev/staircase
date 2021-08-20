@@ -26,7 +26,7 @@ There are three methods belonging to :class:`staircase.Stairs` which allow us to
 clip
 *****
 
-Let's start by acknowledging that :meth:`staircase.Stairs.clip` is not new in version 2.  It retains the same method signature but its meaning has changed.  In version 1 the clip function, given an interval in the domain defined by *lower* and *upper* parameters, would return a copy of the Stairs instance where the value of the step function outside of this interval is zero.  In version 2 these values are undefined instead.  That is, the clip method allows us to restrict the domain of a step function to an interval.
+:meth:`staircase.Stairs.clip` is not new in version 2.  It retains the same method signature but its meaning has changed.  In version 1 the clip function, given an interval in the domain defined by *lower* and *upper* parameters, would return a copy of the Stairs instance where the value of the step function outside of this interval is zero.  In version 2 these values are undefined instead.  That is, the clip method allows us to restrict the domain of a step function to an interval.
 
 .. ipython:: python
     :suppress:
