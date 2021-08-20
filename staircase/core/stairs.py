@@ -254,6 +254,8 @@ class Stairs:
 
         See Also
         --------
+        Stairs.step_points
+        Stairs.step_values
         Stairs.number_of_steps
 
         Examples
@@ -274,14 +276,64 @@ class Stairs:
         return self._get_deltas().copy()
 
     @property
-    def step_values(self):  # TODO: alias as deltas?
+    def step_values(self):
+        """
+        A pandas Series of key, value pairs of indicating where step changes occur in the step function, and
+        the limit of the step function when it approaches these points from the right.
+
+        Returns
+        -------
+        :class:`pandas.Series`
+
+        See Also
+        --------
+        Stairs.step_points
+        Stairs.step_changes
+        Stairs.number_of_steps
+
+        Examples
+        --------
+
+        .. plot::
+            :context: close-figs
+
+            >>> s1.plot()
+            >>> s1.step_values
+            1    1
+            2    0
+            3    1
+            4   -1
+            5    0
+            dtype: int64
+        """
         return self._get_values().copy()
 
-    # TODO: docstring
     # TODO: test
-    # TODO: what's new
     @property
     def step_points(self):
+        """
+        A numpy arrauy of domain values indicating where step changes occur in the step function.
+
+        Returns
+        -------
+        :class:`numpy.ndarray`
+
+        See Also
+        --------
+        Stairs.step_values
+        Stairs.step_changes
+        Stairs.number_of_steps
+
+        Examples
+        --------
+
+        .. plot::
+            :context: close-figs
+
+            >>> s1.plot()
+            >>> s1.step_values
+            array([1, 2, 3, 4, 5], dtype=int64)
+        """
         if self._data is None:
             return np.array([])
         return self._data.index.values
@@ -299,6 +351,7 @@ class Stairs:
         See Also
         --------
         Stairs.step_changes
+        Stairs.step_values
         Stairs.step_points
         """
         return len(self.step_points)

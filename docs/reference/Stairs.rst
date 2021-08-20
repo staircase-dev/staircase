@@ -16,6 +16,8 @@ Constructor & basic methods
    Stairs.limit
    Stairs.layer
    Stairs.step_changes
+   Stairs.step_values
+   Stairs.step_points
    Stairs.to_frame
    
 .. _api.arithmetic_operators:

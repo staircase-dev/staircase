@@ -181,6 +181,8 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
     "statsmodels": ("https://www.statsmodels.org/devel/", None),
+    "sortedcontainers": ("http://www.grantjenks.com/docs/sortedcontainers", None),
+    "seaborn": ("https://seaborn.pydata.org", None),
 }
 
 

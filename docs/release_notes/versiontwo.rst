@@ -137,8 +137,10 @@ Other additions
 - :meth:`staircase.Stairs.pipe` 
 - :meth:`staircase.Stairs.limit`
 - :meth:`staircase.Stairs.agg`
-- :meth:`staircase.Stairs.quantile`
+- :meth:`staircase.Stairs.quantiles`
 - :meth:`staircase.Stairs.value_sums`
+- :attr:`staircase.Stairs.step_values`
+- :attr:`staircase.Stairs.step_points`
 
 
 Backwards incompatible API changes
