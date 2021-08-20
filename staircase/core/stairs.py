@@ -1,8 +1,8 @@
 """
-Staircase
+staircase
 ==============
 
-Staircase is a MIT licensed library, written in pure-Python, for
+staircase is a MIT licensed library, written in pure-Python, for
 modelling step functions. See :ref:`Getting Started <getting_started>` for more information.
 """
 

@@ -86,7 +86,7 @@ There is plenty more analysis that could be done.  The staircase package provide
 
 ## Installation
 
-Staircase can be installed from PyPI:
+staircase can be installed from PyPI:
 
 ```bash
 python -m pip install staircase
