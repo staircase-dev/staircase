@@ -13,7 +13,7 @@ Frequently asked questions
 .. dropdown:: What happens if I call :meth:`staircase.Stairs.layer` with default arguments?
     :container: + shadow
 
-    The default arguments for *start*, *end* and *value* in :meth:`staircase.Stairs.layer` are all None, as per the method signature.  However the internals of staircase will treat them as -infinity, infinity and 1 respectively.  The result of this will be increasing the value of a step function by 1 everywhere.  For a discussion around this choice please see the section on :ref:`layering <user_guide.layering>`.
+    The default arguments for *start*, *end* and *value* in :meth:`staircase.Stairs.layer` are all None, as per the method signature.  However the internals of staircase will treat them as -infinity, infinity and 1 respectively.  The result of this will be increasing the value of a step function by 1 everywhere.  For a discussion around this choice please see  :ref:`user_guide.layering` and then :ref:`user_guide.gotchas`.
 
 .. dropdown:: Why can't I calculate the integral of my step function?
     :container: + shadow
@@ -66,3 +66,9 @@ Frequently asked questions
         >>> sf.clip(None, 7).plot(axes[1])
 
     In the above example, the step function on the left has two infinite intervals (each having a value of 0).  The step function on the right only has one infinite interval, trailing off to negative infinity.  For all domain values greater than 7 the step function is undefined.  The difference between these two step function can be noticed from the above plot by a keen observer.  If a plot is produced with an argument `style = "hlines"` then it will be impossible to identify infinite intervals in the plot unless `arrows = True`.  See :meth:`staircase.plot` for details on these parameters.
+
+
+.. dropdown:: Can I use generators as inputs to :meth:`staircase.Stairs.layer`?
+    :container: + shadow
+
+    No, however you can use lists, tuples, :class:`pandas.Series`, :class:`numpy.ndarray`

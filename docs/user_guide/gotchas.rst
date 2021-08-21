@@ -9,7 +9,7 @@ A "gotcha" is any feature of the programming language, which works as intended, 
 
 .. raw:: html
 
-    <h4>Null values in :meth:`staircase.Stairs.layer` parameters *start* and *end*</h4>
+    <h4>Null values in <i>staircase.Stairs.layer</i> parameters <i>start</i> and <i>end</i></h4>
 
 Let's start with the simplest case, when `start = end = None`, that is what is the result of `.layer()`?
 
