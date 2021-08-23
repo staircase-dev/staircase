@@ -1451,3 +1451,72 @@ def test_slicing_resample_mean(s1_fix):
         check_names=False,
         check_index_type=False,
     )
+
+
+def test_layering_index(s1_fix):
+    result = Stairs(
+        start=pd.Index([1, -4, 3, 6, 7]),
+        end=pd.Index([10, 5, 5, 7, 10]),
+        value=pd.Index([2, -1.75, 2.5, -2.5, -2.5]),
+    )
+    assert result.identical(s1_fix)
+
+
+def test_pipe(s1_fix):
+    def is_stairs(s):
+        return isinstance(s, Stairs)
+
+    assert s1().pipe(is_stairs)
+
+
+def test_value_sums(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.value_sums(),
+        pd.Series({-1.75: 5, -0.5: 4, 0.25: 2, 2.0: 1, 2.75: 2}),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_step_changes(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.step_changes,
+        pd.Series({-4: -1.75, 1: 2.0, 3: 2.5, 5: -0.75, 6: -2.5, 10: 0.5}),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_step_values(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.step_values,
+        pd.Series({-4: -1.75, 1: 0.25, 3: 2.75, 5: 2.0, 6: -0.5, 10: 0.0}),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_step_points(s1_fix):
+    assert list(s1_fix.step_points) == [-4, 1, 3, 5, 6, 10]
+
+
+def test_step_changes_stepless():
+    pd.testing.assert_series_equal(
+        Stairs().step_changes,
+        pd.Series([], dtype="float64"),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_step_values_stepless():
+    pd.testing.assert_series_equal(
+        Stairs().step_values,
+        pd.Series([], dtype="float64"),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_step_points_stepless():
+    assert list(Stairs().step_points) == []

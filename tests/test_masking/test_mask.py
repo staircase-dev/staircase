@@ -255,3 +255,31 @@ def test_mask_on_stepless():
         check_names=False,
         check_index_type=False,
     )
+
+
+def test_identical_nan_initial():
+    assert sc.Stairs(initial_value=np.nan).identical(np.nan)
+
+
+def test_value_sums_group_false(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.mask((-2, 0)).mask((6, 8)).value_sums(group=False),
+        pd.Series(
+            [2, 2, 1, 2, 2, 1, 2, 2],
+            index=[-1.75, np.nan, -1.75, 0.25, 2.75, 2.0, np.nan, -0.5],
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_value_sums_dropna_false(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.mask((-2, 0)).mask((6, 8)).value_sums(dropna=False),
+        pd.Series(
+            [3, 2, 2, 1, 2, 4],
+            index=[-1.75, -0.5, 0.25, 2.0, 2.75, np.nan],
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
