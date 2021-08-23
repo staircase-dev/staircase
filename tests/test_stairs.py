@@ -958,6 +958,20 @@ def test_plot(s1_fix, kwargs):
     s1_fix.plot()
 
 
+def test_plot_ecdf(s1_fix):
+    s1_fix.plot.ecdf()
+
+
+def test_plot_bad_backend(s1_fix):
+    with pytest.raises(ValueError):
+        s1_fix.plot(backend="")
+
+
+def test_plot_ecdf_bad_backend(s1_fix):
+    with pytest.raises(ValueError):
+        s1_fix.plot.ecdf(backend="")
+
+
 def test_add_1(s1_fix, s2_fix):
     assert pd.Series.equals(
         (s1_fix + s2_fix).step_changes,
