@@ -62,18 +62,13 @@ Returns
 """
 
 resample_header = """
-Creates a new step function whose values are derived by applying a function to the
-step function slices
+Creates a new step function by applying a function to the step function slices, and replacing
+the slices with the new values.
 
 Parameters
 ----------
 func : {"min", "max", "mean", "median", "mode", "integral"}
     The function applied to the step function slices.
-points : {"left", "right", "mid"} or array-like
-    Determines what point in the domain of the new step function each slice will
-    be mapped to.  If *points* is a string, it indicates a position in reference
-    to each interval used to slice the step functions.  If *points* is array-like
-    its length must be the same as the number of slices.
 
 Returns
 -------
@@ -246,10 +241,29 @@ resample_example = """
 .. plot::
     :context: close-figs
 
-    >>> cuts = pd.date_range("2021", periods=12, freq="MS")
-    >>> ax = sf.slice(cuts).resample("mean", points="left").plot()
+    >>> cuts = pd.date_range("2021", "2022", freq="MS")
+    >>> ax = sf.slice(cuts).resample("mean").plot()
     >>> ax.xaxis.set_major_formatter(DateFormatter('%b-%y'))
     >>> ax.set_title("resampled by mean")
+
+.. plot::
+    :context: close-figs
+
+    >>> s = sc.Stairs(
+    ...     start=[1, -4, 3, 6, 7],
+    ...     end=[10, 5, 5, 7, 10],
+    ...     value=[2, -1.75, 2.5, -2.5, -2.5]
+    ... )
+    >>> cuts = [0,2,4,6]
+    >>> resampled = s.slice(cuts).resample("mean")
+    >>> fig, axes = plt.subplots(ncols=2, figsize=(7,3), sharex=True, sharey=True)
+    >>> for ax in axes:
+    ...     for x in cuts:
+    ...         ax.axvline(x, c="r", linestyle="--", alpha=0.3)
+    >>> s.plot(axes[0])
+    >>> axes[0].set_title("s")
+    >>> resampled.plot(axes[1])
+    >>> axes[1].set_title("s resampled by mean")
 """
 
 

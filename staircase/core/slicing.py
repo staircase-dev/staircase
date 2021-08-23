@@ -78,25 +78,19 @@ class StairsSlicer:
         return self._slices.apply(sc.Stairs.hist, *args, **kwargs).fillna(zero)
 
     @Appender(docstrings.resample_docstring, join="\n", indents=1)
-    def resample(self, func, points="left"):
+    def resample(self, func):
         # TODO: assert func in name list
+        # TODO: interval_index must be monotonic increasing with no gaps
         self._ensure_slices()
-        if isinstance(points, str):
-            if points == "left":
-                index = self._slices.index.left
-            elif points == "right":
-                index = self._slices.index.right
-            elif points == "mid":
-                index = self._slices.index.mid
-            else:
-                pass  # TODO: throw error
-        else:
-            assert len(points) == len(self._slices.index)
-            index = points
-        result = getattr(self, func)()
-        return sc.Stairs._new(
-            initial_value=self._stairs.initial_value,
-            data=pd.DataFrame({"value": result.values}, index=index),
+        new_values = getattr(self, func)()
+        left_bound = self._slices.index.left.min()
+        right_bound = self._slices.index.right.max()
+        stairs_na = self._stairs.isna().mask((left_bound, right_bound)).fillna(0)
+        return (
+            self._stairs.mask((left_bound, right_bound))
+            .fillna(0)
+            .mask(stairs_na)
+            .layer(new_values.index.left, new_values.index.right, new_values.values)
         )
 
 

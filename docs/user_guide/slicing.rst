@@ -62,7 +62,7 @@ There are several methods, beyond simple summary stats, that :class:`staircase.S
     ii = pd.IntervalIndex.from_breaks(range(0, 101, 5))
     sf.slice(ii).apply(count_steps)
 
-The concept of resampling a step function was introduced in `staircase` v1.  In v2 resampling is achieved by slicing, applying a function which returns a number, then producing a new step function from those values.  The points at which the resampled step function changes value are chosen relative to the intervals used to slice the step function.  They may either be the left-endpoings, right-endpoints or midpoints, and the *points* parameter in :meth:`staircase.StairSlicer.resample` affects this behaviour.
+The concept of resampling a step function was introduced in `staircase` v1.  In v2 resampling is achieved by slicing, applying a function which returns a number, then producing a new step function by replacing the slice intervals with those values (see :meth:`staircase.StairSlicer.resample`)
 
 .. ipython:: python
     :suppress:
@@ -75,7 +75,7 @@ The concept of resampling a step function was introduced in `staircase` v1.  In 
     sf.plot(axes[0]);
     axes[0].set_title("sf");
     ii = pd.IntervalIndex.from_breaks(range(0, 101, 10))
-    sf.slice(ii).resample("mean", points="mid").plot(axes[1]);
+    sf.slice(ii).resample("mean").plot(axes[1]);
     @savefig slicing_resample.png
     axes[1].set_title("sf - resampled");
 
