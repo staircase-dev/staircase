@@ -1177,3 +1177,253 @@ def test_repr(s1_fix):
 
 def test_make_test_data():
     assert type(test_data.make_test_data()) == pd.DataFrame
+
+
+def test_logical_and_scalar_1(s3_fix):
+    assert (s3_fix & 1).identical(s3_fix)
+
+
+def test_logical_rand_scalar_1(s3_fix):
+    assert (1 & s3_fix).identical(s3_fix)
+
+
+def test_logical_and_scalar_2(s3_fix):
+    assert (s3_fix & 0).identical(0)
+
+
+def test_logical_rand_scalar_2(s3_fix):
+    assert (0 & s3_fix).identical(0)
+
+
+def test_logical_and_scalar_3(s3_fix):
+    assert (s3_fix & np.nan).identical(np.nan)
+
+
+def test_logical_rand_scalar_3(s3_fix):
+    assert (np.nan & s3_fix).identical(np.nan)
+
+
+def test_logical_or_scalar_1(s3_fix):
+    assert (s3_fix | 1).identical(1)
+
+
+def test_logical_ror_scalar_1(s3_fix):
+    assert (1 | s3_fix).identical(1)
+
+
+def test_logical_or_scalar_2(s3_fix):
+    assert (s3_fix | 0).identical(s3_fix)
+
+
+def test_logical_ror_scalar_2(s3_fix):
+    assert (0 | s3_fix).identical(s3_fix)
+
+
+def test_logical_or_scalar_3(s3_fix):
+    assert (s3_fix | np.nan).identical(np.nan)
+
+
+def test_logical_ror_scalar_3(s3_fix):
+    assert (np.nan | s3_fix).identical(np.nan)
+
+
+def test_logical_xor_scalar_1(s3_fix):
+    assert (s3_fix ^ 1).identical(~s3_fix)
+
+
+def test_logical_rxor_scalar_1(s3_fix):
+    assert (1 ^ s3_fix).identical(~s3_fix)
+
+
+def test_logical_xor_scalar_2(s3_fix):
+    assert (s3_fix ^ 0).identical(s3_fix)
+
+
+def test_logical_rxor_scalar_2(s3_fix):
+    assert (0 ^ s3_fix).identical(s3_fix)
+
+
+def test_logical_xor_scalar_3(s3_fix):
+    assert (s3_fix ^ np.nan).identical(np.nan)
+
+
+def test_logical_rxor_scalar_3(s3_fix):
+    assert (np.nan ^ s3_fix).identical(np.nan)
+
+
+def test_slicing_mean(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.slice(range(-4, 11, 2)).mean(),
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): -0.75,
+                pd.Interval(2, 4, closed="left"): 1.5,
+                pd.Interval(4, 6, closed="left"): 2.375,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_slicing_max(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.slice(range(-4, 11, 2)).max(),
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): 0.25,
+                pd.Interval(2, 4, closed="left"): 2.75,
+                pd.Interval(4, 6, closed="left"): 2.75,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_slicing_min(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.slice(range(-4, 11, 2)).min(),
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): -1.75,
+                pd.Interval(2, 4, closed="left"): 0.25,
+                pd.Interval(4, 6, closed="left"): 2.0,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_slicing_mode(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.slice(range(-4, 11, 2)).mode(),
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): -1.75,
+                pd.Interval(2, 4, closed="left"): 0.25,
+                pd.Interval(4, 6, closed="left"): 2.0,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_slicing_median(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.slice(range(-4, 11, 2)).median(),
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): -0.75,
+                pd.Interval(2, 4, closed="left"): 1.5,
+                pd.Interval(4, 6, closed="left"): 2.375,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_slicing_agg_min(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.slice(range(-4, 11, 2)).agg("min")["min"],
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): -1.75,
+                pd.Interval(2, 4, closed="left"): 0.25,
+                pd.Interval(4, 6, closed="left"): 2.0,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_slicing_apply_min(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.slice(range(-4, 11, 2)).apply(Stairs.min),
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): -1.75,
+                pd.Interval(2, 4, closed="left"): 0.25,
+                pd.Interval(4, 6, closed="left"): 2.0,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_slicing_agg_min_max(s1_fix):
+    result = s1_fix.slice(range(-4, 11, 2)).agg(["min", "max"])
+    pd.testing.assert_series_equal(
+        result["min"],
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): -1.75,
+                pd.Interval(2, 4, closed="left"): 0.25,
+                pd.Interval(4, 6, closed="left"): 2.0,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+    pd.testing.assert_series_equal(
+        result["max"],
+        pd.Series(
+            {
+                pd.Interval(-4, -2, closed="left"): -1.75,
+                pd.Interval(-2, 0, closed="left"): -1.75,
+                pd.Interval(0, 2, closed="left"): 0.25,
+                pd.Interval(2, 4, closed="left"): 2.75,
+                pd.Interval(4, 6, closed="left"): 2.75,
+                pd.Interval(6, 8, closed="left"): -0.5,
+                pd.Interval(8, 10, closed="left"): -0.5,
+            }
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_slicing_resample_mean(s1_fix):
+    pd.testing.assert_series_equal(
+        s1_fix.slice(range(0, 7, 2)).resample("mean").step_values,
+        pd.Series({-4: -1.75, 0: -0.75, 2: 1.5, 4: 2.375, 6: -0.5, 10: 0.0}),
+        check_names=False,
+        check_index_type=False,
+    )
