@@ -22,10 +22,14 @@ def _cache_integral_and_mean(self):
         try:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                integral = (value_sums * value_sums.index).sum()
+                # integral calculated this way to force an overflow error if required
+                # pandas.TimedeltaIndex * int is not raising an overflow error when it ideally should
+                integral = np.array(
+                    [x * y for x, y in zip(value_sums.index, value_sums)]
+                ).sum()
                 mean = integral / value_sums.sum()
                 self._integral_and_mean = (integral, mean)
-        except ValueError as exc:
+        except (OverflowError, ValueError) as exc:
             integral = None
             mean = ((value_sums / value_sums.sum()) * value_sums.index).sum()
             self._integral_and_mean = (integral, mean)
@@ -37,8 +41,8 @@ def integral(self):
     if self._integral_and_mean is None:
         try:
             _cache_integral_and_mean(self)
-        except ValueError:
-            raise ValueError(
+        except (OverflowError, ValueError):
+            raise OverflowError(
                 "Integral calculation results in overflow error.  Consider scaling down step function values to accommodate."
             )
     return self._integral_and_mean[0]
@@ -49,7 +53,7 @@ def mean(self):
     if self._integral_and_mean is None:
         try:
             _cache_integral_and_mean(self)
-        except ValueError:
+        except OverflowError:
             pass
     return self._integral_and_mean[1]
 

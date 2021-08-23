@@ -1462,6 +1462,21 @@ def test_layering_index(s1_fix):
     assert result.identical(s1_fix)
 
 
+def test_layering_frame(s1_fix):
+    df = pd.DataFrame(
+        {
+            "start": [1, -4, 3, 6, 7],
+            "end": [10, 5, 5, 7, 10],
+            "value": [2, -1.75, 2.5, -2.5, -2.5],
+        }
+    )
+    assert Stairs(df, "start", "end", "value").identical(s1_fix)
+
+
+def test_layering_trivial_1(s1_fix):
+    assert s1_fix.copy().layer(1, 1).identical(s1_fix)
+
+
 def test_pipe(s1_fix):
     def is_stairs(s):
         return isinstance(s, Stairs)
@@ -1520,3 +1535,31 @@ def test_step_values_stepless():
 
 def test_step_points_stepless():
     assert list(Stairs().step_points) == []
+
+
+def test_negate(s1_fix):
+    pd.testing.assert_series_equal(
+        (-s1_fix).step_values,
+        pd.Series({-4: 1.75, 1: -0.25, 3: -2.75, 5: -2.0, 6: 0.5, 10: 0.0}),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_integral_overflow():
+    with pytest.raises(OverflowError):
+        s = (
+            Stairs()
+            .layer(pd.Timestamp("1980"), pd.Timestamp("2050"), 5000)
+            .layer(pd.Timestamp("1990"), pd.Timestamp("2060"), 4000)
+        )
+        s.integral()
+
+
+def test_mean_no_overflow():
+    s = (
+        Stairs()
+        .layer(pd.Timestamp("1980"), pd.Timestamp("2050"), 5000)
+        .layer(pd.Timestamp("1990"), pd.Timestamp("2060"), 4000)
+    )
+    s.mean()

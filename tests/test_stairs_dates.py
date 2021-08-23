@@ -1630,3 +1630,22 @@ def test_clip_expected_type(date_func, kwargs):
     kwargs = {key: timestamp(*val, date_func=date_func) for key, val in kwargs.items()}
     result = s1(date_func).clip(**kwargs)
     assert_expected_type(result, date_func)
+
+
+def test_integral_overflow():
+    with pytest.raises(OverflowError):
+        s = (
+            Stairs()
+            .layer(pd.Timestamp("1980"), pd.Timestamp("2050"), 5000)
+            .layer(pd.Timestamp("1990"), pd.Timestamp("2060"), 4000)
+        )
+        s.integral()
+
+
+def test_mean_no_overflow():
+    s = (
+        Stairs()
+        .layer(pd.Timestamp("1980"), pd.Timestamp("2050"), 5000)
+        .layer(pd.Timestamp("1990"), pd.Timestamp("2060"), 4000)
+    )
+    s.mean()
