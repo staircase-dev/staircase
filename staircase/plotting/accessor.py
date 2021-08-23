@@ -25,9 +25,3 @@ class PlotAccessor:
             return plot_matplotlib(self._dist().ecdf, **kwargs)
         else:
             raise ValueError(f"Plotting backend {backend} not defined for ecdf")
-
-
-def _get_plot(self, **kwargs):
-    if self._plot is None:
-        self._plot = PlotAccessor(self, **kwargs)
-    return self._plot

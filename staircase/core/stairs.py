@@ -641,7 +641,6 @@ def _add_operations():
 
     ops.add_operations(Stairs)
     stats.add_methods(Stairs)
-    plotting.add_methods(Stairs)
     sampling.add_methods(Stairs)
     layering.add_methods(Stairs)
     slicing.add_methods(Stairs)

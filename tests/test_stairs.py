@@ -944,7 +944,17 @@ def test_s1_agg_max(closed, x, kwargs, expected_val):
     assert np.array_equal(s1(closed=closed).slice(ii).max().values, expected_val)
 
 
-def test_plot(s1_fix):
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {},
+        {"arrows": True, "style": "hlines"},
+        {"arrows": False, "style": "hlines"},
+        {"arrows": True, "style": "step"},
+        {"arrows": False, "style": "step"},
+    ],
+)
+def test_plot(s1_fix, kwargs):
     s1_fix.plot()
 
 
