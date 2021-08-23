@@ -13,8 +13,8 @@ class PlotAccessor:
     @Appender(docstrings.matplotlib_docstring, join="\n", indents=1)
     def __call__(self, *args, backend="matplotlib", **kwargs):
         # register_matplotlib_converters()
-        if self._stairs._data is None:
-            return
+        # if self._stairs._data is None:
+        #    return
         if backend == "matplotlib":
             return plot_matplotlib(self._stairs, *args, **kwargs)
         else:
