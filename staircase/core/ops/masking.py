@@ -1,5 +1,4 @@
 import bisect
-import inspect
 import operator
 
 import numpy as np
@@ -8,7 +7,6 @@ import pandas as pd
 import staircase as sc
 from staircase.constants import inf
 from staircase.core.ops import docstrings
-from staircase.core.ops.common import _combine_stairs_via_values
 from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
 
@@ -27,12 +25,8 @@ def _get_slice_index(self, lower, upper, lower_how, upper_how):
     left_index = bisect_funcs[lower_how](index_values, lower_val_for_bisect) - 1
     right_index = bisect_funcs[upper_how](index_values, upper_val_for_bisect)
     return left_index, right_index
-    # return self._data["value"].iloc[left_index:right_index]
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.clip_docstring, join="\n", indents=1)
 def clip(self, lower=-inf, upper=inf):
     lower, upper = _replace_none_with_infs((lower, upper))
@@ -98,9 +92,7 @@ def _mask_stairs(self, other, inverse):
             return sc.Stairs(initial_value=np.nan)
         else:
             return self.copy()
-    return _combine_stairs_via_values(
-        self, _maskify(other, inverse=inverse), pd.Series.add, operator.add
-    )
+    return _maskify(other, inverse=inverse) + self
 
 
 def _make_mask_or_where_func(docstring, which):

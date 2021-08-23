@@ -246,3 +246,12 @@ def test_mask_single_step_initial_nan(start, end, expected_step_values, tuple_ma
         check_index_type=False,
     )
     assert np.isnan(s.initial_value)
+
+
+def test_mask_on_stepless():
+    pd.testing.assert_series_equal(
+        sc.Stairs().mask((0, 2)).step_changes,
+        pd.Series({0: np.nan, 2: 0.0}),
+        check_names=False,
+        check_index_type=False,
+    )

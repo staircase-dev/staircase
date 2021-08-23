@@ -224,3 +224,12 @@ def test_where_single_step_initial_nan(start, end, expected_step_values, tuple_m
         check_index_type=False,
     )
     assert np.isnan(s.initial_value)
+
+
+def test_where_on_stepless():
+    pd.testing.assert_series_equal(
+        sc.Stairs().where((0, 2)).step_changes,
+        pd.Series({0: 0.0, 2: np.nan}),
+        check_names=False,
+        check_index_type=False,
+    )
