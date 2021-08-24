@@ -1,6 +1,8 @@
 name: Upload to test-PYPI
 
-on: workflow_dispatch
+on:
+  release:
+    types: [created]
 
 jobs:
   deploy:
@@ -16,7 +18,7 @@ jobs:
           python -m pip install poetry
           poetry install
       - name: Build package
-        run: poetry publish
+        run: poetry build
       - name: Publish to Test-PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
