@@ -165,8 +165,8 @@ def test_mask_neginf_with_nan_initial(end, expected_step_values, tuple_mask):
     "start, expected_step_values, tuple_mask",
     _add_tuple_mask_option(
         [
-            (-5, pd.Series()),
-            (-4, pd.Series()),
+            (-5, pd.Series([], dtype="float64")),
+            (-4, pd.Series([], dtype="float64")),
             (-2, pd.Series({-4: -1.75, -2: np.nan})),
             (1, pd.Series({-4: -1.75, 1: np.nan})),
             (6, s1().step_values.drop([6, 10]).pipe(concat, {6: np.nan})),

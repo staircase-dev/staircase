@@ -116,8 +116,8 @@ def test_where_neginf_to_posinf_with_nan_initial(initial_value):
     "end, expected_step_values, tuple_mask",
     _add_tuple_mask_option(
         [
-            (-5, pd.Series()),
-            (-4, pd.Series()),
+            (-5, pd.Series([], dtype="float64")),
+            (-4, pd.Series([], dtype="float64")),
             (-2, pd.Series({-4.0: -1.75, -2: np.nan})),
             (1, pd.Series({-4.0: -1.75, 1: np.nan})),
             (6, s1().step_values.drop([6, 10]).pipe(concat, {6: np.nan})),
@@ -200,8 +200,8 @@ def test_where_single_step(start, end, expected_step_values, tuple_mask):
     "start, end, expected_step_values, tuple_mask",
     _add_tuple_mask_option(
         [
-            (-6, -5, pd.Series()),
-            (-6, -4, pd.Series()),
+            (-6, -5, pd.Series([], dtype="float64")),
+            (-6, -4, pd.Series([], dtype="float64")),
             (-6, -2, pd.Series({-4: -1.75, -2: np.nan})),
             (2, 4, pd.Series({2: 0.25, 3: 2.75, 4: np.nan})),
             (7, 8, pd.Series({7: -0.5, 8: np.nan})),

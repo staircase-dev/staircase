@@ -1544,22 +1544,3 @@ def test_negate(s1_fix):
         check_names=False,
         check_index_type=False,
     )
-
-
-def test_integral_overflow():
-    with pytest.raises(OverflowError):
-        s = (
-            Stairs()
-            .layer(pd.Timestamp("1980"), pd.Timestamp("2050"), 5000)
-            .layer(pd.Timestamp("1990"), pd.Timestamp("2060"), 4000)
-        )
-        s.integral()
-
-
-def test_mean_no_overflow():
-    s = (
-        Stairs()
-        .layer(pd.Timestamp("1980"), pd.Timestamp("2050"), 5000)
-        .layer(pd.Timestamp("1990"), pd.Timestamp("2060"), 4000)
-    )
-    s.mean()
