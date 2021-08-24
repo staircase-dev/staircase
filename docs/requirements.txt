@@ -1,12 +1,13 @@
 ipykernel
-sphinx
-nbsphinx
-sortedcontainers
+sphinx == 4.0.2
+nbsphinx == 0.8.6
+sphinx-panels
 matplotlib
-pandas<1.2
+pandas
 numpy
 seaborn
 pytz
-Pygments==2.7.4
-guzzle_sphinx_theme
+Pygments
+pydata-sphinx-theme
 toml
+numpydoc

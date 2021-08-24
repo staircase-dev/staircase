@@ -1,27 +1,26 @@
-from staircase.core.stairs import Stairs
+"""
+isort:skip_file
+"""
 
-from staircase.core.collections.functions import (
-    aggregate,
-    corr,
-    cov,
-    _max as max,
-    _mean as mean,
-    _median as median,
-    _min as min,
-    resample,
-    sample,
-)
+from staircase.constants import inf
+from staircase.core.stairs import Stairs, _add_operations
+from staircase.core.arrays.aggregation import _aggregate as agg
+from staircase.core.arrays.aggregation import _max as max
+from staircase.core.arrays.aggregation import _mean as mean
+from staircase.core.arrays.aggregation import _median as median
+from staircase.core.arrays.aggregation import _min as min
+from staircase.core.arrays.aggregation import _sum as sum
+from staircase.core.arrays.transform import corr, cov, limit, sample
+from staircase.core.slicing import StairsSlicer
+from staircase.core.stats.distribution import Dist
+from staircase.test_data import make_test_data
 
-from staircase.defaults import default
-
-from staircase.core.stats import hist_from_ecdf
-
-from .test_data import make_test_data
+_add_operations()
 
 
 def get_version():
     def get_version_post_py38():
-        from importlib.metadata import version
+        from importlib.metadata import version  # type: ignore
 
         return version(__name__)
 

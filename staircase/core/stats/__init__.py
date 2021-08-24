@@ -1,33 +1,35 @@
+from staircase.core.accessor import CachedAccessor
+from staircase.core.stats.statistic import _max as max
+from staircase.core.stats.statistic import _min as min
 from staircase.core.stats.statistic import (
-    integrate,
+    agg,
+    corr,
+    cov,
+    integral,
     mean,
     median,
     mode,
-    percentile,
     std,
+    value_sums,
+    values_in_range,
     var,
-)
-
-from staircase.core.stats.distribution import (
-    ecdf_stairs,
-    hist,
-    hist_from_ecdf,
-    percentile_stairs,
-    percentile_Stairs,
 )
 
 
 def add_methods(cls):
-    cls.integrate = integrate
+    from staircase.core.stats.distribution import Dist
+
+    cls.value_sums = value_sums
+    cls.values_in_range = values_in_range
+    cls.cov = cov
+    cls.corr = corr
+    cls.agg = agg
+
+    cls.integral = integral
     cls.mean = mean
     cls.median = median
     cls.mode = mode
-    cls.percentile = percentile
     cls.std = std
     cls.var = var
 
-    cls.ecdf_stairs = ecdf_stairs
-    cls.hist = hist
-    cls.hist_from_ecdf = hist_from_ecdf
-    cls.percentile_stairs = percentile_stairs
-    cls.percentile_Stairs = percentile_Stairs
+    cls.dist = CachedAccessor("dist", Dist)

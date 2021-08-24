@@ -50,6 +50,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+junit.xml
 
 # Translations
 *.mo
@@ -127,3 +128,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# VS Code
+.vscode
+
+#temp ignores
+READMEold.md
+*.ipynb
+docs - copy/
+tests/mtest_stairs_module_dates.py
+tests/mtest_stairs_module.py

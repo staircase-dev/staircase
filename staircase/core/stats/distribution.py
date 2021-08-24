@@ -1,186 +1,154 @@
 import math
-import warnings
 
 import numpy as np
+import pandas as pd
+
 import staircase as sc
-from pandas import IntervalIndex, Series
+from staircase.constants import inf
 from staircase.core.stats import docstrings
+from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
 
-warnings.simplefilter("default")
 
+class Xtiles(sc.core.stairs.Stairs):
 
-@Appender(docstrings.percentile_stairs_example, join="\n", indents=1)
-def percentile_stairs(self, lower=float("-inf"), upper=float("inf")):
-    """
-    Calculates a percentile function (and returns a corresponding Stairs instance)
+    class_name = None
+    scale_factor = None
 
-    This method can be used for efficiency gains if substituting for multiple calls
-    to percentile() with the same lower and upper parameters
+    def sample(self, x):
+        return (self.limit(x, side="left") + self.limit(x, side="right")) / 2
 
-    Parameters
-    ----------
-    lower : int, float or pandas.Timestamp, optional
-        lower bound of the interval on which to perform the calculation
-    upper : int, float or pandas.Timestamp, optional
-        upper bound of the interval on which to perform the calculation
+    def __call__(self, *args, **kwargs):
+        return self.sample(*args, **kwargs)
 
-    Returns
-    -------
-    :class:`Stairs`
-        An instance representing a percentile function
-
-    See Also
-    --------
-    Stairs.percentile
-    """
-    temp_df = self.clip(lower, upper).to_dataframe()
-
-    assert (
-        temp_df.shape[0] >= 3
-    ), "Step function composed only of infinite length intervals.  Provide bounds by 'lower' and 'upper' parameters"
-
-    temp_df = (
-        temp_df.iloc[1:-1]
-        .assign(duration=lambda df: df.end - df.start)
-        .groupby("value")["duration"]
-        .sum()
-        .to_frame()
-        .assign(duration=lambda df: np.cumsum(df.duration / df.duration.sum()))
-        .assign(duration=lambda df: df.duration.shift())
-        .fillna(0)
-    )
-    percentile_step_func = sc.Stairs()
-    for start, end, value in zip(
-        temp_df.duration.values,
-        np.append(temp_df.duration.values[1:], 1),
-        temp_df.index,
-    ):
-        percentile_step_func.layer(start * 100, end * 100, value)
-    percentile_step_func[100] = 0
-    return percentile_step_func
-
-
-def percentile_Stairs(self, lower=float("-inf"), upper=float("inf")):
-    """Deprecated.  Use Stairs.percentile_stairs."""
-    warnings.warn(
-        "Stairs.percentile_Stairs will be deprecated in version 2.0.0, use Stairs.percentile_stairs instead",
-        PendingDeprecationWarning,
-    )
-    return percentile_stairs(self, lower, upper)
-
-
-@Appender(docstrings.ecdf_stairs_example, join="\n", indents=1)
-def ecdf_stairs(self, lower=float("-inf"), upper=float("inf")):
-    """
-    Calculates an `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_
-    for the corresponding step function values (and returns the result as a Stairs instance)
-
-    Parameters
-    ----------
-    lower : int, float or pandas.Timestamp, optional
-        lower bound of the step-function domain on which to perform the calculation
-    upper : int, float or pandas.Timestamp, optional
-        upper bound of the step-function domain to perform the calculation
-
-    Returns
-    -------
-    :class:`Stairs`
-        An instance representing an empirical cumulative distribution function for the step function values
-
-    See Also
-    --------
-    staircase.hist_from_ecdf
-    Stairs.hist
-    """
-
-    def _switch_first_key_to_zero(d):
-        d[0] = d.get(0, 0) + d.pop(float("-inf"))
-        return d
-
-    _ecdf = _switch_first_key_to_zero(
-        percentile_stairs(self, lower, upper)._sorted_dict.copy()
-    )
-
-    return sc.Stairs().layer(
-        np.cumsum(list(_ecdf.values())[:-1]), None, np.diff(list(_ecdf.keys())) / 100
-    )
-
-
-@Appender(docstrings.hist_from_ecdf_example, join="\n", indents=1)
-def hist_from_ecdf(ecdf, bin_edges=None, closed="left"):
-    """
-    Calculates a histogram from a Stairs instance corresponding to an
-    `empirical cumulative distribution function <https://en.wikipedia.org/wiki/Empirical_distribution_function>`_.
-
-    Such ecdf stair instances are returned from :meth:`Stairs.ecdf_stairs`.  This function predominantly exists
-    to allow users to store the result of a ecdf stairs instance locally, and experiment with bin_edges without
-    requiring the recalculation of the ecdf.
-
-    Parameters
-    ----------
-    ecdf : :class:`Stairs`
-        lower bound of the step-function domain on which to perform the calculation
-    bin_edges : int, float, optional
-        defines the bin edges for the histogram (it is the domain of the ecdf that is being binned).
-        If not specified the bin_edges will be assumed to be the integers which cover the domain of the ecdf
-    closed: {'left', 'right'}, default 'left'
-        determines whether the bins, which are half-open intervals, are left-closed , or right-closed
-
-    Returns
-    -------
-    :class:`pandas.Series`
-        A Series, with a :class:`pandas.IntervalIndex`, representing the values of the histogram
-
-    See Also
-    --------
-    Stairs.hist
-    Stairs.ecdf_stairs
-    """
-    if bin_edges is None:
-        round_func = math.floor if closed == "left" else math.ceil
-        bin_edges = range(
-            round_func(min(ecdf.step_changes().keys())) - (closed == "right"),
-            round_func(max(ecdf.step_changes().keys())) + (closed == "left") + 1,
+    @classmethod
+    def from_ecdf(cls, ecdf):
+        assert ecdf._data is not None
+        return cls._new(
+            initial_value=ecdf._data.index[0],
+            data=pd.DataFrame(
+                {"value": np.append(ecdf._data.index, ecdf._data.index[-1])},
+                index=np.append(0, ecdf._get_values().values * cls.scale_factor),
+            ),
         )
-    return Series(
-        data=[
-            ecdf(c2, how=closed) - ecdf(c1, how=closed)
-            for c1, c2 in zip(bin_edges[:-1], bin_edges[1:])
-        ],
-        index=IntervalIndex.from_tuples(
-            [(c1, c2) for c1, c2 in zip(bin_edges[:-1], bin_edges[1:])], closed=closed
-        ),
-        dtype="float64",
-    )
 
 
-@Appender(docstrings.hist_example, join="\n", indents=1)
-def hist(self, lower=float("-inf"), upper=float("inf"), bin_edges=None, closed="left"):
-    """
-    Calculates a histogram for the corresponding step function values
+class Percentiles(Xtiles):
 
-    Parameters
-    ----------
-    lower : int, float or pandas.Timestamp, optional
-        lower bound of the step-function domain on which to perform the calculation
-    upper : int, float or pandas.Timestamp, optional
-        upper bound of the step-function domain to perform the calculation
-    bin_edges : array-like of int or float, optional
-        defines the bin edges for the histogram (remember it is the step-function range that is being binned).
-        If not specified the bin_edges will be assumed to be the integers which cover the step function range
-    closed: {'left', 'right'}, default 'left'
-        determines whether the bins, which are half-open intervals, are left-closed , or right-closed
+    class_name = "Percentiles"
+    scale_factor = 100
 
-    Returns
-    -------
-    :class:`pandas.Series`
-        A Series, with a :class:`pandas.IntervalIndex`, representing the values of the histogram
 
-    See Also
-    --------
-    staircase.hist_from_ecdf
-    Stairs.ecdf_stairs
-    """
-    _ecdf = ecdf_stairs(self, lower, upper)
-    return hist_from_ecdf(_ecdf, bin_edges, closed)
+class Fractiles(Xtiles):
+
+    class_name = "Fractiles"
+    scale_factor = 1
+
+    def to_percentiles(self):
+
+        data = self._get_values().copy()
+        data.index = data.index * 100
+        return Percentiles._new(initial_value=self.initial_value, data=data.to_frame())
+
+
+class ECDF(sc.core.stairs.Stairs):
+
+    class_name = "ECDF"
+
+    @staticmethod
+    def from_stairs(stairs):
+        # widths = np.diff(stairs._data.index.values)
+        # heights = stairs._get_values().values[:-1]
+        # ecdf_deltas = pd.Series(widths).groupby(heights).sum().rename("delta")
+        ecdf_deltas = stairs.value_sums(dropna=True).rename("delta")
+        deltas_sum = ecdf_deltas.sum()
+        normalized_probability_deltas = ecdf_deltas / deltas_sum
+
+        ecdf = ECDF._new(
+            initial_value=0,
+            data=normalized_probability_deltas.to_frame(),
+            closed="left",
+        )
+        ecdf._denormalize_probability_factor = deltas_sum
+        return ecdf
+
+    def hist(self, bins="unit", closed="left", stat="sum"):
+
+        step_points = self.step_points
+        if isinstance(bins, str) and bins == "unit":
+            round_func = math.floor if closed == "left" else math.ceil
+            bins = range(
+                round_func(min(step_points)) - (closed == "right"),
+                round_func(max(step_points)) + (closed == "left") + 1,
+            )
+
+        if not isinstance(bins, pd.IntervalIndex):
+            bins = pd.IntervalIndex.from_breaks(bins, closed=closed)
+
+        values = self.limit(bins.right, side=bins.closed) - self.limit(
+            bins.left, side=bins.closed
+        )
+
+        # inspired by seaborn.histplot
+        if stat != "probability":
+            values = values * self._denormalize_probability_factor
+            if stat in ("frequency", "density"):
+                widths = bins.map(lambda i: i.right - i.left)
+                if stat == "frequency":
+                    values = values / widths
+                elif stat == "density":
+                    values = values / np.dot(values, widths)
+
+        return pd.Series(
+            data=values,
+            index=bins,
+            # dtype="float64",
+        )
+
+    def percentiles(self):
+        return Percentiles.from_ecdf(self)
+
+    def fractiles(self):
+        return Fractiles.from_ecdf(self)
+
+
+class Dist:
+    def __init__(self, stairs):
+        self._reset()
+        self._stairs = stairs
+
+    def _reset(self):
+        self._ecdf = None
+        self._fractiles = None
+        self._percentiles = None
+
+    @property
+    def ecdf(self):
+        if self._ecdf is None:
+            self._ecdf = ECDF.from_stairs(self._stairs)
+        return self._ecdf
+
+    def hist(self, bins="unit", closed="left", stat="sum"):
+        return self.ecdf.hist(bins, closed, stat)
+
+    @property
+    def fractile(self):
+        if self._fractiles is None:
+            self._fractiles = Fractiles.from_ecdf(self.ecdf)
+        return self._fractiles
+
+    @property
+    def percentile(self):
+        if self._percentiles is None:
+            self._percentiles = Percentiles.from_ecdf(self.ecdf)
+        return self._percentiles
+
+    def quantiles(self, n):
+        assert n > 0 and isinstance(n, int)
+        return self.fractile(np.linspace(0, 1, n + 1)[1:-1])
+
+
+# def _get_dist(self):
+#     if self._dist is None:
+#         self._dist = Dist(self)
+#     return self._dist
