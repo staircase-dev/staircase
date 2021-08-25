@@ -104,7 +104,7 @@ def plot(
         color = lines[0].get_color()
     else:
         lines = _plot_matplotlib_hlines(frame, ax=ax, linewidth=linewidth, **kwargs)
-        color = lines.get_color()
+        color = lines.get_colors()[0]
     if arrows or style == "hlines":
         _draw_arrows(frame, ax, color, linewidth, **arrow_kwargs)
     return ax
