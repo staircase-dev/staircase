@@ -136,10 +136,94 @@ class Stairs:
 
     @property
     def fractile(self):
+        """
+        This property returns a :class:`staircase.Fractiles` object.
+
+        Fractiles is a subclass of Stairs.  Although it inherits all methods of Stairs,
+        it is expected that it will typically only be used as a callable class, to
+        calculate the x fractile with the following parameters.
+
+        Parameters
+        ----------
+        x : float or array-like of float
+            Percentile or sequence of fractiles to compute,.  Must be between 0 and 1.
+
+        Returns
+        -------
+        float or :class:`numpy.ndarray` of floats
+
+        See Also
+        --------
+        Stairs.percentile, Stairs.quantiles
+
+        Examples
+        --------
+
+        .. plot::
+            :context: close-figs
+
+            >>> sf = sc.Stairs().layer([0,1,2,3,4], [6,7,8,9,10])
+            >>> fig, axes = plt.subplots(ncols=2, figsize=(7,3), sharey=True)
+            >>> sf.plot(axes[0])
+            >>> axes[0].set_title("sf")
+            >>> sf.fractile.plot(axes[1])
+            >>> axes[1].set_title("fractile function")
+
+        >>> sf.fractile
+        <staircase.Fractiles, id=2151414503360>
+
+        >>> sf.fractile(0.5)
+        3
+
+        >>> sf.percentile([0.25, 0.5, 0.75])
+        array([2., 3., 4.])
+        """
         return self.dist.fractile
 
     @property
     def percentile(self):
+        """
+        This property returns a :class:`staircase.Percentiles` object.
+
+        Percentiles is a subclass of Stairs.  Although it inherits all methods of Stairs,
+        it is expected that it will typically only be used as a callable class, to
+        calculate the x-th percentile with the following parameters.
+
+        Parameters
+        ----------
+        x : int or array-like of int
+            Percentile or sequence of percentiles to compute,.  Must be between 0 and 100.
+
+        Returns
+        -------
+        float or :class:`numpy.ndarray` of floats
+
+        See Also
+        --------
+        Stairs.fractile, Stairs.quantiles
+
+        Examples
+        --------
+
+        .. plot::
+            :context: close-figs
+
+            >>> sf = sc.Stairs().layer([0,1,2,3,4], [6,7,8,9,10])
+            >>> fig, axes = plt.subplots(ncols=2, figsize=(7,3), sharey=True)
+            >>> sf.plot(axes[0])
+            >>> axes[0].set_title("sf")
+            >>> sf.percentile.plot(axes[1])
+            >>> axes[1].set_title("percentile function")
+
+        >>> sf.percentile
+        <staircase.Percentiles, id=2151414790944>
+
+        >>> sf.percentile(50)
+        3
+
+        >>> sf.percentile([25,50,75])
+        array([2., 3., 4.])
+        """
         return self.dist.percentile
 
     @Appender(stats.docstrings.hist_example, join="\n", indents=2)
@@ -198,11 +282,11 @@ class Stairs:
             :context: close-figs
 
             >>> sf = sc.Stairs().layer([0,1,2,3,4], [6,7,8,9,10])
-            >>> fig, axes = plt.subplots(ncols=2, figsize=(7,3), sharex=True)
+            >>> fig, axes = plt.subplots(ncols=2, figsize=(7,3))
             >>> sf.plot(axes[0])
             >>> axes[0].set_title("sf")
-            >>> sf.ecdf.plot(axes[1])
-            >>> axes[1].set_title("sf")
+            >>> sf.fractile.plot(axes[1])
+            >>> axes[1].set_title("fractile function")
 
         >>> sf.quantiles(4)
         array([2., 3., 4.])
@@ -244,7 +328,7 @@ class Stairs:
     plot = CachedAccessor("plot", PlotAccessor)
 
     @property
-    def step_changes(self):  # TODO: alias as deltas?
+    def step_changes(self):
         """
         A pandas Series of key, value pairs of indicating where step changes occur in the step function, and the change in value
 
@@ -308,7 +392,6 @@ class Stairs:
         """
         return self._get_values().copy()
 
-    # TODO: test
     @property
     def step_points(self):
         """
@@ -540,7 +623,9 @@ class Stairs:
         left_delta, right_delta = window
         lower, upper = where
         clipped = self.clip(lower, upper)
-        step_points = clipped._data.index  # TODO: what if data is none
+        if clipped._data is None:
+            return pd.Series([clipped.initial_value] * 2, index=where)
+        step_points = clipped._data.index
         sample_points = pd.Index.union(
             step_points - left_delta,
             step_points - right_delta,
