@@ -79,8 +79,10 @@ class StairsSlicer:
 
     @Appender(docstrings.resample_docstring, join="\n", indents=1)
     def resample(self, func):
-        # TODO: assert func in name list
-        # TODO: interval_index must be monotonic increasing with no gaps
+        if not self._interval_index.is_non_overlapping_monotonic:
+            raise ValueError(
+                "Slices must be monotonic increasing (ascending order) and not overlapping"
+            )
         self._ensure_slices()
         new_values = getattr(self, func)()
         left_bound = self._slices.index.left.min()

@@ -6,9 +6,6 @@ from staircase.core.stairs import Stairs
 from staircase.util._decorators import Appender
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.aggregate_example, join="\n", indents=1)
 def _aggregate(collection, func):
     """
@@ -43,40 +40,25 @@ def _aggregate(collection, func):
     )._remove_redundant_step_points()
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.mean_docstring, join="\n", indents=1)
 def _mean(collection):
     return _aggregate(collection, np.mean)
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.median_docstring, join="\n", indents=1)
 def _median(collection):
     return _aggregate(collection, np.median)
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.min_docstring, join="\n", indents=1)
 def _min(collection):
     return _aggregate(collection, np.min)
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.max_docstring, join="\n", indents=1)
 def _max(collection):
     return _aggregate(collection, np.max)
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 def _sum(collection):
     return _aggregate(collection, np.sum)

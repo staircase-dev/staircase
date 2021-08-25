@@ -9,9 +9,6 @@ from staircase.core.stats.statistic import cov as _cov
 from staircase.util._decorators import Appender
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.sample_example, join="\n", indents=1)
 def sample(collection, x):
     """
@@ -45,9 +42,6 @@ def sample(collection, x):
     return array.apply(Stairs.sample, x=x, include_index=True)
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 @Appender(docstrings.limit_example, join="\n", indents=1)
 def limit(collection, x, side="right"):
     """
@@ -85,9 +79,6 @@ def limit(collection, x, side="right"):
     return array.apply(Stairs.limit, x=x, side=side, include_index=True)
 
 
-# TODO: docstring
-# TODO: test
-# TODO: what's new
 def _make_corr_cov_func(docstring, stairs_method, assume_ones_diagonal):
     @Appender(docstring, join="\n", indents=1)
     def func(collection, where=(-inf, inf)):
