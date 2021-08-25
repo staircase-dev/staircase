@@ -283,3 +283,47 @@ def test_value_sums_dropna_false(s1_fix):
         check_names=False,
         check_index_type=False,
     )
+
+
+def test_isna(s1_fix):
+    s = s1_fix.clip(None, 10).mask((-2, 0)).mask((4, 7)).isna()
+    pd.testing.assert_series_equal(
+        s.step_values,
+        pd.Series(
+            [1, 0, 1, 0, 1],
+            index=[-2, 0, 4, 7, 10],
+        ),
+        check_names=False,
+        check_index_type=False,
+        check_dtype=False,
+    )
+    assert s.initial_value == 0
+
+
+def test_notna(s1_fix):
+    s = s1_fix.clip(None, 10).mask((-2, 0)).mask((4, 7)).notna()
+    pd.testing.assert_series_equal(
+        s.step_values,
+        pd.Series(
+            [0, 1, 0, 1, 0],
+            index=[-2, 0, 4, 7, 10],
+        ),
+        check_names=False,
+        check_index_type=False,
+        check_dtype=False,
+    )
+    assert s.initial_value == 1
+
+
+def test_fillna(s1_fix):
+    s = s1_fix.clip(None, 10).mask((-2, 0)).mask((4, 7)).fillna(1)
+    pd.testing.assert_series_equal(
+        s.step_values,
+        pd.Series(
+            [-1.75, 1, -1.75, 0.25, 2.75, 1, -0.5, 1],
+            index=[-4, -2, 0, 1, 3, 4, 7, 10],
+        ),
+        check_names=False,
+        check_index_type=False,
+    )
+    assert s.initial_value == s1_fix.initial_value
