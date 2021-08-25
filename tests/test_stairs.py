@@ -955,7 +955,15 @@ def test_s1_agg_max(closed, x, kwargs, expected_val):
     ],
 )
 def test_plot(s1_fix, kwargs):
-    s1_fix.plot()
+    s1_fix.plot(**kwargs)
+
+
+def test_plot_trivial_1():
+    Stairs().plot()
+
+
+def test_plot_trivial_2():
+    Stairs(initial_value=np.nan).plot()
 
 
 def test_plot_ecdf(s1_fix):
@@ -1544,3 +1552,45 @@ def test_negate(s1_fix):
         check_names=False,
         check_index_type=False,
     )
+
+
+def test_hist_frequency(s1_fix):
+    index = pd.IntervalIndex.from_breaks([-2, 0, 2, 3], closed="left")
+    pd.testing.assert_series_equal(
+        s1_fix.hist(bins=[-2, 0, 2, 3], stat="frequency"),
+        pd.Series([4.5, 1, 3], index=index),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_hist_density(s1_fix):
+    index = pd.IntervalIndex.from_breaks([-2, 0, 2, 3], closed="left")
+    pd.testing.assert_series_equal(
+        s1_fix.hist(bins=[-2, 0, 2, 3], stat="density"),
+        pd.Series([0.36, 0.08, 0.12], index=index),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_hist_probability(s1_fix):
+    index = pd.IntervalIndex.from_breaks([-2, 0, 2, 3], closed="left")
+    pd.testing.assert_series_equal(
+        s1_fix.hist(bins=[-2, 0, 2, 3], stat="probability"),
+        pd.Series([0.642857, 0.142857, 0.214286], index=index),
+        check_names=False,
+        check_index_type=False,
+    )
+
+
+def test_quantiles(s1_fix):
+    assert (s1_fix.quantiles(4) == np.array([-1.75, -0.5, 0.25])).all()
+
+
+def test_fractile(s1_fix):
+    assert list(map(s1().fractile, (0.25, 0.5, 0.75))) == [
+        -1.75,
+        -0.5,
+        0.25,
+    ]
