@@ -2,11 +2,12 @@ class NegInf:
     def __init__(self):
         pass
 
-    def __lt__(self, _):
+    def __lt__(self, other):
+        assert not isinstance(other, NegInf)
         return True
 
     def __gt__(self, other):
-        assert not isinstance(other, Inf)
+        assert not isinstance(other, (Inf, NegInf))
         return False
 
     def __neg__(self):
@@ -21,11 +22,11 @@ class Inf:
         pass
 
     def __gt__(self, other):
-        assert type(other) != Inf
+        assert not isinstance(other, Inf)
         return True
 
     def __lt__(self, other):
-        assert type(other) != Inf
+        assert not isinstance(other, (Inf, NegInf))
         return False
 
     def __neg__(self):
