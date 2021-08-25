@@ -19,10 +19,6 @@
 
 An open source package for performing data analysis with (mathematical) step functions.  Strongly aligned to :mod:`pandas`.
   
-.. warning::
-
-   This documentation is for *staircase version 2* which is still in pre-release.  Visit `version 1 documentation here <https://www.staircase.dev/en/v1.6.6/>`__.
-
 
 Contents
 ==================

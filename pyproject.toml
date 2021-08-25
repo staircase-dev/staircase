@@ -7,14 +7,14 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 name = "staircase"
 version = "2.0.0rc1"
-description = "Facilitating the modelling, manipulation and analysis of data with (mathematical) step functions"
+description = "A data analysis package based on modelling and manipulation of mathematical step functions. Strongly aligned with pandas."
 readme = "README.md"
 authors = ["Riley Clement <venaturum@gmail.com>"]
 maintainers = ["Riley Clement <venaturum@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/staircase-dev/staircase"
-homepage = "https://github.com/staircase-dev/staircase"
-documentation = "https://github.com/staircase-dev/staircase"
+homepage = "https://staircase.dev"
+documentation = "https://staircase.dev"
 
 keywords=[
 	'Staircase',
