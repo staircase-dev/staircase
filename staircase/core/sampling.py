@@ -3,7 +3,7 @@ import pandas as pd
 from pandas.api.types import is_list_like
 
 from staircase.docstrings import examples
-from staircase.util import _is_datetime_like, _verify_window
+from staircase.util import _is_datetime_like
 from staircase.util._decorators import Appender
 
 

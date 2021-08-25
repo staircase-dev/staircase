@@ -6,7 +6,7 @@ class NegInf:
         return True
 
     def __gt__(self, other):
-        assert type(other) != Inf
+        assert not isinstance(other, Inf)
         return False
 
     def __neg__(self):

@@ -22,7 +22,8 @@ def _reindex_deltas(new_index, deltas, initial_value):
 
 
 def _reindex_values(new_index, values, initial_value):
-    """Conform values to new index
+    """
+    Conform values to new index
 
     Parameters
     ----------

@@ -6,6 +6,7 @@ F = TypeVar("F", bound=FuncType)
 
 
 class Appender:
+
     """
     A function decorator that will append an addendum to the docstring
     of the target function.

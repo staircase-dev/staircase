@@ -4,10 +4,6 @@ import numpy as np
 import pandas as pd
 
 import staircase as sc
-from staircase.constants import inf
-from staircase.core.stats import docstrings
-from staircase.util import _replace_none_with_infs
-from staircase.util._decorators import Appender
 
 
 class Xtiles(sc.core.stairs.Stairs):
@@ -57,9 +53,6 @@ class ECDF(sc.core.stairs.Stairs):
 
     @staticmethod
     def from_stairs(stairs):
-        # widths = np.diff(stairs._data.index.values)
-        # heights = stairs._get_values().values[:-1]
-        # ecdf_deltas = pd.Series(widths).groupby(heights).sum().rename("delta")
         ecdf_deltas = stairs.value_sums(dropna=True).rename("delta")
         deltas_sum = ecdf_deltas.sum()
         normalized_probability_deltas = ecdf_deltas / deltas_sum

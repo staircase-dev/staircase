@@ -1,4 +1,5 @@
 """
+
 staircase
 ==============
 
@@ -10,11 +11,10 @@ modelling step functions. See :ref:`Getting Started <getting_started>` for more 
 import numpy as np
 import pandas as pd
 
-from staircase import docstrings, plotting
+from staircase import docstrings
 from staircase.constants import inf
 from staircase.core import stats
 from staircase.core.accessor import CachedAccessor
-from staircase.plotting import docstrings as plot_docstrings
 from staircase.plotting.accessor import PlotAccessor
 from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
@@ -637,7 +637,7 @@ class Stairs:
 
 
 def _add_operations():
-    from staircase.core import layering, ops, sampling, slicing, stats
+    from staircase.core import layering, ops, sampling, slicing
 
     ops.add_operations(Stairs)
     stats.add_methods(Stairs)

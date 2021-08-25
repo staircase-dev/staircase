@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib.dates import num2date
 from pandas.plotting import register_matplotlib_converters
 
 from staircase.util._decorators import Appender

@@ -8,7 +8,9 @@ from staircase.constants import inf
 
 
 def _is_datetime_like(x):
-    return type(x) in (pd.Timestamp, datetime.datetime, datetime.date, np.datetime64)
+    return isinstance(
+        x, (pd.Timestamp, datetime.datetime, datetime.date, np.datetime64)
+    )
 
 
 def _sanitize_binary_operands(self, other, copy_other=False):
@@ -23,13 +25,6 @@ def _sanitize_binary_operands(self, other, copy_other=False):
         if copy_other:
             other = other.copy()
     return self, other
-
-
-def _verify_window(left_delta, right_delta):
-    zero = type(left_delta)(0)
-    assert left_delta <= zero, "left_delta must not be positive"
-    assert right_delta >= zero, "right_delta must not be negative"
-    assert right_delta - left_delta > zero, "window length must be non-zero"
 
 
 def _get_lims(stairs, closed):
