@@ -31,7 +31,7 @@ Pretty exciting huh.
 
 But don't hit the close button on the browser just yet.  Let us convince you that much of the world around you can be modelled as step functions.
 
-For example, the number of users viewing this page over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the page, and decreases by 1 every time a user leaves the page.  Let's say we have this data in vector format (i.e. tuple, list, numpy array, pandas series).  Specifically, assume *arrive* and *leave* are vectors of times, expressed as minutes past midnight, for all page views occuring yesterday.  Creating the corresponding step function is simple.  To achieve it we use the *[Stairs](https://www.staircase.dev/en/version2/reference/Stairs.html)* class:
+For example, the number of users viewing this page over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the page, and decreases by 1 every time a user leaves the page.  Let's say we have this data in vector format (i.e. tuple, list, numpy array, pandas series).  Specifically, assume *arrive* and *leave* are vectors of times, expressed as minutes past midnight, for all page views occuring yesterday.  Creating the corresponding step function is simple.  To achieve it we use the *[Stairs](https://www.staircase.dev/en/latest/reference/Stairs.html)* class:
 
 ```python
 >>> import staircase as sc
@@ -81,7 +81,7 @@ Plotting is based on [matplotlib](https://matplotlib.org) and it requires relati
 <p align="left"><img src="https://github.com/staircase/staircase/blob/master/docs/img/pageviewshistpretty.png?raw=true" title="concurrent viewers histogram (aesthetic)" alt="concurrent viewers histogram (aesthetic)"></p>
 
 
-There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://www.staircase.dev/en/version2/reference/Stairs.html#arithmetic-operators), [relational operations](https://www.staircase.dev/en/version2/reference/Stairs.html#relational-operators), [logical operations](https://www.staircase.dev/en/version2/reference/Stairs.html#logical-operators), [statistical operations](https://www.staircase.dev/en/version2/reference/Stairs.html#statistical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://www.staircase.dev/en/version2/reference/Stairs.html#summary-statistics), [aggregations](https://www.staircase.dev/en/version2/reference/arrays.html#aggregation) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html).
+There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://www.staircase.dev/en/latest/reference/Stairs.html#arithmetic-operators), [relational operations](https://www.staircase.dev/en/latest/reference/Stairs.html#relational-operators), [logical operations](https://www.staircase.dev/en/latest/reference/Stairs.html#logical-operators), [statistical operations](https://www.staircase.dev/en/latest/reference/Stairs.html#statistical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://www.staircase.dev/en/latest/reference/Stairs.html#summary-statistics), [aggregations](https://www.staircase.dev/en/latest/reference/arrays.html#aggregation) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html).
 
 
 ## Installation
