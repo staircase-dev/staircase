@@ -484,7 +484,7 @@ def test_mean2(s1_fix, s2_fix):
 
 
 def test_integral_0():
-    assert Stairs(initial_value=0).layer(None, 0).integral() == 0
+    assert Stairs(initial_value=0).layer(None, 0).integral() is np.nan
 
 
 def test_mean_nan():

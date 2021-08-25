@@ -15,7 +15,7 @@ from staircase.util._decorators import Appender
 
 def _cache_integral_and_mean(self):
     if self._data is None or len(self._data) < 2:
-        self._integral_and_mean = 0, np.nan  # TODO: is zero right here?  ?
+        self._integral_and_mean = np.nan, np.nan
     else:
         value_sums = self.value_sums(group=False)
         value_sums = value_sums[value_sums.index.notnull()]
