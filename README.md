@@ -78,7 +78,7 @@ We can create histogram data showing relative frequency of concurrent viewers (a
 
 
 Plotting is based on [matplotlib](https://matplotlib.org) and it requires relatively little effort to take the previous chart and improve the aesthetics:
-<p align="left"><img src="https://github.com/staircase/staircase/blob/master/docs/img/pageviewshistpretty.png?raw=true" title="concurrent viewers histogram (aesthetic)" alt="concurrent viewers histogram (aesthetic)"></p>
+<p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/pageviewshistpretty.png?raw=true" title="concurrent viewers histogram (aesthetic)" alt="concurrent viewers histogram (aesthetic)"></p>
 
 
 There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://www.staircase.dev/en/latest/reference/Stairs.html#arithmetic-operators), [relational operations](https://www.staircase.dev/en/latest/reference/Stairs.html#relational-operators), [logical operations](https://www.staircase.dev/en/latest/reference/Stairs.html#logical-operators), [statistical operations](https://www.staircase.dev/en/latest/reference/Stairs.html#statistical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://www.staircase.dev/en/latest/reference/Stairs.html#summary-statistics), [aggregations](https://www.staircase.dev/en/latest/reference/arrays.html#aggregation) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html).
