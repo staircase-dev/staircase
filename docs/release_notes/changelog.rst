@@ -7,6 +7,7 @@ Changelog
 
 
 v2.0.0 2021-08-25
+
 - see :ref:`What's new in Version 2 <release_notes.versiontwo>`
 
 
