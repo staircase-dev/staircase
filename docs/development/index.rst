@@ -1,9 +1,11 @@
-.. _contributing:
+.. _development:
 
 
-***************
-Contributing
-***************
+Development
+===================
+
+Contributing to staircase
+******************************
 
 There are many ways in which contributions can be made - the first and foremost being *using staircase and giving feedback*.
 
@@ -18,6 +20,12 @@ See this `beginner's guide to contributing <https://github.com/firstcontribution
 .. _contributing.developer_guide:
 
 Developer guide
-==================
+***************
 
-COMING SOON
+.. toctree::
+    :maxdepth: 1
+
+    guide/environment
+    guide/documentation
+    guide/code
+    guide/internals
