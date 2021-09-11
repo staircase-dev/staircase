@@ -38,7 +38,7 @@ import pandas
 import numpy
 
 for pkg in (staircase, pandas, numpy):
-    print(pkg.__version__)
+    print(pkg.__name__, pkg.__version__)
 
 <details>
 
