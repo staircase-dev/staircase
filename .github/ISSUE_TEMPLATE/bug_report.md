@@ -39,6 +39,7 @@ import numpy
 
 for pkg in (staircase, pandas, numpy):
     print(pkg.__name__, pkg.__version__)
+```
 
 <details>
 
