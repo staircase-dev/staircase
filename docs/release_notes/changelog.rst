@@ -6,9 +6,10 @@ Changelog
 =========
 
 UNRELEASED
-
-- throw `DifferentClosedValuesError` on binary operations with different `closed` values.
+- bugfix for slicing with non-fixed frequency period index (#GH108)
+- throw `DifferentClosedValuesError` on binary operations with different `closed` values (#GH96) (@amagee)
 - added test for :meth:`staircase.Stairs.logical_xor` with two Stairs arguments
+
 
 v2.0.0 2021-08-25
 
