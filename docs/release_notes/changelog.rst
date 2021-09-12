@@ -5,6 +5,9 @@
 Changelog
 =========
 
+UNRELEASED
+
+- throw `DifferentClosedValuesError` on binary operations with different `closed` values.
 
 v2.0.0 2021-08-25
 
