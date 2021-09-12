@@ -5,7 +5,10 @@ import pandas as pd
 
 import staircase as sc
 from staircase.core.ops import docstrings
-from staircase.core.ops.common import _combine_stairs_via_values
+from staircase.core.ops.common import (
+    _combine_stairs_via_values,
+    _requires_closeds_equal,
+)
 from staircase.util import _sanitize_binary_operands
 from staircase.util._decorators import Appender
 
@@ -14,6 +17,7 @@ def _make_relational_func(
     docstring, numpy_relational, series_relational, float_relational
 ):
     @Appender(docstring, join="\n", indents=1)
+    @_requires_closeds_equal
     def func(self, other):
         self, other = _sanitize_binary_operands(
             self, other

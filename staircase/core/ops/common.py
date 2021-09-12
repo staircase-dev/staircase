@@ -1,7 +1,10 @@
+import functools
+
 import numpy as np
 import pandas as pd
 
 import staircase as sc
+from staircase.core.exceptions import DifferentClosedValuesError
 
 
 def _not_arithmetic_op(series_op):
@@ -104,3 +107,23 @@ def _combine_stairs_via_values(stairs1, stairs2, series_op, float_op):
     )
     new_instance._remove_redundant_step_points()
     return new_instance
+
+
+def _assert_closeds_equal(stairs1, stairs2):
+    if (
+        isinstance(stairs1, sc.Stairs)
+        and isinstance(stairs2, sc.Stairs)
+        and stairs1.number_of_steps != 0
+        and stairs2.number_of_steps != 0
+        and stairs1._closed != stairs2._closed
+    ):
+        raise DifferentClosedValuesError(stairs1, stairs2)
+
+
+def _requires_closeds_equal(func):
+    @functools.wraps(func)
+    def wrapper(stairs1, stairs2, *args, **kwargs):
+        _assert_closeds_equal(stairs1, stairs2)
+        return func(stairs1, stairs2, *args, **kwargs)
+
+    return wrapper

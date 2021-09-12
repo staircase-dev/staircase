@@ -7,6 +7,7 @@ Changelog
 
 UNRELEASED
 
+- throw `DifferentClosedValuesError` on binary operations with different `closed` values.
 - added test for :meth:`staircase.Stairs.logical_xor` with two Stairs arguments
 
 v2.0.0 2021-08-25

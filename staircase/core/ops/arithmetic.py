@@ -6,7 +6,10 @@ import pandas as pd
 
 import staircase as sc
 from staircase.core.ops import docstrings
-from staircase.core.ops.common import _combine_stairs_via_values
+from staircase.core.ops.common import (
+    _combine_stairs_via_values,
+    _requires_closeds_equal,
+)
 from staircase.util import _sanitize_binary_operands
 from staircase.util._decorators import Appender
 
@@ -39,6 +42,7 @@ def _add_or_sub_deltas_no_mask(self, other, series_op, float_op):
 
 def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
     @Appender(docstring, join="\n", indents=1)
+    @_requires_closeds_equal
     def func(self, other):
         self, other = _sanitize_binary_operands(self, other)
         if self._data is None and other._data is None:
@@ -94,6 +98,7 @@ subtract = _make_add_or_sub_func(
 
 def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
     @Appender(docstring, join="\n", indents=1)
+    @_requires_closeds_equal
     def func(self, other):
         def op_with_scalar(self, other, series_op, float_op):
             if other == 0 and series_op == pd.Series.divide:
