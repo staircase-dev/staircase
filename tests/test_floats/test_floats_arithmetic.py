@@ -3,6 +3,7 @@ import pandas as pd
 import pytest
 
 from staircase import Stairs
+from staircase.core.ops.common import DifferentClosedValues
 
 
 def s1(closed="left"):
@@ -262,3 +263,10 @@ def test_negate(s1_fix):
         check_names=False,
         check_index_type=False,
     )
+
+
+def test_add_with_closed_mismatch():
+    stairs1 = s1(closed="left")
+    stairs2 = s1(closed="right")
+    with pytest.raises(DifferentClosedValues):
+        stairs1 + stairs2
