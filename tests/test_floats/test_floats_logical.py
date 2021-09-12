@@ -157,6 +157,14 @@ def test_logical_rxor_scalar_3(s3_fix):
     assert (np.nan ^ s3_fix).identical(np.nan)
 
 
+def test_logical_xor_stairs_1(s3_fix):
+    assert (s3_fix ^ s3_fix).identical(0)
+
+
+def test_logical_xor_stairs_2(s3_fix):
+    assert (s3_fix ^ ~s3_fix).identical(1)
+
+
 def test_make_boolean(s2_fix):
     int_seq = s2_fix
     calc = int_seq.make_boolean()
