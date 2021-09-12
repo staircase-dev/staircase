@@ -98,6 +98,7 @@ subtract = _make_add_or_sub_func(
 
 def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
     @Appender(docstring, join="\n", indents=1)
+    @_requires_closeds_equal
     def func(self, other):
         def op_with_scalar(self, other, series_op, float_op):
             if other == 0 and series_op == pd.Series.divide:

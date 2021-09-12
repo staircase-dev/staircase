@@ -265,8 +265,44 @@ def test_negate(s1_fix):
     )
 
 
-def test_add_with_closed_mismatch():
-    stairs1 = s1(closed="left")
-    stairs2 = s1(closed="right")
-    with pytest.raises(DifferentClosedValuesError):
-        stairs1 + stairs2
+import operator
+
+operators = [
+    operator.add,
+    operator.sub,
+    operator.mul,
+    operator.truediv,
+    operator.eq,
+    operator.ne,
+    operator.lt,
+    operator.gt,
+    operator.le,
+    operator.ge,
+    operator.and_,
+    operator.or_,
+    operator.xor,
+]
+
+
+@pytest.mark.parametrize(
+    ("left", "right", "ok"),
+    [
+        (Stairs(start=0, closed="left"), 1, True),
+        (Stairs(start=0, closed="right"), 1, True),
+        (1, Stairs(start=0, closed="left"), True),
+        (1, Stairs(start=0, closed="right"), True),
+        (Stairs(closed="left"), 1, True),
+        (Stairs(closed="right"), 1, True),
+        (1, Stairs(closed="left"), True),
+        (1, Stairs(closed="right"), True),
+        (s1(closed="left"), s1(closed="right"), False),
+        (s1(closed="right"), s1(closed="left"), False),
+    ],
+)
+@pytest.mark.parametrize("op", operators)
+def test_add_with_closed_mismatch(left, right, ok, op):
+    if ok:
+        op(left, right)
+    else:
+        with pytest.raises(DifferentClosedValuesError):
+            op(left, right)
