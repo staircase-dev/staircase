@@ -6,6 +6,7 @@ Changelog
 =========
 
 UNRELEASED
+- bugfix for incorrect closed parameter not being produced by operations with right-closed step functions (#GH95)
 - bugfix for slicing with non-fixed frequency period index (#GH108)
 - throw `DifferentClosedValuesError` on binary operations with different `closed` values (#GH96) (@amagee)
 - added test for :meth:`staircase.Stairs.logical_xor` with two Stairs arguments

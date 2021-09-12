@@ -20,6 +20,7 @@ def negate(self):
     return sc.Stairs._new(
         initial_value=-self.initial_value,
         data=data,
+        closed=self.closed,
     )
 
 
@@ -49,6 +50,7 @@ def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
             return sc.Stairs._new(
                 initial_value=float_op(self.initial_value, other.initial_value),
                 data=None,
+                closed=self.closed,
             )
         elif other._data is None:  # means self._data is not None
             data = self._data.copy()
@@ -57,6 +59,7 @@ def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
             return sc.Stairs._new(
                 initial_value=float_op(self.initial_value, other.initial_value),
                 data=data,
+                closed=self.closed,
             )
         elif self._data is None:  # means other._data is not None
             data = other._data.copy()
@@ -67,6 +70,7 @@ def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
             return sc.Stairs._new(
                 initial_value=float_op(self.initial_value, other.initial_value),
                 data=data,
+                closed=other.closed,
             )
         # self._data or other._data exists
         elif self._has_na() or other._has_na():
@@ -102,7 +106,7 @@ def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
     def func(self, other):
         def op_with_scalar(self, other, series_op, float_op):
             if other == 0 and series_op == pd.Series.divide:
-                return sc.Stairs._new(np.nan, None)
+                return sc.Stairs._new(np.nan, None, closed=self.closed)
             if self._data is None:
                 data = None
             else:
@@ -114,6 +118,7 @@ def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
             return sc.Stairs._new(
                 initial_value=initial_value,
                 data=data,
+                closed=self.closed,
             )
 
         self, other = _sanitize_binary_operands(self, other)

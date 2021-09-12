@@ -85,6 +85,15 @@ def test_deepcopy(init_value):
     assert not int_seq_copy.identical(int_seq)
 
 
+@pytest.mark.parametrize(
+    "closed",
+    ["left", "right"],
+)
+def test_copy_correct_closed_value(closed):
+    result = Stairs(closed=closed).copy()
+    assert result.closed == closed
+
+
 def test_to_dataframe(s1_fix):
     s1_fix.to_frame()
 
@@ -235,3 +244,12 @@ def test_step_values_stepless():
 
 def test_step_points_stepless():
     assert list(Stairs().step_points) == []
+
+
+@pytest.mark.parametrize(
+    "closed",
+    ["left", "right"],
+)
+def test_shift_correct_closed_value(closed):
+    result = Stairs(start=1, end=2, closed=closed).shift(1)
+    assert result.closed == closed

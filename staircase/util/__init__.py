@@ -15,12 +15,12 @@ def _is_datetime_like(x):
 
 def _sanitize_binary_operands(self, other, copy_other=False):
     if not isinstance(self, sc.Stairs):
-        self = sc.Stairs(initial_value=self)
+        self = sc.Stairs(initial_value=self, closed=other.closed)
     else:
         self = self.copy()
 
     if not isinstance(other, sc.Stairs):
-        other = sc.Stairs(initial_value=other)
+        other = sc.Stairs(initial_value=other, closed=self.closed)
     else:
         if copy_other:
             other = other.copy()

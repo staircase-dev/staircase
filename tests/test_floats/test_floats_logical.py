@@ -1,4 +1,5 @@
 import itertools
+import operator
 
 import numpy as np
 import pandas as pd
@@ -207,3 +208,27 @@ def test_or(s3_fix, s4_fix):
     expected.layer(9.5, 10)
     assert calc.identical(expected), "OR calculation not what it should be"
     assert expected.identical(calc), "OR calculation not what it should be"
+
+
+@pytest.mark.parametrize(
+    "op",
+    [
+        operator.and_,
+        operator.or_,
+        operator.xor,
+    ],
+)
+@pytest.mark.parametrize(
+    "closed",
+    ["left", "right"],
+)
+@pytest.mark.parametrize(
+    "operands",
+    [("stairs", "stairs"), ("stairs", "scalar"), ("scalar", "stairs")],
+)
+def test_closed_binary_ops(op, closed, operands):
+    operand_dict = {"stairs": Stairs(closed=closed), "scalar": 1}
+    operand0 = operand_dict[operands[0]]
+    operand1 = operand_dict[operands[1]]
+    result = op(operand0, operand1)
+    assert result.closed == closed

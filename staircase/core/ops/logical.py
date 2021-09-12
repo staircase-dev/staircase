@@ -22,7 +22,7 @@ def _make_boolean_func(docstring, series_comp, float_comp):
             initial_value = float_comp(self.initial_value, 0) * 1
 
         if self._data is None:
-            return sc.Stairs(initial_value=initial_value)
+            return sc.Stairs(initial_value=initial_value, closed=self.closed)
         values = series_comp(self._get_values(), 0) * 1
         values.loc[np.isnan(self._get_values().values)] = np.nan
         result = sc.Stairs._new(
@@ -30,6 +30,7 @@ def _make_boolean_func(docstring, series_comp, float_comp):
             data=pd.DataFrame(
                 {"value": values},
             ),
+            closed=self.closed,
         )
         result._remove_redundant_step_points()
         return result
@@ -48,23 +49,23 @@ invert = _make_boolean_func(docstrings.invert_docstring, pd.Series.eq, operator.
 def _make_logical_func(docstring, array_op, float_op):
     def _op_with_scalar_and(self, other):
         if np.isnan(other):
-            return sc.Stairs._new(np.nan, None)
+            return sc.Stairs._new(np.nan, None, closed=self.closed)
         elif other == 0:
-            return sc.Stairs._new(0, None)
+            return sc.Stairs._new(0, None, closed=self.closed)
         else:
             return self.make_boolean()
 
     def _op_with_scalar_or(self, other):
         if np.isnan(other):
-            return sc.Stairs._new(np.nan, None)
+            return sc.Stairs._new(np.nan, None, closed=self.closed)
         elif other == 0:
             return self.make_boolean()
         else:
-            return sc.Stairs._new(1, None)
+            return sc.Stairs._new(1, None, closed=self.closed)
 
     def _op_with_scalar_xor(self, other):
         if np.isnan(other):
-            return sc.Stairs._new(np.nan, None)
+            return sc.Stairs._new(np.nan, None, closed=self.closed)
         elif other == 0:
             return self.make_boolean()
         else:

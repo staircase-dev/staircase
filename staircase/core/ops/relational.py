@@ -33,6 +33,7 @@ def _make_relational_func(
             return sc.Stairs._new(
                 initial_value=initial_value,
                 data=None,
+                closed=self.closed,
             )
         elif self._data is None or other._data is None:
             if other._data is None:  # self._data exists
@@ -52,6 +53,7 @@ def _make_relational_func(
                     {"value": new_values * 1},
                     index=new_index,
                 ),
+                closed=self.closed,
             )
             new_instance._remove_redundant_step_points()
             return new_instance

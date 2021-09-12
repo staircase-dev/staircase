@@ -483,6 +483,7 @@ class Stairs:
         new_instance = Stairs._new(
             initial_value=self.initial_value,
             data=self._data.copy() if self._data is not None else None,
+            closed=self.closed,
         )
         return new_instance
 
@@ -562,6 +563,7 @@ class Stairs:
         return Stairs._new(
             initial_value=self.initial_value,
             data=self._data.set_index(self._data.index + delta),
+            closed=self.closed,
         )
 
     @Appender(docstrings.examples.diff_example, join="\n", indents=2)

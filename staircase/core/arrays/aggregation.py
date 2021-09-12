@@ -37,6 +37,7 @@ def _aggregate(collection, func):
             index=index,
             name="value",
         ).to_frame(),
+        closed=collection[0].closed,
     )._remove_redundant_step_points()
 
 

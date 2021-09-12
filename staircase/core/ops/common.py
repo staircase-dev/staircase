@@ -104,6 +104,7 @@ def _combine_stairs_via_values(stairs1, stairs2, series_op, float_op):
     new_instance = sc.Stairs._new(
         initial_value=initial_value,
         data=pd.DataFrame({"value": values}),
+        closed=stairs1.closed,
     )
     new_instance._remove_redundant_step_points()
     return new_instance

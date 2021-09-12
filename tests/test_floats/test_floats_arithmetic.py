@@ -1,3 +1,5 @@
+import operator
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -262,3 +264,37 @@ def test_negate(s1_fix):
         check_names=False,
         check_index_type=False,
     )
+
+
+@pytest.mark.parametrize(
+    "op",
+    [
+        operator.add,
+        operator.sub,
+        operator.mul,
+        operator.truediv,
+    ],
+)
+@pytest.mark.parametrize(
+    "closed",
+    ["left", "right"],
+)
+@pytest.mark.parametrize(
+    "operands",
+    [("stairs", "stairs"), ("stairs", "scalar"), ("scalar", "stairs")],
+)
+def test_closed_binary_ops(op, closed, operands):
+    operand_dict = {"stairs": Stairs(closed=closed), "scalar": 1}
+    operand0 = operand_dict[operands[0]]
+    operand1 = operand_dict[operands[1]]
+    result = op(operand0, operand1)
+    assert result.closed == closed
+
+
+@pytest.mark.parametrize(
+    "closed",
+    ["left", "right"],
+)
+def test_closed_negate(closed):
+    s = -(Stairs(initial_value=1, closed=closed))
+    assert s.closed == closed

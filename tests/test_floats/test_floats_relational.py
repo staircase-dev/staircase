@@ -1,3 +1,5 @@
+import operator
+
 import pytest
 
 from staircase import Stairs
@@ -136,3 +138,30 @@ def test_eq_3():
 
 def test_ne_3(s1_fix):
     assert s1_fix != 3
+
+
+@pytest.mark.parametrize(
+    "op",
+    [
+        operator.eq,
+        operator.ne,
+        operator.lt,
+        operator.gt,
+        operator.le,
+        operator.ge,
+    ],
+)
+@pytest.mark.parametrize(
+    "closed",
+    ["left", "right"],
+)
+@pytest.mark.parametrize(
+    "operands",
+    [("stairs", "stairs"), ("stairs", "scalar"), ("scalar", "stairs")],
+)
+def test_closed_binary_ops(op, closed, operands):
+    operand_dict = {"stairs": Stairs(closed=closed), "scalar": 1}
+    operand0 = operand_dict[operands[0]]
+    operand1 = operand_dict[operands[1]]
+    result = op(operand0, operand1)
+    assert result.closed == closed
