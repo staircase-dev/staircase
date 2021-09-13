@@ -53,20 +53,26 @@ def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
                 closed=self.closed,
             )
         elif other._data is None:  # means self._data is not None
-            data = self._data.copy()
-            if self._valid_values:
-                data["value"] = series_op(data["value"], other.initial_value)
+            if np.isnan(other.initial_value):
+                data = None
+            else:
+                data = self._data.copy()
+                if self._valid_values:
+                    data["value"] = series_op(data["value"], other.initial_value)
             return sc.Stairs._new(
                 initial_value=float_op(self.initial_value, other.initial_value),
                 data=data,
                 closed=self.closed,
             )
         elif self._data is None:  # means other._data is not None
-            data = other._data.copy()
-            if other._valid_values:
-                data["value"] = series_rop(data["value"], self.initial_value)
-            if other._valid_deltas:
-                data["delta"] = series_rop(data["delta"], 0)
+            if np.isnan(self.initial_value):
+                data = None
+            else:
+                data = other._data.copy()
+                if other._valid_values:
+                    data["value"] = series_rop(data["value"], self.initial_value)
+                if other._valid_deltas:
+                    data["delta"] = series_rop(data["delta"], 0)
             return sc.Stairs._new(
                 initial_value=float_op(self.initial_value, other.initial_value),
                 data=data,
@@ -105,9 +111,10 @@ def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
     @_requires_closeds_equal
     def func(self, other):
         def op_with_scalar(self, other, series_op, float_op):
+            # other is scalar
             if other == 0 and series_op == pd.Series.divide:
                 return sc.Stairs._new(np.nan, None, closed=self.closed)
-            if self._data is None:
+            if self._data is None or np.isnan(other):
                 data = None
             else:
                 data = pd.DataFrame({"value": series_op(self._get_values(), other)})

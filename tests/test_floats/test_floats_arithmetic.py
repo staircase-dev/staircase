@@ -288,7 +288,9 @@ def test_closed_binary_ops(op, closed, operands):
     operand0 = operand_dict[operands[0]]
     operand1 = operand_dict[operands[1]]
     result = op(operand0, operand1)
-    assert result.closed == closed
+    assert (
+        result.closed == closed
+    ), f"result has closed value of {result.closed}, expected {closed}"
 
 
 @pytest.mark.parametrize(
@@ -297,4 +299,26 @@ def test_closed_binary_ops(op, closed, operands):
 )
 def test_closed_negate(closed):
     s = -(Stairs(initial_value=1, closed=closed))
-    assert s.closed == closed
+    assert (
+        s.closed == closed
+    ), f"result has closed value of {s.closed}, expected {closed}"
+
+
+@pytest.mark.parametrize(
+    "op",
+    [
+        operator.add,
+        operator.sub,
+        operator.mul,
+        operator.truediv,
+    ],
+)
+@pytest.mark.parametrize(
+    "nan_pos",
+    ["first", "second"],
+)
+def test_binary_ops_with_nan(s1_fix, op, nan_pos):
+    # GH109
+    operands = (np.nan, s1_fix) if nan_pos == "first" else (s1_fix, np.nan)
+    result = op(*operands)
+    assert result._data is None, "wrong internal representation in resulting Stairs"

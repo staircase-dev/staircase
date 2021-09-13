@@ -29,11 +29,15 @@ def _make_relational_func(
                 float_relational(self.initial_value, other.initial_value) * 1
             )
 
-        if self._data is None and other._data is None:
+        if (
+            (self._data is None and other._data is None)
+            or (np.isnan(other.initial_value) and other._data is None)
+            or (np.isnan(self.initial_value) and self._data is None)
+        ):
             return sc.Stairs._new(
                 initial_value=initial_value,
                 data=None,
-                closed=self.closed,
+                closed=other.closed if np.isnan(self.initial_value) else self.closed,
             )
         elif self._data is None or other._data is None:
             if other._data is None:  # self._data exists

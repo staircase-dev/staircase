@@ -232,3 +232,22 @@ def test_closed_binary_ops(op, closed, operands):
     operand1 = operand_dict[operands[1]]
     result = op(operand0, operand1)
     assert result.closed == closed
+
+
+@pytest.mark.parametrize(
+    "op",
+    [
+        operator.and_,
+        operator.or_,
+        operator.xor,
+    ],
+)
+@pytest.mark.parametrize(
+    "nan_pos",
+    ["first", "second"],
+)
+def test_binary_ops_with_nan(s1_fix, op, nan_pos):
+    # GH109
+    operands = (np.nan, s1_fix) if nan_pos == "first" else (s1_fix, np.nan)
+    result = op(*operands)
+    assert result._data is None, "wrong internal representation in resulting Stairs"
