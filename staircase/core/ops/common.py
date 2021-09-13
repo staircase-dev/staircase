@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 import staircase as sc
-from staircase.core.exceptions import DifferentClosedValuesError
+from staircase.core.exceptions import ClosedMismatchError
 
 
 def _not_arithmetic_op(series_op):
@@ -118,10 +118,10 @@ def _assert_closeds_equal(stairs1, stairs2):
         and stairs2.number_of_steps != 0
         and stairs1._closed != stairs2._closed
     ):
-        raise DifferentClosedValuesError(stairs1, stairs2)
+        raise ClosedMismatchError(stairs1, stairs2)
 
 
-def _requires_closeds_equal(func):
+def requires_closed_match(func):
     @functools.wraps(func)
     def wrapper(stairs1, stairs2, *args, **kwargs):
         _assert_closeds_equal(stairs1, stairs2)

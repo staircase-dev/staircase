@@ -3,7 +3,7 @@ import operator
 import pytest
 
 from staircase import Stairs
-from staircase.core.ops.common import DifferentClosedValuesError
+from staircase.core.ops.common import ClosedMismatchError
 
 
 def s1(closed="left"):
@@ -51,7 +51,7 @@ def s1(closed="left"):
 )
 def test_binary_operation_closed_matching(left, right, op, ok):
     """
-    A binary operation should throw a a `DifferentClosedValuesError` if:
+    A binary operation should throw a a `ClosedMismatchError` if:
 
     1. Both arguments are `Stairs` objects, and
     2. The arguments have different `closed` values, and
@@ -63,5 +63,5 @@ def test_binary_operation_closed_matching(left, right, op, ok):
     if ok:
         op(left, right)
     else:
-        with pytest.raises(DifferentClosedValuesError):
+        with pytest.raises(ClosedMismatchError):
             op(left, right)
