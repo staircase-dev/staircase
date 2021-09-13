@@ -6,11 +6,18 @@ Changelog
 =========
 
 UNRELEASED
+
+
+Please list new changes above this comment
+
+
+v2.0.1 2021-09-13
+
 - bugfix for incorrect closed parameter not being produced by operations with right-closed step functions (#GH95)
 - bugfix for slicing with non-fixed frequency period index (#GH108)
 - bugfix for Stairs binary operations with np.nan reporting incorrect number of step changes (#GH109)
-- throw `ClosedMismatchError` on binary operations with different `closed` values (#GH96) (@amagee)
-- added test for :meth:`staircase.Stairs.logical_xor` with two Stairs arguments
+- throw `ClosedMismatchError` on binary operations with different `closed` values (#GH96)
+Contributors: @amagee (Andrew Magee)
 
 
 v2.0.0 2021-08-25
