@@ -6,7 +6,7 @@ import pandas as pd
 
 import staircase as sc
 from staircase.core.ops import docstrings
-from staircase.core.ops.common import _combine_stairs_via_values
+from staircase.core.ops.common import _combine_stairs_via_values, requires_closed_match
 from staircase.util import _sanitize_binary_operands
 from staircase.util._decorators import Appender
 
@@ -17,6 +17,7 @@ def negate(self):
     return sc.Stairs._new(
         initial_value=-self.initial_value,
         data=data,
+        closed=self.closed,
     )
 
 
@@ -39,30 +40,40 @@ def _add_or_sub_deltas_no_mask(self, other, series_op, float_op):
 
 def _make_add_or_sub_func(docstring, series_op, float_op, series_rop):
     @Appender(docstring, join="\n", indents=1)
+    @requires_closed_match
     def func(self, other):
         self, other = _sanitize_binary_operands(self, other)
         if self._data is None and other._data is None:
             return sc.Stairs._new(
                 initial_value=float_op(self.initial_value, other.initial_value),
                 data=None,
+                closed=self.closed,
             )
         elif other._data is None:  # means self._data is not None
-            data = self._data.copy()
-            if self._valid_values:
-                data["value"] = series_op(data["value"], other.initial_value)
+            if np.isnan(other.initial_value):
+                data = None
+            else:
+                data = self._data.copy()
+                if self._valid_values:
+                    data["value"] = series_op(data["value"], other.initial_value)
             return sc.Stairs._new(
                 initial_value=float_op(self.initial_value, other.initial_value),
                 data=data,
+                closed=self.closed,
             )
         elif self._data is None:  # means other._data is not None
-            data = other._data.copy()
-            if other._valid_values:
-                data["value"] = series_rop(data["value"], self.initial_value)
-            if other._valid_deltas:
-                data["delta"] = series_rop(data["delta"], 0)
+            if np.isnan(self.initial_value):
+                data = None
+            else:
+                data = other._data.copy()
+                if other._valid_values:
+                    data["value"] = series_rop(data["value"], self.initial_value)
+                if other._valid_deltas:
+                    data["delta"] = series_rop(data["delta"], 0)
             return sc.Stairs._new(
                 initial_value=float_op(self.initial_value, other.initial_value),
                 data=data,
+                closed=other.closed,
             )
         # self._data or other._data exists
         elif self._has_na() or other._has_na():
@@ -94,11 +105,13 @@ subtract = _make_add_or_sub_func(
 
 def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
     @Appender(docstring, join="\n", indents=1)
+    @requires_closed_match
     def func(self, other):
         def op_with_scalar(self, other, series_op, float_op):
+            # other is scalar
             if other == 0 and series_op == pd.Series.divide:
-                return sc.Stairs._new(np.nan, None)
-            if self._data is None:
+                return sc.Stairs._new(np.nan, None, closed=self.closed)
+            if self._data is None or np.isnan(other):
                 data = None
             else:
                 data = pd.DataFrame({"value": series_op(self._get_values(), other)})
@@ -109,6 +122,7 @@ def _make_mul_div_func(docstring, series_op, float_op, series_rop, float_rop):
             return sc.Stairs._new(
                 initial_value=initial_value,
                 data=data,
+                closed=self.closed,
             )
 
         self, other = _sanitize_binary_operands(self, other)

@@ -5,7 +5,7 @@ import pandas as pd
 
 import staircase as sc
 from staircase.core.ops import docstrings
-from staircase.core.ops.common import _combine_stairs_via_values
+from staircase.core.ops.common import _combine_stairs_via_values, requires_closed_match
 from staircase.util import _sanitize_binary_operands
 from staircase.util._decorators import Appender
 
@@ -14,6 +14,7 @@ def _make_relational_func(
     docstring, numpy_relational, series_relational, float_relational
 ):
     @Appender(docstring, join="\n", indents=1)
+    @requires_closed_match
     def func(self, other):
         self, other = _sanitize_binary_operands(
             self, other
@@ -25,10 +26,15 @@ def _make_relational_func(
                 float_relational(self.initial_value, other.initial_value) * 1
             )
 
-        if self._data is None and other._data is None:
+        if (
+            (self._data is None and other._data is None)
+            or (np.isnan(other.initial_value) and other._data is None)
+            or (np.isnan(self.initial_value) and self._data is None)
+        ):
             return sc.Stairs._new(
                 initial_value=initial_value,
                 data=None,
+                closed=other.closed if np.isnan(self.initial_value) else self.closed,
             )
         elif self._data is None or other._data is None:
             if other._data is None:  # self._data exists
@@ -48,6 +54,7 @@ def _make_relational_func(
                     {"value": new_values * 1},
                     index=new_index,
                 ),
+                closed=self.closed,
             )
             new_instance._remove_redundant_step_points()
             return new_instance

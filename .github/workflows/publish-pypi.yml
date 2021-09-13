@@ -1,4 +1,4 @@
-name: Upload to test-PYPI
+name: Upload to PYPI
 
 on:
   release:
@@ -19,8 +19,7 @@ jobs:
           poetry install
       - name: Build package
         run: poetry build
-      - name: Publish to Test-PyPI
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
+          password: ${{ secrets.PYPI_API_TOKEN }}
