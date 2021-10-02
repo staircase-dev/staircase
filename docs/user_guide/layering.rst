@@ -3,9 +3,9 @@
 The layer method
 =================
 
-The layer method is unique among all :class:`staircase.Stairs` methods - it is the only mutator method, and is the only method which modifies the step function in place, as opposed to acting on a copy.  It is a very flexible method, taking full advantage of defaults and weak typing afforded by Python.
+The layer method is unique among all :class:`staircase.Stairs` methods - it is the only mutator method, i.e. it is the only method which modifies the step function in place, as opposed to acting on a copy.  It is a very flexible method, taking full advantage of defaults and weak typing afforded by Python.
 
-The layer method was introduced in :ref:intro_tutorials.creating, in which parameters were either all numbers, or all vectors.  Advanced usage allows certain combinations of these, and may allow vectors of different lengths.  Understanding these features is key to ensure they do not result in bugs, or unwanted effects.
+The layer method was introduced in :ref:`intro_tutorials.creating`, in which parameters were either all numbers, or all vectors.  Advanced usage allows certain combinations of these, and may allow vectors of different lengths.  Understanding these features is key to ensure they do not result in bugs, or unwanted effects.
 
 For those who are mathematically inclined, a set of axioms pertaining to the layer method can be found at the bottom of the page.  The expected behaviour of any call to :meth:`staircase.Stairs.layer` can be derived from these axioms.  Alternatively, the key ideas are summarised below:
 
