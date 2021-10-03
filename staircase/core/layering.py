@@ -97,8 +97,12 @@ def layer(self, start=None, end=None, value=None, frame=None):
     assert not pd.isna(value).any(), "value parameter cannot contain null values"
     if not isinstance(start, pd.Series):
         start = pd.Series(start)
+    else:
+        start = start.reset_index(drop=True)
     if not isinstance(end, pd.Series):
         end = pd.Series(end)
+    else:
+        end = end.reset_index(drop=True)
     df = pd.concat([start, end], axis=1, ignore_index=True)
     start_series = pd.Series(value, index=df.iloc[:, 0])
     self.initial_value += start_series[start_series.index.isna()].sum()
