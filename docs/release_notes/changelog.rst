@@ -7,6 +7,7 @@ Changelog
 
 UNRELEASED
 
+- bugfix for layer function when using pandas Series with different index (#GH112)
 
 Please list new changes above this comment
 
