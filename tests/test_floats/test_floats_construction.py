@@ -335,13 +335,14 @@ def test_layering_frame(s1_fix):
 def test_layering_trivial_1(s1_fix):
     assert s1_fix.copy().layer(1, 1).identical(s1_fix)
 
+
 def test_layering_series_with_different_index():
-    #GH112
+    # GH112
     result = Stairs(
-        start=pd.Series([0,2,4], index=[0,2,4]),
-        end = pd.Series([1,3,5], index=[1,3,5]),
+        start=pd.Series([0, 2, 4], index=[0, 2, 4]),
+        end=pd.Series([1, 3, 5], index=[1, 3, 5]),
     )
-    expected = pd.Series([1,0,1,0,1,0])
+    expected = pd.Series([1, 0, 1, 0, 1, 0])
     pd.testing.assert_series_equal(
         result.step_values,
         expected,
