@@ -90,7 +90,7 @@ To achieve the desired result the step function should be clipped to the require
     year2021 = (pd.Timestamp("2021"), pd.Timestamp("2022"))
     (sf1 > sf2).clip(*year2021).mean()
 
-or, perhaps preferably, the original step functions are clipped intially:
+or, perhaps preferably, the original step functions are clipped:
 
 .. ipython:: python
 
