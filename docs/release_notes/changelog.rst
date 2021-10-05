@@ -8,7 +8,7 @@ Changelog
 UNRELEASED
 
 - bugfix for closed attribute not preserved by addition or subtraction of Stairs when closed=="right" (#GH115)
-
+- bugfix for staircase.core.arrays.aggregation incorrect when collection of Stairs have closed=="right" (#GH117)
 
 Please list new changes above this comment
 

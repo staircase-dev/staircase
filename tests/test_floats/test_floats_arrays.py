@@ -294,3 +294,13 @@ def test_corr_matrix2(IS1, IS2):
         sc.corr([IS1, IS2], where=(0, 12)).values
         - np.array([[1, -0.07452442], [-0.07452442, 1]])
     )
+
+
+@pytest.mark.parametrize(
+    "func",
+    [sc.sum, sc.max, sc.min, sc.median, sc.mean],
+)
+def test_aggregation_with_closed_right(func):
+    # GH117
+    s = sc.Stairs(start=0, end=1, closed="right")
+    assert func([s, s]).number_of_steps == 2
