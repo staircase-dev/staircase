@@ -33,7 +33,7 @@ def _aggregate(collection, func):
     return Stairs._new(
         initial_value=func([s.initial_value for s in collection]),
         data=pd.Series(
-            func([s.sample(index) for s in collection], axis=0),
+            func([s.limit(index, "right") for s in collection], axis=0),
             index=index,
             name="value",
         ).to_frame(),
