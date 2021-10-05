@@ -7,6 +7,7 @@ Changelog
 
 UNRELEASED
 
+- bugfix for closed attribute not preserved by addition or subtraction of Stairs when closed=="right" (#GH115)
 
 
 Please list new changes above this comment
