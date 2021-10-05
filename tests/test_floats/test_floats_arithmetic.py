@@ -283,8 +283,12 @@ def test_negate(s1_fix):
     "operands",
     [("stairs", "stairs"), ("stairs", "scalar"), ("scalar", "stairs")],
 )
-def test_closed_binary_ops(op, closed, operands):
-    operand_dict = {"stairs": Stairs(closed=closed), "scalar": 1}
+@pytest.mark.parametrize(
+    "stairs_kwargs",
+    [{"start": 0, "end": 1}, {}],
+)
+def test_closed_binary_ops(op, closed, operands, stairs_kwargs):
+    operand_dict = {"stairs": Stairs(closed=closed, **stairs_kwargs), "scalar": 1}
     operand0 = operand_dict[operands[0]]
     operand1 = operand_dict[operands[1]]
     result = op(operand0, operand1)
