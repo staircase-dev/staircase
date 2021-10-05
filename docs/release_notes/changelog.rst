@@ -7,7 +7,7 @@ Changelog
 
 UNRELEASED
 
-- bugfix for layer function when using pandas Series with different index (#GH112)
+- bugfix for closed attribute not preserved by addition or subtraction of Stairs when closed=="right" (#GH115)
 
 
 Please list new changes above this comment
