@@ -33,6 +33,7 @@ def _add_or_sub_deltas_no_mask(self, other, series_op, float_op):
     new_instance = sc.Stairs._new(
         initial_value=float_op(self.initial_value, other.initial_value),
         data=pd.DataFrame({"delta": deltas}),
+        closed=self.closed,
     )
     new_instance._remove_redundant_step_points()
     return new_instance

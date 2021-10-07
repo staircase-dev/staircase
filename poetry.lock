@@ -287,17 +287,6 @@ pycodestyle = ">=2.7.0,<2.8.0"
 pyflakes = ">=2.3.0,<2.4.0"
 
 [[package]]
-name = "guzzle-sphinx-theme"
-version = "0.7.11"
-description = "Sphinx theme used by Guzzle."
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-Sphinx = ">=1.2b1"
-
-[[package]]
 name = "identify"
 version = "2.2.13"
 description = "File identification library for Python"
@@ -1409,7 +1398,7 @@ codecov = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.1"
-content-hash = "b110e6c00c3c4654ed9d1a5de31fe38d1212bd61ff48c93835e7e4e1acd94ba7"
+content-hash = "3f4685c1eae8566d9668b6dff186b561b2e0135764f752d649df160c0c5072dd"
 
 [metadata.files]
 alabaster = [
@@ -1621,9 +1610,6 @@ filelock = [
 flake8 = [
     {file = "flake8-3.9.2-py2.py3-none-any.whl", hash = "sha256:bf8fd333346d844f616e8d47905ef3a3384edae6b4e9beb0c5101e25e3110907"},
     {file = "flake8-3.9.2.tar.gz", hash = "sha256:07528381786f2a6237b061f6e96610a4167b226cb926e2aa2b6b1d78057c576b"},
-]
-guzzle-sphinx-theme = [
-    {file = "guzzle_sphinx_theme-0.7.11.tar.gz", hash = "sha256:9b8c1639c343c02c3f3db7df660ddf6f533b5454ee92a5f7b02edaa573fed3e6"},
 ]
 identify = [
     {file = "identify-2.2.13-py2.py3-none-any.whl", hash = "sha256:7199679b5be13a6b40e6e19ea473e789b11b4e3b60986499b1f589ffb03c217c"},
