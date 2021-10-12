@@ -7,7 +7,7 @@ Changelog
 
 UNRELEASED
 
-
+- bugfix for array aggregation where array contains a constant value step function over non-float domain (#GH119)
 
 Please list new changes above this comment
 

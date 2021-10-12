@@ -442,3 +442,19 @@ def test_corr_matrix2(date_func):
         ).values
         - np.array([[1, -0.07452442], [-0.07452442, 1]])
     )
+
+
+@pytest.mark.parametrize(
+    "func",
+    [sc.sum, sc.max, sc.min, sc.median, sc.mean],
+)
+@pytest.mark.parametrize(
+    "swap_order",
+    [False, True],
+)
+def test_aggregation_with_constant_stairs(func, swap_order):
+    # GH119 - no need to test result, just that it is passing
+    s1 = sc.Stairs().layer(pd.Timestamp("2020"), pd.Timestamp("2021"))
+    s2 = sc.Stairs()
+    arr = [s2, s1] if swap_order else [s1, s2]
+    func(arr)

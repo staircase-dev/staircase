@@ -75,7 +75,7 @@ def limit(self, x, side, include_index=False):
     passed_x = x
     if self._data is None:
         if pd.api.types.is_list_like(x):
-            return self.initial_value * np.ones_like(x)
+            return self.initial_value * np.ones_like(x, dtype=float)
         else:
             return self.initial_value
     amended_values = np.append(
