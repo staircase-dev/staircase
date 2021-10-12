@@ -6,7 +6,12 @@ Changelog
 =========
 
 
-**v2.0.3 2021-10-08**
+**v2.0.4 2021-10-12**
+
+- bugfix for array aggregation where array contains a constant value step function over non-float domain (#GH119)
+
+
+**v2.0.3 2021-10-07**
 
 - bugfix for closed attribute not preserved by addition or subtraction of Stairs when closed=="right" (#GH115)
 - bugfix for staircase.core.arrays.aggregation incorrect when collection of Stairs have closed=="right" (#GH117)

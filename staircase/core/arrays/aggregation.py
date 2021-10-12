@@ -29,7 +29,13 @@ def _aggregate(collection, func):
     staircase.mean, staircase.median, staircase.min, staircase.max
     """
     collection = pd.Series(collection).values
-    index = pd.Index(np.unique(np.concatenate([s.step_points for s in collection])))
+    index = pd.Index(
+        np.unique(
+            np.concatenate(
+                [s.step_points for s in (sf for sf in collection if sf.number_of_steps)]
+            )
+        )
+    )
     return Stairs._new(
         initial_value=func([s.initial_value for s in collection]),
         data=pd.Series(
