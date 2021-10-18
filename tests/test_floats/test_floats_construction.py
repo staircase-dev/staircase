@@ -332,6 +332,13 @@ def test_layering_frame(s1_fix):
     assert Stairs(df, "start", "end", "value").identical(s1_fix)
 
 
+def test_from_values(s1_fix):
+    values = pd.Series(
+        index=[-4, 1, 3, 5, 6, 10], data=[-1.75, 0.25, 2.75, 2.0, -0.5, 0]
+    )
+    assert Stairs.from_values(0, data=values).identical(s1_fix)
+
+
 def test_layering_trivial_1(s1_fix):
     assert s1_fix.copy().layer(1, 1).identical(s1_fix)
 

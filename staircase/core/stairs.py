@@ -7,9 +7,11 @@ staircase is a MIT licensed library, written in pure-Python, for
 modelling step functions. See :ref:`Getting Started <getting_started>` for more information.
 """
 
+import warnings
 
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_datetime64_dtype, is_numeric_dtype, is_timedelta64_dtype
 
 from staircase import docstrings
 from staircase.constants import inf
@@ -76,6 +78,37 @@ class Stairs:
         new_instance._data = data
         new_instance._valid_deltas = False if data is None else "delta" in data.columns
         new_instance._valid_values = False if data is None else "value" in data.columns
+        return new_instance
+
+    @classmethod
+    def from_values(cls, initial_value, data, closed="left"):
+
+        try:
+            if not (
+                is_numeric_dtype(data.index)
+                or is_datetime64_dtype(data.index)
+                or is_timedelta64_dtype(data.index)
+            ):
+                warnings.warn("Index values must be of a totally ordered class")
+        except AttributeError:
+            pass
+
+        if np.isinf(data.index).any():
+            raise ValueError("Invalid value for Series index")
+
+        if not is_numeric_dtype(data):
+            raise ValueError("Invalid dtype for from_values()")
+
+        series_values_inf_mask = np.isinf(data)
+        if series_values_inf_mask.any():
+            data[series_values_inf_mask] = None
+            warnings.warn("Infinity values are automatically converted to NaN")
+
+        new_instance = cls(closed=closed)
+        new_instance.initial_value = initial_value
+        new_instance._data = data.to_frame("value")
+        new_instance._valid_deltas = False
+        new_instance._valid_values = True
         return new_instance
 
     def _has_na(self):
