@@ -44,4 +44,9 @@ This project is licensed under the MIT License::
 Acknowledgement
 ----------------
 
-The seeds of :mod:`staircase` began developing at the Hunter Valley Coal Chain Coordinator, where it finds strong application in analysing simulated data.  Thanks for the support!
+The seeds of :mod:`staircase` began developing at the Hunter Valley Coal Chain Coordinator, where it finds strong application in analysing simulated data.
+
+We also recognise that two classes have been borrowed, with minor adjustments, from the :mod:`pandas` source code:
+
+    - :class:`pandas.util._decorators.Appender`
+    - :class:`pandas.core.accessor.CachedAccessor`
