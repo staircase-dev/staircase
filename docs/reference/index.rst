@@ -13,3 +13,6 @@ This page gives an overview of all public staircase objects, functions and metho
    StairsSlicer
    arrays
    misc
+
+.. automodule:: staircase
+   :undoc-members:

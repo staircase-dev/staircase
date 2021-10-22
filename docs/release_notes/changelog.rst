@@ -34,6 +34,7 @@ Please list new changes above this comment
 - bugfix for slicing with non-fixed frequency period index (#GH108)
 - bugfix for Stairs binary operations with np.nan reporting incorrect number of step changes (#GH109)
 - throw `ClosedMismatchError` on binary operations with different `closed` values (#GH96)
+
 Contributors: @amagee (Andrew Magee)
 
 
