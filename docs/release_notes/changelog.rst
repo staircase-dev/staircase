@@ -7,6 +7,7 @@ Changelog
 
 UNRELEASED
 
+- added :meth:`staircase.Stairs.from_values` (#GH88)
 - bugfix for array aggregation where array contains a constant value step function over non-float domain (#GH119)
 
 Please list new changes above this comment
@@ -62,7 +63,7 @@ Contributors: @amagee (Andrew Magee)
 
 - bugfix for missing *lower_how* and *upper_how* parameters in :meth:`staircase.Stairs.resample`
 - renamed Stairs._values to avoid error when performing Series.groupby.sum in pandas>=1.2
- 
+
 
 **v1.6.2 2020-01-13**
 
