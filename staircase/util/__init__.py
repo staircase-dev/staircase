@@ -9,7 +9,16 @@ from staircase.constants import inf
 
 def _is_datetime_like(x):
     return isinstance(
-        x, (pd.Timestamp, datetime.datetime, datetime.date, np.datetime64)
+        x,
+        (
+            pd.Timestamp,
+            pd.Timedelta,
+            datetime.timedelta,
+            datetime.datetime,
+            datetime.date,
+            np.datetime64,
+            np.timedelta64,
+        ),
     )
 
 
