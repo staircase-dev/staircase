@@ -7,10 +7,15 @@ Changelog
 
 UNRELEASED
 
+
+Please list new changes above this comment
+
+**v2.1.0 2021-10-29**
+
 - added support for :class:`pandas.Timedelta`, :class:`datetime.timedelta` and :class:`numpy.timedelta64`
 - added :meth:`staircase.Stairs.from_values` (#GH88)
 
-Please list new changes above this comment
+Contributors: @mesejo (Daniel Mesejo-León)
 
 
 **v2.0.4 2021-10-12**
