@@ -28,6 +28,7 @@ Contents
    
    getting_started/index.rst
    user_guide/index.rst
+   case_studies/index.rst
    reference/index.rst
    development/index.rst
    release_notes/index.rst

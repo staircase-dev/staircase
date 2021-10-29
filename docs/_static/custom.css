@@ -23,6 +23,11 @@ dt:target, span.highlighted {
 	background-color: rgba(var(--pst-color-primary),1);
 }
 
+.sig-name {
+	color: #ffffff;
+}
+
+
 nav.bg-light {
 	background-color: rgba(var(--pst-color-primary),1) !important;
 }
@@ -35,6 +40,23 @@ nav.bg-light {
 	font-weight: 600;
     color: rgba(var(--pst-color-primary),1);
     border-color: rgba(var(--pst-color-primary),1);
+}
+
+
+.btn-block[href^="case_studies/index.html"] {
+	text-align: left;
+	font-weight: 600;
+    color: #ffffff;
+	background-color:rgba(var(--pst-color-primary),1);
+    border-color: rgba(var(--pst-color-primary),1);
+}
+
+.btn-block[href^="case_studies/index.html"]:hover {
+	text-align: left;
+	font-weight: 600;
+	color:rgba(var(--pst-color-primary),1);
+	background-color:#ffffff;
+	border-color: rgba(var(--pst-color-primary),1);
 }
 
 .btn-block:hover {

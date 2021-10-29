@@ -74,20 +74,18 @@ The code examples in the user guide assume the following setup:
 |
 |
 
-.. dropdown::
-    :title: bg-white text-white
+.. toctree::
+    :hidden:
+    :maxdepth: 1
 
-    .. toctree::
-        :maxdepth: 1
-
-        stepfunctionthinking
-        endpoints
-        layering
-        dates
-        masking
-        slicing
-        distributions
-        arraymethods
-        gotchas
-        faq
-        cookbook
+    stepfunctionthinking
+    endpoints
+    layering
+    dates
+    masking
+    slicing
+    distributions
+    arraymethods
+    gotchas
+    faq
+    cookbook
