@@ -7,9 +7,16 @@ staircase is a MIT licensed library, written in pure-Python, for
 modelling step functions. See :ref:`Getting Started <getting_started>` for more information.
 """
 
+import warnings
 
 import numpy as np
 import pandas as pd
+from pandas.api.types import (
+    is_datetime64_dtype,
+    is_number,
+    is_numeric_dtype,
+    is_timedelta64_dtype,
+)
 
 from staircase import docstrings
 from staircase.constants import inf
@@ -76,6 +83,57 @@ class Stairs:
         new_instance._data = data
         new_instance._valid_deltas = False if data is None else "delta" in data.columns
         new_instance._valid_values = False if data is None else "value" in data.columns
+        return new_instance
+
+    @classmethod
+    def from_values(cls, initial_value, values=None, closed="left"):
+        """
+        Construct :class:`Stairs` from :class:`pandas.Series`.
+
+        Parameters
+        ----------
+        initial_value : float, default 0
+            The value of the step function at negative infinity.
+        values : :class:`pandas.Series`
+            The step function values' when approaching the change points from the right
+        closed : {"left", "right"}
+            Indicates whether the half-open intervals comprising the step function should be interpreted
+            as left-closed or right-closed.
+
+        Returns
+        -------
+        :class:`Stairs`
+        """
+
+        if not isinstance(values, pd.Series) or values.empty:
+            raise ValueError("values must be a not empty Series")
+
+        if not (
+            is_numeric_dtype(values.index)
+            or is_datetime64_dtype(values.index)
+            or is_timedelta64_dtype(values.index)
+        ):
+            warnings.warn("The index of data is not numeric, or time based")
+
+        if np.isinf(values.index).any():
+            raise ValueError("Invalid value for Series index")
+
+        if not is_numeric_dtype(values) or not is_number(initial_value):
+            raise ValueError("Invalid dtype for from_values()")
+
+        if not values.index.is_monotonic_increasing:
+            raise ValueError("Series index must be monotonic")
+
+        series_values_inf_mask = np.isinf(values)
+        if series_values_inf_mask.any():
+            values = values.replace([np.inf], np.nan)
+            warnings.warn("Infinity values detected and have been converted to NaN")
+
+        new_instance = cls(closed=closed)
+        new_instance.initial_value = initial_value
+        new_instance._data = values.to_frame("value")
+        new_instance._valid_deltas = False
+        new_instance._valid_values = True
         return new_instance
 
     def _has_na(self):

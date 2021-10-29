@@ -12,6 +12,7 @@ Constructor & basic methods
 
    Stairs.__init__
    Stairs.copy
+   Stairs.from_values
    Stairs.sample
    Stairs.limit
    Stairs.layer
@@ -19,9 +20,9 @@ Constructor & basic methods
    Stairs.step_values
    Stairs.step_points
    Stairs.to_frame
-   
+
 .. _api.arithmetic_operators:
- 
+
 Arithmetic operators
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -39,7 +40,7 @@ Arithmetic operators
    Stairs.rdivide
 
 .. _api.relational_operators:
-   
+
 Relational operators
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -53,7 +54,7 @@ Relational operators
    Stairs.eq
    Stairs.ne
    Stairs.identical
-   
+
 .. _api.logical_operators:
 
 Logical operators
@@ -61,7 +62,7 @@ Logical operators
 
 .. autosummary::
    :toctree: api/
-   
+
    Stairs.make_boolean
    Stairs.invert
    Stairs.logical_and
@@ -78,7 +79,7 @@ Statistical operators
 
 .. autosummary::
    :toctree: api/
-   
+
    Stairs.cov
    Stairs.corr
 
@@ -108,23 +109,23 @@ Summary statistics
    Stairs.quantiles
    Stairs.ecdf
    Stairs.hist
-   
+
 Plotting
-~~~~~~~~~~~~~~~~~~ 
+~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
    :toctree: api/
    :template: autosummary/accessor_callable.rst
 
    Stairs.plot
-   
-   
+
+
 Miscellaneous functions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
    :toctree: api/
-   
+
    Stairs.clip
    Stairs.mask
    Stairs.where

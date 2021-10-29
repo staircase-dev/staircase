@@ -332,6 +332,44 @@ def test_layering_frame(s1_fix):
     assert Stairs(df, "start", "end", "value").identical(s1_fix)
 
 
+@pytest.mark.parametrize(
+    "closed",
+    ["left", "right"],
+)
+@pytest.mark.parametrize(
+    "initial_value",
+    [0, -1, 1],
+)
+def test_from_values(initial_value, closed):
+    # this corresponds to the step function produced by S1 method
+    values = pd.Series([-1.75, 0.25, 2.75, 2.00, -0.5, 0], index=[-4, 1, 3, 5, 6, 10])
+    sf = Stairs.from_values(
+        initial_value=initial_value,
+        values=values + initial_value,
+        closed=closed,
+    )
+    assert sf.identical(s1(closed) + initial_value)
+
+
+@pytest.mark.parametrize(
+    "index, values",
+    [
+        ([-np.inf], [0]),
+        ([np.inf], [0]),
+        ([1, 0], [10, 20]),
+        ([0], ["1"]),
+        ([], []),
+    ],
+)
+def test_from_values_exception(index, values):
+    with pytest.raises(ValueError):
+        Stairs.from_values(
+            initial_value=0,
+            values=pd.Series(values, index=index),
+            closed="left",
+        )
+
+
 def test_layering_trivial_1(s1_fix):
     assert s1_fix.copy().layer(1, 1).identical(s1_fix)
 

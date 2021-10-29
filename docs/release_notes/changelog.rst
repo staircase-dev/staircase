@@ -6,6 +6,14 @@ Changelog
 =========
 
 
+**v2.1.0 2021-10-29**
+
+- added support for :class:`pandas.Timedelta`, :class:`datetime.timedelta` and :class:`numpy.timedelta64`
+- added :meth:`staircase.Stairs.from_values` (#GH88)
+
+Contributors: @mesejo (Daniel Mesejo-León)
+
+
 **v2.0.4 2021-10-12**
 
 - bugfix for array aggregation where array contains a constant value step function over non-float domain (#GH119)
@@ -56,7 +64,7 @@ Contributors: @amagee (Andrew Magee)
 
 - bugfix for missing *lower_how* and *upper_how* parameters in :meth:`staircase.Stairs.resample`
 - renamed Stairs._values to avoid error when performing Series.groupby.sum in pandas>=1.2
- 
+
 
 **v1.6.2 2020-01-13**
 
