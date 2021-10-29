@@ -7,8 +7,8 @@ Changelog
 
 UNRELEASED
 
+- added support for :class:`pandas.Timedelta`, :class:`datetime.timedelta` and :class:`numpy.timedelta64`
 - added :meth:`staircase.Stairs.from_values` (#GH88)
-- bugfix for array aggregation where array contains a constant value step function over non-float domain (#GH119)
 
 Please list new changes above this comment
 

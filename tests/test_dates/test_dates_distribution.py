@@ -13,7 +13,16 @@ def pytest_generate_tests(metafunc):
     if "date_func" in metafunc.fixturenames:
         metafunc.parametrize(
             "date_func",
-            ["pandas", "pydatetime", "numpy", "pandas_tz", "pydatetime_tz"],
+            [
+                "pandas",
+                "pydatetime",
+                "numpy",
+                "pandas_tz",
+                "pydatetime_tz",
+                "pandas_timedelta",
+                "pytimedelta",
+                "numpy_timedelta",
+            ],
             indirect=True,
         )
 
@@ -37,6 +46,12 @@ def date_func(request):
                 ts, pytz.timezone("Australia/Sydney")
             ).to_pydatetime()
         )
+    elif request.param == "pandas_timedelta":
+        return lambda ts: ts - pd.Timestamp(2019, 12, 31)
+    elif request.param == "pytimedelta":
+        return lambda ts: (ts - pd.Timestamp(2019, 12, 31)).to_pytimedelta()
+    elif request.param == "numpy_timedelta":
+        return lambda ts: (ts - pd.Timestamp(2019, 12, 31)).to_timedelta64()
     else:
         assert False, "should not happen"
 
@@ -50,9 +65,12 @@ def assert_expected_type(stairs, date_func):
     if stairs._data is None:
         return
     example_type = timestamp(2020, 1, 1, date_func=date_func)
-    example_type = pd.Timestamp(
-        example_type
-    )  # pandas natively converts datetimes to timestamps
+    try:  # TODO this is a hack
+        example_type = pd.Timedelta(example_type)
+    except:  # noqa
+        example_type = pd.Timestamp(
+            example_type
+        )  # pandas natively converts datetimes to timestamps
     assert all(
         [type(example_type) == type(x) for x in stairs._data.index]
     ), "Unexpected type in step points"

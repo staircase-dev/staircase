@@ -44,7 +44,6 @@ Unfortunately the :class:`pandas.Timedelta` class has `limitations <https://pand
 
 * :meth:`pandas.Timestamp.to_datetime64`
 * :meth:`pandas.Timestamp.to_pydatetime`
-  
 
 Timezones
 **********
