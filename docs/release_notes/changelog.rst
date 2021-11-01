@@ -10,6 +10,9 @@ UNRELEASED
 
 Please list new changes above this comment
 
+- workaround for func:`staircase.Stairs.plot` when `style="hlines"` (from pandas issue #GH34251) (#GH124)
+
+
 **v2.1.0 2021-10-29**
 
 - added support for :class:`pandas.Timedelta`, :class:`datetime.timedelta` and :class:`numpy.timedelta64`
