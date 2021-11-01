@@ -10,7 +10,7 @@ UNRELEASED
 
 Please list new changes above this comment
 
-- workaround for func:`staircase.Stairs.plot` when `style="hlines"` (from pandas issue #GH34251) (#GH124)
+- bugfix for func:`staircase.Stairs.plot` when `style="hlines"` and package numexpr installed (from pandas issue #GH34251) (#GH124)
 
 
 **v2.1.0 2021-10-29**
