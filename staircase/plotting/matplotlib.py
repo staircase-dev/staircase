@@ -68,7 +68,7 @@ def _plot_matplotlib_steps(frame, ax, **kwargs):
 
 
 def _plot_matplotlib_hlines(frame, ax, **kwargs):
-    plot_data = frame.iloc[1:-1].query("value.notnull()")
+    plot_data = frame.iloc[1:-1].loc[lambda df: df["value"].notnull()]
 
     return ax.hlines(
         plot_data["value"],
