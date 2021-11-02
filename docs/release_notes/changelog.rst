@@ -10,6 +10,8 @@ UNRELEASED
 
 Please list new changes above this comment
 
+**v2.1.1 2021-11-02**
+
 - bugfix for func:`staircase.Stairs.plot` when `style="hlines"` and package numexpr installed (from pandas issue #GH34251) (#GH124)
 
 
