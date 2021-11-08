@@ -286,7 +286,7 @@ make_boolean_docstring = _make_boolean_docstring_body + _gen_example(
 
 
 clip_docstring = """
-Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper]
+Returns a copy of *self* which is undefined everywhere outside of [lower, upper]
 
 Parameters
 ----------
@@ -298,7 +298,7 @@ upper : int, float or pandas.Timestamp
 Returns
 -------
 :class:`Stairs`
-    Returns a copy of *self* which is zero-valued everywhere outside of [lower, upper)
+    Returns a copy of *self* which is undefined everywhere outside of [lower, upper)
 
 Examples
 --------
