@@ -260,7 +260,10 @@ def corr(self, other, where=(-inf, inf), lag=0, clip="pre"):
     mask = self.isna() | other.isna()
     self = self.mask(mask)
     other = other.mask(mask)
-    return self.cov(other, where) / (self.clip(*where).std() * other.clip(*where).std())
+    denominator = self.clip(*where).std() * other.clip(*where).std()
+    if denominator == 0:
+        return np.nan
+    return self.cov(other, where) / denominator
 
 
 def _get_stairs_method(name):

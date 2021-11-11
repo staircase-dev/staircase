@@ -1,17 +1,26 @@
-from staircase.constants import inf
-from staircase.core.arrays.aggregation import _aggregate as agg
-from staircase.core.arrays.aggregation import _max as max
-from staircase.core.arrays.aggregation import _mean as mean
-from staircase.core.arrays.aggregation import _median as median
-from staircase.core.arrays.aggregation import _min as min
-from staircase.core.arrays.aggregation import _sum as sum
-from staircase.core.arrays.transform import corr, cov, limit, sample
-from staircase.core.slicing import StairsSlicer
-from staircase.core.stairs import Stairs, _add_operations
-from staircase.core.stats.distribution import Dist
-from staircase.test_data import make_test_data
+from staircase.core.stairs import Stairs, _add_operations  # isort: skip
 
 _add_operations()
+
+from staircase.constants import inf
+from staircase.core.arrays import (
+    agg,
+    corr,
+    cov,
+    limit,
+    logical_and,
+    logical_or,
+    max,
+    mean,
+    median,
+    min,
+    sample,
+    sum,
+)
+from staircase.core.arrays.extension import StairsArray
+from staircase.core.slicing import StairsSlicer
+from staircase.core.stats.distribution import Dist
+from staircase.test_data import make_test_data
 
 
 def get_version():
