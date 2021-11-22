@@ -3,7 +3,7 @@
 What statistical properties are available?
 ==========================================
 
-Anybody who has done a course in basic statistics will be comfortable with most of the single-variable summary statistics that :mod:`staircase` makes available.  However these statistics were likely performed on a finite set of samples, i.e. observations of the variable.  When the variable in question is the value of a step function we do not have a finite set of observations.  This is because a step function is composed of intervals, and every interval contains an infinite number of points.  So a step function gives rise to an infinte set of points?  Yes.  The resulting math to calculate summary statistics may be a little different from their finite-set counterparts but the concepts remain the same.  The following statistics can all be performed on step functions:
+Anybody who has done a course in basic statistics will be comfortable with most of the single-variable summary statistics that :mod:`staircase` makes available.  However these statistics were likely performed on a finite set of samples, i.e. observations of the variable.  When the variable in question is the value of a step function we do not have a finite set of observations.  This is because a step function is composed of intervals, and every interval contains an infinite number of points.  So a step function gives rise to an infinite set of points?  Yes.  The resulting math to calculate summary statistics may be a little different from their finite-set counterparts but the concepts remain the same.  The following statistics can all be performed on step functions:
 
 * :meth:`staircase.Stairs.min`
 * :meth:`staircase.Stairs.max`
