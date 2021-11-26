@@ -1,6 +1,7 @@
 import pandas as pd
 
-import staircase.core.arrays.accessor  # registers the accessor with pandas
+# registers the accessor with pandas
+import staircase.core.arrays.accessor  # noqa
 from staircase.constants import inf
 from staircase.core.arrays import docstrings
 from staircase.core.arrays.extension import StairsArray
@@ -13,12 +14,12 @@ def agg(collection, func):
 
 
 @Appender(docstrings.make_docstring("toplevel", "max"), join="\n", indents=1)
-def max(collection):
+def max(collection):  # noqa
     return StairsArray(collection).max()
 
 
 @Appender(docstrings.make_docstring("toplevel", "min"), join="\n", indents=1)
-def min(collection):
+def min(collection):  # noqa
     return StairsArray(collection).min()
 
 
@@ -33,7 +34,7 @@ def median(collection):
 
 
 @Appender(docstrings.make_docstring("toplevel", "sum"), join="\n", indents=1)
-def sum(collection):
+def sum(collection):  # noqa
     return StairsArray(collection).sum()
 
 
