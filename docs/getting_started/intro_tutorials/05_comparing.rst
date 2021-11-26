@@ -56,7 +56,7 @@ Logical
 
 Under the assumption that the value 1 is equivalent to *true*, and a value of 0 is equivalent to *false*, then a logical comparison between two boolean step functions (ones whose values are either 0, or 1) is intuitively derived from standard logical comparisons.
 
-To answer the question of "what if the step function is not boolean valued" we appeal to the boolean definition that Python applies to numbers;anything not zero is considered *true*, and consequently only zero is false.
+To answer the question of "what if the step function is not boolean valued" we appeal to the boolean definition that Python applies to numbers: anything not zero is considered *true*, and consequently only zero is false.
 
 Let's see some examples:
 
