@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 
 import staircase as sc
@@ -44,3 +45,8 @@ def test_make_test_data(dates, positive_only, groups, seed):
     sc.make_test_data(
         dates=dates, positive_only=positive_only, groups=groups, seed=seed
     )
+
+
+def test_accessor_non_Stairs_dtype():
+    with pytest.raises(TypeError):
+        pd.Series([1]).sc

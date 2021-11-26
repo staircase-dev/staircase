@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytest
@@ -365,3 +366,25 @@ def test_StairsArray_isna(IS1):
 def test_StairsArray_concat_same_type(IS1):
     # the _concat_same_type method is called with shift()
     sc.StairsArray([IS1, None, IS1]).shift()
+
+
+def test_StairsArray_plot(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2])
+    ia.plot()
+
+
+def test_StairsArray_plot_exception(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2])
+    _, ax = plt.subplots()
+    with pytest.raises(ValueError):
+        ia.plot(ax, ["s1"])
+
+
+def test_toplevel_plot(IS1, IS2):
+    arr = [IS1, IS2]
+    sc.plot(arr)
+
+
+def test_accessor_plot(IS1, IS2):
+    arr = pd.Series([IS1, IS2], dtype="Stairs")
+    arr.sc.plot()

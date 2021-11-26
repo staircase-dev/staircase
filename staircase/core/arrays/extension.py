@@ -1,6 +1,7 @@
 import numbers
 from collections.abc import Iterable
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas.api.extensions import (
@@ -23,6 +24,7 @@ class StairsDtype(ExtensionDtype):
 
     type = Stairs
     name = "Stairs"
+    na_value = pd.NA
 
     @classmethod
     def construct_from_string(cls, string):
@@ -141,21 +143,27 @@ class StairsArray(ExtensionArray):
         print("hello")
         return cls(np.concatenate([array.data for array in to_concat]))
 
+    @Appender(docstrings.make_docstring("array", "mean"), join="\n", indents=1)
     def mean(self):
         return self.agg(np.mean)
 
+    @Appender(docstrings.make_docstring("array", "median"), join="\n", indents=1)
     def median(self):
         return self.agg(np.median)
 
+    @Appender(docstrings.make_docstring("array", "sum"), join="\n", indents=1)
     def sum(self):
         return self.agg(np.sum)
 
+    @Appender(docstrings.make_docstring("array", "min"), join="\n", indents=1)
     def min(self):
         return self.agg(np.min)
 
+    @Appender(docstrings.make_docstring("array", "max"), join="\n", indents=1)
     def max(self):
         return self.agg(np.max)
 
+    @Appender(docstrings.make_docstring("array", "agg"), join="\n", indents=1)
     def agg(self, func):
         index = pd.Index(
             np.unique(
@@ -181,19 +189,37 @@ class StairsArray(ExtensionArray):
             closed=self.data[0].closed,
         )._remove_redundant_step_points()
 
+    @Appender(docstrings.make_docstring("array", "sample"), join="\n", indents=1)
     def sample(self, x):
         array = pd.Series(self.data)
         return array.apply(Stairs.sample, x=x, include_index=True)
 
+    @Appender(docstrings.make_docstring("array", "limit"), join="\n", indents=1)
     def limit(self, x, side="right"):
         array = pd.Series(self.data)
         return array.apply(Stairs.limit, x=x, side=side, include_index=True)
 
+    @Appender(docstrings.make_docstring("array", "logical_or"), join="\n", indents=1)
     def logical_or(self):
         return self.agg(_make_logical(np.logical_or))
 
+    @Appender(docstrings.make_docstring("array", "logical_and"), join="\n", indents=1)
     def logical_and(self):
         return self.agg(_make_logical(np.logical_and))
+
+    @Appender(docstrings.make_docstring("array", "plot"), join="\n", indents=1)
+    def plot(self, ax=None, labels=None, **kwargs):
+        if ax is None:
+            _, ax = plt.subplots()
+        if labels is None:
+            labels = range(len(self))
+        elif len(labels) != len(self):
+            raise ValueError(
+                f"Number of labels supplied: {len(labels)}  Required: {len(self)}."
+            )
+        for s, l in zip(self, labels):
+            s.plot(ax=ax, label=l, style="step", **kwargs)
+        return ax
 
     def _reduce(self, name: str, *, skipna: bool = True, **kwargs):
         return {
@@ -243,8 +269,8 @@ def _make_corr_cov_func(docstring, stairs_method, assume_ones_diagonal):
 
 
 StairsArray.corr = _make_corr_cov_func(
-    docstrings.corr_docstring, _corr, assume_ones_diagonal=True
+    docstrings.make_docstring("array", "corr"), _corr, assume_ones_diagonal=True
 )
 StairsArray.cov = _make_corr_cov_func(
-    docstrings.cov_docstring, _cov, assume_ones_diagonal=False
+    docstrings.make_docstring("array", "cov"), _cov, assume_ones_diagonal=False
 )

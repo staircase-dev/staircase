@@ -14,6 +14,7 @@ from staircase.core.arrays import (
     mean,
     median,
     min,
+    plot,
     sample,
     sum,
 )
