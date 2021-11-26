@@ -102,10 +102,6 @@ class StairsArray(ExtensionArray):
             else:
                 self.data[key] = value
 
-    @property
-    def ndim(self):
-        return len(self.shape)
-
     def copy(self):
         return StairsArray(self.data.copy())
 
