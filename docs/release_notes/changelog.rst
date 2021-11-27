@@ -7,6 +7,12 @@ Changelog
 
 UNRELEASED
 
+
+Please list new changes above this comment
+
+
+**v2.2.0 2021-11-27**
+
 - added :class:`staircase.StairsArray` (pandas Extension Array for :class:`staircase.Stairs` objects)
 - added StairsDtype (pandas ExtensionDtype)
 - added :class:`StairsAccessor <staircase.core.arrays.accessor.StairsAccessor>` (pandas Series custom accessor)
@@ -14,7 +20,6 @@ UNRELEASED
 - added :func:`staircase.logical_and`
 - added :func:`staircase.plot`
 
-Please list new changes above this comment
 
 **v2.1.1 2021-11-02**
 
