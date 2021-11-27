@@ -3,10 +3,14 @@
 ==============
 Stairs
 ==============
+
+.. class:: staircase.Stairs
+
 .. currentmodule:: staircase
 
 Constructor & basic methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. autosummary::
    :toctree: api/
 

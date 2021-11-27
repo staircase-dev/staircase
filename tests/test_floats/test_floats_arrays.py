@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytest
@@ -304,3 +305,86 @@ def test_aggregation_with_closed_right(func):
     # GH117
     s = sc.Stairs(start=0, end=1, closed="right")
     assert func([s, s]).number_of_steps == 2
+
+
+def test_StairsArray_construction1(IS1, IS2):
+    sa1 = sc.StairsArray([IS1, IS2])
+    sa2 = sc.StairsArray(sa1)
+    assert (sa1 == sa2).bool().all()
+
+
+def test_StairsArray_construction2(IS1, IS2):
+    with pytest.raises(ValueError):
+        sc.StairsArray(np.array([[sc.Stairs()], [sc.Stairs()]]))
+
+
+def test_StairsArray_construction3():
+    with pytest.raises(TypeError):
+        sc.StairsArray("Stairs")
+
+
+def test_StairsArray_slice(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2, IS1])[1:]
+    assert (ia == sc.StairsArray([IS2, IS1])).bool().all()
+
+
+def test_StairsArray_set1(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2, IS1])
+    ia[1] = IS1
+    assert (ia == sc.StairsArray([IS1, IS1, IS1])).bool().all()
+
+
+def test_StairsArray_set2(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS1, IS1])
+    ia[1:] = IS2
+    assert (ia == sc.StairsArray([IS1, IS2, IS2])).bool().all()
+
+
+def test_StairsArray_get_exception(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2, IS1])[1:]
+    with pytest.raises(TypeError):
+        ia[1.5]
+
+
+def test_StairsArray_copy(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2])
+    ia2 = ia.copy()
+    assert (ia == ia2).bool().all() and (id(ia) != id(ia2))
+
+
+def test_StairsArray_take(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2, IS1])
+    ia2 = ia.take((0, 2))
+    assert (ia2 == sc.StairsArray([IS1, IS1])).bool().all()
+
+
+def test_StairsArray_isna(IS1):
+    ia = sc.StairsArray([IS1, None, IS1])
+    assert (ia.isna() == np.array([False, True, False])).all()
+
+
+def test_StairsArray_concat_same_type(IS1):
+    # the _concat_same_type method is called with shift()
+    sc.StairsArray([IS1, None, IS1]).shift()
+
+
+def test_StairsArray_plot(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2])
+    ia.plot()
+
+
+def test_StairsArray_plot_exception(IS1, IS2):
+    ia = sc.StairsArray([IS1, IS2])
+    _, ax = plt.subplots()
+    with pytest.raises(ValueError):
+        ia.plot(ax, ["s1"])
+
+
+def test_toplevel_plot(IS1, IS2):
+    arr = [IS1, IS2]
+    sc.plot(arr)
+
+
+def test_accessor_plot(IS1, IS2):
+    arr = pd.Series([IS1, IS2], dtype="Stairs")
+    arr.sc.plot()

@@ -18,6 +18,9 @@ Aggregation
    min
    max
    agg
+   logical_or
+   logical_and
+   plot
 
 
 

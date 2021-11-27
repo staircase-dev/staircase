@@ -233,7 +233,7 @@ def corr(self, other, where=(-inf, inf), lag=0, clip="pre"):
     other: :class:`Stairs`
         the stairs instance with which to compute the correlation
     where : tuple or list of length two, optional
-    Indicates the domain interval over which to perform the calculation.
+        Indicates the domain interval over which to perform the calculation.
         Default is (-sc.inf, sc.inf) or equivalently (None, None).
     lag : int, float, pandas.Timedelta
         A pandas.Timedelta is only valid when domain is date-like.
@@ -260,7 +260,10 @@ def corr(self, other, where=(-inf, inf), lag=0, clip="pre"):
     mask = self.isna() | other.isna()
     self = self.mask(mask)
     other = other.mask(mask)
-    return self.cov(other, where) / (self.clip(*where).std() * other.clip(*where).std())
+    denominator = self.clip(*where).std() * other.clip(*where).std()
+    if denominator == 0:
+        return np.nan
+    return self.cov(other, where) / denominator
 
 
 def _get_stairs_method(name):
