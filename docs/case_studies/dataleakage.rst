@@ -7,7 +7,7 @@ Case study: data leakage
 This case study illustrates the use of the staircase package to simplify feature engineering while avoiding *data leakage*.
 Data leakage, also known as target leakage, occurs when models are trained and validated using data that would not, and will not, be available at the time of prediction.  In order to avoid data leakage it is important to think about the time at which that data becomes known.
 
-The dataset used in this example is taken from `Kaggle <https://www.kaggle.com/dansbecker/melbourne-housing-snapshot/metadata>`_ and is distributed under a `creative commons license <https://creativecommons.org/licenses/by-nc-sa/4.0/>`_.  If you've ever looked at buying real estate it is likely you have investigated property prices in the same neighbourhood as a guide to estimating price.  It is therefore tempting, when using this dataset for predicting house price, to use average sale price in the neighbourhood as an input feature.  The problem is that when predicting a price for a particular house that is yet to be sold, we will not know the price it sold for (obviously) or the price for any house that sells after it. The data used to train a machine learning model must reflect this. We can still engineer an average house price feature for each house, however in order to avoid data leakage it can only use  house prices for houses sold prior to that house. This can be a tricky, or inefficient, calculation however :mod:`staircase` can make light work of this.
+The dataset used in this example is taken from `Kaggle <https://www.kaggle.com/dansbecker/melbourne-housing-snapshot/metadata>`_ and is distributed under a `creative commons license <https://creativecommons.org/licenses/by-nc-sa/4.0/>`_.  If you've ever looked at buying real estate it is likely you have investigated property prices in the same neighbourhood as a guide to estimating price.  It is therefore tempting, when using this dataset for predicting house price, to use average sale price in the neighbourhood as an input feature.  The problem is that when predicting a price for a particular house that is yet to be sold, we will not know the price it sold for (obviously) or the price for any house that sells after it. The data used to train a machine learning model must reflect this. We can still engineer an average house price feature for each house, however in order to avoid data leakage it can only use prices for houses sold prior to that house. This can be a tricky, or inefficient, calculation however :mod:`staircase` can make light work of this.
 
 .. ipython:: python
     :suppress:
@@ -63,7 +63,7 @@ Let's plot these:
     @savefig case_study_data_leakage_quotients.png
     axes[1].set_title("Sum of houses prices sold over time");
 
-These step functions look to be almost identical, albeit one scaled much higher, however their quotient will tell a different story.  So no we divide these step functions to obtain one for average house prices over time
+These step functions look to be almost identical, albeit one scaled much higher, however their quotient will tell a different story.  We now divide these step functions to obtain one for average house price over time
 
 .. ipython:: python
 
@@ -72,7 +72,7 @@ These step functions look to be almost identical, albeit one scaled much higher,
     av_house_prices = sum_houses_prices/houses_sold
     av_house_prices.plot(ax);
     @savefig case_study_data_leakage_average.png
-    ax.set_title("Average houses prices over time");
+    ax.set_title("Average houses price over time");
 
 
 As can be seen from the plot, as time goes on the average is less variable. It settles down as more and more houses are taken into account when calculating the average. It is also possible to calculate rolling averages too, whether by a fixed number of previous houses, or with a time based rolling window, eg "previous month". This will be discussed later.
@@ -84,7 +84,7 @@ So how do we get use this information in our training set? If a house is sold on
     sample_times = data["Date"] - pd.Timedelta(0.5, "day")
     sample_times
 
-So these are the times at which we need to know the value of our av_house_prices step function. We can get these values by simply "calling" our step function as if it was a method:
+So these are the times at which we need to know the value of our `av_house_prices` step function. We can get these values by simply "calling" our step function as if it was a method:
 
 .. ipython:: python
 
@@ -109,14 +109,14 @@ To recap, creating the average house price data feature is as simple as
     )(sample_times)
 
 
-Now, for the houses sold on the earliest date in this dataset there will be no average house price data, and there will be missing values in the average_price column for these houses. These values would need to be imputed before proceeding. The average_price column can then be used as an input to a machine learning model.
+Now, for the houses sold on the earliest date in this dataset there will be no average house price data, and there will be missing values in the `average_price` column for these houses. These values would need to be imputed before proceeding. The `average_price` column can then be used as an input to a machine learning model.
 
 Next we explore some advanced usage with :mod:`staircase`.
 
 
 **Sampling the step function "immediately to the left"**
 
-We took a shortcut above, by the fact that our dates were at the day-frequency level, and we sampled the step function the day before each sale. What if we wanted the values of the step function up until the exact date? This can be done with the :meth: `staircase.Stairs.limit` method, which takes sample points and a *side* parameter.
+We took a shortcut above, by the fact that our dates were at the day-frequency level, and we sampled the step function the day before each sale. What if we wanted the values of the step function up until the exact date? This can be done with the :meth:`staircase.Stairs.limit` method, which takes sample points and a *side* parameter.
 
 .. ipython:: python
 

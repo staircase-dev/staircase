@@ -11,7 +11,9 @@ This page gives an overview of all public staircase objects, functions and metho
 
    Stairs
    StairsSlicer
+   StairsArray
    arrays
+   StairsAccessor
    misc
 
 .. automodule:: staircase

@@ -6,6 +6,17 @@ Changelog
 =========
 
 
+
+**v2.2.0 2021-11-27**
+
+- added :class:`staircase.StairsArray` (pandas Extension Array for :class:`staircase.Stairs` objects)
+- added StairsDtype (pandas ExtensionDtype)
+- added :class:`StairsAccessor <staircase.core.arrays.accessor.StairsAccessor>` (pandas Series custom accessor)
+- added :func:`staircase.logical_or`
+- added :func:`staircase.logical_and`
+- added :func:`staircase.plot`
+
+
 **v2.1.1 2021-11-02**
 
 - bugfix for func:`staircase.Stairs.plot` when `style="hlines"` and package numexpr installed (from pandas issue #GH34251) (#GH124)
