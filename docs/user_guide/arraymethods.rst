@@ -54,6 +54,7 @@ When a Series has the dtype "Stairs" (:class:`StairsDtype`) there are several me
 | :meth:`staircase.StairsArray.agg`   | :meth:`pandas.Series.agg`            |
 +-------------------------------------+--------------------------------------+
 
+In addition to these the standard binary operators (:meth:`+ <staircase.StairsArray.add>`, :meth:`- <staircase.StairsArray.subtract>`, :meth:`* <staircase.StairsArray.multiply>`, :meth:`/ <staircase.StairsArray.divide>`, :meth:`> <staircase.StairsArray.gt>`, :meth:`>= <staircase.StairsArray.ge>`, :meth:`< <staircase.StairsArray.lt>`, :meth:`<= <staircase.StairsArray.le>`, :meth:`== <staircase.StairsArray.eq>`, :meth:`\!= <staircase.StairsArray.ne>`) are also defined for StairsArray and Series with "Stairs" dtype.  The second operand may be numerical, a :class:`staircase.Stairs` object, or an array-like collection of these.
 
 Applying additional methods defined on StairsArray to a Series requires the use of the accessor, which is automatically registered with :mod:`pandas` when :mod:`staircase` is imported.
 

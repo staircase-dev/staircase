@@ -24,3 +24,18 @@ StairsArray
    StairsArray.cov
    StairsArray.corr
    StairsArray.plot
+   StairsArray.ge
+   StairsArray.gt
+   StairsArray.le
+   StairsArray.lt
+   StairsArray.eq
+   StairsArray.ne
+   StairsArray.negate
+   StairsArray.add
+   StairsArray.subtract
+   StairsArray.multiply
+   StairsArray.divide
+   StairsArray.radd
+   StairsArray.rsubtract
+   StairsArray.rmultiply
+   StairsArray.rdivide
