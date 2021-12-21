@@ -6,6 +6,20 @@ Changelog
 =========
 
 
+**v2.3.0 2021-12-21**
+
+- added :meth:`staircase.StairsArray.ge`
+- added :meth:`staircase.StairsArray.gt`
+- added :meth:`staircase.StairsArray.le`
+- added :meth:`staircase.StairsArray.lt`
+- added :meth:`staircase.StairsArray.eq`
+- added :meth:`staircase.StairsArray.ne`
+- added :meth:`staircase.StairsArray.negate`
+- added :meth:`staircase.StairsArray.add` and :meth:`staircase.StairsArray.radd`
+- added :meth:`staircase.StairsArray.subtract` and :meth:`staircase.StairsArray.rsubtract`
+- added :meth:`staircase.StairsArray.multiply` and :meth:`staircase.StairsArray.rmultiply`
+- added :meth:`staircase.StairsArray.divide` and :meth:`staircase.StairsArray.rdivide`
+
 
 **v2.2.0 2021-11-27**
 
@@ -19,7 +33,7 @@ Changelog
 
 **v2.1.1 2021-11-02**
 
-- bugfix for func:`staircase.Stairs.plot` when `style="hlines"` and package numexpr installed (from pandas issue #GH34251) (#GH124)
+- bugfix for :meth:`staircase.Stairs.plot` when `style="hlines"` and package numexpr installed (from pandas issue #GH34251) (#GH124)
 
 
 **v2.1.0 2021-10-29**

@@ -564,3 +564,152 @@ def _make_plot_docstring(which):
     elif which == "accessor":
         doc += _accessor_plot_extra_examples
     return doc
+
+
+_extension_array_setup = """
+>>> {var} = sc.StairsArray({stair_list})
+
+.. plot::
+    :context: close-figs
+    :include-source: False
+
+    >>> stair_list = {stair_list}
+    >>> fig, axes = plt.subplots(nrows=1, ncols=2,  figsize=(7,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+    >>> for ax, title, stair_instance in zip(axes, ["{var}[0]", "{var}[1]"], stair_list):
+    ...     stair_instance.plot(ax=ax, arrows=True)
+    ...     ax.set_title(title)
+"""
+
+_extension_array_result = """
+>>> result = {result1}
+
+.. plot::
+    :context: close-figs
+    :include-source: False
+
+    >>> arr = sc.StairsArray({stair_list})
+    >>> result = {result2}
+    >>> fig, axes = plt.subplots(nrows=1, ncols=2,  figsize=(7,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+    >>> for ax, title, stair_instance in zip(axes, ["result[0]", "result[1]"], result):
+    ...     stair_instance.plot(ax=ax, arrows=True)
+    ...     ax.set_title(title)
+"""
+
+
+def _make_extension_array_example(sym, rop=False):
+    result = f"0.5 {sym} arr" if rop else f"arr {sym} 0.5"
+    example = _extension_array_setup.format(
+        var="arr", stair_list="[s1,s2]"
+    ) + _extension_array_result.format(
+        result1=result,
+        sym=sym,
+        stair_list="[s1,s2]",
+        result2=result,
+    )
+    if not rop:
+        example += _extension_array_setup.format(
+            var="other", stair_list="[s4,s3]"
+        ) + _extension_array_result.format(
+            result1=f"arr {sym} other",
+            sym=sym,
+            stair_list="[s1,s2]",
+            result2=f"arr {sym} sc.StairsArray([s4,s3])",
+        )
+    return example
+
+
+_extension_array_binop = """
+Binary operator for :class:`staircase.StairsArray` (and :class:`pandas.Series` with "Stairs" dtype).
+
+Equivalent to {equiv}.
+
+Parameters
+-----------
+other : int, float, :class:`staircase.Stairs` or array-like of these
+    If array-like must have same length as *self*.
+
+Returns
+-------
+:class:`staircase.StairsArray`
+
+See Also
+---------
+:meth:`staircase.Stairs.{funcstr}`
+
+Examples
+--------
+{examples}
+"""
+
+
+def make_binop_docstring(funcstr):
+    sym = {
+        "ge": ">=",
+        "gt": ">",
+        "le": "<=",
+        "lt": "<",
+        "eq": "==",
+        "ne": "!=",
+        "add": "+",
+        "subtract": "-",
+        "multiply": "*",
+        "divide": "/",
+        "radd": "+",
+        "rsubtract": "-",
+        "rmultiply": "*",
+        "rdivide": "/",
+    }[funcstr]
+
+    rop = funcstr in ("radd", "rsubtract", "rmultiply", "rdivide")
+    if rop:
+        equiv = f"*other* {sym} *self*"
+    else:
+        equiv = f"*self* {sym} *other*"
+    return _extension_array_binop.format(
+        funcstr=funcstr,
+        equiv=equiv,
+        examples=_make_extension_array_example(sym, rop),
+    )
+
+
+negate_docstring = """
+Unary operator for :class:`staircase.StairsArray` (and :class:`pandas.Series` with "Stairs" dtype).
+
+Equivalent to -*self*.
+
+Returns
+-------
+:class:`staircase.StairsArray`
+
+See Also
+---------
+:meth:`staircase.Stairs.negate`
+
+Examples
+--------
+
+>>> arr = sc.StairsArray([s1, s2])
+
+.. plot::
+    :context: close-figs
+    :include-source: False
+
+    >>> arr = sc.StairsArray([s1, s2])
+    >>> fig, axes = plt.subplots(nrows=1, ncols=2,  figsize=(7,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+    >>> for ax, title, stair_instance in zip(axes, ["arr[0]", "arr[1]"], arr):
+    ...     stair_instance.plot(ax=ax, arrows=True)
+    ...     ax.set_title(title)
+
+>>> result = -arr
+
+.. plot::
+    :context: close-figs
+    :include-source: False
+
+    >>> arr = sc.StairsArray([s1, s2])
+    >>> result = -arr
+    >>> fig, axes = plt.subplots(nrows=1, ncols=2,  figsize=(7,3), sharey=True, sharex=True, tight_layout=True, dpi=400)
+    >>> for ax, title, stair_instance in zip(axes, ["result[0]", "result[1]"], result):
+    ...     stair_instance.plot(ax=ax, arrows=True)
+    ...     ax.set_title(title)
+"""

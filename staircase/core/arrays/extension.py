@@ -31,7 +31,7 @@ class StairsDtype(ExtensionDtype):
         if string == cls.name:
             return cls()
         else:
-            raise TypeError("Cannot construct a '{}' from " "'{}'".format(cls, string))
+            raise TypeError("Cannot construct a '{}' from '{}'".format(cls, string))
 
     @classmethod
     def construct_array_type(cls):
@@ -228,26 +228,62 @@ class StairsArray(ExtensionArray):
             "agg": self.agg,
         }[name]()
 
+    @Appender(docstrings.negate_docstring, join="\n", indents=1)
+    def negate(self):
+        return StairsArray(-self.data)
 
-def _make_relational_func(func_str):
+    __neg__ = negate
+
+
+def _make_binary_func(func_str):
 
     stairs_func = getattr(Stairs, func_str)
+    docstring = docstrings.make_binop_docstring(funcstr)
 
+    @Appender(docstring, join="\n", indents=1)
     def func(self, other):
-        if not isinstance(other, StairsArray):
+        if isinstance(other, (int, float, Stairs)):
+            result = StairsArray([stairs_func(s, other) for s in self.data])
+        elif is_list_like(other):
+            if len(other) != len(self):
+                return ValueError("Arrays have different lengths.")
+            result = StairsArray(
+                [stairs_func(s1, s2) for s1, s2 in zip(self.data, other.data)]
+            )
+        else:
             return NotImplemented
-        result = StairsArray(
-            [stairs_func(s1, s2) for s1, s2 in zip(self.data, other.data)]
-        )
         return result
 
     return func
 
 
-for funcstr in ("ge", "gt", "le", "lt", "eq", "ne"):
-    func = _make_relational_func(funcstr)
+for funcstr in (
+    "ge",
+    "gt",
+    "le",
+    "lt",
+    "eq",
+    "ne",
+    "add",
+    "subtract",
+    "multiply",
+    "divide",
+    "radd",
+    "rsubtract",
+    "rmultiply",
+    "rdivide",
+):
+    func = _make_binary_func(funcstr)
     setattr(StairsArray, funcstr, func)
-    setattr(StairsArray, f"__{funcstr}__", func)
+    magic = {
+        "subtract": "sub",
+        "multiply": "mul",
+        "divide": "truediv",
+        "rsubtract": "rsub",
+        "rmultiply": "rmul",
+        "rdivide": "rtruediv",
+    }.get(funcstr, funcstr)
+    setattr(StairsArray, f"__{magic}__", func)
 
 
 def _make_corr_cov_func(docstring, stairs_method, assume_ones_diagonal):
