@@ -7,6 +7,11 @@ Changelog
 
 UNRELEASED
 
+
+Please list new changes above this comment
+
+**v2.3.0 2021-12-21**
+
 - added :meth:`staircase.StairsArray.ge`
 - added :meth:`staircase.StairsArray.gt`
 - added :meth:`staircase.StairsArray.le`
@@ -18,8 +23,6 @@ UNRELEASED
 - added :meth:`staircase.StairsArray.subtract` and :meth:`staircase.StairsArray.rsubtract`
 - added :meth:`staircase.StairsArray.multiply` and :meth:`staircase.StairsArray.rmultiply`
 - added :meth:`staircase.StairsArray.divide` and :meth:`staircase.StairsArray.rdivide`
-
-Please list new changes above this comment
 
 
 **v2.2.0 2021-11-27**
