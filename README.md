@@ -1,4 +1,4 @@
-<p align="center"><a href="https://github.com/staircase-dev/staircase"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/staircase.png?raw=true" title="staircase logo" alt="staircase logo"></a></p>
+<p align="center"><a href="https://github.com/staircase-dev/staircase"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/staircase2.png?raw=true" title="staircase logo" alt="staircase logo"></a></p>
 
 
 <p align="center">
@@ -54,7 +54,7 @@ In this example, we consider data corresponding to site views for a website in O
 425732   2021-10-31 23:59:59                   NaT        US
 ```
 
-Note that the number of users viewing the site over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the site, and decreases by 1 every time a user leaves the site.  This step function can be thought of as the sum of three step functions - AU users + UK users + US users.  Creating a step function for AU users, for example, is simple.  To achieve it we use the *[Stairs](https://www.staircase.dev/en/latest/reference/Stairs.html)* class:
+Note that the number of users viewing the site over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the site, and decreases by 1 every time a user leaves the site.  This step function can be thought of as the sum of three step functions: AU users + UK users + US users.  Creating a step function for AU users, for example, is simple.  To achieve it we use the *[Stairs](https://www.staircase.dev/en/latest/reference/Stairs.html)* class, which represents a step function:
 
 
 ```python
@@ -69,7 +69,7 @@ We can visualise the function with the plot function:
 ```python
 >>> views_AU.plot()
 ```
-<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/AU_views.png?raw=true" title="AU views example" alt="AU views example"></p>
+<p align="left"><img src="https://github.com/master/staircase/blob/master/docs/img/AU_views.png?raw=true" title="AU views example" alt="AU views example"></p>
 
 Rather than creating a separate variable for each country, we can create a `pandas.Series` to hold a step function for each country.  We can even give this Series a "Stairs" type.
 
@@ -97,11 +97,11 @@ The plotting backend to `staircase` is provided by `matplotlib`.
 >>> series_stepfunctions.sc.plot(ax, alpha=0.7)
 >>> ax.legend()
 ```
-<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/all_views.png?raw=true" title="all views example" alt="all views example"></p>
+<p align="left"><img src="https://github.com/master/staircase/blob/master/docs/img/all_views.png?raw=true" title="all views example" alt="all views example"></p>
 
 Now plotting step functions is useful, but the real fun starts when we go beyond this:
 
-<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/staircase_analysis.gif?raw=true" title="staircase analysis examples" alt="staircase analysis examples"></p>
+<p align="left"><img src="https://github.com/master/staircase/blob/master/docs/img/staircase_analysis.gif?raw=true" title="staircase analysis examples" alt="staircase analysis examples"></p>
 
 
 ## Installation
@@ -134,7 +134,7 @@ See this [beginner's guide to contributing](https://github.com/firstcontribution
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/staircase-dev/staircase/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/staircase-dev/staircase/tags).  It is highly recommended to use staircase 2.*, for both performance and additional features.
 
 
 ## License
