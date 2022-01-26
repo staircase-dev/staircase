@@ -24,64 +24,84 @@
 		<img src="https://codecov.io/gh/staircase-dev/staircase/branch/master/graph/badge.svg"/></a>
 </p>
 
+The staircase package enables data analysis through mathematical step functions. Step functions can be used to represent continuous time series - think changes in state over time, queue size over time, utilisation over time, success rates over time etc.
 
-The leading use-case for the staircase package is for the creation and analysis of step functions.
+The package is built upon `numpy` and `pandas`, with a deliberate, stylistic alignment to the latter in order to integrate seamlessly into the [pandas ecosystem](https://pandas.pydata.org/docs/ecosystem.html).
 
-Pretty exciting huh.
+The staircase package makes converting raw, temporal data into time series easy and readable. Furthermore there is a rich variety of [arithmetic operations](https://www.staircase.dev/en/latest/reference/Stairs.html#arithmetic-operators), [relational operations](https://www.staircase.dev/en/latest/reference/Stairs.html#relational-operators), [logical operations](https://www.staircase.dev/en/latest/reference/Stairs.html#logical-operators), [statistical operations](https://www.staircase.dev/en/latest/reference/Stairs.html#statistical-operators), to enable analysis, in addition to functions for [univariate analysis](https://www.staircase.dev/en/latest/reference/Stairs.html#summary-statistics), [aggregations](https://www.staircase.dev/en/latest/reference/arrays.html#aggregation) and compatibility with datetimes.
 
-But don't hit the close button on the browser just yet.  Let us convince you that much of the world around you can be modelled as step functions.
+**New in 2022:** staircase now provides support for [pandas extension arrays](https://pandas.pydata.org/docs/ecosystem.html#extension-data-types) and a [Series accessor](https://www.staircase.dev/en/latest/user_guide/arraymethods.html).
 
-For example, the number of users viewing this page over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the page, and decreases by 1 every time a user leaves the page.  Let's say we have this data in vector format (i.e. tuple, list, numpy array, pandas series).  Specifically, assume *arrive* and *leave* are vectors of times, expressed as minutes past midnight, for all page views occuring yesterday.  Creating the corresponding step function is simple.  To achieve it we use the *[Stairs](https://www.staircase.dev/en/latest/reference/Stairs.html)* class:
+
+## An example
+
+In this example, we consider data corresponding to site views for a website in October 2021.  The start and end times have been logged for each session, in addition to one of three countries codes (AU, UK, US).  These times are recorded with `pandas.Timestamp` and any time which falls outside of October is logged as `NAT`.
+
+
+```python
+>>> data
+                       start                   end   country
+0                        NaT   2021-10-01 00:00:50        AU
+1                        NaT   2021-10-01 00:07:45        AU
+2                        NaT   2021-10-01 00:05:58        AU
+3                        NaT   2021-10-01 00:08:48        AU
+4                        NaT   2021-10-01 00:05:26        AU
+...                      ...                   ...       ...
+425728   2021-10-31 23:57:16                   NaT        US
+425729   2021-10-31 23:57:25                   NaT        US
+425730   2021-10-31 23:58:59                   NaT        US
+425731   2021-10-31 23:59:45                   NaT        US
+425732   2021-10-31 23:59:59                   NaT        US
+```
+
+Note that the number of users viewing the site over time can be modelled as a step function.  The value of the function increases by 1 every time a user arrives at the site, and decreases by 1 every time a user leaves the site.  This step function can be thought of as the sum of three step functions - AU users + UK users + US users.  Creating a step function for AU users, for example, is simple.  To achieve it we use the *[Stairs](https://www.staircase.dev/en/latest/reference/Stairs.html)* class:
+
 
 ```python
 >>> import staircase as sc
 
->>> views = sc.Stairs()
->>> views.layer(arrive,leave)
+>>> views_AU = sc.Stairs(data.query("country == 'AU'"), "start", "end")
+>>> views_AU
+<staircase.Stairs, id=1609972469384>
 ```
 
 We can visualise the function with the plot function:
 ```python
->>> views.plot()
+>>> views_AU.plot()
 ```
-<p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/pageviews.png?raw=true" title="pageviews example" alt="pageviews example"></p>
+<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/AU_views.png?raw=true" title="AU views example" alt="AU views example"></p>
 
-We can find the total time in minutes the page was viewed:
+Rather than creating a separate variable for each country, we can create a `pandas.Series` to hold a step function for each country.  We can even give this Series a "Stairs" type.
+
 ```python
->>> views.clip(0,1440).integral()
-9297.94622521079
+>>> october = (pd.Timestamp("2021-10"), pd.Timestamp("2021-11"))
+>>> series_stepfunctions = (
+...     data.groupby("country")
+...     .apply(sc.Stairs, "start", "end")
+...     .apply(sc.Stairs.clip, october)  # set step functions to be undefined outside of October
+...     .astype("Stairs")
+... )
+>>> series_stepfunctions
+country
+AU    <staircase.Stairs, id=2516367680328>
+UK    <staircase.Stairs, id=2516362550664>
+US    <staircase.Stairs, id=2516363585928>
+dtype: Stairs
 ```
 
-We can find the average number of viewers:
+The plotting backend to `staircase` is provided by `matplotlib`.
+
 ```python
->>> views.clip(0,1440).mean()
-6.4569071008408265
+>>> import matplotlib.pyplot as plt
+>>> _, ax = plt.subplots(figsize=(15,4))
+>>> series_stepfunctions.sc.plot(ax, alpha=0.7)
+>>> ax.legend()
 ```
+<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/all_views.png?raw=true" title="all views example" alt="all views example"></p>
 
-We can find the average number of viewers, per hour of the day, and plot:
-```python
->>> views.slice(pd.interval_range(0, periods=24, freq=60)).mean().plot()
-```
-<p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/meanperhour.png?raw=true" title="mean page views per hour" alt="mean page views per hour"></p>
+Now plotting step functions is useful, but the real fun starts when we go beyond this:
 
-We can find the maximum concurrent views:
-```python
->>> views.clip(0,1440).max()
-16
-```
-
-We can create histogram data showing relative frequency of concurrent viewers (and plot it):
-```python
->>> views.clip(0,1440).hist().plot.bar()
-```
-<p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/pageviewshist.png?raw=true" title="concurrent viewers histogram" alt="concurrent viewers histogram"></p>
-
-
-Plotting is based on [matplotlib](https://matplotlib.org) and it requires relatively little effort to take the previous chart and improve the aesthetics:
-<p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/pageviewshistpretty.png?raw=true" title="concurrent viewers histogram (aesthetic)" alt="concurrent viewers histogram (aesthetic)"></p>
-
-
-There is plenty more analysis that could be done.  The staircase package provides a rich variety of [arithmetic operations](https://www.staircase.dev/en/latest/reference/Stairs.html#arithmetic-operators), [relational operations](https://www.staircase.dev/en/latest/reference/Stairs.html#relational-operators), [logical operations](https://www.staircase.dev/en/latest/reference/Stairs.html#logical-operators), [statistical operations](https://www.staircase.dev/en/latest/reference/Stairs.html#statistical-operators), for use with *Stairs*, in addition to functions for [univariate analysis](https://www.staircase.dev/en/latest/reference/Stairs.html#summary-statistics), [aggregations](https://www.staircase.dev/en/latest/reference/arrays.html#aggregation) and compatibility with [pandas.Timestamp](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html).
+<p align="left"><img src="https://github.com/venaturum/staircase/blob/master/docs/img/staircase_analysis.gif?raw=true" title="staircase analysis examples" alt="staircase analysis examples"></p>
 
 
 ## Installation
