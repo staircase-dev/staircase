@@ -69,7 +69,7 @@ We can visualise the function with the plot function:
 ```python
 >>> views_AU.plot()
 ```
-<p align="left"><img src="https://github.com/master/staircase/blob/master/docs/img/AU_views.png?raw=true" title="AU views example" alt="AU views example"></p>
+<p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/AU_views.png?raw=true" title="AU views example" alt="AU views example"></p>
 
 Rather than creating a separate variable for each country, we can create a `pandas.Series` to hold a step function for each country.  We can even give this Series a "Stairs" type.
 
@@ -97,11 +97,11 @@ The plotting backend to `staircase` is provided by `matplotlib`.
 >>> series_stepfunctions.sc.plot(ax, alpha=0.7)
 >>> ax.legend()
 ```
-<p align="left"><img src="https://github.com/master/staircase/blob/master/docs/img/all_views.png?raw=true" title="all views example" alt="all views example"></p>
+<p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/all_views.png?raw=true" title="all views example" alt="all views example"></p>
 
 Now plotting step functions is useful, but the real fun starts when we go beyond this:
 
-<p align="left"><img src="https://github.com/master/staircase/blob/master/docs/img/staircase_analysis.gif?raw=true" title="staircase analysis examples" alt="staircase analysis examples"></p>
+<p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/staircase_analysis.gif?raw=true" title="staircase analysis examples" alt="staircase analysis examples"></p>
 
 
 ## Installation
