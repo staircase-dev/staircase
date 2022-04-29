@@ -69,6 +69,7 @@ We can visualise the function with the plot function:
 ```python
 >>> views_AU.plot()
 ```
+
 <p align="left"><img src="https://github.com/staircase-dev/staircase/blob/master/docs/img/AU_views.png?raw=true" title="AU views example" alt="AU views example"></p>
 
 Rather than creating a separate variable for each country, we can create a `pandas.Series` to hold a step function for each country.  We can even give this Series a "Stairs" type.
