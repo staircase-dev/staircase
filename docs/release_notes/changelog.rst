@@ -7,6 +7,7 @@ Changelog
 
 UNRELEASED
 
+- warnings generated if using :meth:`staircase.StairsArray.layer` with non-standard argument types (#GH132)
 
 Please list new changes above this comment
 

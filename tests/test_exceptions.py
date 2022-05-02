@@ -1,7 +1,10 @@
 import operator
 
+import numpy as np
+import pandas as pd
 import pytest
 
+import staircase as sc
 from staircase import Stairs
 from staircase.core.ops.common import ClosedMismatchError
 
@@ -65,3 +68,26 @@ def test_binary_operation_closed_matching(left, right, op, ok):
     else:
         with pytest.raises(ClosedMismatchError):
             op(left, right)
+
+
+@pytest.mark.parametrize(
+    ("start", "end"),
+    [
+        ("1", "2"),
+    ],
+)
+def test_layering_args_warning(start, end):
+    with pytest.warns(UserWarning):
+        Stairs(start=start, end=end)
+
+
+@pytest.mark.parametrize(
+    ("start", "end"),
+    [(1, None), (None, 1), (1, sc.inf), (-sc.inf, 1)],
+)
+def test_layering_args_no_warning(start, end):
+    with pytest.warns(None) as warnings:
+        Stairs(start=start, end=end)
+
+    if len(warnings) > 0:
+        raise AssertionError("Warnings were raised, but not expected")
