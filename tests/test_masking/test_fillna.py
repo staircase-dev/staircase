@@ -31,6 +31,11 @@ def s1_fix():
     return s1(0)
 
 
+@pytest.fixture
+def s2_fix():
+    return s2(0)
+
+
 def test_fillna(s1_fix):
     s = s1_fix.clip(None, 10).mask((-2, 0)).mask((4, 7)).fillna(1)
     pd.testing.assert_series_equal(
