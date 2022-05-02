@@ -126,37 +126,6 @@ A variant of the above problem, suppose a collection of events is defined by sta
     9  38.199949   43.50357
 
 
-Fill undefined intervals of one step function with another
------------------------------------------------------------
-
-:meth:`staircase.Stairs.fillna` allows undefined intervals in a step function to be redefined (i.e. "filled") with a number.  This recipe shows a simple one-liner which fills the undefined values of step function *a* with the values of step function *b*.
-
-.. plot::
-    :context: close-figs
-
-    >>> # test data
-    >>> def gen_test_step_function(seed):
-    ...     return (
-    ...         sc.make_test_data(dates=False, seed=seed)
-    ...         .pipe(sc.Stairs, "start", "end")
-    ...     )
-    ...
-    >>> a = gen_test_step_function(0).mask((20,30)).mask((80,90))
-    >>> b = gen_test_step_function(1)
-
-    >>> # recipe
-    >>> result = a.fillna(0) + b.where(a.isna()).fillna(0)
-
-    >>> # plot
-    >>> fig, axes = plt.subplots(ncols=3, figsize=(8,3), sharex=True, sharey=True)
-    >>> a.plot(axes[0])
-    >>> axes[0].set_title("a")
-    >>> b.plot(axes[1])
-    >>> axes[1].set_title("b")
-    >>> result.plot(axes[2])
-    >>> axes[2].set_title("result")
-
-
 Stitch two step functions together at a point
 ----------------------------------------------
 
