@@ -128,3 +128,18 @@ def requires_closed_match(func):
         return func(stairs1, stairs2, *args, **kwargs)
 
     return wrapper
+
+
+def convert_string_args_to_timestamp(func):
+    def convert_str(arg):
+        if isinstance(arg, str):
+            return pd.Timestamp(arg)
+        return arg
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        args = [convert_str(arg) for arg in args]
+        kwargs = {key: convert_str(val) for key, val in kwargs.items()}
+        return func(self, *args, **kwargs)
+
+    return wrapper

@@ -11,9 +11,20 @@ def pytest_generate_tests(metafunc):
     if "date_func" in metafunc.fixturenames:
         metafunc.parametrize(
             "date_func",
-            ["pandas", "pydatetime", "numpy", "pandas_tz", "pydatetime_tz"],
+            [
+                "pandas",
+                "pydatetime",
+                "numpy",
+                "pandas_tz",
+                "pydatetime_tz",
+                "pandas_str",
+            ],
             indirect=True,
         )
+
+
+def pandas_str(ts):
+    return pd.Timestamp(ts)
 
 
 @pytest.fixture
@@ -21,6 +32,8 @@ def date_func(request):
     # returns a func which takes a pandas timestamp
     if request.param == "pandas":
         return lambda x: x
+    elif request.param == "pandas_str":
+        return pandas_str
     elif request.param == "pydatetime":
         return pd.Timestamp.to_pydatetime
     elif request.param == "numpy":
@@ -39,8 +52,10 @@ def date_func(request):
         assert False, "should not happen"
 
 
-def timestamp(*args, date_func, **kwargs):
+def timestamp(*args, date_func, use_str=False, **kwargs):
     ts = pd.Timestamp(*args, **kwargs)
+    if use_str and date_func == pandas_str:
+        return str(ts)
     return date_func(ts)
 
 
@@ -91,14 +106,14 @@ def s2(date_func):
 def test_sum(date_func):
     s1mask = s1(date_func).mask(
         (
-            timestamp(2020, 1, 2, date_func=date_func),
-            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 2, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 4, date_func=date_func, use_str=True),
         )
     )
     s2mask = s2(date_func).mask(
         (
-            timestamp(2020, 1, 7, date_func=date_func),
-            timestamp(2020, 1, 9, date_func=date_func),
+            timestamp(2020, 1, 7, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 9, date_func=date_func, use_str=True),
         )
     )
     pd.testing.assert_series_equal(
@@ -127,14 +142,14 @@ def test_sum(date_func):
 def test_max(date_func):
     s1mask = s1(date_func).mask(
         (
-            timestamp(2020, 1, 2, date_func=date_func),
-            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 2, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 4, date_func=date_func, use_str=True),
         )
     )
     s2mask = s2(date_func).mask(
         (
-            timestamp(2020, 1, 7, date_func=date_func),
-            timestamp(2020, 1, 9, date_func=date_func),
+            timestamp(2020, 1, 7, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 9, date_func=date_func, use_str=True),
         )
     )
     pd.testing.assert_series_equal(
@@ -162,14 +177,14 @@ def test_max(date_func):
 def test_min(date_func):
     s1mask = s1(date_func).mask(
         (
-            timestamp(2020, 1, 2, date_func=date_func),
-            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 2, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 4, date_func=date_func, use_str=True),
         )
     )
     s2mask = s2(date_func).mask(
         (
-            timestamp(2020, 1, 7, date_func=date_func),
-            timestamp(2020, 1, 9, date_func=date_func),
+            timestamp(2020, 1, 7, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 9, date_func=date_func, use_str=True),
         )
     )
     pd.testing.assert_series_equal(
@@ -193,14 +208,14 @@ def test_min(date_func):
 def test_mean_1(date_func):
     s1mask = s1(date_func).mask(
         (
-            timestamp(2020, 1, 2, date_func=date_func),
-            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 2, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 4, date_func=date_func, use_str=True),
         )
     )
     s2mask = s2(date_func).mask(
         (
-            timestamp(2020, 1, 7, date_func=date_func),
-            timestamp(2020, 1, 9, date_func=date_func),
+            timestamp(2020, 1, 7, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 9, date_func=date_func, use_str=True),
         )
     )
     pd.testing.assert_series_equal(
@@ -229,19 +244,19 @@ def test_mean_1(date_func):
 def test_mean_2(date_func):
     s1mask = s1(date_func).mask(
         (
-            timestamp(2020, 1, 2, date_func=date_func),
-            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 2, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 4, date_func=date_func, use_str=True),
         )
     )
     s2mask = (
         s2(date_func)
         .mask(
             (
-                timestamp(2020, 1, 7, date_func=date_func),
-                timestamp(2020, 1, 9, date_func=date_func),
+                timestamp(2020, 1, 7, date_func=date_func, use_str=True),
+                timestamp(2020, 1, 9, date_func=date_func, use_str=True),
             )
         )
-        .mask((None, timestamp(2019, 12, 31, date_func=date_func)))
+        .mask((None, timestamp(2019, 12, 31, date_func=date_func, use_str=True)))
     )
     result = sc.mean([s1mask, s2mask])
     pd.testing.assert_series_equal(
@@ -270,14 +285,14 @@ def test_mean_2(date_func):
 def test_median(date_func):
     s1mask = s1(date_func).mask(
         (
-            timestamp(2020, 1, 2, date_func=date_func),
-            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 2, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 4, date_func=date_func, use_str=True),
         )
     )
     s2mask = s2(date_func).mask(
         (
-            timestamp(2020, 1, 7, date_func=date_func),
-            timestamp(2020, 1, 9, date_func=date_func),
+            timestamp(2020, 1, 7, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 9, date_func=date_func, use_str=True),
         )
     )
     pd.testing.assert_series_equal(
@@ -305,14 +320,14 @@ def test_median(date_func):
 def test_sample(date_func):
     s1mask = s1(date_func).mask(
         (
-            timestamp(2020, 1, 2, date_func=date_func),
-            timestamp(2020, 1, 4, date_func=date_func),
+            timestamp(2020, 1, 2, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 4, date_func=date_func, use_str=True),
         )
     )
     s2mask = s2(date_func).mask(
         (
-            timestamp(2020, 1, 7, date_func=date_func),
-            timestamp(2020, 1, 9, date_func=date_func),
+            timestamp(2020, 1, 7, date_func=date_func, use_str=True),
+            timestamp(2020, 1, 9, date_func=date_func, use_str=True),
         )
     )
     expected = pd.DataFrame(
