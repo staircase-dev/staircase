@@ -7,11 +7,14 @@ Changelog
 
 UNRELEASED
 
+Please list new changes above this comment
+
+**v2.4.0 2022-05-02**
+
 - warnings generated if using :meth:`staircase.Stairs.layer` with non-standard argument types (#GH132)
 - :meth:`staircase.Stairs.fillna` can be used with :class:`staircase.Stairs` argument (#GH82)
 - string representations of timestamps can be used as arguments to :meth:`staircase.Stairs.clip`, :meth:`staircase.Stairs.mask` and :meth:`staircase.Stairs.where` (#GH49)
 
-Please list new changes above this comment
 
 **v2.3.0 2021-12-21**
 
