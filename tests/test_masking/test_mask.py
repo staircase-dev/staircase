@@ -313,17 +313,3 @@ def test_notna(s1_fix):
         check_dtype=False,
     )
     assert s.initial_value == 1
-
-
-def test_fillna(s1_fix):
-    s = s1_fix.clip(None, 10).mask((-2, 0)).mask((4, 7)).fillna(1)
-    pd.testing.assert_series_equal(
-        s.step_values,
-        pd.Series(
-            [-1.75, 1, -1.75, 0.25, 2.75, 1, -0.5, 1],
-            index=[-4, -2, 0, 1, 3, 4, 7, 10],
-        ),
-        check_names=False,
-        check_index_type=False,
-    )
-    assert s.initial_value == s1_fix.initial_value

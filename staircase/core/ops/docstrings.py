@@ -290,10 +290,12 @@ Returns a copy of *self* which is undefined everywhere outside of [lower, upper]
 
 Parameters
 ----------
-lower : int, float or pandas.Timestamp
-    lower bound of the interval
-upper : int, float or pandas.Timestamp
-    upper bound of the interval
+lower : int, float, pandas.Timedelta, pandas.Timestamp or str
+    lower bound of the interval.  A string argument is assumed to be a string representation
+    of a pandas.Timestamp
+upper : int, float, pandas.Timedelta, pandas.Timestamp or str
+    upper bound of the interval.  A string argument is assumed to be a string representation
+    of a pandas.Timestamp
 
 Returns
 -------
@@ -383,7 +385,9 @@ Parameters
 ----------
 other : :class:`Stairs`, or tuple
     If *other* is a tuple *(a,b)* then it is assumed that a < b and that
-    *a* and *b* both belong to the domain of the step function represented by *self*
+    *a* and *b* both belong to the domain of the step function represented by *self*.
+    An exception is when *a* or *b* are strings, in which case they are assumed to
+    be pandas.Timestamp and the above conditions apply.
 
 Returns
 -------
@@ -453,6 +457,7 @@ fillna_examples = "\n".join(
         _gen_example(["s3", "s3.fillna(0.5)"]),
         _gen_example(["s3", 's3.fillna("ffill")']),
         _gen_example(["s3", 's3.fillna("bfill")']),
+        _gen_example(["s3", "s2", "s3.fillna(s2)"]),
     ]
 )
 
@@ -461,8 +466,8 @@ Define values for (a copy of) *self* where it is undefined.
 
 Parameters
 ----------
-value : {{int, float, "backfill", "bfill", "pad", "ffill"}}
-    If *value* is and int or float, then it is used to provide values
+value : {{int, float, "backfill", "bfill", "pad", "ffill", :class:`Stairs`}}
+    If *value* is and int, float or :class:`Stairs`, then it is used to provide values
     where *self* is undefined.  If *value* is a string then it indicates
     a method for propagating values of the step function across undefined
     intervals:

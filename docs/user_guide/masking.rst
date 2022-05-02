@@ -116,7 +116,7 @@ As noted above, there are several methods that can be used for reducing the doma
 
 Currently there is only one method for enlarging the domain of a step function: :meth:`staircase.Stairs.fillna`.  This method is similar to its pandas counterpart :meth:`pandas.Series.fillna`, in that it aims to replace null values, however it differs slightly in the semantics of parameters.
 
-The method :meth:`staircase.Stairs.fillna` takes one parameter, which can be either a real number, or a string corresponding to a method.  These method names are taken from pandas and indicate the following behaviour:
+The method :meth:`staircase.Stairs.fillna` takes one parameter, which can be either a real number, a :class:`staircase.Stairs` instance, or a string corresponding to a method.  These method names are taken from pandas and indicate the following behaviour:
 
 - ``pad / ffill`` propagate last defined value forward
 - ``backfill / bfill`` propagate next defined value backward
@@ -157,6 +157,19 @@ For example:
     >>> axes[0].set_title("sf.where(masker)");
     >>> sf.where(masker).fillna("bfill").plot(ax=axes[1], arrows=True);
     >>> axes[1].set_title('sf.where(masker).fillna("bfill")')
+
+.. plot::
+    :context: close-figs
+    :include-source: False
+
+    >>> masker = sc.Stairs().layer(None,3,2).layer(5,6);
+    >>> fig, axes = plt.subplots(ncols=3, figsize=(9,3), sharex=True, sharey=True)
+    >>> sf.where(masker).plot(ax=axes[0], arrows=True);
+    >>> axes[0].set_title("sf.where(masker)");
+    >>> sf.negate().plot(ax=axes[1], arrows=True);
+    >>> axes[1].set_title("-sf");
+    >>> sf.where(masker).fillna(-sf).plot(ax=axes[2], arrows=True);
+    >>> axes[2].set_title('sf.where(masker).fillna(-sf)')
 
 
 isna/notna

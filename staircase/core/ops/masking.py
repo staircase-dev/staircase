@@ -7,6 +7,10 @@ import pandas as pd
 import staircase as sc
 from staircase.constants import inf
 from staircase.core.ops import docstrings
+from staircase.core.ops.common import (
+    convert_string_args_to_timestamp,
+    requires_closed_match,
+)
 from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
 
@@ -28,6 +32,7 @@ def _get_slice_index(self, lower, upper, lower_how, upper_how):
 
 
 @Appender(docstrings.clip_docstring, join="\n", indents=1)
+@convert_string_args_to_timestamp
 def clip(self, lower=-inf, upper=inf):
     lower, upper = _replace_none_with_infs((lower, upper))
     if not lower < upper:
@@ -98,11 +103,13 @@ def _mask_stairs(self, other, inverse):
 
 
 def _make_mask_or_where_func(docstring, which):
+    @convert_string_args_to_timestamp
     def handle_tuple_mask(self, left, right):
         return _mask_stairs(
             self, sc.Stairs().layer(start=left, end=right), inverse=False
         )
 
+    @convert_string_args_to_timestamp
     def handle_tuple_where(self, left, right):
         left = -inf if left is None else left
         right = inf if right is None else right
@@ -159,11 +166,24 @@ isna = _make_null_comparison_func(docstrings.isna_docstring, np.isnan)
 notna = _make_null_comparison_func(docstrings.notna_docstring, lambda x: ~np.isnan(x))
 
 
-# TODO: test
-@Appender(docstrings.fillna_docstring, join="\n", indents=1)
-def fillna(self, value):
+def _make_data_fillna_method(self, value):
+    # value is a string
+    initial_value = self.initial_value
+    if self._data is None:
+        data = None
+    else:
+        values = self._get_values().copy()
+        if value in ("pad", "ffill") and np.isnan(values.iloc[0]):
+            values.iloc[0] = self.initial_value
+        values = values.fillna(method=value)
+        if value in ("backfill", "bfill") and np.isnan(self.initial_value):
+            initial_value = values.iloc[0]
+        data = pd.DataFrame({"value": values})
+    return initial_value, data
 
-    if not isinstance(value, str) and np.isnan(self.initial_value):
+
+def _make_data_fillna_scalar(self, value):
+    if np.isnan(self.initial_value):
         initial_value = value
     else:
         initial_value = self.initial_value
@@ -171,16 +191,28 @@ def fillna(self, value):
     if self._data is None:
         data = None
     else:
-        values = self._get_values().copy()
-        if value in ("pad", "ffill") and np.isnan(values.iloc[0]):
-            values.iloc[0] = self.initial_value
-        if isinstance(value, str):
-            values = values.fillna(method=value)
-        else:
-            values = values.fillna(value=value)
-        if value in ("backfill", "bfill") and np.isnan(self.initial_value):
-            initial_value = values.iloc[0]
+        values = self._get_values().copy().fillna(value=value)
         data = pd.DataFrame({"value": values})
+    return initial_value, data
+
+
+@requires_closed_match
+def _fillna_with_stairs(self, value):
+    # value is Stairs
+    return self.fillna(0) + value * self.isna()
+
+
+# TODO: test
+@Appender(docstrings.fillna_docstring, join="\n", indents=1)
+def fillna(self, value):
+
+    if isinstance(value, sc.Stairs):
+        return _fillna_with_stairs(self, value)
+
+    if isinstance(value, str):
+        initial_value, data = _make_data_fillna_method(self, value)
+    else:
+        initial_value, data = _make_data_fillna_scalar(self, value)
 
     new_instance = sc.Stairs._new(
         initial_value=initial_value, data=data, closed=self.closed

@@ -1,9 +1,82 @@
+import datetime
+import warnings
+
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_list_like
+from pandas.api.types import (
+    is_datetime64_any_dtype,
+    is_list_like,
+    is_number,
+    is_numeric_dtype,
+    is_timedelta64_dtype,
+)
 
+from staircase.constants import Inf, NegInf
 from staircase.docstrings import examples
 from staircase.util._decorators import Appender
+
+
+def _check_args_dtypes(start, end):
+    approved_dtypes_checks = [
+        is_datetime64_any_dtype,
+        is_timedelta64_dtype,
+        is_numeric_dtype,
+    ]
+
+    def _check_approved_dtype(vec):
+        approved = any(map(lambda func: func(vec), approved_dtypes_checks))
+        if not approved:
+            warnings.warn(
+                f"An argument supplied for 'start' or 'end' has dtype {vec.dtype}.  Only numerical, datetime-like, or timedelta dtypes have been tested.  Using other dtypes is considered experimental."
+            )
+
+    _check_approved_dtype(start)
+    _check_approved_dtype(end)
+
+
+def _check_args_types(start, end):
+    base_approved_types = [
+        pd.Timedelta,
+        pd.Timestamp,
+        datetime.datetime,
+        datetime.timedelta,
+        np.datetime64,
+        np.timedelta64,
+    ]
+
+    def _check_approved_type(arg, approved_types):
+        approved = (
+            arg is None
+            or pd.api.types.is_number(arg)
+            or isinstance(arg, approved_types)
+        )
+        if not approved:
+            warnings.warn(
+                f"An argument supplied for 'start' or 'end' has type '{type(arg)}'.  Only numerical, datetime-like, or timedelta types have been tested.  Using other types is considered experimental."
+            )
+
+    _check_approved_type(start, tuple(base_approved_types + [Inf]))
+    _check_approved_type(end, tuple(base_approved_types + [NegInf]))
+
+
+def _convert_to_series(vec):
+    if not isinstance(vec, pd.Series):
+        vec = pd.Series(vec)
+    else:
+        vec = vec.reset_index(drop=True)
+    return vec
+
+
+def _preprocess_layer_args(frame, start, end, value):
+    if isinstance(start, NegInf):
+        start = None
+    if isinstance(end, Inf):
+        end = None
+    if frame is not None:
+        start, end, value = _extract_from_frame(frame, start, end, value)
+    if value is None:
+        value = 1
+    return start, end, value
 
 
 def _extract_from_frame(frame=None, start=None, end=None, value=None):
@@ -20,6 +93,8 @@ def _extract_from_frame(frame=None, start=None, end=None, value=None):
 
 
 def _layer_scalar(self, start, end, value):
+    _check_args_types(start, end)
+
     if start is not None and end is not None and start == end:
         return self
 
@@ -87,22 +162,14 @@ def layer(self, start=None, end=None, value=None, frame=None):
     if self._data is None and np.isnan(self.initial_value):
         return self
     self._clear_cache()
-    if frame is not None:
-        start, end, value = _extract_from_frame(frame, start, end, value)
-    if value is None:
-        value = 1
+    start, end, value = _preprocess_layer_args(frame, start, end, value)
     if not any(list(map(is_list_like, (start, end, value)))):
         return _layer_scalar(self, start, end, value)
     value = np.array(value)
     assert not pd.isna(value).any(), "value parameter cannot contain null values"
-    if not isinstance(start, pd.Series):
-        start = pd.Series(start)
-    else:
-        start = start.reset_index(drop=True)
-    if not isinstance(end, pd.Series):
-        end = pd.Series(end)
-    else:
-        end = end.reset_index(drop=True)
+    start = _convert_to_series(start)
+    end = _convert_to_series(end)
+    _check_args_dtypes(start, end)  # conversion to Series required before checking
     df = pd.concat([start, end], axis=1, ignore_index=True)
     start_series = pd.Series(value, index=df.iloc[:, 0])
     self.initial_value += start_series[start_series.index.isna()].sum()
