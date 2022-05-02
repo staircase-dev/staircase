@@ -457,6 +457,7 @@ fillna_examples = "\n".join(
         _gen_example(["s3", "s3.fillna(0.5)"]),
         _gen_example(["s3", 's3.fillna("ffill")']),
         _gen_example(["s3", 's3.fillna("bfill")']),
+        _gen_example(["s3", "s2", "s3.fillna(s2)"]),
     ]
 )
 
@@ -465,8 +466,8 @@ Define values for (a copy of) *self* where it is undefined.
 
 Parameters
 ----------
-value : {{int, float, "backfill", "bfill", "pad", "ffill"}}
-    If *value* is and int or float, then it is used to provide values
+value : {{int, float, "backfill", "bfill", "pad", "ffill", :class:`Stairs`}}
+    If *value* is and int, float or :class:`Stairs`, then it is used to provide values
     where *self* is undefined.  If *value* is a string then it indicates
     a method for propagating values of the step function across undefined
     intervals:
