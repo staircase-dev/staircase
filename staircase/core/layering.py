@@ -6,6 +6,7 @@ import pandas as pd
 from pandas.api.types import (
     is_datetime64_any_dtype,
     is_list_like,
+    is_number,
     is_numeric_dtype,
     is_timedelta64_dtype,
 )
@@ -35,16 +36,20 @@ def _check_args_dtypes(start, end):
 
 def _check_args_types(start, end):
     base_approved_types = [
-        float,
-        int,
         pd.Timedelta,
         pd.Timestamp,
         datetime.datetime,
         datetime.timedelta,
+        np.datetime64,
+        np.timedelta64,
     ]
 
     def _check_approved_type(arg, approved_types):
-        approved = arg is None or isinstance(arg, approved_types)
+        approved = (
+            arg is None
+            or pd.api.types.is_number(arg)
+            or isinstance(arg, approved_types)
+        )
         if not approved:
             warnings.warn(
                 f"An argument supplied for 'start' or 'end' has type '{type(arg)}'.  Only numerical, datetime-like, or timedelta types have been tested.  Using other types is considered experimental."
