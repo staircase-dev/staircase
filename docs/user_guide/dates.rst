@@ -33,6 +33,8 @@ For datetime domains *v2* has been tested with :class:`numpy.datetime64`, :class
 * :meth:`staircase.Stairs.where`
 * :meth:`staircase.Stairs.slice`
 
+String representations of timestamps can also be used as arguments for :meth:`staircase.Stairs.clip`, :meth:`staircase.Stairs.mask` and :meth:`staircase.Stairs.where`.
+
 Note that when using datetime domains an integral calculation will be a timedelta:
 
 .. ipython:: python

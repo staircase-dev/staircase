@@ -7,7 +7,10 @@ import pandas as pd
 import staircase as sc
 from staircase.constants import inf
 from staircase.core.ops import docstrings
-from staircase.core.ops.common import requires_closed_match
+from staircase.core.ops.common import (
+    convert_string_args_to_timestamp,
+    requires_closed_match,
+)
 from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
 
@@ -29,6 +32,7 @@ def _get_slice_index(self, lower, upper, lower_how, upper_how):
 
 
 @Appender(docstrings.clip_docstring, join="\n", indents=1)
+@convert_string_args_to_timestamp
 def clip(self, lower=-inf, upper=inf):
     lower, upper = _replace_none_with_infs((lower, upper))
     if not lower < upper:
@@ -99,11 +103,13 @@ def _mask_stairs(self, other, inverse):
 
 
 def _make_mask_or_where_func(docstring, which):
+    @convert_string_args_to_timestamp
     def handle_tuple_mask(self, left, right):
         return _mask_stairs(
             self, sc.Stairs().layer(start=left, end=right), inverse=False
         )
 
+    @convert_string_args_to_timestamp
     def handle_tuple_where(self, left, right):
         left = -inf if left is None else left
         right = inf if right is None else right

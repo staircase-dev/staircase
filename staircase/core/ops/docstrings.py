@@ -290,10 +290,12 @@ Returns a copy of *self* which is undefined everywhere outside of [lower, upper]
 
 Parameters
 ----------
-lower : int, float or pandas.Timestamp
-    lower bound of the interval
-upper : int, float or pandas.Timestamp
-    upper bound of the interval
+lower : int, float, pandas.Timedelta, pandas.Timestamp or str
+    lower bound of the interval.  A string argument is assumed to be a string representation
+    of a pandas.Timestamp
+upper : int, float, pandas.Timedelta, pandas.Timestamp or str
+    upper bound of the interval.  A string argument is assumed to be a string representation
+    of a pandas.Timestamp
 
 Returns
 -------
@@ -383,7 +385,9 @@ Parameters
 ----------
 other : :class:`Stairs`, or tuple
     If *other* is a tuple *(a,b)* then it is assumed that a < b and that
-    *a* and *b* both belong to the domain of the step function represented by *self*
+    *a* and *b* both belong to the domain of the step function represented by *self*.
+    An exception is when *a* or *b* are strings, in which case they are assumed to
+    be pandas.Timestamp and the above conditions apply.
 
 Returns
 -------
