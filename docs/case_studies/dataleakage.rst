@@ -41,12 +41,14 @@ As these variables change as time moves along, they give rise to step functions.
 We can create the step function for number of houses sold by simply passing the *Date* column to the :class:`staircase.Stairs` constructor as the start times of intervals.  There are no end times, as once a house changes state from "unsold" to "sold", it never becomes "unsold" again.
 
 .. ipython:: python
+    :okwarning:
 
     houses_sold = sc.Stairs(data, start="Date")
 
 We can create the step function for total sum of house prices similarly, however this time we set the *value* argument to be the house price column, so that the step function increases by the house price at each sale date.
 
 .. ipython:: python
+    :okwarning:
 
     sum_houses_prices = sc.Stairs(data, start="Date", value="Price")
 
@@ -101,6 +103,7 @@ At the moment this data is a numpy array, but we can add it to our original data
 To recap, creating the average house price data feature is as simple as
 
 .. ipython:: python
+    :okwarning:
 
     sample_times = data["Date"] - pd.Timedelta(0.5, "day")
     data["average_price"] = (
@@ -130,6 +133,7 @@ We took a shortcut above, by the fact that our dates were at the day-frequency l
 We calculate a :class:`pandas.Series` indexed by suburb, whose values are step functions (:class:`staircase.Stairs`). Using this we can calculate average house prices (up to a certain point in time) for each suburb.
 
 .. ipython:: python
+    :okwarning:
 
     def create_av_price_step_function(df):
         count = sc.Stairs(df, start="Date")
