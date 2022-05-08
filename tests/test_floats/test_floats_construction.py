@@ -363,9 +363,10 @@ def test_from_values(initial_value, closed):
 )
 def test_from_values_exception(index, values):
     with pytest.raises(ValueError):
+        kwargs = {"dtype": "float64"} if values == [] else {}
         Stairs.from_values(
             initial_value=0,
-            values=pd.Series(values, index=index),
+            values=pd.Series(values, index=index, **kwargs),
             closed="left",
         )
 
