@@ -61,7 +61,10 @@ def _check_args_types(start, end):
 
 def _convert_to_series(vec):
     if not isinstance(vec, pd.Series):
-        vec = pd.Series(vec)
+        if vec is None or (isinstance(vec, (tuple, list)) and not len(vec)):
+            vec = pd.Series(vec, dtype="float64")
+        else:
+            vec = pd.Series(vec)
     else:
         vec = vec.reset_index(drop=True)
     return vec

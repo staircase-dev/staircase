@@ -333,6 +333,56 @@ def test_layering_frame(s1_fix):
 
 
 @pytest.mark.parametrize(
+    "start",
+    [
+        (1, 2),
+        (pd.Timestamp("2020-1-1"), pd.Timestamp("2020-1-2")),
+        (pd.Timedelta("1hr"), pd.Timedelta("2hr")),
+    ],
+)
+@pytest.mark.parametrize(
+    "end",
+    [None, []],
+)
+def test_layering_empty_end(start, end):
+    result = Stairs(start=start, end=end)
+    expected = pd.Series([1, 2], index=start)
+    pd.testing.assert_series_equal(
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
+        check_dtype=False,
+    )
+    assert result.initial_value == 0
+
+
+@pytest.mark.parametrize(
+    "end",
+    [
+        (1, 2),
+        (pd.Timestamp("2020-1-1"), pd.Timestamp("2020-1-2")),
+        (pd.Timedelta("1hr"), pd.Timedelta("2hr")),
+    ],
+)
+@pytest.mark.parametrize(
+    "start",
+    [None, []],
+)
+def test_layering_empty_start(start, end):
+    result = Stairs(start=start, end=end)
+    expected = pd.Series([1, 0], index=end)
+    pd.testing.assert_series_equal(
+        result.step_values,
+        expected,
+        check_names=False,
+        check_index_type=False,
+        check_dtype=False,
+    )
+    assert result.initial_value == 2
+
+
+@pytest.mark.parametrize(
     "closed",
     ["left", "right"],
 )
@@ -363,9 +413,10 @@ def test_from_values(initial_value, closed):
 )
 def test_from_values_exception(index, values):
     with pytest.raises(ValueError):
+        kwargs = {"dtype": "float64"} if values == [] else {}
         Stairs.from_values(
             initial_value=0,
-            values=pd.Series(values, index=index),
+            values=pd.Series(values, index=index, **kwargs),
             closed="left",
         )
 
