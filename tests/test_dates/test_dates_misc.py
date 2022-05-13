@@ -333,3 +333,26 @@ def test_clip_expected_type(date_func, kwargs):
     kwargs = {key: timestamp(*val, date_func=date_func) for key, val in kwargs.items()}
     result = s1(date_func).clip(**kwargs)
     assert_expected_type(result, date_func)
+
+
+def test_from_values(date_func):
+    # this corresponds to the step function produced by S1 method
+    values = pd.Series(
+        [2, 4.5, 2, -0.5, 0],
+        index=[
+            timestamp(2020, 1, 1, date_func=date_func),
+            timestamp(2020, 1, 3, date_func=date_func),
+            timestamp(2020, 1, 5, date_func=date_func),
+            timestamp(2020, 1, 6, date_func=date_func),
+            timestamp(2020, 1, 10, date_func=date_func),
+        ],
+    )
+
+    sf = Stairs.from_values(
+        initial_value=0,
+        values=values,
+    )
+
+    print(sf._data)
+    print(s1(date_func)._data)
+    assert sf.identical(s1(date_func))

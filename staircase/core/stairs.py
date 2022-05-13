@@ -22,6 +22,7 @@ from staircase import docstrings
 from staircase.constants import inf
 from staircase.core import stats
 from staircase.core.accessor import CachedAccessor
+from staircase.core.layering import _check_args_dtypes
 from staircase.plotting.accessor import PlotAccessor
 from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
@@ -108,14 +109,9 @@ class Stairs:
         if not isinstance(values, pd.Series) or values.empty:
             raise ValueError("values must be a not empty Series")
 
-        if not (
-            is_numeric_dtype(values.index)
-            or is_datetime64_dtype(values.index)
-            or is_timedelta64_dtype(values.index)
-        ):
-            warnings.warn("The index of data is not numeric, or time based")
+        _check_args_dtypes(values.index)
 
-        if np.isinf(values.index).any():
+        if is_numeric_dtype(values.index) and np.isinf(values.index).any():
             raise ValueError("Invalid value for Series index")
 
         if not is_numeric_dtype(values) or not is_number(initial_value):
