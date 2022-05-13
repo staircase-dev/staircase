@@ -7,6 +7,8 @@ Changelog
 
 UNRELEASED
 
+- bugfix for using :meth:`staircase.Stairs.from_values` with timezone aware DatetimeIndex on `values` argument  (#GH145)
+
 Please list new changes above this comment
 
 **v2.4.1 2022-05-09**

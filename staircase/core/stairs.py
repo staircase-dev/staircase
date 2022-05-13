@@ -115,7 +115,7 @@ class Stairs:
         ):
             warnings.warn("The index of data is not numeric, or time based")
 
-        if np.isinf(values.index).any():
+        if is_numeric_dtype(values.index) and np.isinf(values.index).any():
             raise ValueError("Invalid value for Series index")
 
         if not is_numeric_dtype(values) or not is_number(initial_value):
