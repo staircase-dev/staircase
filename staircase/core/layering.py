@@ -16,7 +16,7 @@ from staircase.docstrings import examples
 from staircase.util._decorators import Appender
 
 
-def _check_args_dtypes(start, end):
+def _check_args_dtypes(*vectors):
     approved_dtypes_checks = [
         is_datetime64_any_dtype,
         is_timedelta64_dtype,
@@ -27,11 +27,11 @@ def _check_args_dtypes(start, end):
         approved = any(map(lambda func: func(vec), approved_dtypes_checks))
         if not approved:
             warnings.warn(
-                f"An argument supplied for 'start' or 'end' has dtype {vec.dtype}.  Only numerical, datetime-like, or timedelta dtypes have been tested.  Using other dtypes is considered experimental."
+                f"An argument supplied has dtype {vec.dtype}.  Only numerical, datetime-like, or timedelta dtypes have been tested.  Using other dtypes is considered experimental."
             )
 
-    _check_approved_dtype(start)
-    _check_approved_dtype(end)
+    for vec in vectors:
+        _check_approved_dtype(vec)
 
 
 def _check_args_types(start, end):
