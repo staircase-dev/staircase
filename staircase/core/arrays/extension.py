@@ -136,7 +136,6 @@ class StairsArray(ExtensionArray):
 
     @classmethod
     def _concat_same_type(cls, to_concat):
-        print("hello")
         return cls(np.concatenate([array.data for array in to_concat]))
 
     @Appender(docstrings.make_docstring("array", "mean"), join="\n", indents=1)
