@@ -31,11 +31,11 @@ jobs:
         curl -sSL https://install.python-poetry.org | python - -y
         echo "/Users/runner/.local/bin" >> $GITHUB_PATH
     - name: Update PATH
-        if: ${{ matrix.platform != 'windows-latest' }}
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+      if: ${{ matrix.platform != 'windows-latest' }}
+      run: echo "$HOME/.local/bin" >> $GITHUB_PATH
     - name: Update Path for Windows
-        if: ${{ matrix.platform != 'windows-latest' }}
-        run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
+      if: ${{ matrix.platform != 'windows-latest' }}
+      run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
     - name: Install dependencies
       run: |
         poetry install
