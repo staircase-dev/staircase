@@ -6,10 +6,14 @@ on:
 
 jobs:
   build:
-    runs-on: ${{matrix.platform}}
+    runs-on: ${{matrix.sys.os}}
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        sys:
+          - { os: windows-latest, shell: pwsh }
+          - { os: ubuntu-latest,  shell: bash  }
+          - { os: macos-latest,   shell: bash  }
+          
         python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
@@ -19,29 +23,35 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Upgrade pip
+      shell: ${{ matrix.sys.shell }}
       run: |
         python -m pip install --upgrade pip
     - name: Install codecov
+      shell: ${{ matrix.sys.shell }}
       run: |
         python -m pip install codecov
     - name: Install poetry (ubuntu, macos)
+      shell: ${{ matrix.sys.shell }}
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
         echo "/Users/runner/.local/bin" >> $GITHUB_PATH
-      if: ${{ matrix.platform != 'windows-latest'}}
+      if: ${{ matrix.sys.os != 'windows-latest'}}
     - name: Install poetry (windows)
-      shell: pwsh
+      shell: ${{ matrix.sys.shell }}
       run: |
         (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
         echo "C:\Users\runneradmin\AppData\Roaming\Python\Scripts\poetry" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      if: ${{ matrix.platform == 'windows-latest'}}
+      if: ${{ matrix.sys.os == 'windows-latest'}}
     - name: Install dependencies
+      shell: ${{ matrix.sys.shell }}
       run: |
         echo $PATH
         poetry install
     - name: Lint with flake8
+      shell: ${{ matrix.sys.shell }}
       run: poetry run flake8 ./staircase
     - name: Test with pytest
+      shell: ${{ matrix.sys.shell }}
       run: |
         poetry run pytest ./tests --junitxml=junit/test-results-${{ matrix.python-version }}.xml --cov=staircase --cov-report=xml
         codecov
