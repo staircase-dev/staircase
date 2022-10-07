@@ -34,7 +34,7 @@ jobs:
       if: ${{ matrix.platform != 'windows-latest' }}
       run: echo "$HOME/.local/bin" >> $GITHUB_PATH
     - name: Update Path for Windows
-      if: ${{ matrix.platform != 'windows-latest' }}
+      if: ${{ matrix.platform == 'windows-latest' }}
       run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
     - name: Install dependencies
       run: |
