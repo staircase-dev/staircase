@@ -27,12 +27,12 @@ jobs:
     - name: Install poetry (ubuntu, macos)
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
-      if: ${{ matrix.python-version != windows-latest}}
+      if: ${{ matrix.platform != 'windows-latest'}}
     - name: Install poetry (windows)
       shell: pwsh
       run: |
         (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
-      if: ${{ matrix.python-version == windows-latest}}
+      if: ${{ matrix.platform == 'windows-latest'}}
     - name: Install dependencies
       run: |
         poetry install
