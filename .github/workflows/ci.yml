@@ -28,6 +28,7 @@ jobs:
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
         export PATH="/Users/runner/.local/bin:$PATH"
+        echo $PATH
       if: ${{ matrix.platform != 'windows-latest'}}
     - name: Install poetry (windows)
       shell: pwsh
@@ -36,6 +37,7 @@ jobs:
       if: ${{ matrix.platform == 'windows-latest'}}
     - name: Install dependencies
       run: |
+        echo $PATH
         poetry install
     - name: Lint with flake8
       run: poetry run flake8 ./staircase
