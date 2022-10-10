@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import Type, Callable, Any
+
 import numbers
 from collections.abc import Iterable
 
@@ -27,22 +30,22 @@ class StairsDtype(ExtensionDtype):
     na_value = pd.NA
 
     @classmethod
-    def construct_from_string(cls, string):
+    def construct_from_string(cls, string: str) -> StairsDtype:
         if string == cls.name:
             return cls()
         else:
             raise TypeError("Cannot construct a '{}' from '{}'".format(cls, string))
 
     @classmethod
-    def construct_array_type(cls):
+    def construct_array_type(cls) -> Type[StairsArray]:
         return StairsArray
 
 
-def _isna(value):
+def _isna(value: pd.Series) -> pd.Series:
     return pd.isna(value)
 
 
-def _make_logical(func):
+def _make_logical(func: Callable) -> Callable:
     def logical_func(x, axis=0):
         return np.where(
             np.logical_or.reduce(np.isnan(x), axis=axis),
@@ -75,13 +78,13 @@ class StairsArray(ExtensionArray):
             raise TypeError("'data' should be array of Stairs objects.")
 
     @property
-    def dtype(self):
+    def dtype(self) -> type:
         return self._dtype
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> Any:
         if isinstance(idx, numbers.Integral):
             return self.data[idx]
         elif isinstance(idx, (Iterable, slice)):
@@ -185,7 +188,7 @@ class StairsArray(ExtensionArray):
         )._remove_redundant_step_points()
 
     @Appender(docstrings.make_docstring("array", "sample"), join="\n", indents=1)
-    def sample(self, x):
+    def sample(self, x) -> pd.Series:
         array = pd.Series(self.data)
         return array.apply(Stairs.sample, x=x, include_index=True)
 
@@ -234,7 +237,7 @@ class StairsArray(ExtensionArray):
     __neg__ = negate
 
 
-def _make_binary_func(func_str):
+def _make_binary_func(func_str: str) -> Callable:
 
     stairs_func = getattr(Stairs, func_str)
     docstring = docstrings.make_binop_docstring(funcstr)
@@ -285,7 +288,7 @@ for funcstr in (
     setattr(StairsArray, f"__{magic}__", func)
 
 
-def _make_corr_cov_func(docstring, stairs_method, assume_ones_diagonal):
+def _make_corr_cov_func(docstring: str, stairs_method: Callable, assume_ones_diagonal: int) -> Callable:
     @Appender(docstring, join="\n", indents=1)
     def func(self, where=(-inf, inf)):
         size = len(self.data)

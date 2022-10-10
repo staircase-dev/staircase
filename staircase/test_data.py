@@ -1,8 +1,10 @@
+from __future__ import annotations
 import numpy as np
 import pandas as pd
 
 
-def make_test_data(dates=True, positive_only=True, groups=(), seed=None):
+def make_test_data(dates: bool = True, positive_only: bool = True,
+                   groups: tuple[str] | list[str] = (), seed: int | None = None) -> pd.DataFrame:
     """
     Creates interval data for use with staircase.
 
@@ -66,7 +68,7 @@ def make_test_data(dates=True, positive_only=True, groups=(), seed=None):
     return pd.concat(dfs)
 
 
-def _make_test_data(dates=True, positive_only=True, seed=None):
+def _make_test_data(dates: bool = True, positive_only: bool = True, seed: str | bool | None=None) -> pd.DataFrame:
     if seed is None:
         rng = np.random.default_rng()
     else:

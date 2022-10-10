@@ -626,7 +626,7 @@ class Stairs:
         )
 
     @Appender(docstrings.examples.diff_example, join="\n", indents=2)
-    def diff(self, delta: int | float | pd.Timedelta):
+    def diff(self, delta: int | float | pd.Timedelta) -> Stairs:
         """
         Returns a stairs instance corresponding to the difference between the step function corresponding to *self*
         and the same step-function translated by delta.
@@ -648,7 +648,7 @@ class Stairs:
         return self - self.shift(delta)
 
     @Appender(docstrings.examples.rolling_mean_example, join="\n", indents=2)
-    def rolling_mean(self, window: tuple[int | int] = (0, 0), where: tuple[float | float] = (-inf, inf)):
+    def rolling_mean(self, window: tuple[int | int] = (0, 0), where: tuple[float | float] = (-inf, inf)) -> pd.Series:
         """
         Returns coordinates defining rolling mean
 
@@ -766,13 +766,13 @@ class Stairs:
         """
         return func(self, *args, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return str(self)
         """
         return f"<staircase.{self.class_name}, id={id(self)}>"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation of Stairs
         """

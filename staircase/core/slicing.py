@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import Literal, Callable
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_list_like
@@ -10,22 +12,22 @@ from staircase.util._decorators import Appender
 
 
 class StairsSlicer:
-    def __init__(self, stairs, interval_index):
+    def __init__(self, stairs: sc.Stairs, interval_index):
         self._stairs = stairs
         self._interval_index = interval_index
-        self._slices = None
+        self._slices: pd.Series | None = None
 
-    def _create_slices(self):
+    def _create_slices(self) -> None:
         slices = self._interval_index.map(lambda i: clip(self._stairs, i.left, i.right))
         self._slices = pd.Series(slices, index=self._interval_index)
 
-    def _ensure_slices(self):
+    def _ensure_slices(self) -> StairsSlicer:
         if self._slices is None:
             self._create_slices()
         return self
 
     @Appender(docstrings.agg_docstring, join="\n", indents=1)
-    def agg(self, funcs):
+    def agg(self, funcs) -> pd.DataFrame:
         if isinstance(funcs, str):
             funcs = [funcs]
         self._ensure_slices()
@@ -35,12 +37,12 @@ class StairsSlicer:
         return df
 
     @Appender(docstrings.apply_docstring, join="\n", indents=1)
-    def apply(self, func, *args, **kwargs):
+    def apply(self, func: Callable, *args, **kwargs) -> pd.Series:
         self._ensure_slices()
         return self._slices.apply(func, args=args, **kwargs)
 
     @Appender(docstrings._docstrings["max"], join="\n", indents=1)
-    def max(self):
+    def max(self) -> float:
         result = self._max()
         if self._stairs._closed == "left" and self._interval_index.closed in (
             "right",
@@ -55,7 +57,7 @@ class StairsSlicer:
         return result
 
     @Appender(docstrings._docstrings["min"], join="\n", indents=1)
-    def min(self):
+    def min(self) -> float:
         result = self._min()
         if self._stairs._closed == "left" and self._interval_index.closed in (
             "right",
@@ -78,7 +80,7 @@ class StairsSlicer:
         return self._slices.apply(sc.Stairs.hist, *args, **kwargs).fillna(zero)
 
     @Appender(docstrings.resample_docstring, join="\n", indents=1)
-    def resample(self, func):
+    def resample(self, func: str):
         if not self._interval_index.is_non_overlapping_monotonic:
             raise ValueError(
                 "Slices must be monotonic increasing (ascending order) and not overlapping"
@@ -96,7 +98,7 @@ class StairsSlicer:
         )
 
 
-def make_slice_method(method_name):
+def make_slice_method(method_name: str) -> Callable:
 
     func = _get_stairs_method(method_name)
     docstring = docstrings._docstrings.get(method_name, "")
@@ -114,7 +116,7 @@ for method_name in ["_max", "_min", "mean", "median", "integral", "mode"]:
     setattr(StairsSlicer, method_name, method)
 
 
-def slice(self, cuts, closed="left"):
+def slice(self: sc.Stairs, cuts, closed: Literal["left", "right", "both", "neither"] = "left") -> StairsSlicer:
     """
     Slice the step function into pieces.
 
@@ -123,6 +125,7 @@ def slice(self, cuts, closed="left"):
 
     Parameters
     ----------
+    self : Stairs : class
     cuts : sequence, :class:`pandas.IntervalIndex`, :class:`pandas.PeriodIndex`.
         Used to slice the step function.  If *cuts* is a sequence then it should comprised
         of monotonically increasing values from the step function domain.
