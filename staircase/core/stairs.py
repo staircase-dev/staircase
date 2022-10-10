@@ -58,7 +58,7 @@ class Stairs:
     def __init__(
         self,
         frame: pd.DataFrame | None = None,
-        start: int | None =None,
+        start: int | None = None,
         end=None,
         value=None,
         initial_value=0,
@@ -81,7 +81,12 @@ class Stairs:
         self._integral_and_mean = None
 
     @classmethod
-    def _new(cls, initial_value: float, data: pd.DataFrame, closed:  Literal["left", "right"] = "left") -> Stairs:
+    def _new(
+        cls,
+        initial_value: float,
+        data: pd.DataFrame,
+        closed: Literal["left", "right"] = "left",
+    ) -> Stairs:
         new_instance = cls(closed=closed)
         new_instance.initial_value = initial_value
         new_instance._data = data
@@ -90,8 +95,12 @@ class Stairs:
         return new_instance
 
     @classmethod
-    def from_values(cls, initial_value: float = 0, values: pd.Series | None = None,
-                    closed: Literal["left", "right"] = "left") -> Stairs:
+    def from_values(
+        cls,
+        initial_value: float = 0,
+        values: pd.Series | None = None,
+        closed: Literal["left", "right"] = "left",
+    ) -> Stairs:
         """
         Construct :class:`Stairs` from :class:`pandas.Series`.
 
@@ -558,8 +567,12 @@ class Stairs:
         return False
 
     @Appender(docstrings.examples.describe_example, join="\n", indents=2)
-    def describe(self, where: tuple[float | int, float | int] | list[float | int, float | int] = (-inf, inf),
-                 percentiles: list[float | int] | tuple[float | int] = (25, 50, 75)) -> pd.Series:
+    def describe(
+        self,
+        where: tuple[float | int, float | int]
+        | list[float | int, float | int] = (-inf, inf),
+        percentiles: list[float | int] | tuple[float | int] = (25, 50, 75),
+    ) -> pd.Series:
         """
         Generate descriptive statistics for the step function values over a specified domain.
 
@@ -626,7 +639,7 @@ class Stairs:
         )
 
     @Appender(docstrings.examples.diff_example, join="\n", indents=2)
-    def diff(self, delta: int | float | pd.Timedelta):
+    def diff(self, delta: int | float | pd.Timedelta) -> Stairs:
         """
         Returns a stairs instance corresponding to the difference between the step function corresponding to *self*
         and the same step-function translated by delta.
@@ -648,7 +661,11 @@ class Stairs:
         return self - self.shift(delta)
 
     @Appender(docstrings.examples.rolling_mean_example, join="\n", indents=2)
-    def rolling_mean(self, window: tuple[int | int] = (0, 0), where: tuple[float | float] = (-inf, inf)):
+    def rolling_mean(
+        self,
+        window: tuple[int | int] = (0, 0),
+        where: tuple[float | float] = (-inf, inf),
+    ) -> pd.Series:
         """
         Returns coordinates defining rolling mean
 
@@ -766,13 +783,13 @@ class Stairs:
         """
         return func(self, *args, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return str(self)
         """
         return f"<staircase.{self.class_name}, id={id(self)}>"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation of Stairs
         """

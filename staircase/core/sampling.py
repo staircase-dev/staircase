@@ -1,7 +1,9 @@
+from __future__ import annotations
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_list_like
 
+from staircase.core.stairs import Stairs
 from staircase.docstrings import examples
 from staircase.util import _is_datetime_like
 from staircase.util._decorators import Appender
@@ -9,7 +11,9 @@ from staircase.util._decorators import Appender
 
 # capable of single or vector
 @Appender(examples.sample_example, join="\n", indents=1)
-def sample(self, x, include_index=False):
+def sample(
+    self: Stairs, x: int | float | np.array | pd.Series, include_index=False
+) -> pd.Series:
     """
     Evaluates the value of the step function at one, or more, points.
 
@@ -42,7 +46,7 @@ def sample(self, x, include_index=False):
 
 
 @Appender(examples.limit_example, join="\n", indents=1)
-def limit(self, x, side, include_index=False):
+def limit(self: Stairs, x, side, include_index=False) -> pd.Series:
     """
     Evaluates the limit of the step function as it approaches one, or more, points.
 
