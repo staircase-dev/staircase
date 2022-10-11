@@ -145,7 +145,7 @@ class Stairs:
         new_instance._valid_values = True
         return new_instance
 
-    def _has_na(self) -> bool | np.array[bool]:
+    def _has_na(self) -> bool | np.array:
         return np.isnan(self._data.values).any() or np.isnan(self.initial_value)
 
     def _create_values(self) -> Stairs:

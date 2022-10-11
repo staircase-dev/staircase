@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional
 import numpy as np
 import pandas as pd
 
@@ -6,7 +7,7 @@ import pandas as pd
 def make_test_data(
     dates: bool = True,
     positive_only: bool = True,
-    groups: tuple[str] | list[str] = (),
+    groups: tuple[Optional[str]] | list[Optional[str]] = (),
     seed: int | None = None,
 ) -> pd.DataFrame:
     """
