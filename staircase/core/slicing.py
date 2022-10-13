@@ -1,5 +1,7 @@
 from __future__ import annotations
-from typing import Literal, Callable
+
+from typing import Callable, Literal
+
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_list_like
@@ -74,9 +76,9 @@ class StairsSlicer:
     @Appender(docstrings.hist_docstring, join="\n", indents=1)
     def hist(self, *args, **kwargs):
         self._ensure_slices()
-        zero = (  # hack to get 0 or pd.Timedelta(0)
+        zero = (
             self._stairs._data.index[0] - self._stairs._data.index[0]
-        )
+        )  # hack to get 0 or pd.Timedelta(0)
         return self._slices.apply(sc.Stairs.hist, *args, **kwargs).fillna(zero)
 
     @Appender(docstrings.resample_docstring, join="\n", indents=1)

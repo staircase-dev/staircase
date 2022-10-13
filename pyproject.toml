@@ -88,7 +88,7 @@ codecov = ["codecov"]
 mypy = "^0.982"
 
 [tool.black]
-line-length=120
+line-length=88
 
 [tool.mypy]
 # disallow_untyped_defs='true'

@@ -7,9 +7,9 @@ staircase is a MIT licensed library, written in pure-Python, for
 modelling step functions. See :ref:`Getting Started <getting_started>` for more information.
 """
 from __future__ import annotations
-from typing import Callable, Any
 
 import warnings
+from typing import Any, Callable, Literal
 
 import numpy as np
 import pandas as pd
@@ -19,7 +19,6 @@ from pandas.api.types import (
     is_numeric_dtype,
     is_timedelta64_dtype,
 )
-from typing import Literal
 
 from staircase import docstrings
 from staircase.constants import inf

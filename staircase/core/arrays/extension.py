@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import Type, Callable, Any
 
 import numbers
 from collections.abc import Iterable
+from typing import Any, Callable, Type
 
 import matplotlib.pyplot as plt
 import numpy as np
