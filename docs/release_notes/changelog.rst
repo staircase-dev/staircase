@@ -7,7 +7,11 @@ Changelog
 
 UNRELEASED
 
+
+- dropped support for Python 3.6
+
 Please list new changes above this comment
+
 
 **v2.4.2 2022-05-13**
 
