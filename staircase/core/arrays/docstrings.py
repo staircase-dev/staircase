@@ -134,7 +134,7 @@ Returns
     boolean-valued step function
 
 Examples
----------
+--------
 
 >>> {setup}
 
@@ -624,7 +624,7 @@ Binary operator for :class:`staircase.StairsArray` (and :class:`pandas.Series` w
 Equivalent to {equiv}.
 
 Parameters
------------
+----------
 other : int, float, :class:`staircase.Stairs` or array-like of these
     If array-like must have same length as *self*.
 
@@ -633,7 +633,7 @@ Returns
 :class:`staircase.StairsArray`
 
 See Also
----------
+--------
 :meth:`staircase.Stairs.{funcstr}`
 
 Examples
@@ -682,7 +682,7 @@ Returns
 :class:`staircase.StairsArray`
 
 See Also
----------
+--------
 :meth:`staircase.Stairs.negate`
 
 Examples
