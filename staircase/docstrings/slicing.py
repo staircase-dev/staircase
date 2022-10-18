@@ -77,7 +77,7 @@ Returns
 
 example_header = """
 Examples
----------
+--------
 
 .. plot::
     :context: close-figs
