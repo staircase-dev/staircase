@@ -104,6 +104,7 @@ Before diving deeper into distributions we tackle a variety of miscellaneous que
     queue_tonnes.clip(pd.Timestamp("2020-3"), pd.Timestamp("2020-4")).median()
 
 *What is the 80th percentile for queue tonnes?*
+
 .. ipython:: python
 
     queue_tonnes.percentile(80)
