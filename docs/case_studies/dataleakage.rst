@@ -13,7 +13,7 @@ The dataset used in this example is taken from `Kaggle <https://www.kaggle.com/d
     :suppress:
 
     import matplotlib.pyplot as plt
-    plt.style.use('seaborn')
+    plt.style.use('seaborn-v0_8')
     house_data = r"https://raw.githubusercontent.com/staircase-dev/staircase-notebooks/master/data/melb_house_data.csv"
 
 We begin by importing the house price data into a :class:`pandas.DataFrame` instance. Each row corresponds to a house that has been sold.  There are many columns, however for this exercise we are only interested in *Suburb*, *Price*, and *Date*.  The *Date* column does not appear to have a time component (i.e. hour/minute/second) but :mod:`staircase` could have handled this.
