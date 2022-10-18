@@ -193,7 +193,7 @@ In this recipe we'll create a boolean valued step function which is 1 whenever i
 .. plot::
     :context: close-figs
 
-    >>> saturdays = pd.date_range("2021-01-02", "2022", freq="7D", closed="left")
+    >>> saturdays = pd.date_range("2021-01-02", "2022", freq="7D", inclusive="left")
     >>> mondays = saturdays + pd.Timedelta(2, "day")
     >>> weekend_stairs = sc.Stairs(start=saturdays, end=mondays)
     >>> weekend_stairs.plot()
@@ -206,8 +206,8 @@ In this recipe we'll create a boolean valued step function which is 1 whenever i
 
 .. code-block::
 
-    nine_am = pd.date_range("2021-1-1 09:00", "2022", closed="left")
-    five_pm = pd.date_range("2021-1-1 17:00", "2022", closed="left")
+    nine_am = pd.date_range("2021-1-1 09:00", "2022", inclusive="left")
+    five_pm = pd.date_range("2021-1-1 17:00", "2022", inclusive="left")
     nine_five_stairs = sc.Stairs(start=nine_am, end=five_pm)
 
 
