@@ -356,9 +356,13 @@ html_favicon = "img/favicon.ico"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
+html_css_files = [
+    "custom.css",
+]
+
 
 def setup(app):
-    app.add_css_file("custom.css")
+    # app.add_css_file("custom.css")
     app.add_autodocumenter(AccessorDocumenter)
     app.add_autodocumenter(AccessorAttributeDocumenter)
     app.add_autodocumenter(AccessorMethodDocumenter)
