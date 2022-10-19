@@ -6,6 +6,13 @@ Changelog
 =========
 
 
+**v2.5.0 2022-10-19**
+
+- dropped support for Python 3.6
+- bugfix for :func:`staircase.make_test_data` which failed with numpy < 1.17 (#GH80)
+- bugfix for staircase Series accessor causing errors during inspection of Series instances (#GH158)
+
+
 **v2.4.2 2022-05-13**
 
 - bugfix for using :meth:`staircase.Stairs.from_values` with timezone aware DatetimeIndex on `values` argument  (#GH145)

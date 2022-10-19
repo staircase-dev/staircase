@@ -11,7 +11,7 @@ from staircase.util._decorators import Appender
 class StairsAccessor:
     def __init__(self, pandas_obj):
         if not isinstance(pandas_obj.dtype, StairsDtype):
-            raise TypeError(
+            raise AttributeError(
                 'sc accessor only valid for Series with Stairs dtype.  Convert using .astype("Stairs").'
             )
         self._obj = pandas_obj
