@@ -27,7 +27,7 @@ We begin by importing the queue data into a :class:`pandas.DataFrame` where each
 .. ipython:: python
     :suppress:
 
-    plt.style.use('seaborn')
+    plt.style.use('seaborn-v0_8')
 
 A step function, which quantifies the size of the queue, can be created with vector data corresponding to start and end times for the state being modelled.  In this case, where the state is "in the queue", the required data is the columns “enter” and “leave”.  Note that since we want to examine 2020 we clip the step function at the year endpoints, making the functions undefined for any time outside of 2020 (see :ref:`user_guide.gotchas` for why this is a good idea).
 
@@ -104,6 +104,7 @@ Before diving deeper into distributions we tackle a variety of miscellaneous que
     queue_tonnes.clip(pd.Timestamp("2020-3"), pd.Timestamp("2020-4")).median()
 
 *What is the 80th percentile for queue tonnes?*
+
 .. ipython:: python
 
     queue_tonnes.percentile(80)

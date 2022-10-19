@@ -149,7 +149,7 @@ class Stairs:
 
     def _create_values(self) -> Stairs:
         assert self._valid_deltas
-        self._data.loc[:, "value"] = _make_vals_from_deltas(
+        self._data["value"] = _make_vals_from_deltas(
             self.initial_value, self._data["delta"]
         )
         self._valid_values = True
@@ -157,7 +157,7 @@ class Stairs:
 
     def _create_deltas(self) -> Stairs:
         assert self._valid_values
-        self._data.loc[:, "delta"] = _make_deltas_from_vals(
+        self._data["delta"] = _make_deltas_from_vals(
             self.initial_value, self._data["value"]
         )
         self._valid_deltas = True

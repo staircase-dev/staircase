@@ -11,7 +11,7 @@ This case study illustrates the use of the staircase package for analysing asset
     :suppress:
 
     import matplotlib.pyplot as plt
-    plt.style.use('seaborn')
+    plt.style.use('seaborn-v0_8')
     asset_data = r"https://raw.githubusercontent.com/staircase-dev/staircase-notebooks/master/data/asset_use.csv"
 
 We begin by importing the asset data into a :class:`pandas.DataFrame` instance. Each row corresponds to a period of time that an asset is being used. The first column identifies the asset, while the second and third columns give the start and end times of the period of use respectively.

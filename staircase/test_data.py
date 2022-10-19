@@ -75,23 +75,32 @@ def make_test_data(
     return pd.concat(dfs)
 
 
+def _get_random_functions(seed=None):
+    major, minor, *_ = np.__version__.split(".")
+
+    if f"{major}.{minor}" in ("1.14", "1.15", "1.16"):
+        rs = np.random.RandomState(seed)
+        return rs.randint, rs.uniform
+
+    rng = np.random.default_rng(seed)
+    return rng.integers, rng.random
+
+
 def _make_test_data(
     dates: bool = True, positive_only: bool = True, seed: str | bool | None = None
 ) -> pd.DataFrame:
-    if seed is None:
-        rng = np.random.default_rng()
-    else:
-        rng = np.random.default_rng(seed)
 
-    n_intervals = rng.integers(100, 1000)
-    smallest_interval = rng.integers(1, 6)
-    largest_interval = rng.integers(15, 20)
+    random_integers, random_floats = _get_random_functions(seed)
+
+    n_intervals = random_integers(100, 1000)
+    smallest_interval = random_integers(1, 6)
+    largest_interval = random_integers(15, 20)
     interval_lengths = (
-        rng.random(size=n_intervals) * (largest_interval - smallest_interval)
+        random_floats(size=n_intervals) * (largest_interval - smallest_interval)
         + smallest_interval
     )
 
-    start = rng.random(size=n_intervals) * 120 - 20
+    start = random_floats(size=n_intervals) * 120 - 20
     end = start + interval_lengths
 
     if dates:
@@ -102,7 +111,7 @@ def _make_test_data(
             end * 365 / 100 * pd.Timedelta(1, "day")
         )
 
-    value = rng.choice(range(-5, 6), n_intervals)
+    value = random_integers(-5, 6, n_intervals)
     if positive_only:
         value = value + 6
 
