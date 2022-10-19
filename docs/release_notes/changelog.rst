@@ -10,6 +10,7 @@ UNRELEASED
 
 - dropped support for Python 3.6
 - bugfix for :func:`staircase.make_test_data` which failed with numpy < 1.17 (#GH80)
+- bugfix for staircase Series accessor causing errors during inspection of Series instances (#GH158)
 
 Please list new changes above this comment
 

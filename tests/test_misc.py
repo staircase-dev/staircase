@@ -48,5 +48,9 @@ def test_make_test_data(dates, positive_only, groups, seed):
 
 
 def test_accessor_non_Stairs_dtype():
-    with pytest.raises(TypeError):
+    with pytest.raises(AttributeError):
         pd.Series([1]).sc
+
+
+def test_accessor_inspection():
+    dir(pd.Series([1]))
