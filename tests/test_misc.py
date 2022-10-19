@@ -53,4 +53,5 @@ def test_accessor_non_Stairs_dtype():
 
 
 def test_accessor_inspection():
+    # GH158
     dir(pd.Series([1]))
