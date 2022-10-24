@@ -1,8 +1,17 @@
+from __future__ import annotations
+
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 
 
-def make_test_data(dates=True, positive_only=True, groups=(), seed=None):
+def make_test_data(
+    dates: bool = True,
+    positive_only: bool = True,
+    groups: tuple[Optional[str]] | list[Optional[str]] = (),
+    seed: int | None = None,
+) -> pd.DataFrame:
     """
     Creates interval data for use with staircase.
 
@@ -77,7 +86,9 @@ def _get_random_functions(seed=None):
     return rng.integers, rng.random
 
 
-def _make_test_data(dates=True, positive_only=True, seed=None):
+def _make_test_data(
+    dates: bool = True, positive_only: bool = True, seed: str | bool | None = None
+) -> pd.DataFrame:
 
     random_integers, random_floats = _get_random_functions(seed)
 
