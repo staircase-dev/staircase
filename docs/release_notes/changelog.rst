@@ -7,6 +7,10 @@ Changelog
 
 UNRELEASED
 
+- added type hints (#GH36)
+- `mypy` added to development environment
+
+Contributors: @PabloRuizCuevas
 
 Please list new changes above this comment
 
