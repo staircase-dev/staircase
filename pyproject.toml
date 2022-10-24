@@ -37,6 +37,10 @@ classifiers=[
 	'Topic :: Scientific/Engineering',
 ]
 
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/staircase-dev/staircase/issues"
+
+
 [tool.poetry.dependencies]
 python = "^3.7"
 matplotlib = ">=2"
@@ -60,8 +64,6 @@ python = "^3.10"
 version = "^1.21.2"
 
 
-
-
 [tool.poetry.dev-dependencies]
 ipykernel = "^6"
 pytest = "^6"
@@ -72,20 +74,14 @@ sphinx-autobuild = "*"
 seaborn = ">=0.8.0"
 notebook = ">= 6.0"
 isort = ">=5.8"
-black = {version = "*", python = "^3.6.2"}
-flake8 = ">=3.9"
-pre-commit = {version = ">=2.13", python = "^3.6.1"}
+black = ">=22.10"
+flake8 = ">=5"
+pre-commit = ">=2.20"
 tox=">=3.15"
-
+mypy = "^0.982"
 
 [tool.poetry.extras]
 codecov = ["codecov"]
-
-[tool.poetry.urls]
-"Bug Tracker" = "https://github.com/staircase-dev/staircase/issues"
-
-[tool.poetry.group.dev.dependencies]
-mypy = "^0.982"
 
 [tool.black]
 line-length=88
