@@ -9,7 +9,7 @@ modelling step functions. See :ref:`Getting Started <getting_started>` for more 
 from __future__ import annotations
 
 import warnings
-from typing import Any, Callable, Literal
+from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
@@ -19,6 +19,7 @@ from pandas.api.types import (
     is_numeric_dtype,
     is_timedelta64_dtype,
 )
+from typing_extensions import Literal
 
 from staircase import docstrings
 from staircase.constants import inf

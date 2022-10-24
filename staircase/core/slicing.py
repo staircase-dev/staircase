@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import Callable, Literal
+from typing import Callable
 
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_list_like
+from typing_extensions import Literal
 
 import staircase as sc
 from staircase.core.ops.masking import clip
