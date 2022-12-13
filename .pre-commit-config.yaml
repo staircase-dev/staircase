@@ -10,7 +10,7 @@ repos:
     hooks:
       - id: black
         exclude: ^staircase/test_data*
-  - repo: https://gitlab.com/pycqa/flake8
+  - repo: https://github.com/pycqa/flake8
     rev: 5.0.4
     hooks:
     -   id: flake8
