@@ -7,13 +7,16 @@ Changelog
 
 UNRELEASED
 
+
+Please list new changes above this comment
+
+**v2.5.1 2023-04-25**
+
 - compatible with Pandas 2.0
 - added type hints (#GH36)
 - `mypy` added to development environment
 
 Contributors: @PabloRuizCuevas
-
-Please list new changes above this comment
 
 
 **v2.5.0 2022-10-19**
