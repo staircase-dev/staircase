@@ -7,6 +7,7 @@ Changelog
 
 UNRELEASED
 
+- compatible with Pandas 2.0
 - added type hints (#GH36)
 - `mypy` added to development environment
 
