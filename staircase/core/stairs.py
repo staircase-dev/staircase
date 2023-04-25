@@ -6,8 +6,10 @@ staircase
 staircase is a MIT licensed library, written in pure-Python, for
 modelling step functions. See :ref:`Getting Started <getting_started>` for more information.
 """
+from __future__ import annotations
 
 import warnings
+from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
@@ -17,6 +19,7 @@ from pandas.api.types import (
     is_numeric_dtype,
     is_timedelta64_dtype,
 )
+from typing_extensions import Literal
 
 from staircase import docstrings
 from staircase.constants import inf
@@ -28,7 +31,7 @@ from staircase.util import _replace_none_with_infs
 from staircase.util._decorators import Appender
 
 
-def _make_deltas_from_vals(init_val, vals):
+def _make_deltas_from_vals(init_val, vals: pd.DataFrame) -> pd.Series:
     if not np.isnan(vals).any():
         result = pd.Series(np.diff((np.append([init_val], vals.values))))
     else:
@@ -42,7 +45,7 @@ def _make_deltas_from_vals(init_val, vals):
     return result
 
 
-def _make_vals_from_deltas(init_val, deltas):
+def _make_vals_from_deltas(init_val: float, deltas: pd.DataFrame):
     base = 0 if np.isnan(init_val) else init_val
     return deltas.cumsum() + base
 
@@ -54,12 +57,12 @@ class Stairs:
     @Appender(docstrings.Stairs_docstring, join="\n", indents=2)
     def __init__(
         self,
-        frame=None,
-        start=None,
+        frame: pd.DataFrame | None = None,
+        start: int | None = None,
         end=None,
         value=None,
         initial_value=0,
-        closed="left",
+        closed: Literal["left", "right"] = "left",
     ):
         assert frame is None or isinstance(frame, pd.DataFrame)
         self._data = None
@@ -78,7 +81,12 @@ class Stairs:
         self._integral_and_mean = None
 
     @classmethod
-    def _new(cls, initial_value, data, closed="left"):
+    def _new(
+        cls,
+        initial_value: float,
+        data: pd.DataFrame,
+        closed: Literal["left", "right"] = "left",
+    ) -> Stairs:
         new_instance = cls(closed=closed)
         new_instance.initial_value = initial_value
         new_instance._data = data
@@ -87,7 +95,12 @@ class Stairs:
         return new_instance
 
     @classmethod
-    def from_values(cls, initial_value, values=None, closed="left"):
+    def from_values(
+        cls,
+        initial_value: float = 0,
+        values: pd.Series | None = None,
+        closed: Literal["left", "right"] = "left",
+    ) -> Stairs:
         """
         Construct :class:`Stairs` from :class:`pandas.Series`.
 
@@ -132,10 +145,10 @@ class Stairs:
         new_instance._valid_values = True
         return new_instance
 
-    def _has_na(self):
+    def _has_na(self) -> bool | np.array:
         return np.isnan(self._data.values).any() or np.isnan(self.initial_value)
 
-    def _create_values(self):
+    def _create_values(self) -> Stairs:
         assert self._valid_deltas
         self._data["value"] = _make_vals_from_deltas(
             self.initial_value, self._data["delta"]
@@ -143,7 +156,7 @@ class Stairs:
         self._valid_values = True
         return self
 
-    def _create_deltas(self):
+    def _create_deltas(self) -> Stairs:
         assert self._valid_values
         self._data["delta"] = _make_deltas_from_vals(
             self.initial_value, self._data["value"]
@@ -151,14 +164,14 @@ class Stairs:
         self._valid_deltas = True
         return self
 
-    def _get_deltas(self):
+    def _get_deltas(self) -> pd.Series:
         if self._data is None:
             return pd.Series(dtype="float64")
         if not self._valid_deltas:
             self._create_deltas()
         return self._data["delta"]
 
-    def _get_values(self):
+    def _get_values(self) -> pd.Series:
         if self._data is None:
             return pd.Series(dtype="float64")
         if not self._valid_values:
@@ -308,7 +321,7 @@ class Stairs:
         """
         return self.dist.hist(bins=bins, closed=closed, stat=stat)
 
-    def quantiles(self, q):
+    def quantiles(self, q: int):
         """
         Returns an array of q-quantiles.
 
@@ -348,7 +361,7 @@ class Stairs:
         return self.dist.quantiles(q)
 
     @Appender(stats.docstrings.simple_max_example, join="\n", indents=2)
-    def max(self):
+    def max(self) -> float:
         """
         The maximum of the step function.
 
@@ -364,7 +377,7 @@ class Stairs:
         return stats.max(self)
 
     @Appender(stats.docstrings.simple_min_example, join="\n", indents=2)
-    def min(self):
+    def min(self) -> float:
         """
         The minimum of the step function.
 
@@ -382,7 +395,7 @@ class Stairs:
     plot = CachedAccessor("plot", PlotAccessor)
 
     @property
-    def step_changes(self):
+    def step_changes(self) -> pd.Series:
         """
         A pandas Series of key, value pairs of indicating where step changes occur in the step function, and the change in value
 
@@ -447,7 +460,7 @@ class Stairs:
         return self._get_values().copy()
 
     @property
-    def step_points(self):
+    def step_points(self) -> np.array:
         """
         A numpy arrauy of domain values indicating where step changes occur in the step function.
 
@@ -477,7 +490,7 @@ class Stairs:
 
     @Appender(docstrings.examples.number_of_steps_example, join="\n", indents=2)
     @property
-    def number_of_steps(self):
+    def number_of_steps(self) -> int:
         """
         Calculates the number of step changes
 
@@ -493,17 +506,17 @@ class Stairs:
         """
         return len(self.step_points)
 
-    def _remove_redundant_step_points(self):
+    def _remove_redundant_step_points(self) -> Stairs:
 
         # preferred over values method
-        def remove_via_deltas():
+        def remove_via_deltas() -> None:
             remove_index = (
                 self._data["delta"].isna() & self._data["delta"].isna().shift()
             ) | (self._data["delta"] == 0)
             self._data = self._data.loc[~remove_index]
 
         # do we just make deltas and then run above method?
-        def remove_via_values():
+        def remove_via_values() -> None:
             remove_index = (
                 self._data["value"].isna() & self._data["value"].isna().shift()
             ) | (self._data["value"] == self._data["value"].shift())
@@ -526,7 +539,7 @@ class Stairs:
 
         return self
 
-    def copy(self):
+    def copy(self) -> Stairs:
         """
         Returns a deep copy of this Stairs instance
 
@@ -541,7 +554,7 @@ class Stairs:
         )
         return new_instance
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return True if and only if step function has a value of 1 everywhere.
 
@@ -554,7 +567,12 @@ class Stairs:
         return False
 
     @Appender(docstrings.examples.describe_example, join="\n", indents=2)
-    def describe(self, where=(-inf, inf), percentiles=(25, 50, 75)):
+    def describe(
+        self,
+        where: tuple[float | int, float | int]
+        | list[float | int, float | int] = (-inf, inf),
+        percentiles: list[float | int] | tuple[float | int] = (25, 50, 75),
+    ) -> pd.Series:
         """
         Generate descriptive statistics for the step function values over a specified domain.
 
@@ -591,7 +609,7 @@ class Stairs:
         )
 
     @Appender(docstrings.examples.shift_example, join="\n", indents=2)
-    def shift(self, delta):
+    def shift(self, delta: pd.Series | int | float) -> Stairs:
         """
         Returns a stairs instance corresponding to a horizontal translation by delta
 
@@ -621,7 +639,7 @@ class Stairs:
         )
 
     @Appender(docstrings.examples.diff_example, join="\n", indents=2)
-    def diff(self, delta):
+    def diff(self, delta: int | float | pd.Timedelta) -> Stairs:
         """
         Returns a stairs instance corresponding to the difference between the step function corresponding to *self*
         and the same step-function translated by delta.
@@ -643,7 +661,11 @@ class Stairs:
         return self - self.shift(delta)
 
     @Appender(docstrings.examples.rolling_mean_example, join="\n", indents=2)
-    def rolling_mean(self, window=(0, 0), where=(-inf, inf)):
+    def rolling_mean(
+        self,
+        window: tuple[int | int] = (0, 0),
+        where: tuple[float | float] = (-inf, inf),
+    ) -> pd.Series:
         """
         Returns coordinates defining rolling mean
 
@@ -699,7 +721,7 @@ class Stairs:
             s = s.loc[s.index <= upper - right_delta]
         return s
 
-    def to_frame(self):
+    def to_frame(self) -> pd.DataFrame:
         """
         Returns a pandas.DataFrame with columns 'start', 'end' and 'value'
 
@@ -739,7 +761,7 @@ class Stairs:
             values = np.append(self.initial_value, self._data["value"].values)
         return pd.DataFrame({"start": starts, "end": ends, "value": values})
 
-    def pipe(self, func, *args, **kwargs):
+    def pipe(self, func: Callable, *args, **kwargs) -> Any:
         """
         Applies func and returns the result.
 
@@ -761,13 +783,13 @@ class Stairs:
         """
         return func(self, *args, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return str(self)
         """
         return f"<staircase.{self.class_name}, id={id(self)}>"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation of Stairs
         """
@@ -777,7 +799,7 @@ class Stairs:
         return self.sample(*args, **kwargs)
 
 
-def _add_operations():
+def _add_operations() -> None:
     from staircase.core import layering, ops, sampling, slicing
 
     ops.add_operations(Stairs)

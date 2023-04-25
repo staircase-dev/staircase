@@ -17,7 +17,7 @@ class StairsAccessor:
         self._obj = pandas_obj
 
     @Appender(docstrings.make_docstring("accessor", "corr"), join="\n", indents=1)
-    def corr(self, where=(-inf, inf)):
+    def corr(self, where=(-inf, inf)) -> pd.DataFrame:
         return pd.DataFrame(
             self._obj.values.corr(where),
             index=self._obj.index,
@@ -25,7 +25,7 @@ class StairsAccessor:
         )
 
     @Appender(docstrings.make_docstring("accessor", "cov"), join="\n", indents=1)
-    def cov(self, where=(-inf, inf)):
+    def cov(self, where=(-inf, inf)) -> pd.DataFrame:
         return pd.DataFrame(
             self._obj.values.cov(where),
             index=self._obj.index,

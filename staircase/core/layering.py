@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import datetime
 import warnings
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -23,7 +26,7 @@ def _check_args_dtypes(*vectors):
         is_numeric_dtype,
     ]
 
-    def _check_approved_dtype(vec):
+    def _check_approved_dtype(vec: pd.Series):
         approved = any(map(lambda func: func(vec), approved_dtypes_checks))
         if not approved:
             warnings.warn(
@@ -59,7 +62,7 @@ def _check_args_types(start, end):
     _check_approved_type(end, tuple(base_approved_types + [NegInf]))
 
 
-def _convert_to_series(vec):
+def _convert_to_series(vec: Any) -> pd.Series:
     if not isinstance(vec, pd.Series):
         if vec is None or (isinstance(vec, (tuple, list)) and not len(vec)):
             vec = pd.Series(vec, dtype="float64")
