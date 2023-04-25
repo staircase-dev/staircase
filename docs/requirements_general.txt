@@ -11,3 +11,4 @@ Pygments
 pydata-sphinx-theme
 toml
 numpydoc
+typing-extensions
