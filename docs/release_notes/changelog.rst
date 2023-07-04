@@ -7,9 +7,12 @@ Changelog
 
 UNRELEASED
 
+Please list new changes above this comment
+
+**v2.5.2 2023-07-04**
+
 - support for Python 3.11
 
-Please list new changes above this comment
 
 **v2.5.1 2023-04-25**
 
