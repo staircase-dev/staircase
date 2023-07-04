@@ -7,6 +7,7 @@ Changelog
 
 UNRELEASED
 
+- support for Python 3.11
 
 Please list new changes above this comment
 
