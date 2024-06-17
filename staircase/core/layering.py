@@ -115,7 +115,7 @@ def _layer_scalar(self, start, end, value):
         if start in deltas.index:
             deltas.loc[start] += value
         else:
-            deltas.loc[start] = value
+            deltas.loc[start] = float(value)
         if deltas.loc[start] == 0:
             deltas.drop(start, inplace=True)
 
