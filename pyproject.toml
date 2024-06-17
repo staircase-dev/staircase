@@ -1,8 +1,8 @@
 # Poetry pyproject.toml: https://python-poetry.org/docs/pyproject/
 
 [build-system]
-requires = ["poetry>=1.0"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "staircase"
@@ -35,6 +35,7 @@ classifiers=[
 	'Programming Language :: Python :: 3.9',
 	'Programming Language :: Python :: 3.10',
 	'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
 	'Topic :: Scientific/Engineering',
 ]
 
