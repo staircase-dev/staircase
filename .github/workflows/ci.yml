@@ -43,13 +43,13 @@ jobs:
       run: poetry run flake8 ./staircase
     - name: Test with pytest
       run: |
-        poetry run pytest ./tests --junitxml=junit/test-results-${{ matrix.python-version }}.xml --cov=staircase --cov-report=xml
+        poetry run pytest ./tests --junitxml=junit/test-results-${{ matrix.platform }}-${{ matrix.python-version }}.xml --cov=staircase --cov-report=xml
       #  codecov
     - name: Upload pytest test results
       uses: actions/upload-artifact@v4
       with:
-        name: pytest-results-${{ matrix.python-version }}
-        path: junit/test-results-${{ matrix.python-version }}.xml
+        name: pytest-results-${{ matrix.platform }}-${{ matrix.python-version }}
+        path: junit/test-results-${{ matrix.platform }}-${{ matrix.python-version }}.xml
       # Use always() to always run this step to publish test results when there are test failures
       if: ${{ always() }}
     # - name: Upload coverage to Codecov
