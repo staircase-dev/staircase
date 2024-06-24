@@ -86,8 +86,7 @@ def test_layering_args_warning(start, end):
     [(1, None), (None, 1), (1, sc.inf), (-sc.inf, 1)],
 )
 def test_layering_args_no_warning(start, end):
-    with pytest.warns(None) as warnings:
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
         Stairs(start=start, end=end)
-
-    if len(warnings) > 0:
-        raise AssertionError("Warnings were raised, but not expected")
