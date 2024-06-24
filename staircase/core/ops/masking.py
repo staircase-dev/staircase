@@ -174,10 +174,10 @@ def _make_data_fillna_method(self, value):
     else:
         values = self._get_values().copy()
         fillmethod = {
-            "pad":pd.Series.ffill,
-            "ffill":pd.Series.ffill,
-            "backfill":pd.Series.bfill,
-            "bfill":pd.Series.bfill,
+            "pad": pd.Series.ffill,
+            "ffill": pd.Series.ffill,
+            "backfill": pd.Series.bfill,
+            "bfill": pd.Series.bfill,
         }[value]
         if value in ("pad", "ffill") and np.isnan(values.iloc[0]):
             values.iloc[0] = self.initial_value
