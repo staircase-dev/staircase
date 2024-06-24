@@ -7,10 +7,13 @@ Changelog
 
 UNRELEASED
 
+Please list new changes above this comment
+
+**v2.6.0 2024-06-24**
+
 - support for Python 3.12 added
 - support for Python 3.7 removed
 
-Please list new changes above this comment
 
 **v2.5.2 2023-07-04**
 
