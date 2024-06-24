@@ -397,7 +397,7 @@ def test_integral_dates_3(date_func):
         s1(date_func).agg(
             "integral", (timestamp(2020, 1, 4, date_func=date_func), None)
         )
-        / pd.Timedelta("1 H")
+        / pd.Timedelta("1 h")
         == 108
     ), "Expected integral to be 108 hours"
 
@@ -411,7 +411,7 @@ def test_integral_dates_4(date_func):
                 timestamp(2020, 1, 8, date_func=date_func),
             ),
         )
-        / pd.Timedelta("1 H")
+        / pd.Timedelta("1 h")
         == 132
     ), "Expected integral to be 132 hours"
 
