@@ -87,6 +87,7 @@ def test_layering_args_warning(start, end):
 )
 def test_layering_args_no_warning(start, end):
     import warnings
+
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         Stairs(start=start, end=end)
