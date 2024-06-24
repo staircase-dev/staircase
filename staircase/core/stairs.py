@@ -6,6 +6,7 @@ staircase
 staircase is a MIT licensed library, written in pure-Python, for
 modelling step functions. See :ref:`Getting Started <getting_started>` for more information.
 """
+
 from __future__ import annotations
 
 import warnings
@@ -33,9 +34,11 @@ from staircase.util._decorators import Appender
 
 def _make_deltas_from_vals(init_val, vals: pd.DataFrame) -> pd.Series:
     if not np.isnan(vals).any():
-        result = pd.Series(np.diff((np.append([init_val], vals.values))))
+        result = pd.Series(
+            np.diff((np.append([init_val], vals.values))), dtype="float64"
+        )
     else:
-        temp = pd.Series(np.append([init_val], vals.values))
+        temp = pd.Series(np.append([init_val], vals.values), dtype="float64")
         result = pd.Series.add(
             temp[pd.notnull(temp)].diff(), temp[pd.isnull(temp)], fill_value=0
         )[1:]
@@ -570,7 +573,10 @@ class Stairs:
     def describe(
         self,
         where: tuple[float | int, float | int]
-        | list[float | int, float | int] = (-inf, inf),
+        | list[float | int, float | int] = (
+            -inf,
+            inf,
+        ),
         percentiles: list[float | int] | tuple[float | int] = (25, 50, 75),
     ) -> pd.Series:
         """
