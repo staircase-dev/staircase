@@ -572,7 +572,8 @@ class Stairs:
     @Appender(docstrings.examples.describe_example, join="\n", indents=2)
     def describe(
         self,
-        where: tuple[float | int, float | int] | list[float | int, float | int] = (
+        where: tuple[float | int, float | int]
+        | list[float | int, float | int] = (
             -inf,
             inf,
         ),
