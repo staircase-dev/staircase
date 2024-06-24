@@ -5,7 +5,7 @@ import staircase as sc
 
 
 # Not testing "W", it's a pain for period index
-@pytest.mark.parametrize("freq_str", ["N", "U", "L", "S", "T", "H", "D", "M"])
+@pytest.mark.parametrize("freq_str", ["ns", "us", "ms", "s", "min", "h", "D", "M"])
 def test_slice_month_period_range(freq_str):
     # GH108
     date_freq = "MS" if freq_str == "M" else freq_str

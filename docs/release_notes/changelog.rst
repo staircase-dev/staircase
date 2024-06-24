@@ -6,6 +6,12 @@ Changelog
 =========
 
 
+**v2.6.0 2024-06-24**
+
+- support for Python 3.12 added
+- support for Python 3.7 removed
+
+
 **v2.5.2 2023-07-04**
 
 - support for Python 3.11

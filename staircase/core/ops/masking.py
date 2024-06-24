@@ -173,9 +173,15 @@ def _make_data_fillna_method(self, value):
         data = None
     else:
         values = self._get_values().copy()
+        fillmethod = {
+            "pad": pd.Series.ffill,
+            "ffill": pd.Series.ffill,
+            "backfill": pd.Series.bfill,
+            "bfill": pd.Series.bfill,
+        }[value]
         if value in ("pad", "ffill") and np.isnan(values.iloc[0]):
             values.iloc[0] = self.initial_value
-        values = values.fillna(method=value)
+        values = fillmethod(values)
         if value in ("backfill", "bfill") and np.isnan(self.initial_value):
             initial_value = values.iloc[0]
         data = pd.DataFrame({"value": values})
