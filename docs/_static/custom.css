@@ -1,70 +1,51 @@
+html {
+	/* Use softer blue from bootstrap's default info color */
+	--pst-color-primary: 0, 108, 133;
+	--pst-color-active-navigation: 0, 108, 133;
+	--pst-color-navbar-link: 255, 255, 255;
+	--pst-color-navbar-link-hover: 200, 255, 255;
+	--pst-color-navbar-link-active: 255, 255, 255;
+	--pst-color-on-background: #006d85;
+	
+  }
+  
+  h1 {
+	  --pst-color-heading: #006d85;
+  }
+  
+  h2 {
+	--pst-color-heading: #006d85;
+  }
 
-:root {
-  /* Use softer blue from bootstrap's default info color */
-  --pst-color-primary: 0, 108, 133;
-  --pst-color-active-navigation: 0, 108, 133;
-  --pst-color-navbar-link: 255, 255, 255;
-  --pst-color-navbar-link-hover: 200, 255, 255;
-  --pst-color-navbar-link-active: 255, 255, 255;
-}
+  h3 {
+	--pst-color-heading: #006d85;
+  }
 
-.navbar-light .navbar-nav>.active>.nav-link {
-    font-weight: 800;
-    color: rgba(var(--pst-color-navbar-link-active),1);
-}
-
-dt:target, span.highlighted {
-    background-color: rgba(var(--pst-color-primary),1);
-}
-
-.sig {
-	color: #ffffff;
-	padding-left: 10px;
-	background-color: rgba(var(--pst-color-primary),1);
-}
-
-.sig-name {
-	color: #ffffff;
-}
-
-
-nav.bg-light {
-	background-color: rgba(var(--pst-color-primary),1) !important;
-}
-
-
-.container-xl{max-width: 1400px }
-
-.btn-block {
+  .sd-btn{
+	border-color: #006d85;
+	width: 100%;
 	text-align: left;
-	font-weight: 600;
-    color: rgba(var(--pst-color-primary),1);
-    border-color: rgba(var(--pst-color-primary),1);
-}
+  }
 
+  p .sd-btn:hover{
+	background-color: #006d85;
+	color: #ffffff
+  }
+  
+  .bd-header {
+	  --pst-color-text-muted: #ffffff;
+	  --pst-color-on-background: #006d85;
+  }
+  .bd-header ul.navbar-nav > li.nav-item.current > .nav-link{
+	  color:#c8ffff;
+	  --pst-color-secondary:#c8ffff;
+  }
+  
+  .bd-header ul.navbar-nav > li.nav-item > .nav-link:hover{
+	  color:#c8ffff;
+	  --pst-color-secondary:#c8ffff;
+  }
 
-.btn-block[href^="case_studies/index.html"] {
-	text-align: left;
-	font-weight: 600;
-    color: #ffffff;
-	background-color:rgba(var(--pst-color-primary),1);
-    border-color: rgba(var(--pst-color-primary),1);
-}
-
-.btn-block[href^="case_studies/index.html"]:hover {
-	text-align: left;
-	font-weight: 600;
-	color:rgba(var(--pst-color-primary),1);
-	background-color:#ffffff;
-	border-color: rgba(var(--pst-color-primary),1);
-}
-
-.btn-block:hover {
-	color:#ffffff;
-	background-color:rgba(var(--pst-color-primary),1);
-	border-color: rgba(var(--pst-color-primary),1);
-}
-
-code {
-	font-size: 95% !important;
-}
+  .search-button-field{
+	color: #5c5c5c
+  }

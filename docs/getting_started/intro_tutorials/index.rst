@@ -4,45 +4,54 @@ Introductory tutorials
 =======================
 
 
-.. link-button:: 00_stepfunction
-    :type: ref
-    :text: What is a step function?
-    :classes: btn-outline-primary btn-block
+.. button-ref:: intro_tutorials.stepfunction
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
 
-.. link-button:: 01_domains
-    :type: ref
-    :text: What domains and range are possible?
-    :classes: btn-outline-primary btn-block
+    What is a step function?
 
-.. link-button:: 02_creating
-    :type: ref
-    :text: How do I create my step function?
-    :classes: btn-outline-primary btn-block
+.. button-ref:: intro_tutorials.domains
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    What domains and range are possible?
+
+.. button-ref:: intro_tutorials.creating
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
     
-.. link-button:: 03_plotting
-    :type: ref
-    :text: What does my step function look like?
-    :classes: btn-outline-primary btn-block
+    How do I create my step function?
+
+.. button-ref:: intro_tutorials.plotting
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
     
-.. link-button:: 04_combining
-    :type: ref
-    :text: How do I combine step functions?
-    :classes: btn-outline-primary btn-block
+    What does my step function look like?
+
+.. button-ref:: intro_tutorials.combining
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
     
-.. link-button:: 05_comparing
-    :type: ref
-    :text: How can I compare my step function?
-    :classes: btn-outline-primary btn-block
+    How do I combine step functions?
+
+.. button-ref:: intro_tutorials.comparing
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
     
-.. link-button:: 06_stats
-    :type: ref
-    :text: What statistical properties are available?
-    :classes: btn-outline-primary btn-block
+    How can I compare my step function?
+
+.. button-ref:: intro_tutorials.stats
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
     
-.. link-button:: 07_next
-    :type: ref
-    :text: What next?
-    :classes: btn-outline-primary btn-block
+    What statistical properties are available?
+
+.. button-ref:: intro_tutorials.next
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    What next?
+
 
 .. toctree::
     :maxdepth: 1

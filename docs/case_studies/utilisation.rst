@@ -21,21 +21,21 @@ We begin by importing the asset data into a :class:`pandas.DataFrame` instance. 
     import pandas as pd
     import staircase as sc
 
-    data = pd.read_csv(asset_data, parse_dates=['start', 'end'], dayfirst=True)
+    data = pd.read_csv(asset_data, parse_dates=['start', 'end'])
     data
 
 For the analysis we would like a :class:`staircase.Stairs` object for each asset. Each Stairs object will represent a step function which has a value of zero, when the asset is not in use, and a value of one when the asset is in use. We can pandas' groupby process (`"split-apply-combine" <https://pandas.pydata.org/docs/user_guide/groupby.html>`_) with the :class:`staircase.Stairs` constructor method to get a :class:`pandas.Series`, indexed by asset name, with :class:`staircase.Stairs` values:
 
 .. ipython:: python
 
-    asset_use = data.groupby("asset").apply(sc.Stairs, start="start", end="end")
+    asset_use = data.groupby("asset")[["start", "end"]].apply(sc.Stairs, start="start", end="end")
     asset_use
 
 Note that since we want to examine 2020 we clip the step function at the year endpoints, making the functions undefined for any time outside of 2020 (see :ref:`user_guide.gotchas` for why this is a good idea).  :meth:`pandas.Series.apply` is used here, rather than looping, for efficiency.
 
 .. ipython:: python
 
-    asset_use = asset_use.apply(sc.Stairs.clip, (pd.Timestamp("2020"), pd.Timestamp("2021")))
+    asset_use = asset_use.apply(sc.Stairs.clip, args=(pd.Timestamp("2020"), pd.Timestamp("2021")))
 
 We can access an individual :class:`staircase.Stairs` object with the corresponding asset name. For example, to plot the step function corresponding to asset Z, for the first day:
 

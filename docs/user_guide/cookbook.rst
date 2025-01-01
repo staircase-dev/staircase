@@ -29,7 +29,7 @@ a pandas Series of Stairs instances, indexed by groupbys can be obtained like so
 .. code-block::
 
     >>> df = sc.make_test_data(groups=list("abc"))
-    >>> df.groupby("group").apply(sc.Stairs, "start", "end", "value")
+    >>> df.groupby("group")[["start", "end", "value"]].apply(sc.Stairs, "start", "end", "value")
     group
     a    <staircase.Stairs, id=1931375056736>
     b    <staircase.Stairs, id=1931366000144>
@@ -253,7 +253,7 @@ Suppose we have a set of events, associated with a time and a boolean (success o
     ...
     >>> times = (
     ...     pd.Timestamp("2021") + 
-    ...     pd.Series(np.random.randint(0,365*24, 1000)).apply(pd.Timedelta, unit="H")
+    ...     pd.Series(np.random.randint(0,365*24, 1000)).apply(pd.Timedelta, unit="h")
     ... )
     ...
     >>> events = pd.DataFrame(
@@ -295,7 +295,7 @@ Suppose we have a set of events, associated with a time and a number.  This reci
     ...
     >>> times = (
     ...     pd.Timestamp("2021") + 
-    ...     pd.Series(rng.integers(0,365*24, 1000)).apply(pd.Timedelta, unit="H")
+    ...     pd.Series(rng.integers(0,365*24, 1000)).apply(pd.Timedelta, unit="h")
     ... )
     ...
     >>> events = pd.DataFrame(
@@ -335,7 +335,7 @@ Suppose we have a set of events, associated with a time and a number.  This reci
     ...
     >>> times = (
     ...     pd.Timestamp("2021") + 
-    ...     pd.Series(rng.integers(0,365*24, 1000)).apply(pd.Timedelta, unit="H")
+    ...     pd.Series(rng.integers(0,365*24, 1000)).apply(pd.Timedelta, unit="h")
     ... )
     ...
     >>> events = pd.DataFrame(
@@ -377,7 +377,7 @@ Suppose we have a set of events, associated with a time and a number.  This reci
     ...
     >>> times = (
     ...     pd.Timestamp("2021") + 
-    ...     pd.Series(rng.integers(0,365*24, 1000)).apply(pd.Timedelta, unit="H")
+    ...     pd.Series(rng.integers(0,365*24, 1000)).apply(pd.Timedelta, unit="h")
     ... )
     ...
     >>> events = pd.DataFrame(

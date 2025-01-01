@@ -69,10 +69,10 @@ extensions = [
     # "sphinx.ext.linkcode",
     "numpydoc",  # handle NumPy documentation formatted docstrings]
     "nbsphinx",
-    "sphinx_panels",
+    "sphinx_design",
 ]
 
-source_suffix = [".rst", ".ipynb"]
+source_suffix = [".rst"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -98,7 +98,7 @@ autosummary_generate = True
 
 # sphinx-panels shouldn't add bootstrap css since the pydata-sphinx-theme
 # already loads it
-panels_add_bootstrap_css = False
+# panels_add_bootstrap_css = False
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
@@ -343,10 +343,13 @@ html_theme = "pydata_sphinx_theme"
 # html_theme_path = guzzle_sphinx_theme.html_theme_path()
 
 html_theme_options = {
-    "google_analytics_id": "UA-27880019-2",
+    # "google_analytics_id": "UA-27880019-2",
     "github_url": "https://github.com/staircase-dev/staircase",
+    "navbar_end": ["navbar-icon-links"],
 }
 
+
+html_show_sourcelink = False
 
 html_logo = "img/staircase-wide-inverse.svg"
 html_favicon = "img/favicon.ico"
@@ -359,6 +362,11 @@ html_static_path = ["_static"]
 html_css_files = [
     "custom.css",
 ]
+
+html_context = {
+    # ...
+    "default_mode": "light"
+}
 
 
 def setup(app):
