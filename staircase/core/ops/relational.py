@@ -39,13 +39,13 @@ def _make_relational_func(
         elif self._data is None or other._data is None:
             if other._data is None:  # self._data exists
                 values = self._get_values()
-                new_values = numpy_relational(values, other.initial_value)*1
-                #new_values[values.isna()] = np.nan  # *1 converts bool to nan where applicable
+                new_values = numpy_relational(values, other.initial_value) * 1
+                # new_values[values.isna()] = np.nan  # *1 converts bool to nan where applicable
                 new_index = self._data.index
             else:  # other._data exists
                 values = other._get_values()
                 new_values = numpy_relational(self.initial_value, values)
-                #new_values[values.isna()] = np.nan  # *1 converts bool to nan where applicable
+                # new_values[values.isna()] = np.nan  # *1 converts bool to nan where applicable
                 new_index = other._data.index
 
             new_instance = sc.Stairs._new(
