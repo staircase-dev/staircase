@@ -114,7 +114,7 @@ One of the strongest arguments for ECDFs over histogram plots is when several di
 .. ipython:: python
 
     df = sc.make_test_data(dates=False, groups=["A","B","C","D"], seed=60)
-    series = df.groupby("group").apply(sc.Stairs, "start", "end", "value")
+    series = df.groupby("group")[["start", "end", "value"]].apply(sc.Stairs, "start", "end", "value")
     fig, axes = plt.subplots(ncols=2, figsize=(7,3))
     for i, stairs in series.items():
         stairs.plot(axes[0], label=i)

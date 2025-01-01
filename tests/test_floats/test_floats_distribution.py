@@ -92,7 +92,7 @@ def test_hist_left_closed(stairs_instance, bounds, cuts):
 
     hist = stairs_instance.clip(*bounds).hist(bins=cuts, stat="probability")
     expected = make_expected_result(hist.index, *bounds)
-    assert (hist.apply(round, 5) == expected.apply(round, 5)).all(), f"{bounds}, {cuts}"
+    assert (hist.apply(round, args=(5,)) == expected.apply(round, args=(5,))).all(), f"{bounds}, {cuts}"
 
 
 @pytest.mark.parametrize(
@@ -120,7 +120,7 @@ def test_hist_right_closed(stairs_instance, bounds, cuts):
         bins=cuts, closed="right", stat="probability"
     )
     expected = make_expected_result(hist.index, *bounds)
-    assert (hist.apply(round, 5) == expected.apply(round, 5)).all(), f"{bounds}, {cuts}"
+    assert (hist.apply(round, args=(5,)) == expected.apply(round, args=(5,))).all(), f"{bounds}, {cuts}"
 
 
 @pytest.mark.parametrize(

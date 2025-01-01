@@ -1,4 +1,4 @@
-.. _getting_started.interval_endpoints:
+.. _user_guide.interval_endpoints:
 
 A note on interval endpoints
 =============================

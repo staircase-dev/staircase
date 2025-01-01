@@ -304,7 +304,7 @@ def test_shift(date_func):
         timestamp(2020, 1, 11, date_func=date_func),
         -2.5,
     )
-    result = s1(date_func).shift(pd.Timedelta(24, unit="H"))
+    result = s1(date_func).shift(pd.Timedelta(24, unit="h"))
     assert bool(result == ans)
     assert_expected_type(result, date_func)
 
