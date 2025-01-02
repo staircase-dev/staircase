@@ -7,11 +7,14 @@ Changelog
 
 UNRELEASED
 
+Please list new changes above this comment
+
+**v2.7.0 2025-01-01**
+
 - support for Numpy 2 added
 - support for Python 3.13 added
 - support for Python 3.8 removed
 
-Please list new changes above this comment
 
 **v2.6.0 2024-06-24**
 
