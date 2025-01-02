@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "staircase"
-version = "2.6.0"
+version = "2.7.0"
 description = "A data analysis package based on modelling and manipulation of mathematical step functions. Strongly aligned with pandas."
 readme = "README.md"
 authors = ["Riley Clement <venaturum@gmail.com>"]
@@ -30,11 +30,11 @@ keywords=[
 classifiers=[
 	'Operating System :: OS Independent',
 	'Intended Audience :: Science/Research',
-	'Programming Language :: Python :: 3.8',
 	'Programming Language :: Python :: 3.9',
 	'Programming Language :: Python :: 3.10',
 	'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
 	'Topic :: Scientific/Engineering',
 ]
 
@@ -43,7 +43,7 @@ classifiers=[
 
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 pytz = "*"
 typing-extensions = "^4.4.0"
 
@@ -61,7 +61,7 @@ version = "^1.16"
 
 [[tool.poetry.dependencies.numpy]]
 python = "^3.10"
-version = "^1.21.2"
+version = ">=1.21.2,<3"
 
 [[tool.poetry.dependencies.matplotlib]]
 python = ">=3.8,<3.11"

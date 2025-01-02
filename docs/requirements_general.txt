@@ -1,7 +1,7 @@
 ipykernel
-sphinx == 4.0.2
-nbsphinx == 0.8.6
-sphinx-panels
+sphinx
+nbsphinx
+sphinx-design
 matplotlib
 pandas
 numpy
@@ -12,3 +12,4 @@ pydata-sphinx-theme
 toml
 numpydoc
 typing-extensions
+pickleshare

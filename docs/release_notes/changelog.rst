@@ -6,6 +6,13 @@ Changelog
 =========
 
 
+**v2.7.0 2025-01-01**
+
+- support for Numpy 2 added
+- support for Python 3.13 added
+- support for Python 3.8 removed
+
+
 **v2.6.0 2024-06-24**
 
 - support for Python 3.12 added
@@ -229,6 +236,6 @@ Contributors: @amagee (Andrew Magee)
 
 **v1.0.0 2020-09-01**
 
-- updated documentation to include :ref:`A note on interval endpoints<getting_started.interval_endpoints>`
+- updated documentation to include :ref:`A note on interval endpoints<user_guide.interval_endpoints>`
 - parameter *start* in :meth:`staircase.Stairs.layer` made optional to make method symmetric with respect to time
 - removed *staircase.Stairs.evaluate* method (superseded by :meth:`staircase.Stairs.sample`)

@@ -1,4 +1,4 @@
-.. _userguide:
+.. _user_guide:
 
 ===================
 User Guide
@@ -16,61 +16,72 @@ The code examples in the user guide assume the following setup:
 |
 |
 
-.. link-button:: stepfunctionthinking
-    :type: ref
-    :text: Thinking in step functions
-    :classes: btn-outline-primary btn-block
+.. button-ref:: user_guide.stepfunctionthinking
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
 
-.. link-button:: endpoints
-    :type: ref
-    :text: A note on interval endpoints
-    :classes: btn-outline-primary btn-block
+    Thinking in step functions
 
-.. link-button:: layering
-    :type: ref
-    :text: The layer method
-    :classes: btn-outline-primary btn-block
-	 
-.. link-button:: dates
-    :type: ref
-    :text: Working with dates
-    :classes: btn-outline-primary btn-block
+.. button-ref:: user_guide.interval_endpoints
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
 
-.. link-button:: masking
-    :type: ref
-    :text: Masking
-    :classes: btn-outline-primary btn-block
+    A note on interval endpoints
 
-.. link-button:: slicing
-    :type: ref
-    :text: Slicing
-    :classes: btn-outline-primary btn-block
-
-.. link-button:: distributions
-    :type: ref
-    :text: Distribution of values
-    :classes: btn-outline-primary btn-block
-
-.. link-button:: arraymethods
-    :type: ref
-    :text: Array methods
-    :classes: btn-outline-primary btn-block
-
-.. link-button:: gotchas
-    :type: ref
-    :text: Gotchas
-    :classes: btn-outline-primary btn-block
-
-.. link-button:: faq
-    :type: ref
-    :text: Frequently asked questions
-    :classes: btn-outline-primary btn-block
-
-.. link-button:: cookbook
-    :type: ref
-    :text: Cookbook
-    :classes: btn-outline-primary btn-block
+.. button-ref:: user_guide.layering
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
     
+    The layer method
+
+.. button-ref:: user_guide.dates
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    Working with dates
+
+.. button-ref:: user_guide.masking
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    Masking
+
+.. button-ref:: user_guide.slicing
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    Slicing
+
+.. button-ref:: user_guide.distributions
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    Distribution of values
+
+.. button-ref:: user_guide.arraymethods
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    Array methods
+
+.. button-ref:: user_guide.gotchas
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    Gotchas
+
+.. button-ref:: user_guide.faq
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    Frequently asked questions
+
+.. button-ref:: user_guide.cookbook
+    :ref-type: ref
+    :class: btn-outline-primary btn-block
+
+    Cookbook
+
 |
 |
 

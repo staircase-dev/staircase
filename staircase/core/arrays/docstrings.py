@@ -176,7 +176,7 @@ Takes a collection of Stairs instances and evaluates their limits across a set o
 
 Technically the results of this function should be considered as :math:`\\lim_{{x \\to z^{{-}}}} f(x)`
 or :math:`\\lim_{{x \\to z^{{+}}}} f(x)`, when *side* = 'left' or *side* = 'right' respectively. See
-:ref:`A note on interval endpoints<getting_started.interval_endpoints>` for an explanation.
+:ref:`A note on interval endpoints<user_guide.interval_endpoints>` for an explanation.
 
 Parameters
 {collection_param}

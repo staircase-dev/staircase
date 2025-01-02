@@ -157,7 +157,7 @@ In v1, the first parameter of the constructor was `value` (renamed to `initial_v
 
     df.query("start > '2021-5'").pipe(sc.Stairs, "start", "end")
 
-    df.groupby("group").apply(sc.Stairs, "start", "end")
+    df.groupby("group")[["start", "end"]].apply(sc.Stairs, "start", "end")
 
 
 

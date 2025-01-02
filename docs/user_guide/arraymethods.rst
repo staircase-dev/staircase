@@ -30,7 +30,7 @@ We can alternatively create a pandas Series, with dtype "Stairs" like so
 .. ipython:: python
 
     series_stairs = (
-        df.groupby("group")
+        df.groupby("group")[["start", "end"]]
         .apply(sc.Stairs, start="start", end="end")
         .astype("Stairs")
     )
