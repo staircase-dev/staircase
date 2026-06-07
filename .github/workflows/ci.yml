@@ -42,6 +42,8 @@ jobs:
     - name: Lint with flake8
       run: poetry run flake8 ./staircase
     - name: Test with pytest
+      env:
+        MPLBACKEND: Agg
       run: |
         poetry run pytest ./tests --junitxml=junit/test-results-${{ matrix.platform }}-${{ matrix.python-version }}.xml --cov=staircase --cov-report=xml
         codecov
