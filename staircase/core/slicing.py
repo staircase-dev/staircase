@@ -179,9 +179,11 @@ def slice(
     if isinstance(cuts, pd.IntervalIndex):
         ii = cuts
     elif isinstance(cuts, pd.PeriodIndex):
-        end_times = cuts.end_time + pd.Timedelta(
-            "1ns"
-        )  # PeriodIndex leaves a 1ns gap between intervals
+        if isinstance(cuts.freq, pd.offsets.MonthEnd):
+            freq = pd.offsets.MonthBegin()
+        else:
+            freq = cuts.freq
+        end_times = cuts.start_time + freq
         ii = pd.IntervalIndex.from_arrays(cuts.start_time, end_times, closed=closed)
     elif is_list_like(cuts):
         ii = pd.IntervalIndex.from_breaks(cuts, closed=closed)
