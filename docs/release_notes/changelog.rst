@@ -7,11 +7,14 @@ Changelog
 
 UNRELEASED
 
+Please list new changes above this comment
+
+**v2.8.0 2026-06-07**
+
 - support for Pandas 4 added
 - support for Python 3.14 added
 - support for Python 3.9 removed
 
-Please list new changes above this comment
 
 **v2.7.0 2025-01-01**
 
