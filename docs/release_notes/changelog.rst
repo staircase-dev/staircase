@@ -11,7 +11,7 @@ Please list new changes above this comment
 
 **v2.8.0 2026-06-07**
 
-- support for Pandas 4 added
+- support for Pandas 3 added
 - support for Python 3.14 added
 - support for Python 3.9 removed
 
