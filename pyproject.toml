@@ -48,6 +48,10 @@ pytz = "*"
 typing-extensions = "^4.4.0"
 
 [[tool.poetry.dependencies.pandas]]
+python = "3.10"
+version = ">=2,<3"
+
+[[tool.poetry.dependencies.pandas]]
 python = "^3.11"
 version = ">=2,<4"
 
